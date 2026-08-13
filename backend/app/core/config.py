@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
     
     # Database
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./saibalaji.db")
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:////tmp/saibalaji.db" if os.getenv("VERCEL") else "sqlite:///./saibalaji.db")
     
     # CORS Origins
     CORS_ORIGINS: list[str] = [
