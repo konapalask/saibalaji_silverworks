@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  --color-ivory: #FAF9F5;
+  --color-cream: #F4EFEA;
+  --color-charcoal: #1A1918;
+  --color-gold: #C5A059;
+  --color-gold-light: #E5D5B3;
+  --color-gold-dark: #9E7D3A;
+  --color-silver: #A8B2B9;
+  --color-silver-light: #E2E8F0;
+  --color-border-subtle: #E6E1DA;
+}
+
+/* Arch Shape Container Classes inspired by editorial benchmark */
+.arch-top {
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+}
+
+.arch-full {
+  border-radius: 9999px 9999px 0 0;
+}
+
+.arch-card {
+  border-radius: 120px 120px 16px 16px;
+}
+
+/* Custom Luxury Separator Line */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #C5A059 50%, transparent 100%);
+}
+
+.gold-border {
+  border: 1px solid rgba(197, 160, 89, 0.3);
+}
+
+.silver-border {
+  border: 1px solid rgba(168, 178, 185, 0.3);
+}
+
+/* Glassmorphic elements for modal overlay */
+.glass-panel {
+  background: rgba(250, 249, 245, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF9F5;
+}
+::-webkit-scrollbar-thumb {
+  background: #C5A059;
+  border-radius: 3px;
+}
+
+/* Image zoom & reveal */
+.img-zoom {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .img-zoom {
+  transform: scale(1.06);
+}
+
+/* Luxury button glow */
+.btn-gold {
+  background-color: #1A1918;
+  color: #FAF9F5;
+  border: 1px solid #C5A059;
+  transition: all 0.3s ease;
+}
+.btn-gold:hover {
+  background-color: #C5A059;
+  color: #1A1918;
+  box-shadow: 0 4px 20px rgba(197, 160, 89, 0.3);
+}
+
+.btn-outline-gold {
+  background: transparent;
+  color: #1A1918;
+  border: 1px solid #C5A059;
+  transition: all 0.3s ease;
+}
+.btn-outline-gold:hover {
+  background: #1A1918;
+  color: #FAF9F5;
+}
