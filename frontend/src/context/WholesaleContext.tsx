@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
 import { Product, WholesaleCartItem } from '../types';
+import { useCart } from './CartContext';
 
 interface WholesaleContextType {
   wholesaleItems: WholesaleCartItem[];
@@ -13,47 +14,31 @@ interface WholesaleContextType {
 const WholesaleContext = createContext<WholesaleContextType | undefined>(undefined);
 
 export const WholesaleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [wholesaleItems, setWholesaleItems] = useState<WholesaleCartItem[]>(() => {
-    const saved = localStorage.getItem('sbs_wholesale_cart');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const { cart, addToCart, removeFromCart, updateQuantity, clearCart, totalQuantity } = useCart();
 
-  useEffect(() => {
-    localStorage.setItem('sbs_wholesale_cart', JSON.stringify(wholesaleItems));
-  }, [wholesaleItems]);
+  // Map unified cart items to WholesaleCartItem interface for backwards compatibility
+  const wholesaleItems: WholesaleCartItem[] = cart.map(item => ({
+    product: item.product,
+    requested_quantity: item.quantity,
+    notes: ''
+  }));
 
-  const addToWholesaleCart = (product: Product, quantity?: number, notes?: string) => {
-    const qty = quantity || product.min_wholesale_qty || 10;
-    setWholesaleItems((prev) => {
-      const existing = prev.find((i) => i.product.id === product.id);
-      if (existing) {
-        return prev.map((i) =>
-          i.product.id === product.id
-            ? { ...i, requested_quantity: i.requested_quantity + qty, notes: notes || i.notes }
-            : i
-        );
-      }
-      return [...prev, { product, requested_quantity: qty, notes }];
-    });
+  const addToWholesaleCart = (product: Product, quantity?: number) => {
+    const qty = quantity && quantity > 0 ? quantity : (product.min_wholesale_qty || 5);
+    addToCart(product, qty);
   };
 
   const removeFromWholesaleCart = (productId: number) => {
-    setWholesaleItems((prev) => prev.filter((i) => i.product.id !== productId));
+    removeFromCart(productId);
   };
 
   const updateWholesaleQuantity = (productId: number, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromWholesaleCart(productId);
-      return;
-    }
-    setWholesaleItems((prev) =>
-      prev.map((i) => (i.product.id === productId ? { ...i, requested_quantity: quantity } : i))
-    );
+    updateQuantity(productId, quantity);
   };
 
-  const clearWholesaleCart = () => setWholesaleItems([]);
-
-  const wholesaleCount = wholesaleItems.reduce((acc, item) => acc + item.requested_quantity, 0);
+  const clearWholesaleCart = () => {
+    clearCart();
+  };
 
   return (
     <WholesaleContext.Provider
@@ -63,7 +48,7 @@ export const WholesaleProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         removeFromWholesaleCart,
         updateWholesaleQuantity,
         clearWholesaleCart,
-        wholesaleCount,
+        wholesaleCount: totalQuantity
       }}
     >
       {children}

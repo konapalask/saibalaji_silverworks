@@ -16,6 +16,11 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+class GoogleLoginRequest(BaseModel):
+    email: EmailStr
+    full_name: Optional[str] = "Google User"
+    google_id: Optional[str] = None
+
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
@@ -34,6 +39,12 @@ class UserOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    company_name: Optional[str] = None
+    gstin: Optional[str] = None
 
 # Category Schemas
 class CategoryBase(BaseModel):
@@ -68,6 +79,7 @@ class ProductBase(BaseModel):
     slug: str
     sku: str
     category_id: int
+    subcategory: Optional[str] = None
     product_type: ProductType = ProductType.BOTH
     silver_purity: str = "925 Sterling Silver"
     weight_g: float = 10.0

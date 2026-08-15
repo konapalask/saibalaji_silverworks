@@ -6,6 +6,7 @@ import { VideoPlayerModal } from '../components/VideoPlayerModal';
 import { QuickViewModal } from '../components/QuickViewModal';
 import { ProductCard } from '../components/ProductCard';
 import api from '../services/api';
+import { MAIN_CATEGORIES } from '../data/categoriesData';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -657,6 +658,60 @@ export const Home: React.FC = () => {
             </Link>
           </div>
 
+        </div>
+      </section>
+
+      {/* 11. 10 MAIN PRODUCT CATEGORIES SHOWCASE */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="text-center max-w-3xl mx-auto space-y-3">
+          <span className="text-xs uppercase tracking-[0.35em] text-[#C5A059] font-bold">
+            PRODUCT CATEGORIES
+          </span>
+          <h2 className="font-serif text-4xl sm:text-5xl font-light text-[#1A1918]">
+            10 Main Silver Product Categories
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-600 font-sans leading-relaxed">
+            Explore our hallmark 925 sterling & 999 fine silver collections curated for pooja rituals, deities, luxury tableware, baby gifts, weddings, and custom corporate tokens.
+          </p>
+        </div>
+
+        {/* 10 Category Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+          {MAIN_CATEGORIES.map((cat) => (
+            <Link
+              key={cat.id}
+              to={`/category/${cat.slug}`}
+              className="group bg-white rounded-3xl border border-[#E6E1DA] overflow-hidden hover:shadow-2xl hover:border-[#C5A059] transition-all duration-300 flex flex-col justify-between"
+            >
+              <div className="relative aspect-4/3 w-full bg-[#FAF9F5] overflow-hidden">
+                <img
+                  src={cat.cardImage}
+                  alt={cat.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <span className="absolute bottom-3 left-3 bg-[#1A1918]/80 text-[#C5A059] text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full backdrop-blur-xs border border-[#C5A059]/40">
+                  {cat.subcategories.length} Subcategories
+                </span>
+              </div>
+
+              <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-[#1A1918] group-hover:text-[#C5A059] transition-colors line-clamp-1">
+                    {cat.name}
+                  </h3>
+                  <p className="text-xs text-gray-500 line-clamp-2 mt-1 font-sans leading-relaxed">
+                    {cat.shortDescription}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-[#E6E1DA] flex items-center justify-between text-xs font-semibold text-[#1A1918] group-hover:text-[#C5A059]">
+                  <span>Explore Products</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 

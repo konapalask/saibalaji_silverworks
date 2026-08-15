@@ -8,7 +8,7 @@ import { useWholesale } from '../context/WholesaleContext';
 
 export const Navbar: React.FC = () => {
   const { user, logout, isAdmin } = useAuth();
-  const { cartCount, setIsCartOpen } = useCart();
+  const { cartCount, cartType, setIsCartOpen } = useCart();
   const { wishlistIds } = useWishlist();
   const { wholesaleCount } = useWholesale();
   const navigate = useNav();
@@ -68,14 +68,14 @@ export const Navbar: React.FC = () => {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center space-x-8 text-xs uppercase tracking-widest font-semibold font-sans">
-            <RouterLink to="/" className="text-[#1A1918] hover:text-[#C5A059] transition-colors py-1">
+            <RouterLink to="/home" className="text-[#1A1918] hover:text-[#C5A059] transition-colors py-1">
               Home
             </RouterLink>
             <RouterLink to="/about" className="text-[#1A1918] hover:text-[#C5A059] transition-colors py-1">
-              Our Story
+              About Us
             </RouterLink>
-            <RouterLink to="/shop/retail" className="text-[#1A1918] hover:text-[#C5A059] transition-colors py-1">
-              Retail Collection
+            <RouterLink to="/category/silver-pooja-articles" className="text-[#1A1918] hover:text-[#C5A059] transition-colors py-1">
+              Pooja Articles & Categories
             </RouterLink>
             
             {/* Wholesale Highlight Pill */}
@@ -164,15 +164,18 @@ export const Navbar: React.FC = () => {
               </RouterLink>
             )}
 
-            {/* Cart Icon Drawer Trigger */}
+            {/* Unified Cart Button with Dynamic Mode Pill */}
             <button 
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2.5 bg-[#1A1918] text-[#FAF9F5] rounded-full hover:bg-[#C5A059] transition-all flex items-center justify-center shadow-md"
-              title="Shopping Cart"
+              className="relative px-3 py-2 bg-[#1A1918] text-[#FAF9F5] rounded-full hover:bg-[#C5A059] transition-all flex items-center gap-1.5 shadow-md"
+              title={`Shopping Cart (${cartType} Mode)`}
             >
-              <ShoppingBag className="w-4 h-4" />
+              <ShoppingBag className="w-4 h-4 text-[#C5A059]" />
+              <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:inline text-gray-200">
+                {cartType}
+              </span>
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#C5A059] text-[#1A1918] font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#FAF9F5]">
+                <span className="bg-[#C5A059] text-[#1A1918] font-bold text-[10px] min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center border border-[#FAF9F5]">
                   {cartCount}
                 </span>
               )}
@@ -218,7 +221,7 @@ export const Navbar: React.FC = () => {
         <div className="lg:hidden fixed inset-0 z-40 bg-[#FAF9F5] pt-24 px-6 flex flex-col justify-between pb-8">
           <nav className="flex flex-col space-y-6 text-sm uppercase tracking-widest font-semibold">
             <RouterLink 
-              to="/" 
+              to="/home" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="border-b border-[#E6E1DA] pb-3"
             >
@@ -229,7 +232,7 @@ export const Navbar: React.FC = () => {
               onClick={() => setIsMobileMenuOpen(false)}
               className="border-b border-[#E6E1DA] pb-3"
             >
-              Our Manufacturing Story
+              About Us
             </RouterLink>
             <RouterLink 
               to="/shop/retail" 

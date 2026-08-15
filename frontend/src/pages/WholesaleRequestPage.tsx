@@ -10,18 +10,26 @@ export const WholesaleRequestPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    company_name: user?.company_name || '',
-    contact_person: user?.full_name || '',
-    phone: user?.phone || '',
-    email: user?.email || '',
-    gstin: user?.gstin || '',
-    address: '',
-    city: 'Hyderabad',
-    state: 'Telangana',
-    pincode: '500002',
-    expected_delivery_date: '',
-    notes: ''
+  const [formData, setFormData] = useState(() => {
+    let savedAddr: any = {};
+    try {
+      const stored = localStorage.getItem('sbs_user_address');
+      if (stored) savedAddr = JSON.parse(stored);
+    } catch (e) {}
+
+    return {
+      company_name: user?.company_name || '',
+      contact_person: user?.full_name || '',
+      phone: savedAddr.phone || user?.phone || '',
+      email: user?.email || '',
+      gstin: user?.gstin || '',
+      address: savedAddr.street_address || '',
+      city: savedAddr.city || 'Hyderabad',
+      state: savedAddr.state || 'Telangana',
+      pincode: savedAddr.pincode || '500002',
+      expected_delivery_date: '',
+      notes: ''
+    };
   });
 
   const [submitting, setSubmitting] = useState(false);

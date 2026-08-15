@@ -81,6 +81,7 @@ class Product(Base):
     slug = Column(String(255), nullable=False, unique=True, index=True)
     sku = Column(String(100), nullable=False, unique=True, index=True)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
+    subcategory = Column(String(255), nullable=True, index=True)
     
     product_type = Column(SQLEnum(ProductType), default=ProductType.BOTH, nullable=False)
     silver_purity = Column(String(100), default="925 Sterling Silver")

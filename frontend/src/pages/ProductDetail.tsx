@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight } from 'lucide-react';
+import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, MessageSquare } from 'lucide-react';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useWholesale } from '../context/WholesaleContext';
+import { WhatsAppOrderModal } from '../components/WhatsAppOrderModal';
+import { SingleProductOrder } from '../utils/whatsappOrder';
 import api from '../services/api';
 
 export const ProductDetail: React.FC = () => {
@@ -19,7 +21,10 @@ export const ProductDetail: React.FC = () => {
   const [related, setRelated] = useState<Product[]>([]);
   const [added, setAdded] = useState(false);
 
-  const { addToCart } = useCart();
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
+  const [whatsappOrderData, setWhatsappOrderData] = useState<SingleProductOrder | null>(null);
+
+  const { addToCart, isWholesale, cartType } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { addToWholesaleCart } = useWholesale();
 
@@ -64,8 +69,22 @@ export const ProductDetail: React.FC = () => {
     navigate('/checkout');
   };
 
+  const handleBuyNowOnWhatsApp = () => {
+    const unitPrice = (isWholesale && product.wholesale_price) 
+      ? product.wholesale_price 
+      : product.retail_price;
+
+    setWhatsappOrderData({
+      product,
+      quantity: qty,
+      unitPrice,
+      cartType
+    });
+    setIsWhatsAppModalOpen(true);
+  };
+
   return (
-    <div className="min-h-screen bg-[#FAF9F5] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-[#FAF9F5] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-[#1A1918]">
       
       {/* Breadcrumb */}
       <nav className="text-xs text-gray-500 mb-8 flex items-center gap-2">
@@ -79,7 +98,7 @@ export const ProductDetail: React.FC = () => {
       {/* Main Detail Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         
-        {/* Left Side Gallery with Editorial Arch Styling */}
+        {/* Left Side Gallery */}
         <div className="lg:col-span-6 space-y-4">
           <div className="bg-[#F4EFEA] border border-[#C5A059]/40 p-4 rounded-3xl overflow-hidden shadow-lg">
             <div className="arch-top overflow-hidden bg-white p-2 aspect-4/5 w-full">
@@ -171,7 +190,7 @@ export const ProductDetail: React.FC = () => {
           </div>
 
           {/* Buying Actions */}
-          <div className="space-y-4 pt-6 border-t border-[#E6E1DA]">
+          <div className="space-y-3 pt-6 border-t border-[#E6E1DA]">
             <div className="flex items-center gap-4">
               <div className="flex items-center border border-[#E6E1DA] rounded-2xl bg-white px-4 py-3">
                 <button 
@@ -207,17 +226,18 @@ export const ProductDetail: React.FC = () => {
               </button>
             </div>
 
+            {/* BUY NOW ON WHATSAPP BUTTON */}
             <button 
-              onClick={handleBuyNow}
-              className="w-full bg-[#C5A059] hover:bg-[#1A1918] text-white py-3.5 rounded-2xl text-xs uppercase tracking-widest font-bold transition-colors flex items-center justify-center gap-2 shadow-md"
+              onClick={handleBuyNowOnWhatsApp}
+              className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-4 rounded-2xl text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 shadow-md"
             >
-              <span>Buy Now Direct</span>
-              <ArrowRight className="w-4 h-4" />
+              <MessageSquare className="w-4 h-4 fill-current" />
+              <span>BUY NOW ON WHATSAPP</span>
             </button>
 
             <button 
               onClick={() => addToWholesaleCart(product)}
-              className="w-full bg-white border border-[#C5A059] text-[#1A1918] hover:bg-[#1A1918] hover:text-white py-3 rounded-2xl text-xs uppercase tracking-widest font-semibold transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-white border border-[#C5A059] text-[#1A1918] hover:bg-[#1A1918] hover:text-white py-2.5 rounded-2xl text-xs uppercase tracking-widest font-semibold transition-colors flex items-center justify-center gap-2"
             >
               <Briefcase className="w-4 h-4 text-[#C5A059]" />
               <span>Add to B2B Wholesale Request List</span>
@@ -272,6 +292,13 @@ export const ProductDetail: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* WhatsApp Order Modal */}
+      <WhatsAppOrderModal 
+        isOpen={isWhatsAppModalOpen}
+        onClose={() => setIsWhatsAppModalOpen(false)}
+        singleProductOrder={whatsappOrderData}
+      />
 
     </div>
   );

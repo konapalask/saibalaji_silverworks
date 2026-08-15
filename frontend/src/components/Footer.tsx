@@ -56,8 +56,11 @@ export const Footer: React.FC = () => {
             <p className="text-xs leading-relaxed text-gray-400 pr-4">
               Sai Balaji Silverworks is a premier South Indian manufacturer and wholesaler of fine silver products. From handcrafted 999 silver idols and 925 sterling dinner sets to modern silver jewellery and B2B corporate supplies, we embody silver artistry and purity.
             </p>
-            <div className="pt-2 text-xs text-[#C5A059]">
+            <div className="pt-2 text-xs text-[#C5A059] flex items-center justify-between">
               <span className="font-serif italic text-sm">"Crafted in Silver. Designed to Last."</span>
+              <Link to="/about" className="underline font-sans font-semibold hover:text-white transition-colors">
+                About Us &rarr;
+              </Link>
             </div>
           </div>
 

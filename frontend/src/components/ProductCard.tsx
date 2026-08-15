@@ -91,40 +91,40 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
         </div>
 
         {/* Price & Action Section */}
-        <div className="mt-4 pt-3 border-t border-[#E6E1DA] flex items-center justify-between">
-          {isWholesaleOnly ? (
+        <div className="mt-4 pt-3 border-t border-[#E6E1DA] space-y-3">
+          <div className="flex items-center justify-between">
             <div>
-              <span className="text-[10px] text-gray-500 uppercase tracking-wider block">Bulk Wholesale Quote</span>
+              <span className="text-[10px] text-gray-500 uppercase tracking-wider block">Price</span>
               <span className="font-sans font-bold text-base text-[#1A1918]">
-                ₹{product.wholesale_price ? product.wholesale_price.toLocaleString() : product.retail_price.toLocaleString()} <span className="text-[10px] text-gray-400 font-normal">/ unit</span>
-              </span>
-              <span className="text-[10px] text-[#C5A059] font-medium block">MOQ: {product.min_wholesale_qty} Pcs</span>
-            </div>
-          ) : (
-            <div>
-              <span className="text-[10px] text-gray-500 uppercase tracking-wider block">Retail Price</span>
-              <span className="font-sans font-bold text-lg text-[#1A1918]">
                 ₹{product.retail_price.toLocaleString()}
               </span>
             </div>
-          )}
 
-          {/* Direct Cart Button */}
+            {isWholesaleOnly && (
+              <div className="text-right">
+                <span className="text-[10px] text-[#C5A059] uppercase tracking-wider font-semibold block">Wholesale MOQ</span>
+                <span className="text-xs font-bold text-gray-700">{product.min_wholesale_qty || 5} Pcs</span>
+              </div>
+            )}
+          </div>
+
           {isWholesaleOnly ? (
-            <button 
+            <button
               onClick={() => addToWholesaleCart(product)}
-              className="p-2.5 bg-[#C5A059] text-white rounded-xl hover:bg-[#1A1918] transition-colors flex items-center justify-center shadow-sm"
-              title="Add to Wholesale Request Cart"
+              className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+              title={`Add Wholesale MOQ (${product.min_wholesale_qty || 5} Pcs) to Request`}
             >
-              <Briefcase className="w-4 h-4" />
+              <Briefcase className="w-3.5 h-3.5 text-[#C5A059] group-hover:text-white" />
+              <span>+ ADD BULK ({product.min_wholesale_qty || 5} PCS)</span>
             </button>
           ) : (
-            <button 
+            <button
               onClick={() => addToCart(product, 1)}
-              className="p-2.5 bg-[#1A1918] text-white rounded-xl hover:bg-[#C5A059] transition-colors flex items-center justify-center shadow-sm"
-              title="Add to Cart"
+              className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs"
+              title="Add to Retail Bag"
             >
-              <ShoppingBag className="w-4 h-4" />
+              <ShoppingBag className="w-4 h-4 text-[#C5A059] group-hover:text-white" />
+              <span>ADD TO BAG</span>
             </button>
           )}
         </div>

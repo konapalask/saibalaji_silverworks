@@ -1,22 +1,34 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { CheckCircle2, ShieldCheck, Download, Package } from 'lucide-react';
+import { CheckCircle2, MessageSquare, ArrowRight, ShoppingBag } from 'lucide-react';
+import { openWhatsAppOrderMessage } from '../utils/whatsapp';
 
 export const OrderSuccessPage: React.FC = () => {
   const location = useLocation();
   const order = location.state?.order;
 
+  useEffect(() => {
+    if (order) {
+      // Auto open WhatsApp order message in new tab
+      try {
+        openWhatsAppOrderMessage(order);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [order]);
+
   return (
-    <div className="min-h-screen bg-[#FAF9F5] py-16 px-4 max-w-3xl mx-auto text-center space-y-6">
+    <div className="min-h-screen bg-[#FAF9F5] py-16 px-4 max-w-3xl mx-auto text-center space-y-6 text-[#1A1918]">
       <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto border border-green-300">
         <CheckCircle2 className="w-10 h-10" />
       </div>
       
       <span className="bg-[#C5A059] text-[#1A1918] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
-        PAYMENT CONFIRMED
+        ORDER CONFIRMED
       </span>
       
-      <h1 className="font-serif text-4xl font-bold text-[#1A1918]">Thank You for Your Purchase</h1>
+      <h1 className="font-serif text-4xl font-bold text-[#1A1918]">Thank You for Your Order</h1>
       
       {order ? (
         <div className="bg-white border border-[#E6E1DA] rounded-3xl p-6 text-left space-y-4 shadow-sm max-w-lg mx-auto">
@@ -29,16 +41,33 @@ export const OrderSuccessPage: React.FC = () => {
             <span className="text-xs font-bold text-[#1A1918]">{order.customer_name}</span>
           </div>
           <div className="flex justify-between border-b border-gray-100 pb-3">
+            <span className="text-xs text-gray-500 font-semibold">Customer Phone:</span>
+            <span className="text-xs font-bold text-[#1A1918]">{order.customer_phone}</span>
+          </div>
+          <div className="flex justify-between border-b border-gray-100 pb-3">
             <span className="text-xs text-gray-500 font-semibold">Shipping Address:</span>
             <span className="text-xs text-gray-700 font-medium text-right max-w-xs">{order.shipping_address}, {order.shipping_city}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-xs text-gray-500 font-semibold">Amount Paid:</span>
+            <span className="text-xs text-gray-500 font-semibold">Grand Total:</span>
             <span className="text-sm font-bold text-[#1A1918]">₹{order.grand_total.toLocaleString()}</span>
           </div>
         </div>
       ) : (
         <p className="text-xs text-gray-500">Your retail order has been placed and confirmed successfully.</p>
+      )}
+
+      {/* WhatsApp Action Button */}
+      {order && (
+        <div className="pt-2">
+          <button
+            onClick={() => openWhatsAppOrderMessage(order)}
+            className="w-full max-w-md mx-auto bg-[#25D366] hover:bg-[#128C7E] text-white py-3.5 px-6 rounded-2xl text-xs uppercase font-bold tracking-wider transition-all shadow-lg flex items-center justify-center gap-2"
+          >
+            <MessageSquare className="w-4 h-4 fill-current" />
+            <span>Send Order Summary to WhatsApp (+91 94926 64870)</span>
+          </button>
+        </div>
       )}
 
       <p className="text-xs text-gray-600 max-w-md mx-auto">
@@ -50,7 +79,7 @@ export const OrderSuccessPage: React.FC = () => {
           to="/account" 
           className="bg-[#1A1918] text-white px-6 py-3 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-[#C5A059]"
         >
-          View Order Tracking
+          View Account Orders
         </Link>
         <Link 
           to="/shop/retail" 

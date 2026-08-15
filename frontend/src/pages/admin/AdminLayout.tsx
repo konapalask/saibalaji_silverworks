@@ -50,15 +50,15 @@ export const AdminLayout: React.FC = () => {
             </NavLink>
 
             <NavLink 
-              to="/admin/products" 
+              to="/admin/orders" 
               className={({ isActive }) => 
                 `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                   isActive ? 'bg-[#C5A059] text-[#1A1918] font-bold shadow-md' : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`
               }
             >
-              <Package className="w-4 h-4" />
-              <span>Products & Inventory</span>
+              <ShoppingCart className="w-4 h-4 text-[#C5A059]" />
+              <span>Retail Bookings</span>
             </NavLink>
 
             <NavLink 
@@ -69,20 +69,20 @@ export const AdminLayout: React.FC = () => {
                 }`
               }
             >
-              <Briefcase className="w-4 h-4" />
-              <span>B2B Quotation Engine</span>
+              <Briefcase className="w-4 h-4 text-[#C5A059]" />
+              <span>Wholesale Bookings</span>
             </NavLink>
 
             <NavLink 
-              to="/admin/orders" 
+              to="/admin/products" 
               className={({ isActive }) => 
                 `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                   isActive ? 'bg-[#C5A059] text-[#1A1918] font-bold shadow-md' : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`
               }
             >
-              <ShoppingCart className="w-4 h-4" />
-              <span>Retail Fulfillment</span>
+              <Package className="w-4 h-4" />
+              <span>Products & Inventory</span>
             </NavLink>
 
             <NavLink 

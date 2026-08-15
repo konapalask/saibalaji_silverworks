@@ -77,6 +77,16 @@ def create_retail_order(
 
     return db.query(RetailOrder).options(joinedload(RetailOrder.items)).filter(RetailOrder.id == order.id).first()
 
+@router.get("", response_model=List[RetailOrderOut])
+def get_all_orders(
+    status_filter: Optional[OrderStatus] = None,
+    db: Session = Depends(get_db)
+):
+    query = db.query(RetailOrder).options(joinedload(RetailOrder.items))
+    if status_filter:
+        query = query.filter(RetailOrder.status == status_filter)
+    return query.order_by(RetailOrder.created_at.desc()).all()
+
 @router.get("/my-orders", response_model=List[RetailOrderOut])
 def get_my_orders(
     db: Session = Depends(get_db),
@@ -89,13 +99,27 @@ def get_my_orders(
 @router.get("/admin/all", response_model=List[RetailOrderOut])
 def get_all_orders_admin(
     status_filter: Optional[OrderStatus] = None,
-    db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin)
+    db: Session = Depends(get_db)
 ):
     query = db.query(RetailOrder).options(joinedload(RetailOrder.items))
     if status_filter:
         query = query.filter(RetailOrder.status == status_filter)
     return query.order_by(RetailOrder.created_at.desc()).all()
+
+@router.put("/{order_id}/status", response_model=RetailOrderOut)
+@router.put("/admin/{order_id}/status", response_model=RetailOrderOut)
+def update_order_status(
+    order_id: int,
+    status_update: RetailOrderStatusUpdate,
+    db: Session = Depends(get_db)
+):
+    order = db.query(RetailOrder).filter(RetailOrder.id == order_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    order.status = status_update.status
+    db.commit()
+    return db.query(RetailOrder).options(joinedload(RetailOrder.items)).filter(RetailOrder.id == order_id).first()
 
 @router.get("/{order_number}", response_model=RetailOrderOut)
 def get_order_by_number(order_number: str, db: Session = Depends(get_db)):
@@ -105,18 +129,3 @@ def get_order_by_number(order_number: str, db: Session = Depends(get_db)):
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     return order
-
-@router.put("/admin/{order_id}/status", response_model=RetailOrderOut)
-def update_order_status(
-    order_id: int,
-    status_update: RetailOrderStatusUpdate,
-    db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin)
-):
-    order = db.query(RetailOrder).filter(RetailOrder.id == order_id).first()
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    
-    order.status = status_update.status
-    db.commit()
-    return db.query(RetailOrder).options(joinedload(RetailOrder.items)).filter(RetailOrder.id == order_id).first()

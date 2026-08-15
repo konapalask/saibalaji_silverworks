@@ -6,7 +6,9 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<User>;
+  loginWithGoogle: (email: string, full_name?: string) => Promise<User>;
   register: (data: any) => Promise<User>;
+  updateProfile: (data: Partial<User>) => Promise<User>;
   logout: () => void;
   isLoading: boolean;
   isAdmin: boolean;
@@ -48,6 +50,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return loggedUser;
   };
 
+  const loginWithGoogle = async (email: string, full_name?: string) => {
+    const res = await api.post('/auth/google', { email, full_name });
+    const { access_token, user: loggedUser } = res.data;
+    localStorage.setItem('token', access_token);
+    setToken(access_token);
+    setUser(loggedUser);
+    return loggedUser;
+  };
+
   const register = async (data: any) => {
     const res = await api.post('/auth/register', data);
     const { access_token, user: regUser } = res.data;
@@ -55,6 +66,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(access_token);
     setUser(regUser);
     return regUser;
+  };
+
+  const updateProfile = async (data: Partial<User>) => {
+    const res = await api.put('/auth/me', data);
+    setUser(res.data);
+    return res.data;
   };
 
   const logout = () => {
@@ -66,7 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isAdmin = Boolean(user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN'));
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, isLoading, isAdmin }}>
+    <AuthContext.Provider value={{ user, token, login, loginWithGoogle, register, updateProfile, logout, isLoading, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

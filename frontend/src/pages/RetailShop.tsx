@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { Filter, SlidersHorizontal, Search, Sparkles, X } from 'lucide-react';
 import { ProductCard } from '../components/ProductCard';
 import { QuickViewModal } from '../components/QuickViewModal';
 import { Product, Category } from '../types';
 import api from '../services/api';
 
+import { MAIN_CATEGORIES } from '../data/categoriesData';
+
 export const RetailShop: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -24,14 +25,8 @@ export const RetailShop: React.FC = () => {
     const fetchShopData = async () => {
       setLoading(true);
       try {
-        const catRes = await api.get('/categories');
-        setCategories(catRes.data);
-
         let url = `/products?product_type=RETAIL`;
-        if (selectedCat) {
-          const matchedCat = catRes.data.find((c: Category) => c.slug === selectedCat);
-          if (matchedCat) url += `&category_id=${matchedCat.id}`;
-        }
+        if (selectedCat) url += `&category_slug=${selectedCat}`;
         if (searchVal) url += `&search=${encodeURIComponent(searchVal)}`;
         if (purityVal) url += `&purity=${encodeURIComponent(purityVal)}`;
         if (sortByVal) url += `&sort_by=${sortByVal}`;
@@ -45,7 +40,7 @@ export const RetailShop: React.FC = () => {
       }
     };
     fetchShopData();
-  }, [searchParams]);
+  }, [searchParams, selectedCat, searchVal, purityVal, sortByVal]);
 
   const updateFilter = (key: string, val: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -58,7 +53,7 @@ export const RetailShop: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-[#FAF9F5] py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-[#1A1918]">
       
       {/* Header Banner */}
       <div className="text-center max-w-3xl mx-auto space-y-3 mb-10">
@@ -68,34 +63,34 @@ export const RetailShop: React.FC = () => {
         <h1 className="font-serif text-4xl sm:text-5xl font-light text-[#1A1918]">
           Silver Fine Collection
         </h1>
-        <p className="text-xs sm:text-sm text-gray-600">
-          Handcrafted 925 sterling silver & 999 fine silver products directly from our manufacturing unit.
+        <p className="text-xs sm:text-sm text-gray-600 font-sans">
+          Select any of our 10 main categories below to view all subcategories and hallmarked products.
         </p>
       </div>
 
       {/* Control Toolbar */}
-      <div className="bg-white border border-[#E6E1DA] rounded-2xl p-4 mb-8 flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
+      <div className="bg-white border border-[#E6E1DA] rounded-2xl p-4 mb-8 flex flex-col md:flex-row justify-between items-center gap-4 shadow-xs">
         
         <div className="flex items-center gap-3 w-full md:w-auto">
           <button 
             onClick={() => setIsMobileFilterOpen(true)}
             className="md:hidden flex items-center gap-2 bg-[#1A1918] text-white px-4 py-2 rounded-xl text-xs font-semibold"
           >
-            <Filter className="w-4 h-4" />
-            Filters
+            <Filter className="w-4 h-4 text-[#C5A059]" />
+            10 Categories
           </button>
-          <span className="text-xs text-gray-500 font-semibold">
-            Showing {products.length} Silver Creations
+          <span className="text-xs text-gray-600 font-semibold">
+            Showing <strong className="text-[#1A1918]">{products.length}</strong> Silver Products
           </span>
         </div>
 
         {/* Sorting Dropdown */}
         <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-          <span className="text-xs text-gray-500 font-semibold">Sort By:</span>
+          <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Sort By:</span>
           <select 
             value={sortByVal}
             onChange={(e) => updateFilter('sortBy', e.target.value)}
-            className="bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-[#C5A059]"
+            className="bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2 text-xs font-semibold text-[#1A1918] focus:outline-none focus:border-[#C5A059]"
           >
             <option value="created_at_desc">Latest Additions</option>
             <option value="price_asc">Price: Low to High</option>
@@ -110,41 +105,27 @@ export const RetailShop: React.FC = () => {
       {/* Main Content Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         
-        {/* Desktop Sidebar Filters */}
-        <div className="hidden lg:block space-y-6 bg-white border border-[#E6E1DA] rounded-2xl p-6 h-fit sticky top-24">
+        {/* Desktop Sidebar Filters: 10 Main Categories */}
+        <div className="hidden lg:block space-y-6 bg-white border border-[#E6E1DA] rounded-2xl p-6 h-fit sticky top-24 shadow-xs">
           
           <div className="flex justify-between items-center border-b border-[#E6E1DA] pb-4">
-            <h3 className="font-serif text-lg font-bold text-[#1A1918]">Filter By</h3>
-            {(selectedCat || purityVal || searchVal) && (
-              <button 
-                onClick={() => setSearchParams({})}
-                className="text-[11px] text-[#C5A059] font-bold uppercase hover:underline"
-              >
-                Clear All
-              </button>
-            )}
+            <h3 className="font-serif text-lg font-bold text-[#1A1918]">10 Main Categories</h3>
           </div>
 
-          {/* Categories Filter */}
-          <div className="space-y-2">
-            <h4 className="text-xs font-bold uppercase text-gray-400 tracking-wider">Category</h4>
-            <div className="space-y-1 text-xs">
-              <button 
-                onClick={() => updateFilter('category', '')}
-                className={`w-full text-left py-1.5 px-2 rounded-lg transition-colors ${!selectedCat ? 'bg-[#1A1918] text-white font-bold' : 'hover:bg-[#FAF9F5]'}`}
+          {/* 10 Main Categories List */}
+          <div className="space-y-1.5">
+            {MAIN_CATEGORIES.map((cat) => (
+              <Link 
+                key={cat.id}
+                to={`/category/${cat.slug}`}
+                className="w-full flex items-center justify-between text-left py-2 px-3 rounded-xl hover:bg-[#1A1918] hover:text-white transition-all group font-semibold text-xs text-[#1A1918]"
               >
-                All Categories
-              </button>
-              {categories.map((c) => (
-                <button 
-                  key={c.id}
-                  onClick={() => updateFilter('category', c.slug)}
-                  className={`w-full text-left py-1.5 px-2 rounded-lg transition-colors ${selectedCat === c.slug ? 'bg-[#1A1918] text-white font-bold' : 'hover:bg-[#FAF9F5]'}`}
-                >
-                  {c.name}
-                </button>
-              ))}
-            </div>
+                <span>{cat.name}</span>
+                <span className="text-[10px] text-[#C5A059] group-hover:text-white font-bold">
+                  {cat.subcategories.length} Subs &rarr;
+                </span>
+              </Link>
+            ))}
           </div>
 
           {/* Purity Filter */}
@@ -208,6 +189,45 @@ export const RetailShop: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Mobile Categories Slide-over */}
+      {isMobileFilterOpen && (
+        <div className="fixed inset-0 z-50 bg-[#1A1918]/70 backdrop-blur-xs flex justify-end">
+          <div className="bg-white w-full max-w-xs h-full p-6 overflow-y-auto space-y-6 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-[#E6E1DA] pb-4">
+                <h3 className="font-serif text-xl font-bold text-[#1A1918]">10 Main Categories</h3>
+                <button onClick={() => setIsMobileFilterOpen(false)} className="p-1">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {MAIN_CATEGORIES.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    to={`/category/${cat.slug}`}
+                    onClick={() => setIsMobileFilterOpen(false)}
+                    className="w-full flex items-center justify-between text-left py-2.5 px-3 rounded-xl bg-[#FAF9F5] hover:bg-[#1A1918] hover:text-white transition-all font-semibold text-xs text-[#1A1918]"
+                  >
+                    <span>{cat.name}</span>
+                    <span className="text-[10px] text-[#C5A059] font-bold">
+                      {cat.subcategories.length} Subs &rarr;
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIsMobileFilterOpen(false)}
+              className="w-full bg-[#1A1918] text-white py-3 rounded-xl text-xs uppercase font-bold tracking-widest"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Quick View Modal */}
       <QuickViewModal 

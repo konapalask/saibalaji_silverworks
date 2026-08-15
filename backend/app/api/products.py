@@ -2,7 +2,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session, joinedload
 from app.core.database import get_db
-from app.models.models import Product, ProductImage, ProductType, User
+from app.models.models import Product, ProductImage, ProductType, User, Category
 from app.schemas.schemas import ProductCreate, ProductOut
 from app.api.auth import get_current_admin
 
@@ -11,14 +11,20 @@ router = APIRouter(prefix="/products", tags=["Products"])
 @router.get("", response_model=List[ProductOut])
 def get_products(
     category_id: Optional[int] = None,
+    category_slug: Optional[str] = None,
+    subcategory: Optional[str] = None,
+    subcategories: Optional[List[str]] = Query(None),
     product_type: Optional[ProductType] = None,
     purity: Optional[str] = None,
     search: Optional[str] = None,
     is_featured: Optional[bool] = None,
     is_new_arrival: Optional[bool] = None,
+    in_stock: Optional[bool] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
-    sort_by: Optional[str] = "created_at_desc",
+    min_weight: Optional[float] = None,
+    max_weight: Optional[float] = None,
+    sort_by: Optional[str] = "featured",
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db)
@@ -30,39 +36,79 @@ def get_products(
 
     if category_id:
         query = query.filter(Product.category_id == category_id)
+
+    if category_slug:
+        query = query.join(Product.category).filter(Category.slug.ilike(category_slug))
+
+    # Single or multiple subcategory filtering
+    sub_list = []
+    if subcategories:
+        sub_list.extend(subcategories)
+    if subcategory:
+        # handle comma-separated strings if passed
+        for s in subcategory.split(","):
+            if s.strip() and s.strip() not in sub_list:
+                sub_list.append(s.strip())
+    
+    if sub_list:
+        query = query.filter(Product.subcategory.in_(sub_list))
+
     if product_type:
         query = query.filter(
             (Product.product_type == product_type) | (Product.product_type == ProductType.BOTH)
         )
+
     if purity:
         query = query.filter(Product.silver_purity.ilike(f"%{purity}%"))
+
     if search:
         search_pattern = f"%{search}%"
-        query = query.filter(
+        query = query.join(Product.category).filter(
             (Product.title.ilike(search_pattern)) |
             (Product.sku.ilike(search_pattern)) |
-            (Product.description.ilike(search_pattern))
+            (Product.description.ilike(search_pattern)) |
+            (Product.subcategory.ilike(search_pattern)) |
+            (Category.name.ilike(search_pattern))
         )
+
     if is_featured is not None:
         query = query.filter(Product.is_featured == is_featured)
+
     if is_new_arrival is not None:
         query = query.filter(Product.is_new_arrival == is_new_arrival)
+
+    if in_stock is True:
+        query = query.filter(Product.stock > 0)
+    elif in_stock is False:
+        query = query.filter(Product.stock <= 0)
+
     if min_price is not None:
         query = query.filter(Product.retail_price >= min_price)
+
     if max_price is not None:
         query = query.filter(Product.retail_price <= max_price)
 
-    # Sorting
-    if sort_by == "price_asc":
+    if min_weight is not None:
+        query = query.filter(Product.weight_g >= min_weight)
+
+    if max_weight is not None:
+        query = query.filter(Product.weight_g <= max_weight)
+
+    # Sorting options
+    if sort_by in ["price_asc", "price-low-high"]:
         query = query.order_by(Product.retail_price.asc())
-    elif sort_by == "price_desc":
+    elif sort_by in ["price_desc", "price-high-low"]:
         query = query.order_by(Product.retail_price.desc())
-    elif sort_by == "weight_asc":
+    elif sort_by in ["weight_asc", "weight-low-high"]:
         query = query.order_by(Product.weight_g.asc())
-    elif sort_by == "weight_desc":
+    elif sort_by in ["weight_desc", "weight-high-low"]:
         query = query.order_by(Product.weight_g.desc())
-    else:
+    elif sort_by in ["newest"]:
         query = query.order_by(Product.created_at.desc())
+    elif sort_by in ["popular"]:
+        query = query.order_by(Product.stock.desc())
+    else: # default "featured"
+        query = query.order_by(Product.is_featured.desc(), Product.created_at.desc())
 
     return query.offset(skip).limit(limit).all()
 

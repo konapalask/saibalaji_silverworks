@@ -96,49 +96,26 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
             </div>
 
             {/* Actions */}
-            <div className="space-y-3">
+            <div className="space-y-3 pt-2">
               <div className="flex items-center gap-3">
-                <div className="flex items-center border border-[#E6E1DA] rounded-xl bg-white px-3 py-2">
-                  <button 
-                    onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="text-gray-500 font-bold px-2"
-                  >
-                    -
-                  </button>
-                  <span className="font-bold text-xs px-2">{qty}</span>
-                  <button 
-                    onClick={() => setQty(qty + 1)}
-                    className="text-gray-500 font-bold px-2"
-                  >
-                    +
-                  </button>
-                </div>
-
                 <button 
-                  onClick={handleAddToCart}
-                  className="flex-1 bg-[#1A1918] hover:bg-[#C5A059] text-white py-3 rounded-xl text-xs uppercase tracking-widest font-semibold transition-colors flex items-center justify-center gap-2 shadow-md"
+                  onClick={handleAddWholesale}
+                  className="flex-1 bg-[#1A1918] hover:bg-[#C5A059] text-white py-3.5 px-4 rounded-2xl text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 shadow-lg"
                 >
-                  {added ? <Check className="w-4 h-4 text-green-400" /> : <ShoppingBag className="w-4 h-4" />}
-                  <span>{added ? 'Added to Bag' : 'Add to Retail Bag'}</span>
+                  <Briefcase className="w-4 h-4 text-[#C5A059] group-hover:text-white" />
+                  <span>{added ? 'Added to Wholesale Request!' : `ADD TO B2B WHOLESALE REQUEST (${product.min_wholesale_qty || 5}+ PCS)`}</span>
                 </button>
 
                 <button 
                   onClick={() => toggleWishlist(product.id)}
-                  className={`p-3 rounded-xl border transition-colors ${
+                  className={`p-3.5 rounded-2xl border transition-colors ${
                     isLiked ? 'bg-red-50 border-red-200 text-red-500' : 'border-[#E6E1DA] bg-white text-gray-600 hover:text-red-500'
                   }`}
+                  title="Add to Wishlist"
                 >
                   <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
                 </button>
               </div>
-
-              <button 
-                onClick={handleAddWholesale}
-                className="w-full bg-[#FAF9F5] border border-[#C5A059] text-[#1A1918] hover:bg-[#C5A059] hover:text-white py-2.5 rounded-xl text-xs uppercase tracking-widest font-semibold transition-colors flex items-center justify-center gap-2"
-              >
-                <Briefcase className="w-4 h-4 text-[#C5A059]" />
-                <span>Add to B2B Wholesale Request ({product.min_wholesale_qty}+ Pcs)</span>
-              </button>
             </div>
 
           </div>

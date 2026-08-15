@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User as UserIcon, Package, Briefcase, FileText, Download, Heart, LogOut, ShieldCheck, Sparkles } from 'lucide-react';
+import { User as UserIcon, Package, Briefcase, FileText, Download, Heart, LogOut, MapPin, Phone, Edit3, Check, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { ProductCard } from '../components/ProductCard';
 import { RetailOrder, WholesaleRequest, Product } from '../types';
+import { AddressModal, UserAddress } from '../components/AddressModal';
 import api from '../services/api';
 
 export const AccountPage: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<'orders' | 'wholesale' | 'wishlist'>('orders');
@@ -15,6 +15,35 @@ export const AccountPage: React.FC = () => {
   const [wholesaleRequests, setWholesaleRequests] = useState<WholesaleRequest[]>([]);
   const [quotations, setQuotations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const [isEditAddressOpen, setIsEditAddressOpen] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
+  
+  const [profileData, setProfileData] = useState({
+    full_name: user?.full_name || '',
+    company_name: user?.company_name || '',
+    gstin: user?.gstin || ''
+  });
+
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        full_name: user.full_name || '',
+        company_name: user.company_name || '',
+        gstin: user.gstin || ''
+      });
+    }
+  }, [user]);
+
+  const [savedAddress, setSavedAddress] = useState<UserAddress | null>(() => {
+    try {
+      const stored = localStorage.getItem('sbs_user_address');
+      return stored ? JSON.parse(stored) : null;
+    } catch (e) {
+      return null;
+    }
+  });
 
   useEffect(() => {
     if (!user) return;
@@ -28,7 +57,6 @@ export const AccountPage: React.FC = () => {
         setOrders(ordRes.data);
         setWholesaleRequests(reqRes.data);
 
-        // Fetch quotations
         const quoteRes = await api.get('/quotations/all');
         setQuotations(quoteRes.data);
       } catch (err) {
@@ -54,36 +82,152 @@ export const AccountPage: React.FC = () => {
     window.open(`/api/v1/quotations/${quotationId}/pdf`, '_blank');
   };
 
+  const handleSaveAddress = (newAddress: UserAddress) => {
+    setSavedAddress(newAddress);
+    setIsEditAddressOpen(false);
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfileSaving(true);
+    try {
+      await updateProfile(profileData);
+      setIsEditingProfile(false);
+    } catch (err) {
+      alert('Failed to update name and profile details');
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#FAF9F5] py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#FAF9F5] py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 text-[#1A1918]">
       
       {/* User Header Profile Card */}
-      <div className="bg-white border border-[#E6E1DA] rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-[#1A1918] text-[#C5A059] flex items-center justify-center font-serif text-2xl font-bold border-2 border-[#C5A059]">
-            {user.full_name.charAt(0)}
+      <div className="bg-white border border-[#E6E1DA] rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xs">
+        
+        <div className="flex items-center gap-4 flex-1 w-full">
+          <div className="w-16 h-16 rounded-full bg-[#1A1918] text-[#C5A059] flex items-center justify-center font-serif text-2xl font-bold border-2 border-[#C5A059] shrink-0">
+            {user.full_name ? user.full_name.charAt(0).toUpperCase() : 'U'}
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-serif text-2xl font-bold text-[#1A1918]">{user.full_name}</h1>
-              <span className="bg-[#C5A059] text-white text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full">
-                {user.role}
-              </span>
+
+          {!isEditingProfile ? (
+            <div className="space-y-1 flex-1">
+              <div className="flex items-center gap-3">
+                <h1 className="font-serif text-2xl font-bold text-[#1A1918]">{user.full_name}</h1>
+                <span className="bg-[#C5A059] text-white text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full">
+                  {user.role}
+                </span>
+                <button
+                  onClick={() => setIsEditingProfile(true)}
+                  className="flex items-center gap-1 text-xs text-[#C5A059] hover:underline font-bold ml-2"
+                  title="Edit Customer Name"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Edit Name</span>
+                </button>
+              </div>
+              <p className="text-xs text-gray-500">{user.email}</p>
+              {user.company_name && (
+                <p className="text-xs text-[#C5A059] font-semibold">Company: {user.company_name} (GSTIN: {user.gstin || 'N/A'})</p>
+              )}
             </div>
-            <p className="text-xs text-gray-500">{user.email} | Phone: {user.phone || 'N/A'}</p>
-            {user.company_name && (
-              <p className="text-xs text-[#C5A059] font-semibold mt-0.5">Company: {user.company_name} (GSTIN: {user.gstin || 'N/A'})</p>
-            )}
-          </div>
+          ) : (
+            /* Inline Profile Name Edit Form */
+            <form onSubmit={handleSaveProfile} className="flex-1 space-y-3 bg-[#FAF9F5] p-4 rounded-2xl border border-[#E6E1DA]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-gray-600 mb-1">Customer Full Name *</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={profileData.full_name}
+                    onChange={(e) => setProfileData({ ...profileData, full_name: e.target.value })}
+                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 text-xs font-bold text-[#1A1918]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-gray-600 mb-1">Company Name (Optional)</label>
+                  <input 
+                    type="text" 
+                    value={profileData.company_name}
+                    onChange={(e) => setProfileData({ ...profileData, company_name: e.target.value })}
+                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 text-xs text-[#1A1918]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2 justify-end pt-1">
+                <button 
+                  type="button"
+                  onClick={() => setIsEditingProfile(false)}
+                  className="px-3 py-1.5 border border-[#E6E1DA] text-gray-500 rounded-xl text-xs font-bold flex items-center gap-1 hover:bg-gray-100"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  disabled={profileSaving}
+                  className="px-4 py-1.5 bg-[#1A1918] hover:bg-[#C5A059] text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-xs"
+                >
+                  <Check className="w-3.5 h-3.5 text-[#C5A059]" />
+                  <span>{profileSaving ? 'Saving...' : 'Save Profile Name'}</span>
+                </button>
+              </div>
+            </form>
+          )}
         </div>
 
         <button 
           onClick={logout}
-          className="flex items-center gap-2 border border-[#E6E1DA] text-gray-700 hover:text-red-600 hover:border-red-200 px-4 py-2 rounded-xl text-xs font-bold transition-colors"
+          className="flex items-center gap-2 border border-[#E6E1DA] text-gray-700 hover:text-red-600 hover:border-red-200 px-4 py-2 rounded-xl text-xs font-bold transition-colors shrink-0"
         >
           <LogOut className="w-4 h-4" />
           Logout
         </button>
+      </div>
+
+      {/* Saved Delivery Location Card */}
+      <div className="bg-white border border-[#E6E1DA] rounded-3xl p-6 shadow-xs space-y-3">
+        <div className="flex justify-between items-center border-b border-[#E6E1DA] pb-3">
+          <div className="flex items-center gap-2">
+            <MapPin className="w-5 h-5 text-[#C5A059]" />
+            <h3 className="font-serif text-lg font-bold text-[#1A1918]">Saved Shipping Address & Contact</h3>
+          </div>
+          <button
+            onClick={() => setIsEditAddressOpen(true)}
+            className="flex items-center gap-1.5 bg-[#FAF9F5] border border-[#E6E1DA] hover:border-[#C5A059] px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#1A1918] transition-all"
+          >
+            <Edit3 className="w-3.5 h-3.5 text-[#C5A059]" />
+            <span>Edit Address</span>
+          </button>
+        </div>
+
+        {savedAddress ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div>
+              <span className="text-gray-400 font-bold uppercase text-[10px] block">Contact Phone:</span>
+              <p className="font-bold text-[#1A1918] text-sm mt-0.5">{savedAddress.phone || user.phone || 'Not Provided'}</p>
+            </div>
+            <div>
+              <span className="text-gray-400 font-bold uppercase text-[10px] block">Street Address:</span>
+              <p className="font-medium text-[#1A1918] mt-0.5">{savedAddress.street_address || 'No street address saved'}</p>
+              <p className="text-gray-500 font-medium">{savedAddress.city}, {savedAddress.state} - {savedAddress.pincode}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-between items-center text-xs text-gray-500">
+            <p>No delivery address saved yet. Provide your shipping address to speed up checkout.</p>
+            <button
+              onClick={() => setIsEditAddressOpen(true)}
+              className="bg-[#1A1918] text-white px-4 py-2 rounded-xl font-bold uppercase tracking-wider text-[11px]"
+            >
+              + Add Address
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Navigation Tabs */}
@@ -212,6 +356,13 @@ export const AccountPage: React.FC = () => {
           )}
         </div>
       )}
+
+      {/* Edit Address Modal */}
+      <AddressModal
+        isOpen={isEditAddressOpen}
+        onSave={handleSaveAddress}
+        onSkip={() => setIsEditAddressOpen(false)}
+      />
 
     </div>
   );
