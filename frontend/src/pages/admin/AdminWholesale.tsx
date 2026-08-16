@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Briefcase, FileText, Download, Plus, CheckCircle2, Clock } from 'lucide-react';
 import { WholesaleRequest } from '../../types';
 import api from '../../services/api';
+import { getErrorMessage } from '../../utils/apiError';
 
 export const AdminWholesale: React.FC = () => {
   const [requests, setRequests] = useState<WholesaleRequest[]>([]);
@@ -70,7 +71,7 @@ export const AdminWholesale: React.FC = () => {
       setSelectedReq(null);
       fetchData();
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to generate quotation');
+      alert(getErrorMessage(err, 'Failed to generate quotation'));
     }
   };
 

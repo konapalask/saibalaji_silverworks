@@ -1,0 +1,45 @@
+@echo off
+title Sai Balaji Silverworks Node.js & Cloudflare Live Launcher
+cls
+echo ========================================================
+echo   Starting Sai Balaji Silverworks (Node.js Backend & Frontend)
+echo ========================================================
+echo.
+
+:: Get workspace directory
+set WORKSPACE_DIR=%~dp0
+
+:: Free port 8000 if occupied by a previous process
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :8000 ^| findstr LISTENING') do taskkill /F /PID %%a >nul 2>&1
+
+:: Launch Node.js JSON Backend Server in a new window
+echo [1/3] Launching Node.js Backend Server (Express on http://localhost:8000)...
+start "Sai Balaji Backend" cmd /k "cd /d "%WORKSPACE_DIR%backend" && node server.js"
+
+:: Wait 2 seconds before launching frontend
+timeout /t 2 /nobreak >nul
+
+:: Launch Frontend Server in a new window
+echo [2/3] Launching Frontend Server (Vite React on http://localhost:5173)...
+start "Sai Balaji Frontend" cmd /k "cd /d "%WORKSPACE_DIR%frontend" && npm run dev"
+
+:: Wait 3 seconds before launching Cloudflare tunnel
+timeout /t 3 /nobreak >nul
+
+:: Launch Cloudflare Tunnel in a new window
+echo [3/3] Launching Cloudflare Public Live Tunnel...
+if exist "%WORKSPACE_DIR%cloudflared.exe" (
+    start "Sai Balaji Cloudflare Tunnel" cmd /k "cd /d "%WORKSPACE_DIR%" && cloudflared.exe tunnel --url http://localhost:5173"
+) else (
+    start "Sai Balaji Cloudflare Tunnel" cmd /k "cloudflared tunnel --url http://localhost:5173"
+)
+
+echo.
+echo ========================================================
+echo   All 3 services launched successfully!
+echo   - Local Backend API:  http://localhost:8000/docs
+echo   - Local Frontend App: http://localhost:5173
+echo   - Live Public Link:   Check the Cloudflare window for your trycloudflare.com URL!
+echo ========================================================
+echo.
+pause

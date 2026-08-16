@@ -138,26 +138,21 @@ export const CategoryPage: React.FC = () => {
 
   // Handlers
   const handleSubcategoryToggle = (subName: string) => {
-    setSelectedSubcategories((prev) => {
-      let updated: string[];
-      if (prev.includes(subName)) {
-        updated = prev.filter(s => s !== subName);
-      } else {
-        updated = [...prev, subName];
-      }
+    const subObj = currentCategory.subcategories.find(s => s.name === subName);
 
-      // Update URL clean slug if exactly one subcategory selected
-      if (updated.length === 1) {
-        const subObj = currentCategory.subcategories.find(s => s.name === updated[0]);
-        if (subObj) {
-          navigate(`/category/${currentCategory.slug}/${subObj.slug}`, { replace: true });
-        }
+    // If clicking the currently active subcategory, toggle it off -> reset to All Subcategories
+    if (selectedSubcategories.length === 1 && selectedSubcategories[0] === subName) {
+      setSelectedSubcategories([]);
+      navigate(`/category/${currentCategory.slug}`, { replace: true });
+    } else {
+      // Switch directly to the clicked subcategory
+      setSelectedSubcategories([subName]);
+      if (subObj) {
+        navigate(`/category/${currentCategory.slug}/${subObj.slug}`, { replace: true });
       } else {
         navigate(`/category/${currentCategory.slug}`, { replace: true });
       }
-
-      return updated;
-    });
+    }
   };
 
   const handleSubcategoryChipClick = (subSlug?: string, subName?: string) => {
@@ -333,7 +328,7 @@ export const CategoryPage: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={selectedSubcategories.length === 0}
-                    onChange={() => setSelectedSubcategories([])}
+                    onChange={() => handleSubcategoryChipClick()}
                     className="rounded text-[#C5A059] focus:ring-[#C5A059]"
                   />
                   <span className="font-semibold">All Subcategories</span>

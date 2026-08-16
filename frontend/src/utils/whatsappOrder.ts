@@ -18,7 +18,7 @@ export interface SingleProductOrder {
     wholesale_price?: number;
     featured_image?: string;
     category?: { name: string };
-    subcategory?: { name: string };
+    subcategory?: { name: string } | string;
   };
   quantity: number;
   unitPrice: number;
@@ -35,7 +35,7 @@ export interface CartItemOrder {
     featured_image?: string;
   };
   quantity: number;
-  unitPrice: number;
+  unitPrice?: number;
   effectivePrice: number;
   itemSubtotal: number;
 }
@@ -96,7 +96,11 @@ export const generateSingleProductWhatsAppMessage = (
   msg += `Total: ₹${lineTotal.toLocaleString()}\n`;
 
   if (product.category?.name) msg += `Category: ${product.category.name}\n`;
-  if (product.subcategory?.name) msg += `Subcategory: ${product.subcategory.name}\n`;
+  if (typeof product.subcategory === 'string') {
+    if (product.subcategory) msg += `Subcategory: ${product.subcategory}\n`;
+  } else if (product.subcategory?.name) {
+    msg += `Subcategory: ${product.subcategory.name}\n`;
+  }
 
   msg += `\n━━━━━━━━━━━━━━━━\n\n`;
   msg += `Total Items: ${quantity}\n`;

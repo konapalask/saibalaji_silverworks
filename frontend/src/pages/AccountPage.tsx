@@ -37,6 +37,15 @@ export const AccountPage: React.FC = () => {
   }, [user]);
 
   const [savedAddress, setSavedAddress] = useState<UserAddress | null>(() => {
+    if (user?.street_address) {
+      return {
+        phone: user.phone || '',
+        street_address: user.street_address,
+        city: user.city || 'Hyderabad',
+        state: user.state || 'Telangana',
+        pincode: user.pincode || '500033'
+      };
+    }
     try {
       const stored = localStorage.getItem('sbs_user_address');
       return stored ? JSON.parse(stored) : null;
@@ -44,6 +53,18 @@ export const AccountPage: React.FC = () => {
       return null;
     }
   });
+
+  useEffect(() => {
+    if (user?.street_address || user?.phone) {
+      setSavedAddress({
+        phone: user.phone || '',
+        street_address: user.street_address || '',
+        city: user.city || 'Hyderabad',
+        state: user.state || 'Telangana',
+        pincode: user.pincode || '500033'
+      });
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -82,9 +103,22 @@ export const AccountPage: React.FC = () => {
     window.open(`/api/v1/quotations/${quotationId}/pdf`, '_blank');
   };
 
-  const handleSaveAddress = (newAddress: UserAddress) => {
+  const handleSaveAddress = async (newAddress: UserAddress) => {
     setSavedAddress(newAddress);
     setIsEditAddressOpen(false);
+    if (user) {
+      try {
+        await updateProfile({
+          phone: newAddress.phone,
+          street_address: newAddress.street_address,
+          city: newAddress.city,
+          state: newAddress.state,
+          pincode: newAddress.pincode
+        });
+      } catch (err) {
+        console.error('Failed to sync address to backend', err);
+      }
+    }
   };
 
   const handleSaveProfile = async (e: React.FormEvent) => {

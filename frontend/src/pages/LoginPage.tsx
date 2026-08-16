@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Lock, Mail, ArrowRight } from 'lucide-react';
+import { Lock, Mail, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { AddressModal, UserAddress } from '../components/AddressModal';
+import { getErrorMessage } from '../utils/apiError';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +23,26 @@ export const LoginPage: React.FC = () => {
   const onAuthSuccess = (loggedUser: any) => {
     if (loggedUser.role === 'ADMIN' || loggedUser.role === 'SUPER_ADMIN') {
       navigate('/admin');
+      return;
+    }
+
+    // Check if the user profile in database already has street_address & phone saved
+    const hasProfileAddress = Boolean(loggedUser?.street_address && loggedUser?.phone);
+    
+    if (hasProfileAddress) {
+      // Sync DB address to local storage
+      localStorage.setItem('sbs_user_address', JSON.stringify({
+        fullName: loggedUser.full_name || '',
+        phone: loggedUser.phone || '',
+        street_address: loggedUser.street_address || '',
+        city: loggedUser.city || '',
+        state: loggedUser.state || '',
+        pincode: loggedUser.pincode || ''
+      }));
+      navigate(targetRedirect);
     } else {
+      // Clear old local storage from previous session if any, and prompt for address
+      localStorage.removeItem('sbs_user_address');
       setShowAddressModal(true);
     }
   };
@@ -34,7 +55,7 @@ export const LoginPage: React.FC = () => {
       const user = await login(email, password);
       onAuthSuccess(user);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Invalid email or password');
+      setError(getErrorMessage(err, 'Invalid email or password'));
     } finally {
       setLoading(false);
     }
@@ -52,7 +73,7 @@ export const LoginPage: React.FC = () => {
       const user = await loginWithGoogle(googleEmail, googleEmail.split('@')[0].toUpperCase());
       onAuthSuccess(user);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Google authentication failed');
+      setError(getErrorMessage(err, 'Google authentication failed'));
     } finally {
       setGoogleLoading(false);
     }
@@ -133,16 +154,24 @@ export const LoginPage: React.FC = () => {
 
           <div>
             <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Password</label>
-            <div className="relative">
-              <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
+            <div className="relative flex items-center">
+              <Lock className="w-4 h-4 text-gray-400 absolute left-3" />
               <input 
-                type="password" 
+                type={showPassword ? 'text' : 'password'} 
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl pl-10 pr-4 py-3 text-xs focus:outline-none focus:border-[#C5A059]"
+                className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl pl-10 pr-10 py-3 text-xs focus:outline-none focus:border-[#C5A059]"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 text-gray-400 hover:text-[#C5A059] focus:outline-none transition-colors p-1"
+                title={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, Briefcase, ShoppingCart, FileText, ArrowLeft, ShieldCheck, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, Briefcase, ShoppingCart, FileText, Users, ArrowLeft, ShieldCheck, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export const AdminLayout: React.FC = () => {
@@ -83,6 +83,18 @@ export const AdminLayout: React.FC = () => {
             >
               <Package className="w-4 h-4" />
               <span>Products & Inventory</span>
+            </NavLink>
+
+            <NavLink 
+              to="/admin/users" 
+              className={({ isActive }) => 
+                `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                  isActive ? 'bg-[#C5A059] text-[#1A1918] font-bold shadow-md' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`
+              }
+            >
+              <Users className="w-4 h-4 text-[#C5A059]" />
+              <span>Users & Customers</span>
             </NavLink>
 
             <NavLink 

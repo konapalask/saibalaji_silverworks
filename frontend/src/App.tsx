@@ -30,6 +30,7 @@ import { AdminProducts } from './pages/admin/AdminProducts';
 import { AdminWholesale } from './pages/admin/AdminWholesale';
 import { AdminOrders } from './pages/admin/AdminOrders';
 import { AdminCMS } from './pages/admin/AdminCMS';
+import { AdminUsers } from './pages/admin/AdminUsers';
 
 import { useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
@@ -71,6 +72,7 @@ export const App: React.FC = () => {
                     <Route path="products" element={<AdminProducts />} />
                     <Route path="wholesale" element={<AdminWholesale />} />
                     <Route path="orders" element={<AdminOrders />} />
+                    <Route path="users" element={<AdminUsers />} />
                     <Route path="cms" element={<AdminCMS />} />
                   </Route>
 

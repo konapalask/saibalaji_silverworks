@@ -62,12 +62,12 @@ export const AdminOrders: React.FC = () => {
                     <div className="text-[10px] text-gray-400 font-normal">{new Date(ord.created_at).toLocaleDateString()}</div>
                   </td>
                   <td className="py-4 px-6">
-                    <div className="font-bold text-[#1A1918]">{ord.customer_name}</div>
-                    <div className="text-[10px] text-gray-500">{ord.customer_phone} | {ord.shipping_city}</div>
+                    <div className="font-bold text-[#1A1918]">{ord.customer_name || 'Retail Customer'}</div>
+                    <div className="text-[10px] text-gray-500">{ord.customer_phone || 'N/A'} | {typeof ord.shipping_address === 'string' ? ord.shipping_address : (ord.shipping_city || ord.shipping_address?.city || 'N/A')}</div>
                   </td>
                   <td className="py-4 px-6">
-                    <div className="font-bold text-[#1A1918]">₹{ord.grand_total.toLocaleString()}</div>
-                    <div className="text-[10px] text-gray-500">{ord.items.length} Products</div>
+                    <div className="font-bold text-[#1A1918]">₹{(ord.grand_total ?? ord.total_amount ?? 0).toLocaleString()}</div>
+                    <div className="text-[10px] text-gray-500">{ord.items?.length || 0} Products</div>
                   </td>
                   <td className="py-4 px-6">
                     <span className={`px-2.5 py-1 rounded-full text-[10px] uppercase font-bold ${

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Check, X, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { Product, Category } from '../../types';
 import api from '../../services/api';
+import { getErrorMessage } from '../../utils/apiError';
 
 export const AdminProducts: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -103,7 +104,7 @@ export const AdminProducts: React.FC = () => {
       setIsModalOpen(false);
       fetchProducts();
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to save product');
+      alert(getErrorMessage(err, 'Failed to save product'));
     }
   };
 

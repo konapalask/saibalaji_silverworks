@@ -7,6 +7,10 @@ export interface User {
   phone?: string;
   company_name?: string;
   gstin?: string;
+  street_address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
   role: UserRole;
   is_active: boolean;
   created_at: string;
@@ -36,6 +40,7 @@ export interface Product {
   slug: string;
   sku: string;
   category_id: number;
+  subcategory?: string;
   product_type: ProductType;
   silver_purity: string;
   weight_g: number;

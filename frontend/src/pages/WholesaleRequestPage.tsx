@@ -4,6 +4,7 @@ import { Briefcase, Trash2, Plus, Minus, Send, CheckCircle2, ShieldCheck } from 
 import { useWholesale } from '../context/WholesaleContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { getErrorMessage } from '../utils/apiError';
 
 export const WholesaleRequestPage: React.FC = () => {
   const { wholesaleItems, updateWholesaleQuantity, removeFromWholesaleCart, clearWholesaleCart } = useWholesale();
@@ -54,7 +55,7 @@ export const WholesaleRequestPage: React.FC = () => {
       setSubmittedRequest(res.data);
       clearWholesaleCart();
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to submit wholesale request');
+      alert(getErrorMessage(err, 'Failed to submit wholesale request'));
     } finally {
       setSubmitting(false);
     }

@@ -1,0 +1,58 @@
+import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
+from app.core.database import Base, engine
+from app.api import auth, products, categories, orders, wholesale, quotations, dashboard, content
+
+# Create tables automatically
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(
+    title="SAI BALAJI SILVERWORKS API",
+    description="Full-stack B2C Retail & B2B Wholesale Commerce Platform API for Sai Balaji Silverworks",
+    version=settings.VERSION,
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+
+import os
+from fastapi.staticfiles import StaticFiles
+
+# CORS configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Mount backend/public folder for serving product images & uploaded assets
+public_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "public")
+if not os.path.exists(public_dir):
+    os.makedirs(public_dir, exist_ok=True)
+app.mount("/public", StaticFiles(directory=public_dir), name="public")
+
+# Include Routers
+app.include_router(auth.router, prefix=settings.API_V1_STR)
+app.include_router(products.router, prefix=settings.API_V1_STR)
+app.include_router(categories.router, prefix=settings.API_V1_STR)
+app.include_router(orders.router, prefix=settings.API_V1_STR)
+app.include_router(wholesale.router, prefix=settings.API_V1_STR)
+app.include_router(quotations.router, prefix=settings.API_V1_STR)
+app.include_router(dashboard.router, prefix=settings.API_V1_STR)
+app.include_router(content.router, prefix=settings.API_V1_STR)
+
+@app.get("/")
+def root():
+    return {
+        "brand": "SAI BALAJI SILVERWORKS",
+        "tagline": "Crafted in Silver. Designed to Last.",
+        "status": "Operational",
+        "docs": "/docs",
+        "version": settings.VERSION
+    }
+
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

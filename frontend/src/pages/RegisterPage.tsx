@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { Eye, EyeOff, Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { AddressModal, UserAddress } from '../components/AddressModal';
+import { getErrorMessage } from '../utils/apiError';
 
 export const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +14,7 @@ export const RegisterPage: React.FC = () => {
     company_name: '',
     gstin: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,15 +26,33 @@ export const RegisterPage: React.FC = () => {
 
   const targetRedirect = searchParams.get('redirect') || '/about';
 
+  const onAuthSuccess = (loggedUser: any) => {
+    if (loggedUser.role === 'ADMIN' || loggedUser.role === 'SUPER_ADMIN') {
+      navigate('/admin');
+      return;
+    }
+
+    // For brand new account registrations, clear stale address from previous browser sessions
+    localStorage.removeItem('sbs_user_address');
+
+    // Check if the user profile already contains address & phone from backend
+    const hasAddress = Boolean(loggedUser?.street_address && loggedUser?.phone);
+    if (hasAddress) {
+      navigate(targetRedirect);
+    } else {
+      setShowAddressModal(true);
+    }
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
-      await register(formData);
-      setShowAddressModal(true);
+      const registeredUser = await register(formData);
+      onAuthSuccess(registeredUser);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Registration failed');
+      setError(getErrorMessage(err, 'Registration failed'));
     } finally {
       setLoading(false);
     }
@@ -47,13 +68,9 @@ export const RegisterPage: React.FC = () => {
         return;
       }
       const user = await loginWithGoogle(googleEmail, googleEmail.split('@')[0].toUpperCase());
-      if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
-        navigate('/admin');
-      } else {
-        setShowAddressModal(true);
-      }
+      onAuthSuccess(user);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Google authentication failed');
+      setError(getErrorMessage(err, 'Google authentication failed'));
     } finally {
       setGoogleLoading(false);
     }
@@ -141,13 +158,24 @@ export const RegisterPage: React.FC = () => {
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Password *</label>
-              <input 
-                type="password" 
-                required
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-4 py-2.5 text-xs"
-              />
+              <div className="relative flex items-center">
+                <input 
+                  type={showPassword ? 'text' : 'password'} 
+                  required
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  placeholder="••••••••"
+                  className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl pl-4 pr-10 py-2.5 text-xs focus:outline-none focus:border-[#C5A059]"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 text-gray-400 hover:text-[#C5A059] focus:outline-none transition-colors p-1"
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
           </div>
 

@@ -3,6 +3,7 @@ import { DollarSign, ShoppingBag, Briefcase, Package, FileText, ArrowRight, Mess
 import { DashboardStats, RetailOrder, WholesaleRequest } from '../../types';
 import { openWhatsAppOrderMessage } from '../../utils/whatsapp';
 import api from '../../services/api';
+import { getErrorMessage } from '../../utils/apiError';
 
 export const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -88,7 +89,7 @@ export const AdminDashboard: React.FC = () => {
       setSelectedReq(null);
       fetchDashboardData();
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to generate quotation');
+      alert(getErrorMessage(err, 'Failed to generate quotation'));
     }
   };
 
@@ -135,7 +136,7 @@ export const AdminDashboard: React.FC = () => {
             <DollarSign className="w-5 h-5 text-[#C5A059]" />
           </div>
           <p className="font-serif text-3xl font-bold text-[#1A1918]">
-            ₹{stats.total_revenue.toLocaleString()}
+            ₹{(stats?.total_revenue ?? 0).toLocaleString()}
           </p>
           <span className="text-[10px] text-green-600 font-bold">+18.5% from retail & wholesale</span>
         </div>
@@ -168,7 +169,7 @@ export const AdminDashboard: React.FC = () => {
             <Package className="w-5 h-5 text-[#C5A059]" />
           </div>
           <p className="font-serif text-3xl font-bold text-[#1A1918]">
-            {stats.total_products_count} Products
+            {stats?.total_products_count ?? 0} Products
           </p>
           <span className="text-[10px] text-gray-500">925 Sterling & 999 Fine Silver</span>
         </div>
@@ -226,18 +227,18 @@ export const AdminDashboard: React.FC = () => {
                     </td>
 
                     <td className="py-4 px-4">
-                      <div className="font-bold text-[#1A1918]">{ord.customer_name}</div>
-                      <div className="text-[11px] text-[#C5A059] font-bold">{ord.customer_phone}</div>
+                      <div className="font-bold text-[#1A1918]">{ord.customer_name || 'Retail Customer'}</div>
+                      <div className="text-[11px] text-[#C5A059] font-bold">{ord.customer_phone || 'N/A'}</div>
                     </td>
 
                     <td className="py-4 px-4 max-w-xs text-[#1A1918]">
-                      <p className="truncate font-medium">{ord.shipping_address}</p>
-                      <p className="text-[10px] text-gray-500">{ord.shipping_city}, {ord.shipping_state} - {ord.shipping_pincode}</p>
+                      <p className="truncate font-medium">{typeof ord.shipping_address === 'string' ? ord.shipping_address : (ord.shipping_address?.address || 'N/A')}</p>
+                      <p className="text-[10px] text-gray-500">{ord.shipping_city || ord.shipping_address?.city || 'N/A'}, {ord.shipping_state || ord.shipping_address?.state || ''}</p>
                     </td>
 
                     <td className="py-4 px-4">
-                      <div className="font-bold text-[#1A1918]">₹{ord.grand_total.toLocaleString()}</div>
-                      <div className="text-[10px] text-gray-500">{ord.items.length} Products</div>
+                      <div className="font-bold text-[#1A1918]">₹{(ord.grand_total ?? ord.total_amount ?? 0).toLocaleString()}</div>
+                      <div className="text-[10px] text-gray-500">{ord.items?.length || 0} Products</div>
                     </td>
 
                     <td className="py-4 px-4">
@@ -307,7 +308,7 @@ export const AdminDashboard: React.FC = () => {
                     </div>
 
                     <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center text-xs">
-                      <span className="text-gray-600">{req.items.length} Bulk Line Items</span>
+                      <span className="text-gray-600">{req.items?.length || 0} Bulk Line Items</span>
                       {matchedQuote ? (
                         <button 
                           onClick={(e) => {

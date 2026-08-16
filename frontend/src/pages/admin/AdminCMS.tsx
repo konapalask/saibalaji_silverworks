@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, Check, Plus, Edit, Trash2, Video, FileText, Image as ImageIcon, X } from 'lucide-react';
 import { CompanyVideo } from '../../types';
 import api from '../../services/api';
+import { getErrorMessage } from '../../utils/apiError';
 
 export const AdminCMS: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'hero' | 'videos'>('hero');
@@ -104,7 +105,7 @@ export const AdminCMS: React.FC = () => {
       setIsVidModalOpen(false);
       fetchCMSData();
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to save video');
+      alert(getErrorMessage(err, 'Failed to save video'));
     }
   };
 

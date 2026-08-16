@@ -11,7 +11,7 @@ import {
 
 export const CheckoutPage: React.FC = () => {
   const { effectiveCartItems, totalQuantity, cartType, subtotal } = useCart();
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
   const navigate = useNavigate();
 
   const [orderId] = useState<string>(() => generateOrderId());
@@ -25,13 +25,26 @@ export const CheckoutPage: React.FC = () => {
 
     return {
       name: user?.full_name || '',
-      mobile: savedAddr.phone || user?.phone || '',
-      address: savedAddr.street_address || '',
-      city: savedAddr.city || 'Hyderabad',
-      pincode: savedAddr.pincode || '500033',
+      mobile: user?.phone || savedAddr.phone || '',
+      address: user?.street_address || savedAddr.street_address || '',
+      city: user?.city || savedAddr.city || 'Hyderabad',
+      pincode: user?.pincode || savedAddr.pincode || '500033',
       notes: ''
     };
   });
+
+  React.useEffect(() => {
+    if (user) {
+      setCustomer((prev) => ({
+        ...prev,
+        name: user.full_name || prev.name,
+        mobile: user.phone || prev.mobile,
+        address: user.street_address || prev.address,
+        city: user.city || prev.city,
+        pincode: user.pincode || prev.pincode
+      }));
+    }
+  }, [user]);
 
   const [buttonState, setButtonState] = useState<'idle' | 'preparing' | 'opening' | 'success'>('idle');
   const [showNotice, setShowNotice] = useState(false);
@@ -40,7 +53,7 @@ export const CheckoutPage: React.FC = () => {
   const tax = Math.round(subtotal * 0.03);
   const grandTotal = subtotal + tax;
 
-  const handleSendWhatsAppOrder = (e: React.FormEvent) => {
+  const handleSendWhatsAppOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customer.name.trim()) {
       setErrorMsg('Please enter your Customer Name.');
@@ -54,6 +67,27 @@ export const CheckoutPage: React.FC = () => {
     setErrorMsg('');
     setButtonState('preparing');
 
+    // Save customer address to backend and localStorage
+    try {
+      localStorage.setItem('sbs_user_address', JSON.stringify({
+        phone: customer.mobile,
+        street_address: customer.address,
+        city: customer.city,
+        pincode: customer.pincode
+      }));
+      if (user) {
+        await updateProfile({
+          full_name: customer.name,
+          phone: customer.mobile,
+          street_address: customer.address,
+          city: customer.city,
+          pincode: customer.pincode
+        });
+      }
+    } catch (e) {
+      console.error('Failed to sync checkout user details', e);
+    }
+
     setTimeout(() => {
       setButtonState('opening');
 
@@ -66,16 +100,6 @@ export const CheckoutPage: React.FC = () => {
         shipping: 0,
         grandTotal
       });
-
-      // Save customer address to localStorage
-      try {
-        localStorage.setItem('sbs_user_address', JSON.stringify({
-          phone: customer.mobile,
-          street_address: customer.address,
-          city: customer.city,
-          pincode: customer.pincode
-        }));
-      } catch (e) {}
 
       // Open WhatsApp Click-to-Chat
       openWhatsAppOrderUrl(rawMessage);
