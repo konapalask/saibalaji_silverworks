@@ -20,15 +20,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
   const isLiked = isInWishlist(product.id);
 
   return (
-    <div className="group relative bg-white rounded-2xl border border-[#E6E1DA] overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
-      
+    <div className="group relative bg-white rounded-2xl border border-[#C5A059]/30 hover:border-[#C5A059] overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col justify-between">
+
       {/* Top Image Container with Arch Shape styling */}
       <div className="relative aspect-4/5 w-full bg-[#FAF9F5] overflow-hidden">
-        
+
         {/* Arch Shaped Image container inside grid */}
         <div className="w-full h-full arch-top overflow-hidden p-3">
-          <img 
-            src={product.featured_image} 
+          <img
+            src={product.featured_image}
             alt={product.title}
             className="w-full h-full object-cover rounded-t-full img-zoom"
             loading="lazy"
@@ -47,14 +47,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
         </div>
 
         {/* Wishlist Floating Button */}
-        <button 
+        <button
           onClick={(e) => {
             e.preventDefault();
             toggleWishlist(product.id);
           }}
-          className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-all z-10 ${
-            isLiked ? 'bg-red-50 text-red-500 shadow-md' : 'bg-white/80 text-gray-700 hover:text-red-500 hover:bg-white'
-          }`}
+          className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-all z-10 ${isLiked ? 'bg-red-50 text-red-500 shadow-md' : 'bg-white/80 text-gray-700 hover:text-red-500 hover:bg-white'
+            }`}
           title="Add to Wishlist"
         >
           <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
@@ -63,7 +62,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
         {/* Quick View Overlay Button */}
         {onQuickView && (
           <div className="absolute inset-x-0 bottom-3 px-4 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-            <button 
+            <button
               onClick={() => onQuickView(product)}
               className="w-full bg-[#1A1918]/90 hover:bg-[#C5A059] text-white py-2 rounded-xl text-xs uppercase tracking-widest font-semibold backdrop-blur-sm transition-colors flex items-center justify-center gap-2 shadow-lg"
             >

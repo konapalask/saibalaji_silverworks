@@ -27,8 +27,8 @@ export const CheckoutPage: React.FC = () => {
       name: user?.full_name || '',
       mobile: user?.phone || savedAddr.phone || '',
       address: user?.street_address || savedAddr.street_address || '',
-      city: user?.city || savedAddr.city || 'Hyderabad',
-      pincode: user?.pincode || savedAddr.pincode || '500033',
+      city: user?.city || savedAddr.city || 'Tenali',
+      pincode: user?.pincode || savedAddr.pincode || '522201',
       notes: ''
     };
   });

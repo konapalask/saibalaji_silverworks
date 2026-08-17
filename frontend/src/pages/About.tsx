@@ -33,7 +33,7 @@ export const About: React.FC = () => {
     title: "The Story Behind the Silver",
     description: "Discover the heritage, passion, and engineering precision that built Sai Balaji Silverworks.",
     video_url: "https://assets.mixkit.co/videos/preview/mixkit-artisan-crafting-a-piece-of-jewelry-41586-large.mp4",
-    thumbnail_url: "https://images.unsplash.com/photo-1600003014755-ba31aa59c4b6?auto=format&fit=crop&w=1200&q=80",
+    thumbnail_url: "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp",
     section: "story",
     sort_order: 1,
     is_active: true,
@@ -43,9 +43,9 @@ export const About: React.FC = () => {
   const mfgVid = videoList.find(v => v.section === 'manufacturing') || {
     id: 2,
     title: "Inside Our Manufacturing Unit",
-    description: "Step inside our high-precision casting and silver processing unit in Hyderabad.",
-    video_url: "https://assets.mixkit.co/videos/preview/mixkit-goldsmith-working-in-his-workshop-41584-large.mp4",
-    thumbnail_url: "https://images.unsplash.com/photo-1608755728617-aefab37d2edd?auto=format&fit=crop&w=1200&q=80",
+    description: "Step inside our high-precision casting and silver processing unit in Tenali.",
+    video_url: "https://assets.mixkit.co/videos/preview/mixkit-silversmith-crafting-metal-work-41584-large.mp4",
+    thumbnail_url: "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-God-Idols/AMS-115-0054.webp",
     section: "manufacturing",
     sort_order: 2,
     is_active: true,
@@ -54,28 +54,33 @@ export const About: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF9F5] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
-      
-      {/* Editorial Header */}
+
+      {/* Editorial Header with Emblem */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <span className="text-xs uppercase tracking-[0.35em] text-[#C5A059] font-bold">
+        <div className="flex justify-center mb-2">
+          <div className="p-2 bg-white border border-[#C8A96B]/60 rounded-xl shadow-lg logo-glow-container">
+            <img src="/logo.PNG" alt="Sai Balaji Silverworks Crest" className="h-14 sm:h-16 w-auto object-contain" />
+          </div>
+        </div>
+        <span className="text-xs uppercase tracking-[0.35em] text-[#C5A059] font-bold block">
           HERITAGE & CRAFTSMANSHIP
         </span>
         <h1 className="font-serif text-4xl sm:text-6xl font-light text-[#1A1918]">
           The Journey of Sai Balaji Silverworks
         </h1>
         <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-sans">
-          Combining ancestral South Indian metallurgic mastery with modern hallmarking techniques to craft pure 925 sterling & 999 fine silver.
+          Combining ancestral metallurgic mastery with modern hallmarking techniques to craft pure 925 sterling & 999 fine silver.
         </p>
       </div>
 
       {/* Main Video Documentary Card */}
-      <div 
+      <div
         onClick={() => openVideo(storyVid)}
         className="relative rounded-3xl overflow-hidden bg-[#1A1918] aspect-21/9 border border-[#C5A059]/40 shadow-2xl group cursor-pointer"
       >
-        <img 
-          src={storyVid.thumbnail_url} 
-          alt="" 
+        <img
+          src={storyVid.thumbnail_url}
+          alt=""
           className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-between p-8 sm:p-12 text-white">
@@ -103,7 +108,7 @@ export const About: React.FC = () => {
             Master Craftsmen in Silver Manufacturing
           </h2>
           <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-            Sai Balaji Silverworks was founded on a singular vision: to produce silver products of unquestionable purity and timeless elegance. From our high-precision casting lines in Hyderabad to our intricate hand-carving artisan studios, every stage of production reflects uncompromising commitment.
+            Sai Balaji Silverworks was founded on a singular vision: to produce silver products of unquestionable purity and timeless elegance. From our high-precision casting lines in Tenali to our intricate hand-carving artisan studios, every stage of production reflects uncompromising commitment.
           </p>
           <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
             Whether supplying bulk silver idols to prominent temples across South India or manufacturing bespoke 925 sterling jewellery collections for premium retail stores, our products carry the official seal of trust.
@@ -112,9 +117,9 @@ export const About: React.FC = () => {
 
         <div className="lg:col-span-6">
           <div className="arch-top overflow-hidden border border-[#C5A059]/40 bg-white p-3 shadow-xl">
-            <img 
-              src="https://images.unsplash.com/photo-1600003014755-ba31aa59c4b6?auto=format&fit=crop&w=1200&q=80" 
-              alt="Artisanal Silver Carving" 
+            <img
+              src="/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp"
+              alt="Artisanal Silver Carving"
               className="w-full aspect-4/3 object-cover rounded-t-full"
             />
           </div>
@@ -123,13 +128,13 @@ export const About: React.FC = () => {
 
       {/* Second Video Card — Manufacturing Unit */}
       <div className="bg-white border border-[#E6E1DA] rounded-3xl p-8 sm:p-12 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div 
+        <div
           onClick={() => openVideo(mfgVid)}
           className="lg:col-span-6 relative rounded-2xl overflow-hidden aspect-16/10 group cursor-pointer border border-[#E6E1DA]"
         >
-          <img 
-            src={mfgVid.thumbnail_url} 
-            alt="" 
+          <img
+            src={mfgVid.thumbnail_url}
+            alt=""
             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
           />
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
@@ -147,7 +152,7 @@ export const About: React.FC = () => {
           <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
             Take an unscripted look at our induction furnace melting, laser engraving, anti-tarnish molecular dipping, and NABL certified spectrometer analysis.
           </p>
-          <button 
+          <button
             onClick={() => openVideo(mfgVid)}
             className="px-6 py-3 bg-[#1A1918] hover:bg-[#C5A059] text-white rounded-xl text-xs uppercase font-bold tracking-widest flex items-center gap-2"
           >
@@ -185,7 +190,7 @@ export const About: React.FC = () => {
       </div>
 
       {activeVideo && (
-        <VideoPlayerModal 
+        <VideoPlayerModal
           isOpen={isVideoModalOpen}
           onClose={() => setIsVideoModalOpen(false)}
           videoUrl={activeVideo.video_url}

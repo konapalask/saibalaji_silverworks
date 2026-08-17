@@ -24,7 +24,7 @@ export const AdminProducts: React.FC = () => {
     stock: 50,
     description: '',
     specifications: '',
-    featured_image: 'https://images.unsplash.com/photo-1608755728617-aefab37d2edd?auto=format&fit=crop&w=800&q=80',
+    featured_image: '/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp',
     is_featured: true,
     is_new_arrival: true
   });
@@ -64,7 +64,7 @@ export const AdminProducts: React.FC = () => {
       stock: 50,
       description: 'Handcrafted silver piece.',
       specifications: 'Material: 925 Sterling Silver',
-      featured_image: 'https://images.unsplash.com/photo-1608755728617-aefab37d2edd?auto=format&fit=crop&w=800&q=80',
+      featured_image: '/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp',
       is_featured: true,
       is_new_arrival: true
     });

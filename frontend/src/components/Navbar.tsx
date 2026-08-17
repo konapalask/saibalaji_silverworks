@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
-import { Link as RouterLink, useNavigate as useNav } from 'react-router-dom';
-import { ShoppingBag, Heart, User as UserIcon, Search, Menu, X, ShieldCheck, Briefcase } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link as RouterLink, useNavigate as useNav, useLocation } from 'react-router-dom';
+import { Search, Heart, User as UserIcon, ShoppingBag, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
-import { useWholesale } from '../context/WholesaleContext';
 
 export const Navbar: React.FC = () => {
-  const { user, logout, isAdmin } = useAuth();
-  const { cartCount, cartType, setIsCartOpen } = useCart();
+  const { user } = useAuth();
+  const { totalQuantity, setIsCartOpen } = useCart();
   const { wishlistIds } = useWishlist();
-  const { wholesaleCount } = useWholesale();
   const navigate = useNav();
+  const location = useLocation();
 
+  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 30);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,157 +34,147 @@ export const Navbar: React.FC = () => {
     }
   };
 
+  const isActive = (path: string) => {
+    if (path === '/' || path === '/home') {
+      return location.pathname === '/' || location.pathname === '/home';
+    }
+    return location.pathname.startsWith(path);
+  };
+
   return (
     <>
-      {/* Top Banner */}
-      <div className="bg-[#1A1918] text-[#FAF9F5] text-xs py-2 px-4 border-b border-[#C5A059]/30 tracking-wider">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left font-sans">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#C5A059]" />
-            <span>NABL Hallmarked 925 Sterling & 999 Pure Silver Direct from Manufacturers</span>
-          </div>
-          <div className="flex items-center gap-4 text-[#C5A059]">
-            <a href="tel:+919876543210" className="hover:underline">+91 98765 43210</a>
-            <span>•</span>
-            <RouterLink to="/contact" className="hover:underline">Hyderabad Factory Showroom</RouterLink>
-          </div>
-        </div>
-      </div>
+      {/* Primary Desktop & Mobile Header (88px Optical Baseline Height) */}
+      <header
+        className={`sticky top-0 z-40 h-[88px] transition-all duration-400 flex items-center ${isScrolled
+          ? 'bg-[#090909]/95 backdrop-blur-[18px] border-b border-white/12 shadow-2xl'
+          : 'bg-gradient-to-b from-[#090909]/90 to-transparent backdrop-blur-sm'
+          }`}
+      >
+        <div className="max-w-[1450px] mx-auto w-full px-6 lg:px-10 flex items-center justify-between">
 
-      {/* Primary Header */}
-      <header className="sticky top-0 z-40 bg-[#FAF9F5]/90 backdrop-blur-md border-b border-[#E6E1DA] transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          
-          {/* Mobile Menu Toggle */}
-          <button 
+          {/* Mobile Menu Trigger */}
+          <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-[#1A1918] hover:text-[#C5A059]"
+            className="lg:hidden p-2 text-[#A8A8A8] hover:text-[#F2F2F0] transition-colors"
             aria-label="Toggle Navigation"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
 
-          {/* Brand Logo */}
-          <RouterLink to="/" className="flex flex-col items-center lg:items-start group">
-            <span className="font-serif text-2xl sm:text-3xl font-bold tracking-widest text-[#1A1918] group-hover:text-[#C5A059] transition-colors">
-              SAI BALAJI
-            </span>
-            <span className="text-[9px] uppercase tracking-[0.3em] text-[#C5A059] font-sans font-semibold -mt-1">
-              SILVERWORKS
-            </span>
+          {/* LEFT ZONE: Brand Lockup with White Logo Background */}
+          <RouterLink to="/" className="flex items-center gap-3.5 group shrink-0">
+            <div className="bg-white p-1 rounded-xl shadow-sm border border-[#C7C7C7]/40">
+              <img
+                src="/logo.PNG"
+                alt="Sai Balaji Silverworks Logo"
+                className="h-10 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+            <div className="flex flex-col justify-center">
+              <span className="font-serif text-xl sm:text-[22px] font-normal tracking-[0.18em] text-[#F2F2F0] group-hover:text-white transition-colors leading-tight">
+                SAI BALAJI
+              </span>
+              <span className="text-[9px] uppercase tracking-[0.35em] text-[#C7C7C7] font-semibold font-sans mt-0.5">
+                SILVERWORKS
+              </span>
+              <span className="text-[8px] uppercase tracking-[0.2em] text-[#A8A8A8] font-sans hidden sm:block">
+                EST. 1998 • TENALI
+              </span>
+            </div>
           </RouterLink>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-8 text-xs uppercase tracking-widest font-semibold font-sans">
-            <RouterLink to="/home" className="text-[#1A1918] hover:text-[#C5A059] transition-colors py-1">
-              Home
-            </RouterLink>
-            <RouterLink to="/about" className="text-[#1A1918] hover:text-[#C5A059] transition-colors py-1">
-              About Us
-            </RouterLink>
-            <RouterLink to="/category/silver-pooja-articles" className="text-[#1A1918] hover:text-[#C5A059] transition-colors py-1">
-              Pooja Articles & Categories
-            </RouterLink>
-            
-            {/* Wholesale Highlight Pill */}
-            <RouterLink 
-              to="/shop/wholesale" 
-              className="relative px-3.5 py-1.5 rounded-full border border-[#C5A059] text-[#1A1918] hover:bg-[#C5A059] hover:text-white transition-all flex items-center gap-1.5 shadow-sm"
+          {/* CENTER ZONE: Clean Editorial Navigation Links (NO PILL BUTTONS) */}
+          <nav className="hidden lg:flex items-center space-x-9 text-[13px] uppercase tracking-[0.12em] font-medium text-[#A8A8A8]">
+            <RouterLink
+              to="/home"
+              className={`transition-colors py-1 relative group ${isActive('/home') ? 'text-[#F2F2F0]' : 'hover:text-[#F2F2F0]'}`}
             >
-              <Briefcase className="w-3.5 h-3.5 text-[#C5A059] group-hover:text-white" />
-              <span>B2B Wholesale</span>
-              {wholesaleCount > 0 && (
-                <span className="bg-[#1A1918] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                  {wholesaleCount}
-                </span>
-              )}
+              HOME
+              <span className={`absolute bottom-0 left-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 ${isActive('/home') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
 
-            <RouterLink to="/contact" className="text-[#1A1918] hover:text-[#C5A059] transition-colors py-1">
-              Contact Us
+            <RouterLink
+              to="/about"
+              className={`transition-colors py-1 relative group ${isActive('/about') ? 'text-[#F2F2F0]' : 'hover:text-[#F2F2F0]'}`}
+            >
+              OUR STORY
+              <span className={`absolute bottom-0 left-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 ${isActive('/about') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+            </RouterLink>
+
+            <RouterLink
+              to="/shop/retail"
+              className={`transition-colors py-1 relative group ${isActive('/shop/retail') ? 'text-[#F2F2F0]' : 'hover:text-[#F2F2F0]'}`}
+            >
+              COLLECTIONS
+              <span className={`absolute bottom-0 left-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 ${isActive('/shop/retail') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+            </RouterLink>
+
+            <a
+              href="/home#craftsmanship"
+              className="hover:text-[#F2F2F0] transition-colors py-1 relative group"
+            >
+              CRAFTSMANSHIP
+              <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 group-hover:w-full" />
+            </a>
+
+            <RouterLink
+              to="/shop/wholesale"
+              className={`transition-colors py-1 relative group ${isActive('/shop/wholesale') ? 'text-[#F2F2F0]' : 'hover:text-[#F2F2F0]'}`}
+            >
+              WHOLESALE
+              <span className={`absolute bottom-0 left-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 ${isActive('/shop/wholesale') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+            </RouterLink>
+
+            <RouterLink
+              to="/contact"
+              className={`transition-colors py-1 relative group ${isActive('/contact') ? 'text-[#F2F2F0]' : 'hover:text-[#F2F2F0]'}`}
+            >
+              CONTACT
+              <span className={`absolute bottom-0 left-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 ${isActive('/contact') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
           </nav>
 
-          {/* User Action Icons */}
-          <div className="flex items-center space-x-4 sm:space-x-5">
-            {/* Search Trigger */}
-            <button 
+          {/* RIGHT ZONE: Minimal Utility Actions (20px Line Icons) */}
+          <div className="flex items-center space-x-6 text-[#A8A8A8]">
+            <button
               onClick={() => setIsSearchOpen(true)}
-              className="p-2 text-[#1A1918] hover:text-[#C5A059] transition-colors"
-              title="Search Products"
+              className="p-1.5 hover:text-[#F2F2F0] transition-colors"
+              title="Search"
             >
-              <Search className="w-5 h-5" />
+              <Search className="w-5 h-5 stroke-[1.5]" />
             </button>
 
-            {/* Wishlist Icon */}
-            <RouterLink 
-              to="/account/wishlist" 
-              className="relative p-2 text-[#1A1918] hover:text-[#C5A059] transition-colors hidden sm:block"
+            <RouterLink
+              to="/account/wishlist"
+              className="p-1.5 hover:text-[#F2F2F0] transition-colors relative hidden sm:block"
               title="Wishlist"
             >
-              <Heart className="w-5 h-5" />
+              <Heart className="w-5 h-5 stroke-[1.5]" />
               {wishlistIds.length > 0 && (
-                <span className="absolute top-1 right-1 bg-[#C5A059] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                <span className="absolute -top-1 -right-1 bg-[#C7C7C7] text-[#090909] text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                   {wishlistIds.length}
                 </span>
               )}
             </RouterLink>
 
-            {/* User Account / Admin */}
-            {user ? (
-              <div className="relative group">
-                <RouterLink 
-                  to={isAdmin ? "/admin" : "/account"} 
-                  className="flex items-center gap-1.5 p-2 text-[#1A1918] hover:text-[#C5A059] transition-colors"
-                >
-                  <UserIcon className="w-5 h-5 text-[#C5A059]" />
-                  <span className="hidden xl:inline text-xs font-semibold uppercase tracking-wider">{user.full_name.split(' ')[0]}</span>
-                </RouterLink>
-                <div className="absolute right-0 top-full hidden group-hover:block w-48 bg-white border border-[#E6E1DA] shadow-xl rounded-md py-2 z-50">
-                  <div className="px-4 py-2 border-b border-[#E6E1DA]">
-                    <p className="text-xs font-bold text-[#1A1918]">{user.full_name}</p>
-                    <p className="text-[10px] text-gray-500">{user.email}</p>
-                  </div>
-                  {isAdmin ? (
-                    <RouterLink to="/admin" className="block px-4 py-2 text-xs text-[#1A1918] hover:bg-[#FAF9F5]">
-                      Admin Dashboard
-                    </RouterLink>
-                  ) : (
-                    <RouterLink to="/account" className="block px-4 py-2 text-xs text-[#1A1918] hover:bg-[#FAF9F5]">
-                      My Account & Orders
-                    </RouterLink>
-                  )}
-                  <button 
-                    onClick={logout}
-                    className="w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-red-50"
-                  >
-                    Logout
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <RouterLink 
-                to="/account/login" 
-                className="p-2 text-[#1A1918] hover:text-[#C5A059] transition-colors"
-                title="Login / Register"
-              >
-                <UserIcon className="w-5 h-5" />
-              </RouterLink>
-            )}
-
-            {/* Unified Cart Button with Dynamic Mode Pill */}
-            <button 
-              onClick={() => setIsCartOpen(true)}
-              className="relative px-3 py-2 bg-[#1A1918] text-[#FAF9F5] rounded-full hover:bg-[#C5A059] transition-all flex items-center gap-1.5 shadow-md"
-              title={`Shopping Cart (${cartType} Mode)`}
+            <RouterLink
+              to={user ? "/account" : "/account/login"}
+              className="p-1.5 hover:text-[#F2F2F0] transition-colors"
+              title={user ? user.full_name : "Account Sign In"}
             >
-              <ShoppingBag className="w-4 h-4 text-[#C5A059]" />
-              <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:inline text-gray-200">
-                {cartType}
-              </span>
-              {cartCount > 0 && (
-                <span className="bg-[#C5A059] text-[#1A1918] font-bold text-[10px] min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center border border-[#FAF9F5]">
-                  {cartCount}
+              <UserIcon className="w-5 h-5 stroke-[1.5]" />
+            </RouterLink>
+
+            {/* Shopping Bag Button with Subtle Count Badge */}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="p-1.5 hover:text-[#F2F2F0] transition-colors relative flex items-center gap-1.5"
+              title="Shopping Cart"
+            >
+              <ShoppingBag className="w-5 h-5 stroke-[1.5]" />
+              {totalQuantity > 0 && (
+                <span className="bg-[#C7C7C7] text-[#090909] text-[9px] px-1.5 py-0.2 rounded-full font-extrabold">
+                  {totalQuantity}
                 </span>
               )}
             </button>
@@ -185,98 +183,61 @@ export const Navbar: React.FC = () => {
         </div>
       </header>
 
-      {/* Search Modal Overlay */}
-      {isSearchOpen && (
-        <div className="fixed inset-0 z-50 bg-[#1A1918]/70 backdrop-blur-sm flex items-start justify-center pt-20 px-4">
-          <div className="bg-[#FAF9F5] border border-[#C5A059] rounded-2xl p-6 w-full max-w-2xl shadow-2xl relative">
-            <button 
-              onClick={() => setIsSearchOpen(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-black"
-            >
-              <X className="w-6 h-6" />
+      {/* Fullscreen Mobile Luxury Menu */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-[#090909] text-[#F2F2F0] flex flex-col justify-between p-8 font-serif animate-fade-in">
+          <div className="flex justify-between items-center border-b border-white/12 pb-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-white p-1 rounded-xl shadow-sm border border-[#C7C7C7]/40">
+                <img src="/logo.PNG" alt="Sai Balaji" className="h-9 w-auto object-contain" />
+              </div>
+              <span className="font-serif text-xl tracking-[0.18em] text-[#F2F2F0]">SAI BALAJI</span>
+            </div>
+            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-[#A8A8A8] hover:text-white">
+              <X className="w-7 h-7" />
             </button>
-            <h3 className="font-serif text-2xl text-[#1A1918] mb-4">Search Silver Collections</h3>
-            <form onSubmit={handleSearchSubmit} className="flex gap-2">
-              <input 
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search Lakshmi idols, 925 silver diyas, silver chains..."
-                className="flex-1 bg-white border border-[#E6E1DA] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C5A059]"
-                autoFocus
-              />
-              <button 
-                type="submit"
-                className="bg-[#1A1918] text-white px-6 py-3 rounded-lg text-xs tracking-widest font-semibold uppercase hover:bg-[#C5A059] transition-colors"
-              >
-                Search
-              </button>
-            </form>
+          </div>
+
+          <nav className="flex flex-col space-y-7 text-2xl font-light tracking-wide text-center">
+            <RouterLink to="/" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">HOME</RouterLink>
+            <RouterLink to="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">OUR STORY</RouterLink>
+            <RouterLink to="/shop/retail" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">COLLECTIONS</RouterLink>
+            <a href="/home#craftsmanship" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">CRAFTSMANSHIP</a>
+            <RouterLink to="/shop/wholesale" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">WHOLESALE</RouterLink>
+            <RouterLink to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">CONTACT</RouterLink>
+          </nav>
+
+          <div className="border-t border-white/12 pt-6 text-center space-y-2 font-sans text-xs text-[#A8A8A8]">
+            <p className="text-[#C7C7C7] font-semibold">+91 98765 43210 • Tenali Atelier</p>
+            <p>NABL Hallmarked Silver Manufacturers</p>
           </div>
         </div>
       )}
 
-      {/* Mobile Drawer Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-[#FAF9F5] pt-24 px-6 flex flex-col justify-between pb-8">
-          <nav className="flex flex-col space-y-6 text-sm uppercase tracking-widest font-semibold">
-            <RouterLink 
-              to="/home" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="border-b border-[#E6E1DA] pb-3"
-            >
-              Home
-            </RouterLink>
-            <RouterLink 
-              to="/about" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="border-b border-[#E6E1DA] pb-3"
-            >
-              About Us
-            </RouterLink>
-            <RouterLink 
-              to="/shop/retail" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="border-b border-[#E6E1DA] pb-3"
-            >
-              Retail Collection
-            </RouterLink>
-            <RouterLink 
-              to="/shop/wholesale" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="border-b border-[#E6E1DA] pb-3 text-[#C5A059] flex items-center justify-between"
-            >
-              <span>B2B Wholesale Catalogue</span>
-              <span className="text-xs bg-[#C5A059] text-white px-2 py-0.5 rounded">Bulk</span>
-            </RouterLink>
-            <RouterLink 
-              to="/contact" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="border-b border-[#E6E1DA] pb-3"
-            >
-              Contact Us
-            </RouterLink>
-          </nav>
+      {/* Search Overlay */}
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-50 bg-[#090909]/95 backdrop-blur-xl flex items-center justify-center p-6">
+          <button
+            onClick={() => setIsSearchOpen(false)}
+            className="absolute top-8 right-8 text-[#A8A8A8] hover:text-white p-2"
+          >
+            <X className="w-8 h-8" />
+          </button>
 
-          <div className="space-y-4">
-            {user ? (
-              <RouterLink 
-                to={isAdmin ? "/admin" : "/account"} 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full text-center bg-[#1A1918] text-[#FAF9F5] py-3 rounded-lg text-xs uppercase tracking-widest font-semibold block"
-              >
-                {isAdmin ? 'Admin Dashboard' : 'My Account'}
-              </RouterLink>
-            ) : (
-              <RouterLink 
-                to="/account/login" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full text-center bg-[#1A1918] text-[#FAF9F5] py-3 rounded-lg text-xs uppercase tracking-widest font-semibold block"
-              >
-                Login / Register
-              </RouterLink>
-            )}
-          </div>
+          <form onSubmit={handleSearchSubmit} className="w-full max-w-2xl space-y-4 text-center">
+            <span className="text-xs uppercase tracking-[0.3em] text-[#C7C7C7] font-semibold block">
+              SEARCH THE HOUSE CATALOGUE
+            </span>
+            <input
+              type="text"
+              autoFocus
+              placeholder="Search 999 Pure Idols, 925 Tableware, Pooja Articles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-transparent border-b-2 border-[#C7C7C7] py-4 text-2xl font-serif text-white placeholder-[#555555] focus:outline-none text-center"
+            />
+            <p className="text-xs text-[#A8A8A8]">Press Enter to search collections</p>
+          </form>
         </div>
       )}
     </>

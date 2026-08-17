@@ -53,7 +53,7 @@ let quotations = loadJsonFile('quotations_data.json', []);
 let homepageHero = loadJsonFile('homepage_hero_data.json', {
   title: 'Crafted in Silver. Created with Precision.',
   content: 'From traditional craftsmanship to contemporary silver designs, Sai Balaji Silverworks creates premium silver products for retail and wholesale markets.',
-  media_url: 'https://images.unsplash.com/photo-1608755728617-aefab37d2edd?auto=format&fit=crop&w=1200&q=80'
+  media_url: '/hero_balaji_4k.png'
 });
 let videos = loadJsonFile('videos_data.json', []);
 

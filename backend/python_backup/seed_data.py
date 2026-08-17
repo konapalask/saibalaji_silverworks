@@ -45,31 +45,31 @@ def seed_database():
             "name": "Silver Pooja Articles",
             "slug": "silver-pooja-articles",
             "description": "Sacred 925 sterling & 999 fine silver ritual essentials and puja accessories.",
-            "image_url": "/public/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-God-Idols/AMS-115-0054.webp"
+            "image_url": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-God-Idols/AMS-115-0054.webp"
         },
         {
             "name": "Silver God & Temple Items",
             "slug": "silver-god-temple-items",
             "description": "Hand-crafted 999 fine silver deities, sanctum adornments, and temple accessories.",
-            "image_url": "/public/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp"
+            "image_url": "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp"
         },
         {
             "name": "Silver Dining & Tableware",
             "slug": "silver-dining-tableware",
             "description": "Luxury 925 sterling dinner sets, tumblers, bowls, and royal silverware.",
-            "image_url": "/public/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Dinner-Sets/images.jpg"
+            "image_url": "/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Dinner-Sets/images.jpg"
         },
         {
             "name": "Silver Baby & Kids Gifts",
             "slug": "silver-baby-kids-gifts",
             "description": "Auspicious pure silver baby feeding articles, anklets, and keepsake gifts.",
-            "image_url": "/public/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Feeding-Sets/images (1).jpg"
+            "image_url": "/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Feeding-Sets/images (1).jpg"
         },
         {
             "name": "Silver Wedding & Return Gifts",
             "slug": "silver-wedding-return-gifts",
             "description": "Memorable silver keepsakes, return gift thalis, and custom wedding tokens.",
-            "image_url": "/public/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Wedding-Gifts/images (1).jpg"
+            "image_url": "/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Wedding-Gifts/images (1).jpg"
         }
     ]
 
@@ -96,7 +96,7 @@ def seed_database():
             "wholesale_price": 22000.0,
             "min_wholesale_qty": 5,
             "stock": 35,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-God-Idols/AMS-115-0054.webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-God-Idols/AMS-115-0054.webp",
             "description": "Mastercrafted 999 Fine Silver Lakshmi & Ganesha idol pair, finished with anti-tarnish protective coating.",
             "specifications": "Material: 999 Fine Silver | Weight: 180g | Height: 4.5 inches"
         },
@@ -112,7 +112,7 @@ def seed_database():
             "wholesale_price": 7500.0,
             "min_wholesale_qty": 10,
             "stock": 60,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Deepams/silver-lamp-silver-article-by-unniyarcha-jewellery-844414_1800x1800.webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Deepams/silver-lamp-silver-article-by-unniyarcha-jewellery-844414_1800x1800.webp",
             "description": "Elaborately engraved 925 sterling silver oil lamp featuring intricate floral Nakshi work.",
             "specifications": "Material: 925 Sterling Silver | Weight: 65g | Diameter: 3.5 inches"
         },
@@ -128,7 +128,7 @@ def seed_database():
             "wholesale_price": 13200.0,
             "min_wholesale_qty": 8,
             "stock": 25,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Deepams/silver-lamp-silver-article-by-unniyarcha-jewellery-844414_1800x1800.webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Deepams/silver-lamp-silver-article-by-unniyarcha-jewellery-844414_1800x1800.webp",
             "description": "Traditional South Indian Kamatchi Amman oil lamp cast in 925 sterling silver.",
             "specifications": "Material: 925 Sterling Silver | Weight: 120g | Height: 6 inches"
         },
@@ -144,7 +144,7 @@ def seed_database():
             "wholesale_price": 26000.0,
             "min_wholesale_qty": 5,
             "stock": 18,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Pooja-Plates/DSC_7725.webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Pooja-Plates/DSC_7725.webp",
             "description": "Heavy gauge 925 silver ritual thali plate decorated with auspicious lotus borders.",
             "specifications": "Material: 925 Sterling Silver | Weight: 240g | Diameter: 10 inches"
         },
@@ -160,7 +160,7 @@ def seed_database():
             "wholesale_price": 3600.0,
             "min_wholesale_qty": 15,
             "stock": 40,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Kumkum-Bharani/silver-peacock-lamp-silver-article-by-unniyarcha-jewellery-732650_1800x1800.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Kumkum-Bharani/silver-peacock-lamp-silver-article-by-unniyarcha-jewellery-732650_1800x1800.jpg",
             "description": "Intricately sculpted peacock-topped silver container for sacred vermilion.",
             "specifications": "Material: 925 Sterling Silver | Weight: 35g"
         },
@@ -176,7 +176,7 @@ def seed_database():
             "wholesale_price": 8900.0,
             "min_wholesale_qty": 10,
             "stock": 30,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Bell/31Yu3JtG3YL._SY300_SX300_QL70_FMwebp_.webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Bell/31Yu3JtG3YL._SY300_SX300_QL70_FMwebp_.webp",
             "description": "Solid silver pooja bell with Nandi finial, engineered for resonant acoustic purity.",
             "specifications": "Material: 925 Sterling Silver | Weight: 85g | Sound: Resonant High Octave"
         },
@@ -192,7 +192,7 @@ def seed_database():
             "wholesale_price": 18500.0,
             "min_wholesale_qty": 6,
             "stock": 20,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Kalash/shopping.webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Kalash/shopping.webp",
             "description": "Seamless 999 fine silver holy water vessel for Abhishek and Griha Pravesh rituals.",
             "specifications": "Material: 999 Fine Silver | Weight: 150g"
         },
@@ -208,7 +208,7 @@ def seed_database():
             "wholesale_price": 7600.0,
             "min_wholesale_qty": 12,
             "stock": 45,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Panchapatra-Uddharini/shopping (1).webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Panchapatra-Uddharini/shopping (1).webp",
             "description": "Engraved ritual holy water cup and spoon set for Sandhyavandanam rituals.",
             "specifications": "Material: 925 Sterling Silver | Weight: 70g"
         },
@@ -224,7 +224,7 @@ def seed_database():
             "wholesale_price": 4900.0,
             "min_wholesale_qty": 15,
             "stock": 30,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Akshinthalu-Containers/shopping.webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Akshinthalu-Containers/shopping.webp",
             "description": "Twin silver bowl set for blessing rice (Akshinthalu) and turmeric.",
             "specifications": "Material: 925 Sterling Silver | Weight: 45g"
         },
@@ -240,7 +240,7 @@ def seed_database():
             "wholesale_price": 39500.0,
             "min_wholesale_qty": 3,
             "stock": 12,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Pooja-Sets/shopping (1).webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Pooja-Sets/shopping (1).webp",
             "description": "Grand thali set including thali plate, diya, bell, kalash, kumkum box, agarbatti stand, and spoon.",
             "specifications": "Material: 925 Sterling Silver | Weight: 380g | 7 Pieces"
         },
@@ -258,7 +258,7 @@ def seed_database():
             "wholesale_price": 27500.0,
             "min_wholesale_qty": 4,
             "stock": 15,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp",
             "description": "Solid 999 fine silver Lord Venkateswara idol sculpted with authentic Tirumala Alankaram details.",
             "specifications": "Material: 999 Fine Silver | Weight: 220g | Height: 5.5 inches"
         },
@@ -274,7 +274,7 @@ def seed_database():
             "wholesale_price": 19800.0,
             "min_wholesale_qty": 5,
             "stock": 20,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Lakshmi-Devi-Idols/download.webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Lakshmi-Devi-Idols/download.webp",
             "description": "Seated Lakshmi Devi idol casting gold-accented lotus base in pure 999 silver.",
             "specifications": "Material: 999 Fine Silver | Weight: 160g | Height: 4.5 inches"
         },
@@ -290,7 +290,7 @@ def seed_database():
             "wholesale_price": 13900.0,
             "min_wholesale_qty": 8,
             "stock": 35,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Ganesh-Idols/download (1).webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Ganesh-Idols/download (1).webp",
             "description": "Divine Abhaya Hasta Ganesha silver idol for office desk, home altar, or car dashboard.",
             "specifications": "Material: 999 Fine Silver | Weight: 110g"
         },
@@ -306,7 +306,7 @@ def seed_database():
             "wholesale_price": 16800.0,
             "min_wholesale_qty": 6,
             "stock": 18,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Sai-Baba-Idols/download (1).webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Sai-Baba-Idols/download (1).webp",
             "description": "Revered seated Shirdi Sai Baba murti crafted in solid pure silver.",
             "specifications": "Material: 999 Fine Silver | Weight: 140g"
         },
@@ -322,7 +322,7 @@ def seed_database():
             "wholesale_price": 23500.0,
             "min_wholesale_qty": 5,
             "stock": 14,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Krishna-Idols/download (1).webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Krishna-Idols/download (1).webp",
             "description": "Lord Krishna with flute sculpted alongside sacred Kamadhenu cow in pure silver.",
             "specifications": "Material: 999 Fine Silver | Weight: 190g"
         },
@@ -338,7 +338,7 @@ def seed_database():
             "wholesale_price": 15600.0,
             "min_wholesale_qty": 6,
             "stock": 22,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Shiva-Idols/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Shiva-Idols/images.jpg",
             "description": "Lord Shiva in deep Dhyana mudra with 999 silver Shivling and Trishul.",
             "specifications": "Material: 999 Fine Silver | Weight: 130g"
         },
@@ -354,7 +354,7 @@ def seed_database():
             "wholesale_price": 18900.0,
             "min_wholesale_qty": 5,
             "stock": 16,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Hanuman-Idols/download.webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Hanuman-Idols/download.webp",
             "description": "Strong Sanjeevani-holding Hanuman idol in solid anti-tarnish pure silver.",
             "specifications": "Material: 999 Fine Silver | Weight: 155g"
         },
@@ -370,7 +370,7 @@ def seed_database():
             "wholesale_price": 21500.0,
             "min_wholesale_qty": 4,
             "stock": 10,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Goddess-Idols/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Goddess-Idols/images.jpg",
             "description": "Divine Goddess Saraswati with Veena in 999 silver.",
             "specifications": "Material: 999 Fine Silver | Weight: 175g"
         },
@@ -386,7 +386,7 @@ def seed_database():
             "wholesale_price": 36000.0,
             "min_wholesale_qty": 2,
             "stock": 8,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Silver-Temple-Accessories/img-64897881367e29b08794235.46763001.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Silver-Temple-Accessories/img-64897881367e29b08794235.46763001.jpg",
             "description": "Traditional 999 silver deity crown (Kireetam) for sanctum idols.",
             "specifications": "Material: 999 Fine Silver | Weight: 310g"
         },
@@ -404,7 +404,7 @@ def seed_database():
             "wholesale_price": 46500.0,
             "min_wholesale_qty": 2,
             "stock": 12,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Dinner-Sets/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Dinner-Sets/images.jpg",
             "description": "Luxurious 5-piece 925 sterling silver dining set including 11-inch plate, 2 bowls, tumbler, and spoon.",
             "specifications": "Material: 925 Sterling Silver | Weight: 450g | 5 Pieces"
         },
@@ -420,7 +420,7 @@ def seed_database():
             "wholesale_price": 27800.0,
             "min_wholesale_qty": 4,
             "stock": 25,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Plates/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Plates/images.jpg",
             "description": "Pure silver dining plate with beaded rim detailing.",
             "specifications": "Material: 925 Sterling Silver | Weight: 260g"
         },
@@ -436,7 +436,7 @@ def seed_database():
             "wholesale_price": 5900.0,
             "min_wholesale_qty": 10,
             "stock": 50,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Bowls/images (1).jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Bowls/images (1).jpg",
             "description": "Single heavy silver serving bowl for sweet dishes, curries, and payasam.",
             "specifications": "Material: 925 Sterling Silver | Weight: 55g"
         },
@@ -452,7 +452,7 @@ def seed_database():
             "wholesale_price": 9700.0,
             "min_wholesale_qty": 8,
             "stock": 40,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Tumblers/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Tumblers/images.jpg",
             "description": "Ergonomic silver glass tumbler for water and milk.",
             "specifications": "Material: 925 Sterling Silver | Weight: 90g | Capacity: 250ml"
         },
@@ -468,7 +468,7 @@ def seed_database():
             "wholesale_price": 9200.0,
             "min_wholesale_qty": 8,
             "stock": 35,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Glasses/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Glasses/images.jpg",
             "description": "Handcrafted pure silver drinking glass tumbler.",
             "specifications": "Material: 925 Sterling Silver | Weight: 85g"
         },
@@ -484,7 +484,7 @@ def seed_database():
             "wholesale_price": 4200.0,
             "min_wholesale_qty": 12,
             "stock": 60,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Spoons/images (1).jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Spoons/images (1).jpg",
             "description": "Pair of mirror-finish silver dessert spoons with lotus engraved handles.",
             "specifications": "Material: 925 Sterling Silver | Weight: 40g (Pair)"
         },
@@ -500,7 +500,7 @@ def seed_database():
             "wholesale_price": 7100.0,
             "min_wholesale_qty": 10,
             "stock": 30,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Cups/images (1).jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Cups/images (1).jpg",
             "description": "Royal silver cup and saucer set for traditional beverages.",
             "specifications": "Material: 925 Sterling Silver | Weight: 65g"
         },
@@ -516,7 +516,7 @@ def seed_database():
             "wholesale_price": 32500.0,
             "min_wholesale_qty": 3,
             "stock": 10,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Serving-Sets/images (1).jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Serving-Sets/images (1).jpg",
             "description": "Grand silver serving bowl set with lid and matching serving ladle.",
             "specifications": "Material: 925 Sterling Silver | Weight: 320g"
         },
@@ -534,7 +534,7 @@ def seed_database():
             "wholesale_price": 8700.0,
             "min_wholesale_qty": 8,
             "stock": 30,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Feeding-Sets/images (1).jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Feeding-Sets/images (1).jpg",
             "description": "Antimicrobial 925 silver baby glass and spoon set for Anna Prasanam ceremony.",
             "specifications": "Material: 925 Sterling Silver | Weight: 80g"
         },
@@ -550,7 +550,7 @@ def seed_database():
             "wholesale_price": 1900.0,
             "min_wholesale_qty": 20,
             "stock": 70,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Baby-Spoons/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Baby-Spoons/images.jpg",
             "description": "Smooth rounded-edge silver feeding spoon for infants.",
             "specifications": "Material: 925 Sterling Silver | Weight: 18g"
         },
@@ -566,7 +566,7 @@ def seed_database():
             "wholesale_price": 2800.0,
             "min_wholesale_qty": 15,
             "stock": 50,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Anklets/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Anklets/images.jpg",
             "description": "Adjustable silver anklets with sweet jingling bells for babies.",
             "specifications": "Material: 925 Sterling Silver | Weight: 25g Pair"
         },
@@ -582,7 +582,7 @@ def seed_database():
             "wholesale_price": 13200.0,
             "min_wholesale_qty": 5,
             "stock": 20,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Baby-Gift-Sets/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Baby-Gift-Sets/images.jpg",
             "description": "Luxury gift box with baby glass, bowl, spoon, and anklets.",
             "specifications": "Material: 925 Sterling Silver | Weight: 120g"
         },
@@ -598,7 +598,7 @@ def seed_database():
             "wholesale_price": 3800.0,
             "min_wholesale_qty": 12,
             "stock": 40,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Baby-Bowls/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Baby-Bowls/images.jpg",
             "description": "Pure silver Palada feeding cup for newborns.",
             "specifications": "Material: 925 Sterling Silver | Weight: 35g"
         },
@@ -614,7 +614,7 @@ def seed_database():
             "wholesale_price": 10500.0,
             "min_wholesale_qty": 5,
             "stock": 25,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Baby-Glasses/Pure-Silver-Juli-Glasses-Pack-of-4.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Baby-Glasses/Pure-Silver-Juli-Glasses-Pack-of-4.jpg",
             "description": "Set of 4 small silver drinking tumblers for toddlers.",
             "specifications": "Material: 925 Sterling Silver | Weight: 95g Total"
         },
@@ -630,7 +630,7 @@ def seed_database():
             "wholesale_price": 1650.0,
             "min_wholesale_qty": 20,
             "stock": 60,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Bracelets/images (1).jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Bracelets/images (1).jpg",
             "description": "Protective black bead Nazariya silver bracelets for babies.",
             "specifications": "Material: 925 Sterling Silver | Weight: 15g Pair"
         },
@@ -648,7 +648,7 @@ def seed_database():
             "wholesale_price": 14900.0,
             "min_wholesale_qty": 5,
             "stock": 30,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Wedding-Gifts/images (1).jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Wedding-Gifts/images (1).jpg",
             "description": "Auspicious wedding gift set featuring carved silver thali and twin diyas in velvet box.",
             "specifications": "Material: 925 Sterling Silver | Weight: 140g"
         },
@@ -664,7 +664,7 @@ def seed_database():
             "wholesale_price": 15000.0,
             "min_wholesale_qty": 3,
             "stock": 40,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Return-Gifts/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Return-Gifts/images.jpg",
             "description": "Wholesale pack of 10 silver kumkum boxes for marriage return gifts.",
             "specifications": "Material: 925 Sterling Silver | Weight: 15g each (150g total)"
         },
@@ -680,7 +680,7 @@ def seed_database():
             "wholesale_price": 1150.0,
             "min_wholesale_qty": 25,
             "stock": 200,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Gift-Coins/download.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Gift-Coins/download.jpg",
             "description": "999 Fine Silver wedding coin packaged in acrylic blister card.",
             "specifications": "Material: 999 Fine Silver | Weight: 10g"
         },
@@ -696,7 +696,7 @@ def seed_database():
             "wholesale_price": 5700.0,
             "min_wholesale_qty": 10,
             "stock": 50,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Customized-Wedding-Gifts/images (1).jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Customized-Wedding-Gifts/images (1).jpg",
             "description": "Laser-engraved silver wedding souvenir framed token.",
             "specifications": "Material: 999 Fine Silver | Weight: 50g"
         },
@@ -712,7 +712,7 @@ def seed_database():
             "wholesale_price": 13500.0,
             "min_wholesale_qty": 5,
             "stock": 25,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Couple-Gifts/download.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Couple-Gifts/download.jpg",
             "description": "Revered divine couple idol gift for newlyweds.",
             "specifications": "Material: 999 Fine Silver | Weight: 110g"
         },
@@ -728,7 +728,7 @@ def seed_database():
             "wholesale_price": 10200.0,
             "min_wholesale_qty": 8,
             "stock": 35,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Diyas/DSC5197_2.webp",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Diyas/DSC5197_2.webp",
             "description": "Pair of carved silver oil lamps for auspicious housewarming and wedding gifts.",
             "specifications": "Material: 925 Sterling Silver | Weight: 90g Pair"
         },
@@ -744,7 +744,7 @@ def seed_database():
             "wholesale_price": 22500.0,
             "min_wholesale_qty": 4,
             "stock": 15,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Gift-Sets/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Gift-Sets/images.jpg",
             "description": "Complete wedding gift box housing silver bowl, silver coin, and twin kumkum containers.",
             "specifications": "Material: 925 Sterling Silver | Weight: 210g"
         },
@@ -760,7 +760,7 @@ def seed_database():
             "wholesale_price": 2700.0,
             "min_wholesale_qty": 15,
             "stock": 60,
-            "featured_image": "/public/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Kumkum-Boxes/images.jpg",
+            "featured_image": "/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Kumkum-Boxes/images.jpg",
             "description": "Handcrafted single silver sindoor kumkum box for return gifting.",
             "specifications": "Material: 925 Sterling Silver | Weight: 25g"
         }

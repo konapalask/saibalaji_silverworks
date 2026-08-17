@@ -201,7 +201,7 @@ export const CartScreen: React.FC = () => {
             <Text style={styles.label}>City *</Text>
             <TextInput
               style={styles.input}
-              placeholder="e.g. Hyderabad"
+              placeholder="e.g. Tenali"
               value={city}
               onChangeText={setCity}
             />

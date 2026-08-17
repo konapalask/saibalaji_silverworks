@@ -232,12 +232,12 @@ export const AdminDashboard: React.FC = () => {
                     </td>
 
                     <td className="py-4 px-4 max-w-xs text-[#1A1918]">
-                      <p className="truncate font-medium">{typeof ord.shipping_address === 'string' ? ord.shipping_address : (ord.shipping_address?.address || 'N/A')}</p>
-                      <p className="text-[10px] text-gray-500">{ord.shipping_city || ord.shipping_address?.city || 'N/A'}, {ord.shipping_state || ord.shipping_address?.state || ''}</p>
+                      <p className="truncate font-medium">{typeof ord.shipping_address === 'string' ? ord.shipping_address : ((ord.shipping_address as any)?.address || 'N/A')}</p>
+                      <p className="text-[10px] text-gray-500">{ord.shipping_city || (typeof ord.shipping_address === 'object' ? (ord.shipping_address as any)?.city : 'N/A') || 'N/A'}, {ord.shipping_state || (typeof ord.shipping_address === 'object' ? (ord.shipping_address as any)?.state : '') || ''}</p>
                     </td>
 
                     <td className="py-4 px-4">
-                      <div className="font-bold text-[#1A1918]">₹{(ord.grand_total ?? ord.total_amount ?? 0).toLocaleString()}</div>
+                      <div className="font-bold text-[#1A1918]">₹{(ord.grand_total ?? (ord as any).total_amount ?? 0).toLocaleString()}</div>
                       <div className="text-[10px] text-gray-500">{ord.items?.length || 0} Products</div>
                     </td>
 

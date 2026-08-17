@@ -71,7 +71,7 @@ export const OrderSuccessPage: React.FC = () => {
       )}
 
       <p className="text-xs text-gray-600 max-w-md mx-auto">
-        We are preparing your hallmarked silver products for insured dispatch from our Hyderabad unit.
+        We are preparing your hallmarked silver products for insured dispatch from our Tenali unit.
       </p>
 
       <div className="flex justify-center gap-4 pt-4">

@@ -13,7 +13,7 @@ export const LoginPage: React.FC = () => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [showAddressModal, setShowAddressModal] = useState(false);
-  
+
   const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -28,7 +28,7 @@ export const LoginPage: React.FC = () => {
 
     // Check if the user profile in database already has street_address & phone saved
     const hasProfileAddress = Boolean(loggedUser?.street_address && loggedUser?.phone);
-    
+
     if (hasProfileAddress) {
       // Sync DB address to local storage
       localStorage.setItem('sbs_user_address', JSON.stringify({
@@ -87,7 +87,7 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="min-h-[80vh] bg-[#FAF9F5] flex items-center justify-center py-12 px-4 text-[#1A1918]">
       <div className="bg-white border border-[#E6E1DA] rounded-3xl p-8 max-w-md w-full shadow-xl space-y-6">
-        
+
         <div className="text-center space-y-2">
           <span className="text-xs uppercase tracking-[0.3em] text-[#C5A059] font-bold">
             AUTHENTICATION
@@ -141,8 +141,8 @@ export const LoginPage: React.FC = () => {
             <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Email Address</label>
             <div className="relative">
               <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
-              <input 
-                type="email" 
+              <input
+                type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -156,8 +156,8 @@ export const LoginPage: React.FC = () => {
             <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Password</label>
             <div className="relative flex items-center">
               <Lock className="w-4 h-4 text-gray-400 absolute left-3" />
-              <input 
-                type={showPassword ? 'text' : 'password'} 
+              <input
+                type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -175,7 +175,7 @@ export const LoginPage: React.FC = () => {
             </div>
           </div>
 
-          <button 
+          <button
             type="submit"
             disabled={loading}
             className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-[#FAF9F5] py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-md flex items-center justify-center gap-2"
@@ -199,7 +199,7 @@ export const LoginPage: React.FC = () => {
       </div>
 
       {/* Address Modal post-login */}
-      <AddressModal 
+      <AddressModal
         isOpen={showAddressModal}
         onSave={handleAddressSaved}
         onSkip={() => {

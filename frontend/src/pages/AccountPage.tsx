@@ -41,9 +41,9 @@ export const AccountPage: React.FC = () => {
       return {
         phone: user.phone || '',
         street_address: user.street_address,
-        city: user.city || 'Hyderabad',
-        state: user.state || 'Telangana',
-        pincode: user.pincode || '500033'
+        city: user.city || 'Tenali',
+        state: user.state || 'Andhra Pradesh',
+        pincode: user.pincode || '522201'
       };
     }
     try {
@@ -59,9 +59,9 @@ export const AccountPage: React.FC = () => {
       setSavedAddress({
         phone: user.phone || '',
         street_address: user.street_address || '',
-        city: user.city || 'Hyderabad',
-        state: user.state || 'Telangana',
-        pincode: user.pincode || '500033'
+        city: user.city || 'Tenali',
+        state: user.state || 'Andhra Pradesh',
+        pincode: user.pincode || '522201'
       });
     }
   }, [user]);

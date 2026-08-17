@@ -10,7 +10,7 @@ export const AdminCMS: React.FC = () => {
   // Hero CMS State
   const [heroTitle, setHeroTitle] = useState('Crafted in Silver. Created with Precision.');
   const [heroContent, setHeroContent] = useState('From traditional craftsmanship to contemporary silver designs, Sai Balaji Silverworks creates premium silver products for retail and wholesale markets.');
-  const [mediaUrl, setMediaUrl] = useState('https://images.unsplash.com/photo-1608755728617-aefab37d2edd?auto=format&fit=crop&w=1200&q=80');
+  const [mediaUrl, setMediaUrl] = useState('/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp');
   const [savedHero, setSavedHero] = useState(false);
 
   // Videos CMS State
@@ -72,7 +72,7 @@ export const AdminCMS: React.FC = () => {
       title: '',
       description: '',
       video_url: 'https://assets.mixkit.co/videos/preview/mixkit-artisan-crafting-a-piece-of-jewelry-41586-large.mp4',
-      thumbnail_url: 'https://images.unsplash.com/photo-1600003014755-ba31aa59c4b6?auto=format&fit=crop&w=1200&q=80',
+      thumbnail_url: '/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp',
       section: 'story',
       sort_order: videos.length + 1,
       is_active: true
@@ -231,7 +231,7 @@ export const AdminCMS: React.FC = () => {
                   {videos.map((vid) => (
                     <tr key={vid.id} className="hover:bg-[#FAF9F5]/50 transition-colors">
                       <td className="py-4 px-6 flex items-center gap-3">
-                        <img src={vid.thumbnail_url || 'https://images.unsplash.com/photo-1600003014755-ba31aa59c4b6?auto=format&fit=crop&w=300&q=80'} alt="" className="w-16 h-10 object-cover rounded-lg border border-gray-200" />
+                        <img src={vid.thumbnail_url || '/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp'} alt="" className="w-16 h-10 object-cover rounded-lg border border-gray-200" />
                         <div>
                           <span className="font-serif text-sm font-bold text-[#1A1918] block">{vid.title}</span>
                           <span className="text-[10px] text-gray-500 truncate max-w-xs block">{vid.description}</span>

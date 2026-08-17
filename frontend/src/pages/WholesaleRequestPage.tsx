@@ -25,9 +25,9 @@ export const WholesaleRequestPage: React.FC = () => {
       email: user?.email || '',
       gstin: user?.gstin || '',
       address: savedAddr.street_address || '',
-      city: savedAddr.city || 'Hyderabad',
-      state: savedAddr.state || 'Telangana',
-      pincode: savedAddr.pincode || '500002',
+      city: savedAddr.city || 'Tenali',
+      state: savedAddr.state || 'Andhra Pradesh',
+      pincode: savedAddr.pincode || '522201',
       expected_delivery_date: '',
       notes: ''
     };

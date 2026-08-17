@@ -5,7 +5,10 @@ import { useCart } from '../context/CartContext';
 import { WhatsAppOrderModal } from './WhatsAppOrderModal';
 import { FullCartOrder } from '../utils/whatsappOrder';
 
+import { useAuth } from '../context/AuthContext';
+
 export const CartDrawer: React.FC = () => {
+  const { user } = useAuth();
   const { 
     effectiveCartItems, 
     removeFromCart, 
@@ -33,6 +36,12 @@ export const CartDrawer: React.FC = () => {
   const progressPercent = Math.min(100, Math.round((totalQuantity / WHOLESALE_MOQ) * 100));
 
   const handleOrderCartOnWhatsApp = () => {
+    if (!user) {
+      setIsCartOpen(false);
+      navigate(`/account/login?redirect=${encodeURIComponent('/checkout')}`);
+      return;
+    }
+
     setWhatsappCartData({
       items: effectiveCartItems,
       totalQuantity,

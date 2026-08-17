@@ -21,7 +21,7 @@ export const Contact: React.FC = () => {
           Contact Sai Balaji Silverworks
         </h1>
         <p className="text-xs sm:text-sm text-gray-600">
-          Visit our Hyderabad showroom or submit your retail & wholesale inquiries directly.
+          Visit our Tenali showroom or submit your retail & wholesale inquiries directly.
         </p>
       </div>
 
@@ -31,14 +31,14 @@ export const Contact: React.FC = () => {
         <div className="lg:col-span-5 bg-[#1A1918] text-white rounded-3xl p-8 space-y-8 border border-[#C5A059]/40 shadow-xl flex flex-col justify-between">
           <div className="space-y-6">
             <span className="bg-[#C5A059] text-[#1A1918] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
-              HYDERABAD FACTORY SHOWROOM
+              TENALI FACTORY SHOWROOM
             </span>
             <h3 className="font-serif text-2xl font-bold">Sai Balaji Silverworks Pvt Ltd</h3>
             
             <div className="space-y-4 text-xs">
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-[#C5A059] shrink-0 mt-0.5" />
-                <p className="leading-relaxed">Main Road, Silver Market, Near Charminar Heritage Zone, Hyderabad, Telangana - 500002</p>
+                <p className="leading-relaxed">Main Silver Market, Autonagar, Tenali, Andhra Pradesh - 522201</p>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-[#C5A059] shrink-0" />

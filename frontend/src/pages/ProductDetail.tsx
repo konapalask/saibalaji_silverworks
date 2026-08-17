@@ -5,6 +5,7 @@ import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useWholesale } from '../context/WholesaleContext';
+import { useAuth } from '../context/AuthContext';
 import { WhatsAppOrderModal } from '../components/WhatsAppOrderModal';
 import { SingleProductOrder } from '../utils/whatsappOrder';
 import api from '../services/api';
@@ -12,6 +13,7 @@ import api from '../services/api';
 export const ProductDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
@@ -70,6 +72,11 @@ export const ProductDetail: React.FC = () => {
   };
 
   const handleBuyNowOnWhatsApp = () => {
+    if (!user) {
+      navigate(`/account/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+
     const unitPrice = (isWholesale && product.wholesale_price) 
       ? product.wholesale_price 
       : product.retail_price;
@@ -184,7 +191,7 @@ export const ProductDetail: React.FC = () => {
               <div>
                 <RefreshCw className="w-5 h-5 text-[#C5A059] mx-auto mb-1" />
                 <span className="font-bold text-[11px] block">Direct Factory</span>
-                <span className="text-[10px] text-gray-500">Hyderabad Unit</span>
+                <span className="text-[10px] text-gray-500">Tenali Unit</span>
               </div>
             </div>
           </div>
