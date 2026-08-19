@@ -38,8 +38,8 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
       name: user?.full_name || '',
       mobile: savedAddr.phone || user?.phone || '',
       address: savedAddr.street_address || '',
-      city: savedAddr.city || 'Tenali',
-      pincode: savedAddr.pincode || '522201',
+      city: savedAddr.city || '',
+      pincode: savedAddr.pincode || '',
       notes: ''
     };
   });

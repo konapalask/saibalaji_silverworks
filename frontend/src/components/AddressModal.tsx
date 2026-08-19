@@ -27,9 +27,9 @@ export const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onSave, onSk
         fullName: user.full_name || '',
         phone: user.phone || '',
         street_address: user.street_address || '',
-        city: user.city || 'Tenali',
-        state: user.state || 'Andhra Pradesh',
-        pincode: user.pincode || '522201'
+        city: user.city || '',
+        state: user.state || '',
+        pincode: user.pincode || ''
       };
     }
     try {
@@ -40,9 +40,9 @@ export const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onSave, onSk
       fullName: user?.full_name || '',
       phone: user?.phone || '',
       street_address: '',
-      city: 'Tenali',
-      state: 'Andhra Pradesh',
-      pincode: '522201'
+      city: '',
+      state: '',
+      pincode: ''
     };
   });
 

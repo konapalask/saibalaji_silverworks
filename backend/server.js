@@ -72,11 +72,14 @@ const authenticateToken = (req, res, next) => {
 
 // --- AUTH API ENDPOINTS ---
 
+const getUsers = () => loadJsonFile('users.json', []);
+
 // Register New User
 app.post('/api/v1/auth/register', (req, res) => {
-  const { email, password, full_name, phone, company_name, gstin } = req.body;
-  if (!email || !password || !full_name) {
-    return res.status(400).json({ detail: 'Email, password, and full name are required' });
+  users = getUsers();
+  const { email, password, full_name, phone, company_name, gstin, street_address, city, state, pincode } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ detail: 'Email and password are required' });
   }
 
   const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
@@ -89,8 +92,12 @@ app.post('/api/v1/auth/register', (req, res) => {
     email: email.toLowerCase(),
     password_plain: password, // For easy recovery/testing as requested
     password_hash: bcrypt.hashSync(password, 10),
-    full_name,
+    full_name: full_name || email.split('@')[0],
     phone: phone || '',
+    street_address: street_address || '',
+    city: city || '',
+    state: state || '',
+    pincode: pincode || '',
     company_name: company_name || '',
     gstin: gstin || '',
     role: 'CUSTOMER',
@@ -106,8 +113,43 @@ app.post('/api/v1/auth/register', (req, res) => {
   res.status(201).json({ access_token: token, token_type: 'bearer', user: userResponse });
 });
 
+// Google Login / Register
+app.post('/api/v1/auth/google', (req, res) => {
+  users = getUsers();
+  const { email, full_name } = req.body;
+  if (!email) return res.status(400).json({ detail: 'Email is required' });
+
+  let user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  if (!user) {
+    user = {
+      id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+      email: email.toLowerCase(),
+      password_plain: '',
+      password_hash: '',
+      full_name: full_name || email.split('@')[0],
+      phone: '',
+      street_address: '',
+      city: '',
+      state: '',
+      pincode: '',
+      company_name: '',
+      gstin: '',
+      role: 'CUSTOMER',
+      is_active: true,
+      created_at: new Date().toISOString()
+    };
+    users.push(user);
+    saveJsonFile('users.json', users);
+  }
+
+  const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+  const { password_plain, password_hash, ...userResponse } = user;
+  res.json({ access_token: token, token_type: 'bearer', user: userResponse });
+});
+
 // Login User
 app.post('/api/v1/auth/login', (req, res) => {
+  users = getUsers();
   const { email, username, password } = req.body;
   const userEmail = (email || username || '').toLowerCase();
 
@@ -131,9 +173,33 @@ app.post('/api/v1/auth/login', (req, res) => {
 
 // Get Current User Profile
 app.get('/api/v1/auth/me', authenticateToken, (req, res) => {
+  users = getUsers();
   const user = users.find(u => u.id === req.user.id);
   if (!user) return res.status(404).json({ detail: 'User not found' });
   const { password_plain, password_hash, ...userResponse } = user;
+  res.json(userResponse);
+});
+
+// Update Current User Profile & Address (Saves directly to users.json)
+app.put('/api/v1/auth/me', authenticateToken, (req, res) => {
+  users = getUsers();
+  const userIndex = users.findIndex(u => u.id === req.user.id);
+  if (userIndex === -1) return res.status(404).json({ detail: 'User not found' });
+
+  const { full_name, phone, company_name, gstin, street_address, city, state, pincode } = req.body;
+
+  if (full_name !== undefined) users[userIndex].full_name = full_name;
+  if (phone !== undefined) users[userIndex].phone = phone;
+  if (company_name !== undefined) users[userIndex].company_name = company_name;
+  if (gstin !== undefined) users[userIndex].gstin = gstin;
+  if (street_address !== undefined) users[userIndex].street_address = street_address;
+  if (city !== undefined) users[userIndex].city = city;
+  if (state !== undefined) users[userIndex].state = state;
+  if (pincode !== undefined) users[userIndex].pincode = pincode;
+
+  saveJsonFile('users.json', users);
+
+  const { password_plain, password_hash, ...userResponse } = users[userIndex];
   res.json(userResponse);
 });
 
@@ -141,6 +207,7 @@ app.get('/api/v1/auth/me', authenticateToken, (req, res) => {
 
 // Get All Users (for Admin)
 app.get('/api/v1/users', (req, res) => {
+  users = getUsers();
   const sanitizedUsers = users.map(u => {
     const { password_plain, password_hash, ...rest } = u;
     return rest;
@@ -150,6 +217,7 @@ app.get('/api/v1/users', (req, res) => {
 
 // Delete User
 app.delete('/api/v1/users/:id', (req, res) => {
+  users = getUsers();
   const userId = parseInt(req.params.id);
   users = users.filter(u => u.id !== userId);
   saveJsonFile('users.json', users);
