@@ -92,8 +92,8 @@ export const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onSave, onSk
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#1A1918]/70 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white border border-[#C5A059] rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-6 text-[#1A1918] animate-in fade-in zoom-in-95">
+    <div className="fixed inset-0 z-50 bg-[#1A1918]/70 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6">
+      <div className="bg-white border border-[#C5A059] rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-6 text-[#1A1918] animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
         
         <div className="text-center space-y-2">
           <div className="w-12 h-12 bg-[#FAF9F5] border border-[#C5A059]/40 rounded-full flex items-center justify-center mx-auto text-[#C5A059]">

@@ -119,7 +119,7 @@ def generate_quotation_pdf(quotation: Quotation, request: WholesaleRequest) -> b
     header_left = [
         Paragraph("SAI BALAJI SILVERWORKS", brand_title_style),
         Paragraph("SILVER MANUFACTURERS & EXPORTERS", brand_subtitle_style),
-        Paragraph("GSTIN: 36AAAAA0000A1Z5 | Reg: SB-SLV-8892<br/>Main Road, Silver Market, Hyderabad, TS - 500002<br/>Phone: +91 98765 43210 | Email: wholesale@saibalajisilverworks.com", body_regular)
+        Paragraph("GSTIN: 36AAAAA0000A1Z5 | Reg: SB-SLV-8892<br/>Main Road, Silver Market, Hyderabad, TS - 500002<br/>Phone: +91 9492664870 | Email: wholesale@saibalajisilverworks.com", body_regular)
     ]
 
     header_right = [

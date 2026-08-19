@@ -20,7 +20,7 @@ def seed_database():
         email="admin@saibalajisilverworks.com",
         hashed_password=get_password_hash("admin123"),
         full_name="Sai Balaji Admin",
-        phone="+91 98765 00000",
+        phone="+91 9492664870",
         company_name="Sai Balaji Silverworks Pvt Ltd",
         gstin="36AAAAA0000A1Z5",
         role=UserRole.ADMIN

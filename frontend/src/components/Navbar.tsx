@@ -208,7 +208,7 @@ export const Navbar: React.FC = () => {
           </nav>
 
           <div className="border-t border-white/12 pt-6 text-center space-y-2 font-sans text-xs text-[#A8A8A8]">
-            <p className="text-[#C7C7C7] font-semibold">+91 98765 43210 • Tenali Atelier</p>
+            <p className="text-[#C7C7C7] font-semibold">+91 9492664870 • Tenali Atelier</p>
             <p>NABL Hallmarked Silver Manufacturers</p>
           </div>
         </div>

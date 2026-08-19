@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MessageSquare, Package, User, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 import { 
   generateOrderId, 
   generateFullCartWhatsAppMessage, 
@@ -10,7 +11,7 @@ import {
 } from '../utils/whatsappOrder';
 
 export const CheckoutPage: React.FC = () => {
-  const { effectiveCartItems, totalQuantity, cartType, subtotal } = useCart();
+  const { effectiveCartItems, totalQuantity, cartType, subtotal, clearCart } = useCart();
   const { user, updateProfile } = useAuth();
   const navigate = useNavigate();
 
@@ -88,6 +89,39 @@ export const CheckoutPage: React.FC = () => {
       console.error('Failed to sync checkout user details', e);
     }
 
+    // Save order history to backend database
+    try {
+      const orderItems = effectiveCartItems.map(item => ({
+        id: item.product.id,
+        product_id: item.product.id,
+        product_name: item.product.title,
+        product_sku: item.product.sku,
+        unit_price: item.effectivePrice,
+        quantity: item.quantity,
+        subtotal: item.itemSubtotal,
+        featured_image: item.product.featured_image
+      }));
+
+      await api.post('/orders', {
+        order_number: orderId,
+        user_id: user?.id,
+        customer_name: customer.name,
+        customer_email: user?.email || '',
+        customer_phone: customer.mobile,
+        shipping_address: customer.address,
+        shipping_city: customer.city,
+        shipping_pincode: customer.pincode,
+        items: orderItems,
+        subtotal,
+        tax_amount: tax,
+        shipping_charge: 0,
+        grand_total: grandTotal,
+        status: 'Order Placed'
+      });
+    } catch (err) {
+      console.error('Failed to save order history to backend', err);
+    }
+
     setTimeout(() => {
       setButtonState('opening');
 
@@ -100,6 +134,9 @@ export const CheckoutPage: React.FC = () => {
         shipping: 0,
         grandTotal
       });
+
+      // Clear Shopping Cart after order save
+      clearCart();
 
       // Open WhatsApp Click-to-Chat
       openWhatsAppOrderUrl(rawMessage);

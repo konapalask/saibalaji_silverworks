@@ -65,9 +65,35 @@ export const AdminOrders: React.FC = () => {
                     <div className="font-bold text-[#1A1918]">{ord.customer_name || 'Retail Customer'}</div>
                     <div className="text-[10px] text-gray-500">{ord.customer_phone || 'N/A'} | {typeof ord.shipping_address === 'string' ? ord.shipping_address : (ord.shipping_city || (ord.shipping_address as any)?.city || 'N/A')}</div>
                   </td>
-                  <td className="py-4 px-6">
-                    <div className="font-bold text-[#1A1918]">₹{(ord.grand_total ?? (ord as any).total_amount ?? 0).toLocaleString()}</div>
-                    <div className="text-[10px] text-gray-500">{ord.items?.length || 0} Products</div>
+                  <td className="py-4 px-6 min-w-[240px]">
+                    <div className="space-y-2">
+                      {ord.items && ord.items.length > 0 ? (
+                        ord.items.map((item: any, idx: number) => {
+                          const img = item.featured_image || item.image_url || item.image;
+                          return (
+                            <div key={item.id || idx} className="flex items-center gap-2.5 bg-[#FAF9F5] p-2 rounded-xl border border-[#E6E1DA]">
+                              {img ? (
+                                <img src={img} alt="" className="w-10 h-12 object-cover rounded-lg bg-white border border-gray-200 shrink-0" />
+                              ) : (
+                                <div className="w-10 h-12 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-[#C5A059] shrink-0">
+                                  <ShoppingBag className="w-4 h-4" />
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <p className="font-bold text-[#1A1918] text-[11px] truncate">{item.product_name || 'Silver Item'}</p>
+                                <p className="text-[10px] text-gray-500">Qty: <strong>{item.quantity}</strong> {item.unit_price ? `× ₹${item.unit_price.toLocaleString()}` : ''}</p>
+                              </div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="text-[10px] text-gray-400 font-italic">No item details</div>
+                      )}
+                      <div className="pt-1 flex justify-between items-center text-xs font-bold border-t border-gray-100">
+                        <span>Total:</span>
+                        <span className="text-[#C5A059]">₹{(ord.grand_total ?? (ord as any).total_amount ?? 0).toLocaleString()}</span>
+                      </div>
+                    </div>
                   </td>
                   <td className="py-4 px-6">
                     <span className={`px-2.5 py-1 rounded-full text-[10px] uppercase font-bold ${

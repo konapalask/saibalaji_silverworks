@@ -392,24 +392,48 @@ app.get('/api/v1/dashboard/analytics', (req, res) => {
 // --- ORDER & FULFILLMENT ENDPOINTS ---
 
 app.get('/api/v1/orders', (req, res) => {
+  orders = loadJsonFile('orders_data.json', []);
   res.json(orders);
 });
 
+// Get User Order History
+app.get('/api/v1/orders/my-orders', authenticateToken, (req, res) => {
+  orders = loadJsonFile('orders_data.json', []);
+  users = getUsers();
+  const currentUser = users.find(u => u.id === req.user.id);
+  const userEmail = (currentUser?.email || req.user.email || '').toLowerCase();
+  const userPhone = currentUser?.phone ? currentUser.phone.replace(/\D/g, '') : '';
+
+  const userOrders = orders.filter(o => {
+    if (o.user_id && o.user_id === req.user.id) return true;
+    if (o.customer_email && o.customer_email.toLowerCase() === userEmail) return true;
+    if (userPhone && o.customer_phone && o.customer_phone.replace(/\D/g, '').includes(userPhone)) return true;
+    return false;
+  });
+
+  res.json(userOrders.reverse());
+});
+
 app.post('/api/v1/orders', (req, res) => {
+  orders = loadJsonFile('orders_data.json', []);
   const orderData = req.body;
   const newOrder = {
-    id: orders.length + 1,
-    order_number: `SBS-ORD-${Date.now().toString().slice(-6)}`,
+    id: orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
+    order_number: orderData.order_number || `SBS-ORD-${Date.now().toString().slice(-6)}`,
+    user_id: orderData.user_id || null,
     customer_name: orderData.customer_name || 'Retail Customer',
-    customer_phone: orderData.customer_phone || '',
+    customer_email: orderData.customer_email || orderData.email || '',
+    customer_phone: orderData.customer_phone || orderData.mobile || orderData.phone || '',
     shipping_address: orderData.shipping_address || '',
     shipping_city: orderData.shipping_city || '',
     shipping_state: orderData.shipping_state || '',
     shipping_pincode: orderData.shipping_pincode || '',
     items: orderData.items || [],
+    subtotal: orderData.subtotal || 0,
+    tax_amount: orderData.tax_amount ?? orderData.tax ?? 0,
+    shipping_charge: orderData.shipping_charge ?? orderData.shipping ?? 0,
     grand_total: orderData.grand_total ?? orderData.total_amount ?? 0,
-    ...orderData,
-    status: 'PENDING',
+    status: orderData.status || 'Order Placed',
     created_at: new Date().toISOString()
   };
   orders.push(newOrder);
@@ -418,6 +442,7 @@ app.post('/api/v1/orders', (req, res) => {
 });
 
 app.put('/api/v1/orders/:id/status', (req, res) => {
+  orders = loadJsonFile('orders_data.json', []);
   const orderId = parseInt(req.params.id);
   const { status } = req.body;
   const order = orders.find(o => o.id === orderId);
@@ -433,15 +458,44 @@ app.put('/api/v1/orders/:id/status', (req, res) => {
 // --- WHOLESALE & QUOTATION ENDPOINTS ---
 
 app.get('/api/v1/wholesale/requests', (req, res) => {
+  wholesaleRequests = loadJsonFile('wholesale_requests_data.json', []);
   res.json(wholesaleRequests);
 });
 
-app.post('/api/v1/wholesale/quote', (req, res) => {
+app.get('/api/v1/wholesale/my-requests', authenticateToken, (req, res) => {
+  wholesaleRequests = loadJsonFile('wholesale_requests_data.json', []);
+  users = getUsers();
+  const currentUser = users.find(u => u.id === req.user.id);
+  const userEmail = (currentUser?.email || req.user.email || '').toLowerCase();
+  const userPhone = currentUser?.phone ? currentUser.phone.replace(/\D/g, '') : '';
+
+  const userRequests = wholesaleRequests.filter(r => {
+    if (r.user_id && r.user_id === req.user.id) return true;
+    if (r.email && r.email.toLowerCase() === userEmail) return true;
+    if (userPhone && r.phone && r.phone.replace(/\D/g, '').includes(userPhone)) return true;
+    return false;
+  });
+
+  res.json(userRequests.reverse());
+});
+
+app.post(['/api/v1/wholesale/requests', '/api/v1/wholesale/quote'], (req, res) => {
+  wholesaleRequests = loadJsonFile('wholesale_requests_data.json', []);
   const reqData = req.body;
   const newReq = {
-    id: wholesaleRequests.length + 1,
-    request_number: `SBS-QT-${Date.now().toString().slice(-6)}`,
-    ...reqData,
+    id: wholesaleRequests.length > 0 ? Math.max(...wholesaleRequests.map(r => r.id)) + 1 : 1,
+    request_number: reqData.request_number || `SBS-QT-${Date.now().toString().slice(-6)}`,
+    user_id: reqData.user_id || null,
+    company_name: reqData.company_name || '',
+    contact_person: reqData.contact_person || '',
+    phone: reqData.phone || '',
+    email: reqData.email || '',
+    gstin: reqData.gstin || '',
+    address: reqData.address || '',
+    city: reqData.city || '',
+    state: reqData.state || '',
+    pincode: reqData.pincode || '',
+    items: reqData.items || [],
     status: 'PENDING',
     created_at: new Date().toISOString()
   };
@@ -449,8 +503,10 @@ app.post('/api/v1/wholesale/quote', (req, res) => {
   saveJsonFile('wholesale_requests_data.json', wholesaleRequests);
   res.status(201).json({
     message: 'Wholesale quotation request submitted successfully!',
+    request_number: newReq.request_number,
     quote_id: newReq.request_number,
-    data: newReq
+    data: newReq,
+    ...newReq
   });
 });
 

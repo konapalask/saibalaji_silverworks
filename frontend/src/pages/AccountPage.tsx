@@ -314,13 +314,40 @@ export const AccountPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  {ord.items.map((item) => (
-                    <div key={item.id} className="flex justify-between text-xs py-1">
-                      <span className="font-medium text-gray-700">{item.product_name} (Qty: {item.quantity})</span>
-                      <span className="font-bold">₹{item.subtotal.toLocaleString()}</span>
-                    </div>
-                  ))}
+                <div className="space-y-3 pt-1">
+                  {ord.items && ord.items.map((item: any, index: number) => {
+                    const itemImg = item.featured_image || item.image_url || item.image || item.product?.featured_image;
+                    return (
+                      <div key={item.id || index} className="flex items-center gap-4 p-3 bg-[#FAF9F5] rounded-2xl border border-[#E6E1DA]">
+                        {itemImg ? (
+                          <img 
+                            src={itemImg} 
+                            alt={item.product_name || 'Silver Product'} 
+                            className="w-14 h-16 object-cover rounded-xl bg-white border border-[#E6E1DA] shrink-0"
+                          />
+                        ) : (
+                          <div className="w-14 h-16 bg-white border border-[#E6E1DA] rounded-xl flex items-center justify-center text-[#C5A059] shrink-0">
+                            <Package className="w-6 h-6" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-serif text-sm font-bold text-[#1A1918] truncate">
+                            {item.product_name || item.title || 'Handcrafted Silver Item'}
+                          </h4>
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-gray-500 mt-0.5">
+                            {item.product_sku && <span>SKU: {item.product_sku}</span>}
+                            <span>Quantity: <strong className="text-[#1A1918]">{item.quantity}</strong></span>
+                            {item.unit_price && <span>Price: ₹{item.unit_price.toLocaleString()}</span>}
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className="font-bold text-sm text-[#1A1918]">
+                            ₹{(item.subtotal || item.itemSubtotal || item.unit_price * item.quantity || 0).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))

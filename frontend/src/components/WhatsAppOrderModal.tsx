@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, MessageSquare, CheckCircle2, ShieldCheck, MapPin, Phone, User, Package, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import api from '../services/api';
 import { 
   CustomerDetails, 
   SingleProductOrder, 
@@ -25,6 +27,7 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
   fullCartOrder
 }) => {
   const { user } = useAuth();
+  const { clearCart } = useCart();
   const [orderId] = useState<string>(() => generateOrderId());
   
   const [customer, setCustomer] = useState<CustomerDetails>(() => {
@@ -69,7 +72,7 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
   const shipping = 0; // No shipping fee
   const grandTotal = subtotal + tax;
 
-  const handleConfirmAndSend = (e: React.FormEvent) => {
+  const handleConfirmAndSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customer.name.trim()) {
       setErrorMsg('Please enter your Customer Name.');
@@ -82,6 +85,52 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
 
     setErrorMsg('');
     setButtonState('preparing');
+
+    // Save order history to backend database
+    try {
+      const orderItems = isSingle && singleProductOrder ? [{
+        id: singleProductOrder.product.id,
+        product_id: singleProductOrder.product.id,
+        product_name: singleProductOrder.product.title,
+        product_sku: singleProductOrder.product.sku,
+        unit_price: singleProductOrder.unitPrice,
+        quantity: singleProductOrder.quantity,
+        subtotal: singleProductOrder.unitPrice * singleProductOrder.quantity,
+        featured_image: singleProductOrder.product.featured_image
+      }] : (fullCartOrder?.items || []).map(item => ({
+        id: item.product.id,
+        product_id: item.product.id,
+        product_name: item.product.title,
+        product_sku: item.product.sku,
+        unit_price: item.effectivePrice,
+        quantity: item.quantity,
+        subtotal: item.itemSubtotal,
+        featured_image: item.product.featured_image
+      }));
+
+      await api.post('/orders', {
+        order_number: orderId,
+        user_id: user?.id,
+        customer_name: customer.name,
+        customer_email: user?.email || '',
+        customer_phone: customer.mobile,
+        shipping_address: customer.address,
+        shipping_city: customer.city,
+        shipping_pincode: customer.pincode,
+        items: orderItems,
+        subtotal,
+        tax_amount: tax,
+        shipping_charge: shipping,
+        grand_total: grandTotal,
+        status: 'Order Placed'
+      });
+
+      if (!isSingle) {
+        clearCart();
+      }
+    } catch (err) {
+      console.error('Failed to save order history to backend', err);
+    }
 
     setTimeout(() => {
       setButtonState('opening');
@@ -118,49 +167,51 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#1A1918]/70 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white border border-[#C5A059] rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl space-y-6 text-[#1A1918] relative my-8 animate-in fade-in zoom-in-95">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#1A1918]/70 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6">
+      <div className="bg-white border border-[#C5A059] rounded-3xl max-w-xl w-full shadow-2xl text-[#1A1918] relative animate-in fade-in zoom-in-95 max-h-[90vh] flex flex-col overflow-hidden">
         
-        {/* Close Button */}
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-black rounded-full hover:bg-gray-100 transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {/* Modal Fixed Header */}
+        <div className="p-5 sm:px-8 sm:pt-6 sm:pb-4 border-b border-[#E6E1DA] relative shrink-0 text-center bg-white">
+          {/* Close Button */}
+          <button 
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-black rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
 
-        {/* Modal Header */}
-        <div className="text-center space-y-1">
-          <div className="w-12 h-12 bg-green-50 border border-green-200 text-green-600 rounded-full flex items-center justify-center mx-auto">
-            <MessageSquare className="w-6 h-6 fill-current" />
+          <div className="w-11 h-11 bg-green-50 border border-green-200 text-green-600 rounded-full flex items-center justify-center mx-auto mb-1">
+            <MessageSquare className="w-5 h-5 fill-current" />
           </div>
           <span className="text-[10px] uppercase font-bold tracking-widest text-[#C5A059]">
             DIRECT WHATSAPP ORDER ENGINE
           </span>
-          <h3 className="font-serif text-2xl font-bold text-[#1A1918]">Confirm & Send WhatsApp Order</h3>
+          <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1A1918]">Confirm & Send WhatsApp Order</h3>
           <p className="text-xs text-gray-500">Order Ref: <span className="font-bold text-[#C5A059]">{orderId}</span></p>
         </div>
 
-        {/* Website Notification after WhatsApp opens */}
-        {showNotice && (
-          <div className="p-4 bg-green-50 border border-green-300 text-green-800 rounded-2xl text-xs space-y-1">
-            <div className="flex items-center gap-2 font-bold text-sm text-green-900">
-              <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-              <span>WhatsApp Opened Successfully!</span>
+        {/* Modal Scrollable Body */}
+        <div className="p-5 sm:p-8 overflow-y-auto space-y-6 flex-1">
+          {/* Website Notification after WhatsApp opens */}
+          {showNotice && (
+            <div className="p-4 bg-green-50 border border-green-300 text-green-800 rounded-2xl text-xs space-y-1">
+              <div className="flex items-center gap-2 font-bold text-sm text-green-900">
+                <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+                <span>WhatsApp Opened Successfully!</span>
+              </div>
+              <p className="leading-relaxed">
+                Please send the pre-filled order message to <strong>Sai Balaji Silver Works</strong> in your WhatsApp app to complete your order request.
+              </p>
             </div>
-            <p className="leading-relaxed">
-              Please send the pre-filled order message to <strong>Sai Balaji Silver Works</strong> in your WhatsApp app to complete your order request.
-            </p>
-          </div>
-        )}
+          )}
 
-        {errorMsg && (
-          <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs text-center">
-            {errorMsg}
-          </div>
-        )}
+          {errorMsg && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs text-center">
+              {errorMsg}
+            </div>
+          )}
 
-        <form onSubmit={handleConfirmAndSend} className="space-y-6">
+          <form onSubmit={handleConfirmAndSend} className="space-y-6">
           
           {/* Customer Form Section */}
           <div className="bg-[#FAF9F5] border border-[#E6E1DA] rounded-2xl p-4 space-y-3">
@@ -323,6 +374,7 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
           </button>
         </form>
 
+        </div>
       </div>
     </div>
   );

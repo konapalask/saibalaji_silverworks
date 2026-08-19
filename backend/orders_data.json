@@ -1,18 +1,32 @@
 [
   {
     "id": 1,
-    "order_number": "SBS-ORD-588552",
-    "shipping_address": {},
-    "total_amount": 0,
-    "status": "PENDING",
-    "created_at": "2026-08-16T11:26:28.552Z"
-  },
-  {
-    "id": 2,
-    "order_number": "SBS-ORD-589717",
-    "shipping_address": {},
-    "total_amount": 0,
-    "status": "PENDING",
-    "created_at": "2026-08-16T11:26:29.717Z"
+    "order_number": "SBS-20260819-5285",
+    "user_id": 2,
+    "customer_name": "Nikhil Maddali",
+    "customer_email": "samuelnikhilmddali123@gmail.com",
+    "customer_phone": "9121266269",
+    "shipping_address": "5 147 SF 1 PUCHALAPALLI SUNDARAIAH STREET\nNEAR INDIAN PETROL BUNK\nRAMAVARAPPADU VTC RAMAVARAPPADU",
+    "shipping_city": "VIJAYAWADA",
+    "shipping_state": "",
+    "shipping_pincode": "521108",
+    "items": [
+      {
+        "id": 2,
+        "product_id": 2,
+        "product_name": "Handcrafted Sterling Silver Nakshi Diya",
+        "product_sku": "SBS-PA-002",
+        "unit_price": 9800,
+        "quantity": 1,
+        "subtotal": 9800,
+        "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Deepams/silver-lamp-silver-article-by-unniyarcha-jewellery-844414_1800x1800.webp"
+      }
+    ],
+    "subtotal": 9800,
+    "tax_amount": 294,
+    "shipping_charge": 0,
+    "grand_total": 10094,
+    "status": "Order Placed",
+    "created_at": "2026-08-19T10:41:19.345Z"
   }
 ]

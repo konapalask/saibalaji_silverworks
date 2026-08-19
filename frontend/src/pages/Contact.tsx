@@ -42,7 +42,7 @@ export const Contact: React.FC = () => {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-[#C5A059] shrink-0" />
-                <p>+91 98765 43210 / +91 040 2456 7890</p>
+                <p>+91 9492664870</p>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-[#C5A059] shrink-0" />
