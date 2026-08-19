@@ -53,48 +53,48 @@ export const About: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
+    <div className="min-h-screen bg-[#F8F6F1] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16 text-[#202020]">
 
       {/* Editorial Header with Emblem */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <div className="flex justify-center mb-2">
-          <div className="p-2 bg-white border border-[#C8A96B]/60 rounded-xl shadow-lg logo-glow-container">
+          <div className="p-2 bg-white border border-[#E5E0D8] rounded-2xl shadow-xs">
             <img src="/logo.PNG" alt="Sai Balaji Silverworks Crest" className="h-14 sm:h-16 w-auto object-contain" />
           </div>
         </div>
-        <span className="text-xs uppercase tracking-[0.35em] text-[#C5A059] font-bold block">
+        <span className="text-xs uppercase tracking-[0.35em] text-[#B9A77A] font-bold block">
           HERITAGE & CRAFTSMANSHIP
         </span>
-        <h1 className="font-serif text-4xl sm:text-6xl font-light text-[#1A1918]">
+        <h1 className="font-serif text-4xl sm:text-6xl font-light text-[#202020]">
           The Journey of Sai Balaji Silverworks
         </h1>
-        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-sans">
-          Combining ancestral metallurgic mastery with modern hallmarking techniques to craft pure 925 sterling & 999 fine silver.
+        <p className="text-xs sm:text-sm text-[#666666] leading-relaxed font-sans">
+          Combining ancestral metallurgic mastery with modern NABL hallmarking techniques to craft pure 925 sterling & 999 fine silver.
         </p>
       </div>
 
       {/* Main Video Documentary Card */}
       <div
         onClick={() => openVideo(storyVid)}
-        className="relative rounded-3xl overflow-hidden bg-[#1A1918] aspect-21/9 border border-[#C5A059]/40 shadow-2xl group cursor-pointer"
+        className="relative rounded-3xl overflow-hidden bg-white aspect-21/9 border border-[#E5E0D8] product-shadow group cursor-pointer"
       >
         <img
           src={storyVid.thumbnail_url}
           alt=""
-          className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-between p-8 sm:p-12 text-white">
-          <span className="bg-[#C5A059] text-[#1A1918] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full w-fit">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex flex-col justify-between p-8 sm:p-12 text-white">
+          <span className="bg-[#B9A77A] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full w-fit">
             COMPANY DOCUMENTARY VIDEO
           </span>
 
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
             <div>
               <h3 className="font-serif text-2xl sm:text-4xl font-bold">{storyVid.title}</h3>
-              <p className="text-xs text-gray-300 max-w-xl mt-1">{storyVid.description}</p>
+              <p className="text-xs text-gray-200 max-w-xl mt-1">{storyVid.description}</p>
             </div>
 
-            <div className="w-16 h-16 rounded-full bg-[#C5A059] text-[#1A1918] flex items-center justify-center shrink-0 shadow-2xl group-hover:scale-110 transition-transform">
+            <div className="w-16 h-16 rounded-full bg-white text-[#202020] hover:bg-[#B9A77A] hover:text-white flex items-center justify-center shrink-0 shadow-2xl group-hover:scale-110 transition-transform">
               <Play className="w-6 h-6 fill-current ml-1" />
             </div>
           </div>

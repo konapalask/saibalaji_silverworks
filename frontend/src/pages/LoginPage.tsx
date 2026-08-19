@@ -85,19 +85,19 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[80vh] bg-[#FAF9F5] flex items-center justify-center py-12 px-4 text-[#1A1918]">
-      <div className="bg-white border border-[#E6E1DA] rounded-3xl p-8 max-w-md w-full shadow-xl space-y-6">
-
+    <div className="min-h-screen bg-[#F8F6F1] py-16 px-4 flex items-center justify-center text-[#202020]">
+      <div className="bg-white border border-[#E5E0D8] rounded-3xl p-8 sm:p-10 max-w-md w-full product-shadow space-y-6">
+        
         <div className="text-center space-y-2">
-          <span className="text-xs uppercase tracking-[0.3em] text-[#C5A059] font-bold">
+          <span className="text-xs uppercase tracking-[0.3em] text-[#B9A77A] font-bold">
             AUTHENTICATION
           </span>
-          <h2 className="font-serif text-3xl font-bold text-[#1A1918]">Welcome Back</h2>
-          <p className="text-xs text-gray-500">Sign in to access your retail orders & B2B quotations.</p>
+          <h2 className="font-serif text-3xl font-bold text-[#202020]">Welcome Back</h2>
+          <p className="text-xs text-[#666666]">Sign in to access your retail orders & B2B quotations.</p>
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs text-center">
+          <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs text-center font-medium">
             {error}
           </div>
         )}
@@ -107,7 +107,7 @@ export const LoginPage: React.FC = () => {
           onClick={handleGoogleSignIn}
           disabled={googleLoading}
           type="button"
-          className="w-full bg-white hover:bg-gray-50 text-[#1A1918] border border-[#E6E1DA] py-3.5 px-4 rounded-2xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-3 hover:border-[#C5A059]"
+          className="w-full bg-[#F8F6F1] hover:bg-white text-[#202020] border border-[#E5E0D8] py-3.5 px-4 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-3 hover:border-[#B9A77A]"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -131,14 +131,14 @@ export const LoginPage: React.FC = () => {
         </button>
 
         <div className="flex items-center gap-3">
-          <div className="flex-1 h-px bg-[#E6E1DA]" />
+          <div className="flex-1 h-px bg-[#E5E0D8]" />
           <span className="text-[10px] uppercase font-bold text-gray-400">or sign in with email</span>
-          <div className="flex-1 h-px bg-[#E6E1DA]" />
+          <div className="flex-1 h-px bg-[#E5E0D8]" />
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Email Address</label>
+            <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Email Address</label>
             <div className="relative">
               <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
               <input
@@ -147,13 +147,13 @@ export const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="customer@gmail.com or admin@saibalajisilverworks.com"
-                className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl pl-10 pr-4 py-3 text-xs focus:outline-none focus:border-[#C5A059]"
+                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl pl-10 pr-4 py-3 text-xs focus:outline-none focus:border-[#B9A77A]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Password</label>
+            <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Password</label>
             <div className="relative flex items-center">
               <Lock className="w-4 h-4 text-gray-400 absolute left-3" />
               <input
@@ -162,12 +162,12 @@ export const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl pl-10 pr-10 py-3 text-xs focus:outline-none focus:border-[#C5A059]"
+                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl pl-10 pr-10 py-3 text-xs focus:outline-none focus:border-[#B9A77A]"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 text-gray-400 hover:text-[#C5A059] focus:outline-none transition-colors p-1"
+                className="absolute right-3 text-gray-400 hover:text-[#B9A77A] focus:outline-none transition-colors p-1"
                 title={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -178,18 +178,20 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-[#FAF9F5] py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-md flex items-center justify-center gap-2"
+            className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-xs flex items-center justify-center gap-2"
           >
-            <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
+            <span>{loading ? 'Authenticating...' : 'Sign In to Account'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
-        <div className="text-center pt-4 border-t border-[#E6E1DA] text-xs text-gray-600">
+        <div className="pt-4 border-t border-[#E5E0D8] text-center text-xs text-[#666666]">
           <span>Don't have an account? </span>
-          <Link to={`/account/register?redirect=${encodeURIComponent(targetRedirect)}`} className="font-bold text-[#C5A059] hover:underline">Create Account</Link>
+          <Link to={`/account/register?redirect=${encodeURIComponent(targetRedirect)}`} className="text-[#B9A77A] font-bold hover:underline">
+            Register Here
+          </Link>
         </div>
-
+        
         <div className="p-3 bg-[#FAF9F5] rounded-xl text-[10px] text-gray-500 text-center space-y-1">
           <p className="font-bold text-gray-700">Demo Quick Login Credentials:</p>
           <p>Admin: admin@saibalajisilverworks.com / admin123</p>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Play, ArrowRight, ShieldCheck, Award, Sparkles, Briefcase, ChevronDown, Check } from 'lucide-react';
+import { Play, ArrowRight, ShieldCheck, Award, Sparkles, Briefcase, ChevronDown, Check, Star, Lock, Truck, RefreshCw, Layers } from 'lucide-react';
 import { Product, CompanyVideo } from '../types';
+import { ProductCard } from '../components/ProductCard';
 import { VideoPlayerModal } from '../components/VideoPlayerModal';
 import { QuickViewModal } from '../components/QuickViewModal';
 import { CustomCursor } from '../components/CustomCursor';
@@ -17,19 +18,23 @@ export const Home: React.FC = () => {
   const [activeVideo, setActiveVideo] = useState<CompanyVideo | null>(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
   // Fetch Featured Products & Videos from API
   useEffect(() => {
     const fetchData = async () => {
+      setLoadingProducts(true);
       try {
         const [prodRes, vidRes] = await Promise.all([
           api.get('/products?is_featured=true'),
           api.get('/videos')
         ]);
-        setFeaturedProducts(prodRes.data || []);
-        setVideos(vidRes.data || []);
+        setFeaturedProducts(Array.isArray(prodRes.data) && prodRes.data.length > 0 ? prodRes.data : []);
+        setVideos(Array.isArray(vidRes.data) ? vidRes.data : []);
       } catch (err) {
         console.error("Error fetching homepage data:", err);
+      } finally {
+        setLoadingProducts(false);
       }
     };
     fetchData();
@@ -40,7 +45,7 @@ export const Home: React.FC = () => {
     setIsVideoModalOpen(true);
   };
 
-  // Heritage Timeline Data (100% Authentic Sai Balaji Silver Product Images)
+  // Heritage Timeline Data
   const timelineEvents = [
     {
       era: "1990s / FOUNDATION",
@@ -88,7 +93,7 @@ export const Home: React.FC = () => {
     title: "The Heritage of Sai Balaji Silverworks",
     description: "Discover 25+ years of South Indian silver craftsmanship, from raw 99.9% silver bullion to hallmarked masterpieces.",
     video_url: "https://assets.mixkit.co/videos/preview/mixkit-silversmith-crafting-metal-work-41584-large.mp4",
-    thumbnail_url: "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp",
+    thumbnail_url: "/hero_balaji_4k.png",
     section: "hero",
     sort_order: 1,
     is_active: true,
@@ -96,221 +101,162 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#080808] text-[#EEEEEA] font-sans selection:bg-[#C8C8C4] selection:text-[#080808]">
+    <div className="bg-[#F8F6F1] text-[#202020] font-sans selection:bg-[#B9A77A] selection:text-white">
       <CustomCursor />
 
-      {/* 01. HERO SECTION — AUTHENTIC PURE SILVER HOUSE (AUTHENTIC SAI BALAJI LORD BALAJI SILVER IDOL) */}
-      <section className="relative w-full h-[92vh] sm:h-screen max-w-full overflow-hidden flex items-center bg-[#080808]">
+      {/* 01. HERO SECTION — LIGHT LUXURY WARM IVORY SHOWROOM */}
+      <section className="relative w-full min-h-[90vh] lg:min-h-[92vh] flex items-center bg-[#F8F6F1] overflow-hidden py-12 lg:py-0 border-b border-[#E5E0D8]">
 
-        {/* Full-Bleed Background Container with Right-Side Pure Silver Studio Photography & Left Gradient Fade */}
-        <div className="absolute inset-0 z-0 flex justify-end">
-          <div className="w-full lg:w-[65%] h-full relative">
-            <img
-              src="/hero_balaji_4k.png"
-              alt="Authentic Sai Balaji 4K Pure Silver Deity Idol"
-              className="w-full h-full object-cover object-center opacity-95 scale-100 img-editorial"
-            />
-            {/* Seamless Left-to-Right Obsidian Gradient Mask */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#080808] via-[#080808]/65 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-transparent opacity-80" />
-          </div>
-        </div>
+        {/* Subtle Indian Heritage Pattern Background */}
+        <div className="absolute inset-0 bg-heritage-pattern pointer-events-none" />
 
-        {/* Left Content Container — Single Alignment Axis (580px Width) */}
-        <div className="relative z-10 w-full max-w-[1450px] mx-auto px-6 sm:px-12 lg:px-20">
-          <div className="max-w-[580px] space-y-7">
+        {/* Soft Decorative Ambient Highlights */}
+        <div className="absolute top-10 right-10 w-96 h-96 bg-[#B9A77A]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-[#C8C8C4]/20 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Eyebrow */}
-            <span className="text-[10px] font-sans font-bold uppercase tracking-[0.35em] text-[#898985] block">
-              EST. 1998 • TENALI, INDIA
-            </span>
+        <div className="relative z-10 max-w-[1450px] mx-auto w-full px-6 sm:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
 
-            {/* Brand Title */}
-            <div className="space-y-1">
-              <span className="font-serif text-3xl sm:text-5xl font-light text-[#EEEEEA] tracking-wider block">
-                SAI BALAJI
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.4em] text-[#C8C8C4] font-semibold font-sans block">
-                SILVERWORKS
+          {/* Left Column — Clean Luxury Typography & CTAs */}
+          <div className="lg:col-span-7 space-y-7 text-center lg:text-left">
+
+            {/* Brand Eyebrow Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E5E0D8] shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-[#B9A77A] animate-pulse" />
+              <span className="text-[10.5px] font-sans font-bold uppercase tracking-[0.25em] text-[#666666]">
+                EST. 1998 • TENALI, INDIA
               </span>
             </div>
 
-            {/* Single Emotional Headline */}
-            <h1 className="font-serif text-5xl sm:text-7xl font-light text-[#EEEEEA] leading-[1.05] tracking-tight">
-              CRAFTED <br />
-              IN PURE <br />
-              <span className="text-silver-metallic font-normal italic">SILVER.</span>
-            </h1>
+            {/* Brand Title Lockup */}
+            <div className="space-y-1">
+              <span className="text-xs uppercase tracking-[0.4em] text-[#B9A77A] font-bold font-sans block">
+                SAI BALAJI SILVER
+              </span>
+              <h1 className="font-serif text-5xl sm:text-7xl lg:text-8xl font-light text-[#202020] leading-[1.02] tracking-tight">
+                CRAFTED IN <br />
+                <span className="text-silver-shimmer font-normal italic">PURE SILVER.</span>
+              </h1>
+            </div>
 
-            {/* Refined Short Copy */}
-            <p className="text-sm sm:text-base text-[#898985] font-light leading-relaxed">
-              Three decades of craftsmanship, precision and pure silver — shaped in Tenali, India.
+            {/* Short Supporting Copy */}
+            <p className="text-sm sm:text-base text-[#555555] font-light leading-relaxed max-w-xl mx-auto lg:mx-0">
+              Three decades of South Indian craftsmanship, metallurgical precision and 100% NABL-certified silver — shaped in Tenali.
             </p>
 
-            {/* Quiet Editorial Certifications Line (No Pills, No Cards) */}
-            <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.25em] text-[#C8C8C4] font-medium pt-1">
-              <span>NABL CERTIFIED</span>
-              <span className="text-[#333333]">•</span>
-              <span>25+ YEARS LEGACY</span>
-              <span className="text-[#333333]">•</span>
-              <span>TENALI ATELIER</span>
+            {/* Certification Trust Line */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-[11px] uppercase tracking-[0.2em] text-[#666666] font-semibold pt-1">
+              <span className="flex items-center gap-1.5">
+                <Check className="w-3.5 h-3.5 text-[#B9A77A]" /> 999 Fine Silver
+              </span>
+              <span className="text-[#D0C9BE]">•</span>
+              <span className="flex items-center gap-1.5">
+                <Check className="w-3.5 h-3.5 text-[#B9A77A]" /> 925 Sterling
+              </span>
+              <span className="text-[#D0C9BE]">•</span>
+              <span className="flex items-center gap-1.5">
+                <Check className="w-3.5 h-3.5 text-[#B9A77A]" /> NABL Hallmarked
+              </span>
             </div>
 
-            {/* Single Elegant Luxury CTA */}
-            <div className="pt-2">
+            {/* Action Buttons (Primary + Secondary CTAs) */}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3">
               <Link
                 to="/shop/retail"
-                className="inline-flex items-center gap-3 py-2.5 group text-[11px] uppercase font-bold tracking-[0.25em] text-[#EEEEEA] relative"
+                className="w-full sm:w-auto px-8 py-4 bg-[#202020] hover:bg-[#B9A77A] text-white text-[11px] font-bold uppercase tracking-[0.22em] transition-all duration-300 rounded-xl shadow-md flex items-center justify-center gap-2 group"
               >
-                <span>EXPLORE COLLECTIONS</span>
-                <ArrowRight className="w-4 h-4 text-[#C8C8C4] group-hover:translate-x-2 transition-transform duration-300" />
-                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#C8C8C4] group-hover:w-full transition-all duration-300" />
+                <span>EXPLORE COLLECTION</span>
+                <ArrowRight className="w-4 h-4 text-[#B9A77A] group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </Link>
+
+              <Link
+                to="/category/silver-pooja-articles"
+                className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-[#F1EFEB] text-[#202020] border border-[#E5E0D8] text-[11px] font-bold uppercase tracking-[0.22em] transition-all duration-300 rounded-xl shadow-2xs flex items-center justify-center"
+              >
+                <span>SHOP SILVER</span>
               </Link>
             </div>
 
           </div>
-        </div>
 
-        {/* Minimal Scroll Indicator */}
-        <div className="absolute bottom-6 left-6 sm:left-12 flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-[#898985] z-20">
-          <span>SCROLL</span>
-          <div className="w-8 h-[1px] bg-[#222222]" />
-          <ChevronDown className="w-3.5 h-3.5 text-[#C8C8C4] animate-bounce" />
+          {/* Right Column — Prominent Hero Silver Product Showcase */}
+          <div className="lg:col-span-5 relative flex justify-center items-center">
+            <div className="relative w-full max-w-[480px] aspect-4/5 rounded-3xl bg-gradient-to-b from-white to-[#F1EFEB] border border-[#E5E0D8] p-6 product-shadow flex items-center justify-center">
+
+              {/* Decorative Subtle Frame Overlay */}
+              <div className="absolute inset-3 border border-[#B9A77A]/25 rounded-2xl pointer-events-none" />
+
+              {/* Featured Silver Deity Hero Photography with Soft Studio Drop Shadow */}
+              <img
+                src="/hero_balaji_4k.png"
+                alt="Sai Balaji Pure Silver Lord Balaji Idol"
+                className="w-full h-full object-contain drop-shadow-2xl img-editorial"
+              />
+
+              {/* Floating Quality Seal Badge */}
+              <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-full border border-[#E5E0D8] shadow-md flex items-center gap-2.5 text-xs text-[#202020] font-medium whitespace-nowrap">
+                <Sparkles className="w-4 h-4 text-[#B9A77A]" />
+                <span className="font-serif italic font-semibold text-sm">999 Fine Silver Deity Idol</span>
+              </div>
+            </div>
+          </div>
+
         </div>
 
       </section>
 
-      {/* 02. EDITORIAL INTRODUCTION SECTION (THE HOUSE OF SILVER) */}
-      <section id="about-intro" className="bg-[#F5F5F2] text-[#080808] py-28 sm:py-36 px-6 lg:px-12">
-        <div className="max-w-5xl mx-auto text-center space-y-8">
-          <span className="text-[10px] font-sans font-extrabold uppercase tracking-[0.4em] text-[#777777] block">
-            THE HOUSE OF SILVER
+      {/* 02. BRAND STORY SECTION (WARM IVORY EDITORIAL) */}
+      <section className="bg-white py-24 sm:py-32 px-6 lg:px-12 border-b border-[#E5E0D8]">
+        <div className="max-w-5xl mx-auto text-center space-y-7">
+          <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
+            THE HOUSE OF SAI BALAJI
           </span>
-          <h2 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-light leading-tight text-[#080808]">
+          <h2 className="font-serif text-4xl sm:text-6xl font-light text-[#202020] leading-tight">
             Mastering the art of silver <br className="hidden sm:inline" />
             through generations of purity.
           </h2>
-          <p className="max-w-3xl mx-auto text-sm sm:text-base text-[#444444] font-light leading-relaxed">
+          <p className="max-w-3xl mx-auto text-sm sm:text-base text-[#555555] font-light leading-relaxed">
             From Tenali to patrons across India, Sai Balaji Silverworks brings together generations of craftsmanship, purity and precision. Operating from our specialized manufacturing atelier, we bridge classical deity sculpting with NABL-certificated 999 fine & 925 sterling silver formulations.
           </p>
+
+          <div className="pt-6 flex justify-center">
+            <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#B9A77A] to-transparent" />
+          </div>
         </div>
       </section>
 
-      {/* 03. HERITAGE TIMELINE (A LEGACY SHAPED IN SILVER) */}
-      <section className="py-36 px-6 lg:px-12 max-w-7xl mx-auto space-y-20">
-        <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <span className="text-[10px] font-sans font-extrabold uppercase tracking-[0.4em] text-[#C8C8C4] block">
-            HERITAGE & EVOLUTION
+      {/* 03. SILVER PURITY SECTION (ELEGANT LIGHT SPECIFICATION CARDS) */}
+      <section className="py-24 px-6 lg:px-12 max-w-7xl mx-auto">
+        <div className="text-center space-y-3 mb-16">
+          <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
+            GUARANTEED METALLURGICAL EXCELLENCE
           </span>
-          <h2 className="font-serif text-4xl sm:text-6xl font-light text-white">
-            A Legacy Shaped in Silver
+          <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
+            Silver Purity & Certification
           </h2>
         </div>
 
-        <div className="space-y-24">
-          {timelineEvents.map((item, idx) => (
-            <div
-              key={idx}
-              className={`grid grid-cols-1 lg:grid-cols-12 gap-12 items-center ${idx % 2 === 1 ? 'lg:flex-row-reverse' : ''
-                }`}
-            >
-              <div className={`lg:col-span-6 space-y-4 ${idx % 2 === 1 ? 'lg:order-2' : ''}`}>
-                <span className="text-[10px] font-sans font-bold uppercase tracking-[0.3em] text-[#C8C8C4]">
-                  {item.era} • {item.year}
-                </span>
-                <h3 className="font-serif text-3xl sm:text-4xl text-white font-normal">{item.title}</h3>
-                <p className="text-sm text-[#898985] font-light leading-relaxed max-w-lg">
-                  {item.description}
-                </p>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-              <div className={`lg:col-span-6 relative aspect-16/10 overflow-hidden border border-[#222222] ${idx % 2 === 1 ? 'lg:order-1' : ''}`}>
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover img-editorial"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 04. CRAFTSMANSHIP SECTION (THE HAND BEHIND THE SILVER) */}
-      <section id="craftsmanship" className="py-32 bg-[#111111] border-y border-[#222222] px-6 lg:px-12">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-
-          <div className="lg:col-span-6 relative aspect-4/5 overflow-hidden border border-[#222222]">
-            <img
-              src="/silver_artisan_4k.png"
-              alt="Artisan Silver Craftsmanship"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-transparent opacity-80" />
-            <div className="absolute bottom-8 left-8 right-8 text-white space-y-2">
-              <span className="text-[10px] font-sans font-bold uppercase tracking-[0.3em] text-[#C8C8C4]">THE ATELIER HAND</span>
-              <p className="font-serif text-xl text-[#EEEEEA]">Precision Hand-Engraving & Nakshi Relief Work in Progress</p>
-            </div>
-          </div>
-
-          <div id="manufacturing" className="lg:col-span-6 space-y-8">
-            <span className="text-[10px] font-sans font-extrabold uppercase tracking-[0.4em] text-[#C8C8C4] block">
-              THE HAND BEHIND THE SILVER
-            </span>
-            <h2 className="font-serif text-4xl sm:text-6xl font-light text-white leading-tight">
-              Where heritage hands meet modern induction casting.
-            </h2>
-            <p className="text-sm text-[#898985] font-light leading-relaxed">
-              Every creation bearing the Sai Balaji Silverworks hallmark undergoes multi-stage metallurgical casting. High-frequency vacuum furnaces eliminate air pockets to yield solid, dense silver items finished with anti-tarnish protective barriers.
-            </p>
-
-            {/* Architectural Specifications Grid */}
-            <div className="grid grid-cols-2 gap-8 pt-4 border-t border-[#222222]">
-              <div>
-                <span className="text-2xl font-serif text-[#C8C8C4]">99.9%</span>
-                <h4 className="font-sans text-[10px] uppercase tracking-widest font-bold text-white mt-1">Spectrometry Verified</h4>
-                <p className="text-xs text-[#898985] font-light">NABL assay lab purity testing.</p>
-              </div>
-
-              <div>
-                <span className="text-2xl font-serif text-[#C8C8C4]">01/01</span>
-                <h4 className="font-sans text-[10px] uppercase tracking-widest font-bold text-white mt-1">Tenali Direct Atelier</h4>
-                <p className="text-xs text-[#898985] font-light">Zero middleman markup.</p>
-              </div>
-            </div>
-
-            <Link to="/about" className="px-7 py-3.5 border border-[#333333] hover:border-[#C8C8C4] text-[#C8C8C4] text-[10px] font-semibold uppercase tracking-[0.25em] transition-all inline-flex">
-              <span>EXPLORE MANUFACTURING PROCESS</span>
-            </Link>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 05. SILVER PURITY SECTION (LARGE EDITORIAL SPECIFICATION NUMBERS) */}
-      <section className="py-28 px-6 lg:px-12 max-w-7xl mx-auto border-b border-[#222222]">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-
-          <div className="space-y-4 p-8 border border-[#222222] bg-[#111111]">
-            <span className="font-serif text-6xl sm:text-7xl font-light text-[#EEEEEA] block">999</span>
-            <h3 className="font-sans text-xs uppercase tracking-[0.3em] font-bold text-[#C8C8C4]">FINE SILVER</h3>
-            <p className="text-xs text-[#898985] font-light leading-relaxed max-w-xs mx-auto">
-              Pure 99.9% fine silver for temple idols, sacred pooja articles, and investment bullion.
+          <div className="bg-white p-8 rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] transition-all product-shadow space-y-4 text-center">
+            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">999</span>
+            <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">FINE SILVER</h3>
+            <p className="text-xs text-[#666666] font-light leading-relaxed max-w-xs mx-auto">
+              Pure 99.9% fine silver for temple idols, sacred pooja articles, thalis, and investment bullion.
             </p>
           </div>
 
-          <div className="space-y-4 p-8 border border-[#222222] bg-[#111111]">
-            <span className="font-serif text-6xl sm:text-7xl font-light text-[#EEEEEA] block">925</span>
-            <h3 className="font-sans text-xs uppercase tracking-[0.3em] font-bold text-[#C8C8C4]">STERLING SILVER</h3>
-            <p className="text-xs text-[#898985] font-light leading-relaxed max-w-xs mx-auto">
+          <div className="bg-white p-8 rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] transition-all product-shadow space-y-4 text-center">
+            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">925</span>
+            <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">STERLING SILVER</h3>
+            <p className="text-xs text-[#666666] font-light leading-relaxed max-w-xs mx-auto">
               Precision 92.5% sterling silver for durable dining tableware, baby gifts, and fine ornaments.
             </p>
           </div>
 
-          <div className="space-y-4 p-8 border border-[#222222] bg-[#111111]">
-            <span className="font-serif text-6xl sm:text-7xl font-light text-[#EEEEEA] block">25+</span>
-            <h3 className="font-sans text-xs uppercase tracking-[0.3em] font-bold text-[#C8C8C4]">YEARS OF LEGACY</h3>
-            <p className="text-xs text-[#898985] font-light leading-relaxed max-w-xs mx-auto">
+          <div className="bg-white p-8 rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] transition-all product-shadow space-y-4 text-center">
+            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">25+</span>
+            <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">YEARS OF LEGACY</h3>
+            <p className="text-xs text-[#666666] font-light leading-relaxed max-w-xs mx-auto">
               Established South Indian silver manufacturing atelier based in Tenali, Andhra Pradesh.
             </p>
           </div>
@@ -318,209 +264,303 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 06. MANUFACTURING WORKFLOW SECTION (FROM CRAFT TO CREATION) */}
-      <section className="py-32 px-6 lg:px-12 max-w-7xl mx-auto space-y-16">
-        <div className="text-center space-y-4">
-          <span className="text-[10px] font-sans font-extrabold uppercase tracking-[0.4em] text-[#C8C8C4] block">
-            THE ATELIER PROCESS
-          </span>
-          <h2 className="font-serif text-4xl sm:text-6xl font-light text-white">
-            From Craft to Creation
-          </h2>
+      {/* 04. PRODUCT COLLECTIONS GRID (E-COMMERCE HERO GRID) */}
+      <section className="py-24 px-6 lg:px-12 max-w-7xl mx-auto space-y-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#E5E0D8] pb-8">
+          <div className="space-y-2">
+            <span className="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#B9A77A] block">
+              EXPLORE BY CATEGORY
+            </span>
+            <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
+              Silver Collections
+            </h2>
+          </div>
+          <Link
+            to="/shop/retail"
+            className="text-xs font-bold uppercase tracking-[0.2em] text-[#202020] hover:text-[#B9A77A] flex items-center gap-2 transition-colors"
+          >
+            <span>VIEW ALL 10 CATEGORIES</span>
+            <ArrowRight className="w-4 h-4 text-[#B9A77A]" />
+          </Link>
         </div>
 
+        {/* Collections Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {manufacturingSteps.map((step, idx) => (
-            <div key={idx} className="p-8 border border-[#222222] bg-[#111111] space-y-3 relative group hover:border-[#C8C8C4]/60 transition-all">
-              <span className="text-2xl font-serif text-[#C8C8C4] font-light block">{step.num}</span>
-              <h3 className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-white">{step.name}</h3>
-              <p className="text-xs text-[#898985] font-light leading-relaxed">{step.desc}</p>
-            </div>
+          {MAIN_CATEGORIES.slice(0, 6).map((cat) => (
+            <Link
+              key={cat.id}
+              to={`/category/${cat.slug}`}
+              className="group bg-white rounded-2xl border border-[#E5E0D8] overflow-hidden product-card-hover flex flex-col justify-between"
+            >
+              <div className="relative aspect-4/3 w-full bg-[#FAF8F5] overflow-hidden p-3 border-b border-[#F0ECE6]">
+                <img
+                  src={cat.cardImage}
+                  alt={cat.name}
+                  className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+
+              <div className="p-6 space-y-3">
+                <span className="text-[10px] uppercase font-bold tracking-widest text-[#B9A77A]">
+                  {cat.subcategories.length} Subcategories
+                </span>
+                <h3 className="font-serif text-2xl text-[#202020] group-hover:text-[#B9A77A] transition-colors font-normal">
+                  {cat.name}
+                </h3>
+                <p className="text-xs text-[#666666] font-light line-clamp-2 leading-relaxed">
+                  {cat.shortDescription}
+                </p>
+                <div className="pt-2 flex items-center text-xs font-bold uppercase tracking-wider text-[#202020] group-hover:text-[#B9A77A]">
+                  <span>EXPLORE COLLECTION →</span>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </section>
 
-      {/* 07. WHOLESALE B2B SECTION (BUILT FOR WHOLESALE) */}
-      <section className="py-32 bg-[#111111] border-y border-[#222222] px-6 lg:px-12">
-        <div className="max-w-6xl mx-auto text-center space-y-8">
-          <span className="text-[10px] font-sans font-extrabold uppercase tracking-[0.4em] text-[#C8C8C4] block">
-            BUILT FOR WHOLESALE
+      {/* 05. FEATURED SILVER COLLECTION (E-COMMERCE PRODUCTS GRID) */}
+      <section className="py-24 bg-white border-y border-[#E5E0D8] px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto space-y-12">
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-2">
+              <span className="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#B9A77A] block">
+                CURATED SELECTIONS
+              </span>
+              <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
+                Featured Silver Collection
+              </h2>
+            </div>
+            <Link
+              to="/shop/retail"
+              className="px-6 py-3 bg-[#F8F6F1] hover:bg-[#202020] text-[#202020] hover:text-white border border-[#E5E0D8] text-[11px] font-bold uppercase tracking-[0.2em] rounded-xl transition-all"
+            >
+              VIEW ALL PRODUCTS
+            </Link>
+          </div>
+
+          {/* Product Cards Grid */}
+          {loadingProducts ? (
+            <div className="py-16 text-center text-[#B9A77A] font-serif text-lg animate-pulse">
+              Loading featured silver products...
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProducts.slice(0, 8).map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onQuickView={(p) => setQuickViewProduct(p)}
+                />
+              ))}
+            </div>
+          )}
+
+        </div>
+      </section>
+
+      {/* 06. HERITAGE / CRAFTSMANSHIP SECTION (ALTERNATING LIGHT EDITORIAL) */}
+      <section id="craftsmanship" className="py-28 px-6 lg:px-12 max-w-7xl mx-auto space-y-20">
+        
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-6 relative aspect-4/5 rounded-3xl overflow-hidden border border-[#E5E0D8] product-shadow">
+            <img
+              src="/silver_artisan_4k.png"
+              alt="Artisan Silver Craftsmanship"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6 text-white space-y-1">
+              <span className="text-[10px] font-sans font-bold uppercase tracking-[0.3em] text-[#B9A77A]">TENALI ATELIER HAND</span>
+              <p className="font-serif text-lg text-white">Hand-Sculpted Nakshi Engraving & Relief Work</p>
+            </div>
+          </div>
+
+          <div id="manufacturing" className="lg:col-span-6 space-y-6">
+            <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
+              THE ART OF SILVER
+            </span>
+            <h2 className="font-serif text-4xl sm:text-5xl font-light text-[#202020] leading-tight">
+              Where heritage hands meet modern induction casting.
+            </h2>
+            <p className="text-sm text-[#555555] font-light leading-relaxed">
+              Every creation bearing the Sai Balaji Silverworks hallmark undergoes multi-stage metallurgical casting. High-frequency vacuum furnaces eliminate air pockets to yield solid, dense silver items finished with micro anti-tarnish protective barriers.
+            </p>
+
+            <div className="grid grid-cols-2 gap-6 pt-4 border-t border-[#E5E0D8]">
+              <div>
+                <span className="text-3xl font-serif text-[#202020]">99.9%</span>
+                <h4 className="font-sans text-[10px] uppercase tracking-widest font-bold text-[#B9A77A] mt-1">Spectrometry Verified</h4>
+                <p className="text-xs text-[#666666] font-light">NABL assay lab purity testing.</p>
+              </div>
+
+              <div>
+                <span className="text-3xl font-serif text-[#202020]">01/01</span>
+                <h4 className="font-sans text-[10px] uppercase tracking-widest font-bold text-[#B9A77A] mt-1">Tenali Direct Atelier</h4>
+                <p className="text-xs text-[#666666] font-light">Zero middleman markup.</p>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <Link to="/about" className="px-6 py-3.5 border border-[#202020] hover:bg-[#202020] hover:text-white text-[#202020] text-[10.5px] font-bold uppercase tracking-[0.2em] rounded-xl transition-all inline-flex">
+                <span>EXPLORE OUR ATELIER PROCESS</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Manufacturing Workflow 6 Steps Grid */}
+        <div className="pt-12 border-t border-[#E5E0D8] space-y-10">
+          <div className="text-center space-y-2">
+            <span className="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#B9A77A] block">
+              PRECISION MANUFACTURING
+            </span>
+            <h3 className="font-serif text-3xl font-light text-[#202020]">
+              From Craft to Creation
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {manufacturingSteps.map((step, idx) => (
+              <div key={idx} className="p-6 bg-white rounded-2xl border border-[#E5E0D8] space-y-2 product-shadow hover:border-[#B9A77A] transition-all">
+                <span className="text-xl font-serif text-[#B9A77A] font-bold block">{step.num}</span>
+                <h4 className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-[#202020]">{step.name}</h4>
+                <p className="text-xs text-[#666666] font-light leading-relaxed">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </section>
+
+      {/* 07. B2B / WHOLESALE SECTION (LIGHT CHAMPAGNE PORTAL CARD) */}
+      <section className="py-24 bg-[#F3EFE6] border-y border-[#E5E0D8] px-6 lg:px-12">
+        <div className="max-w-5xl mx-auto text-center space-y-6">
+          <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
+            INDIVIDUAL • CUSTOM • WHOLESALE
           </span>
-          <h2 className="font-serif text-4xl sm:text-7xl font-light text-white">
-            From individual bespoke pieces to <br />
+          <h2 className="font-serif text-4xl sm:text-6xl font-light text-[#202020]">
+            From individual bespoke pieces to <br className="hidden sm:inline" />
             large-scale B2B wholesale requirements.
           </h2>
-          <p className="max-w-2xl mx-auto text-sm text-[#898985] font-light leading-relaxed">
-            Supplying leading jewellery showrooms, temples, and corporate institutions with customized silver minting, 999 bullion bars, and bulk retail stock with instant PDF quotation support.
+          <p className="max-w-2xl mx-auto text-sm text-[#555555] font-light leading-relaxed">
+            Supplying leading South Indian jewellery showrooms, temples, and corporate institutions with customized silver minting, 999 bullion bars, and bulk retail stock with ReportLab PDF quotation support.
           </p>
-          <div>
-            <Link to="/shop/wholesale" className="px-8 py-4 bg-[#EEEEEA] hover:bg-[#C8C8C4] text-[#080808] text-[11px] font-bold uppercase tracking-[0.25em] transition-all inline-flex items-center gap-2 shadow-xl">
-              <span>EXPLORE WHOLESALE →</span>
-              <Briefcase className="w-4 h-4" />
+          <div className="pt-2">
+            <Link
+              to="/shop/wholesale"
+              className="px-9 py-4 bg-[#202020] hover:bg-[#B9A77A] text-white text-[11px] font-bold uppercase tracking-[0.22em] transition-all inline-flex items-center gap-2 rounded-xl shadow-md"
+            >
+              <span>ENQUIRE FOR WHOLESALE</span>
+              <Briefcase className="w-4 h-4 text-[#B9A77A]" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 08. CURATED EDITORIAL COLLECTIONS GALLERY */}
-      <section className="py-32 px-6 lg:px-12 max-w-7xl mx-auto space-y-16">
-        <div className="text-center space-y-4">
-          <span className="text-[10px] font-sans font-extrabold uppercase tracking-[0.4em] text-[#C8C8C4] block">
-            CURATED SELECTIONS
+      {/* 08. VIDEO ATELIER SECTION (DOCUMENTARY PREVIEW) */}
+      <section className="py-24 px-6 lg:px-12 max-w-7xl mx-auto space-y-8 text-center">
+        <div className="max-w-3xl mx-auto space-y-3">
+          <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
+            ATELIER FILMS
           </span>
-          <h2 className="font-serif text-4xl sm:text-6xl font-light text-white">
-            The Collections
-          </h2>
-        </div>
-
-        {/* 2-Tier Balanced 4K Luxury Editorial Layout (Zero Blank Space) */}
-        <div className="space-y-8">
-
-          {/* Top Tier: 2 Featured 4K Collections (50% / 50%) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {MAIN_CATEGORIES.slice(0, 2).map((cat, idx) => (
-              <Link
-                key={cat.id}
-                to={`/category/${cat.slug}`}
-                className="group relative overflow-hidden bg-[#111111] border border-[#222222] block aspect-16/10 rounded-sm"
-                data-cursor="VIEW COLLECTION"
-              >
-                <img
-                  src={cat.cardImage}
-                  alt={cat.name}
-                  className="w-full h-full object-cover img-editorial opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/40 to-transparent p-8 sm:p-10 flex flex-col justify-end">
-                  <span className="text-[9px] uppercase tracking-[0.35em] text-[#C8C8C4] font-bold block mb-1">
-                    0{idx + 1} / FEATURED COLLECTION
-                  </span>
-                  <h3 className="font-serif text-3xl sm:text-4xl text-white group-hover:text-[#C8C8C4] transition-colors">
-                    {cat.name}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-[#898985] font-light line-clamp-2 mt-2 opacity-90 leading-relaxed">
-                    {cat.description}
-                  </p>
-                  <div className="w-0 group-hover:w-full h-[1px] bg-[#C8C8C4] transition-all duration-500 mt-5" />
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          {/* Bottom Tier: 3 Portrait 4K Collections (33.3% / 33.3% / 33.3%) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {MAIN_CATEGORIES.slice(2, 5).map((cat, idx) => (
-              <Link
-                key={cat.id}
-                to={`/category/${cat.slug}`}
-                className="group relative overflow-hidden bg-[#111111] border border-[#222222] block aspect-4/5 rounded-sm"
-                data-cursor="VIEW COLLECTION"
-              >
-                <img
-                  src={cat.cardImage}
-                  alt={cat.name}
-                  className="w-full h-full object-cover img-editorial opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/40 to-transparent p-8 flex flex-col justify-end">
-                  <span className="text-[9px] uppercase tracking-[0.35em] text-[#C8C8C4] font-bold block mb-1">
-                    0{idx + 3} / COLLECTION
-                  </span>
-                  <h3 className="font-serif text-2xl sm:text-3xl text-white group-hover:text-[#C8C8C4] transition-colors">
-                    {cat.name}
-                  </h3>
-                  <p className="text-xs text-[#898985] font-light line-clamp-2 mt-2 opacity-90 leading-relaxed">
-                    {cat.description}
-                  </p>
-                  <div className="w-0 group-hover:w-full h-[1px] bg-[#C8C8C4] transition-all duration-500 mt-4" />
-                </div>
-              </Link>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* 09. VIDEO STORY SECTION (THE STORY BEHIND THE SILVER) */}
-      <section className="relative h-[75vh] w-full overflow-hidden flex items-center justify-center my-20">
-        <img
-          src={storyVid.thumbnail_url}
-          alt="Story Video"
-          className="w-full h-full object-cover opacity-50"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-[#080808]" />
-
-        <div className="relative z-10 text-center space-y-6 max-w-3xl px-6">
-          <span className="text-[10px] font-sans font-extrabold uppercase tracking-[0.4em] text-[#C8C8C4] block">
-            THE STORY BEHIND THE SILVER
-          </span>
-          <h2 className="font-serif text-4xl sm:text-6xl text-white font-light">
+          <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
             Watch Our Atelier Documentary
           </h2>
-          <button
-            onClick={() => openVideo(storyVid)}
-            className="w-20 h-20 rounded-full border border-[#C8C8C4] bg-[#080808]/80 text-[#C8C8C4] hover:bg-[#C8C8C4] hover:text-[#080808] flex items-center justify-center mx-auto transition-all duration-400 backdrop-blur-md group"
-            data-cursor="PLAY FILM"
-          >
-            <Play className="w-7 h-7 fill-current ml-1" />
-          </button>
+        </div>
+
+        <div className="relative h-[60vh] max-w-5xl mx-auto rounded-3xl overflow-hidden border border-[#E5E0D8] product-shadow flex items-center justify-center">
+          <img
+            src={storyVid.thumbnail_url}
+            alt="Story Video"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/30" />
+
+          <div className="relative z-10 space-y-4">
+            <button
+              onClick={() => openVideo(storyVid)}
+              className="w-20 h-20 rounded-full bg-white/95 text-[#202020] hover:bg-[#B9A77A] hover:text-white flex items-center justify-center mx-auto transition-all duration-300 shadow-2xl group"
+              title="Play Atelier Video"
+            >
+              <Play className="w-7 h-7 fill-current ml-1" />
+            </button>
+            <p className="text-xs uppercase tracking-[0.2em] font-bold text-white shadow-xs">
+              CLICK TO WATCH FILM
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* 10. WHY SAI BALAJI (TRUST & EXPERTISE STRIP) */}
-      <section className="py-28 px-6 lg:px-12 max-w-7xl mx-auto space-y-16">
-        <div className="text-center space-y-4">
-          <span className="text-[10px] font-sans font-extrabold uppercase tracking-[0.4em] text-[#C8C8C4] block">
-            UNCOMPROMISING STANDARDS
-          </span>
-          <h2 className="font-serif text-4xl sm:text-5xl font-light text-white">
-            Why Sai Balaji Silverworks
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-          <div className="p-8 border border-[#222222] bg-[#111111] space-y-3">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#C8C8C4] block">01 / PURITY</span>
-            <h3 className="font-serif text-2xl text-white">Spectrometer Assayed</h3>
-            <p className="text-xs text-[#898985] font-light leading-relaxed">Guaranteed 99.9% fine silver and 92.5% sterling formulations stamped with laser hallmarks.</p>
+      {/* 09. WHY SAI BALAJI & E-COMMERCE TRUST SIGNALS */}
+      <section className="py-24 bg-white border-t border-[#E5E0D8] px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="text-center space-y-3">
+            <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
+              UNCOMPROMISING STANDARDS
+            </span>
+            <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
+              Why Sai Balaji Silverworks
+            </h2>
           </div>
 
-          <div className="p-8 border border-[#222222] bg-[#111111] space-y-3">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#C8C8C4] block">02 / FINISH</span>
-            <h3 className="font-serif text-2xl text-white">Anti-Tarnish Nano Layer</h3>
-            <p className="text-xs text-[#898985] font-light leading-relaxed">Micro-coatings preserve brilliant luster for years without premature oxidation.</p>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">
+              <Award className="w-8 h-8 text-[#B9A77A] mx-auto" />
+              <h3 className="font-serif text-xl text-[#202020]">100% Authentic Silver</h3>
+              <p className="text-xs text-[#666666] font-light leading-relaxed">NABL spectrometry assayed 999 fine silver and 925 sterling formulations.</p>
+            </div>
 
-          <div className="p-8 border border-[#222222] bg-[#111111] space-y-3">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#C8C8C4] block">03 / VALUE</span>
-            <h3 className="font-serif text-2xl text-white">Direct Atelier Pricing</h3>
-            <p className="text-xs text-[#898985] font-light leading-relaxed">No intermediary markups. Transparent per-gram silver rates directly from our manufacturing unit.</p>
-          </div>
+            <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">
+              <ShieldCheck className="w-8 h-8 text-[#B9A77A] mx-auto" />
+              <h3 className="font-serif text-xl text-[#202020]">Master Craftsmanship</h3>
+              <p className="text-xs text-[#666666] font-light leading-relaxed">Ancestral South Indian temple idol sculpting & Nakshi relief carving.</p>
+            </div>
 
+            <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">
+              <Sparkles className="w-8 h-8 text-[#B9A77A] mx-auto" />
+              <h3 className="font-serif text-xl text-[#202020]">Anti-Tarnish Coating</h3>
+              <p className="text-xs text-[#666666] font-light leading-relaxed">Nano protective barrier preserves mirror-bright specular shine for years.</p>
+            </div>
+
+            <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">
+              <Truck className="w-8 h-8 text-[#B9A77A] mx-auto" />
+              <h3 className="font-serif text-xl text-[#202020]">Insured Safe Shipping</h3>
+              <p className="text-xs text-[#666666] font-light leading-relaxed">Tamper-evident luxury packaging and insured dispatch across India.</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 11. GRAND LUXURY CTA SECTION */}
-      <section className="py-40 bg-[#111111] border-t border-[#222222] text-center px-6">
+      {/* 10. GRAND CTA SECTION */}
+      <section className="py-32 bg-[#F8F6F1] border-t border-[#E5E0D8] text-center px-6">
         <div className="max-w-4xl mx-auto space-y-8">
-          <span className="text-[10px] font-sans font-extrabold uppercase tracking-[0.4em] text-[#C8C8C4] block">
+          <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
             CRAFTED TO LAST • CREATED IN SILVER
           </span>
-          <h2 className="font-serif text-5xl sm:text-8xl font-light text-white tracking-tight">
-            LET'S CREATE <br />
-            <span className="text-silver-metallic italic font-normal">SOMETHING TIMELESS.</span>
+          <h2 className="font-serif text-5xl sm:text-7xl font-light text-[#202020] tracking-tight">
+            Discover Pure Silver <br />
+            <span className="text-silver-shimmer italic font-normal">Crafted for Generations.</span>
           </h2>
-          <p className="max-w-xl mx-auto text-xs sm:text-sm text-[#898985] font-light leading-relaxed">
-            Discover collections created with precision, heritage and uncompromising attention to detail.
+          <p className="max-w-xl mx-auto text-xs sm:text-sm text-[#666666] font-light leading-relaxed">
+            Browse our hallmarked deity idols, dining tableware, pooja thalis, and custom minting options.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
-            <Link to="/shop/retail" className="px-9 py-4 bg-[#EEEEEA] hover:bg-[#C8C8C4] text-[#080808] text-[11px] font-bold uppercase tracking-[0.25em] transition-all flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <Link
+              to="/shop/retail"
+              className="px-9 py-4 bg-[#202020] hover:bg-[#B9A77A] text-white text-[11px] font-bold uppercase tracking-[0.22em] transition-all flex items-center gap-2 rounded-xl shadow-md"
+            >
               <span>EXPLORE COLLECTIONS</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
-            <Link to="/contact" className="px-9 py-4 border border-[#333333] hover:border-[#C8C8C4] text-[#C8C8C4] text-[11px] font-semibold uppercase tracking-[0.25em] transition-all">
-              <span>CONTACT SAI BALAJI →</span>
+            <Link
+              to="/contact"
+              className="px-9 py-4 bg-white hover:bg-[#F1EFEB] text-[#202020] border border-[#E5E0D8] text-[11px] font-bold uppercase tracking-[0.22em] transition-all rounded-xl shadow-2xs"
+            >
+              <span>CONTACT US →</span>
             </Link>
           </div>
         </div>

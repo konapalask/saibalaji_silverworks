@@ -53,44 +53,44 @@ export const RetailShop: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-[#1A1918]">
+    <div className="min-h-screen bg-[#F8F6F1] py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-[#202020]">
       
       {/* Header Banner */}
       <div className="text-center max-w-3xl mx-auto space-y-3 mb-10">
-        <span className="text-xs uppercase tracking-[0.3em] text-[#C5A059] font-bold">
+        <span className="text-xs uppercase tracking-[0.3em] text-[#B9A77A] font-bold">
           RETAIL STOREFRONT
         </span>
-        <h1 className="font-serif text-4xl sm:text-5xl font-light text-[#1A1918]">
-          Silver Fine Collection
+        <h1 className="font-serif text-4xl sm:text-5xl font-light text-[#202020]">
+          Fine Silver Collection
         </h1>
-        <p className="text-xs sm:text-sm text-gray-600 font-sans">
-          Select any of our 10 main categories below to view all subcategories and hallmarked products.
+        <p className="text-xs sm:text-sm text-[#666666] font-sans">
+          Select any of our 10 main categories below to view all subcategories and NABL-hallmarked products.
         </p>
       </div>
 
       {/* Control Toolbar */}
-      <div className="bg-white border border-[#E6E1DA] rounded-2xl p-4 mb-8 flex flex-col md:flex-row justify-between items-center gap-4 shadow-xs">
+      <div className="bg-white border border-[#E5E0D8] rounded-2xl p-4 mb-8 flex flex-col md:flex-row justify-between items-center gap-4 shadow-2xs">
         
         <div className="flex items-center gap-3 w-full md:w-auto">
           <button 
             onClick={() => setIsMobileFilterOpen(true)}
-            className="md:hidden flex items-center gap-2 bg-[#1A1918] text-white px-4 py-2 rounded-xl text-xs font-semibold"
+            className="md:hidden flex items-center gap-2 bg-[#202020] text-white px-4 py-2 rounded-xl text-xs font-semibold"
           >
-            <Filter className="w-4 h-4 text-[#C5A059]" />
+            <Filter className="w-4 h-4 text-[#B9A77A]" />
             10 Categories
           </button>
-          <span className="text-xs text-gray-600 font-semibold">
-            Showing <strong className="text-[#1A1918]">{products.length}</strong> Silver Products
+          <span className="text-xs text-[#666666] font-semibold">
+            Showing <strong className="text-[#202020]">{products.length}</strong> Silver Products
           </span>
         </div>
 
         {/* Sorting Dropdown */}
         <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-          <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Sort By:</span>
+          <span className="text-xs text-[#666666] font-semibold uppercase tracking-wider">Sort By:</span>
           <select 
             value={sortByVal}
             onChange={(e) => updateFilter('sortBy', e.target.value)}
-            className="bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2 text-xs font-semibold text-[#1A1918] focus:outline-none focus:border-[#C5A059]"
+            className="bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-3 py-2 text-xs font-semibold text-[#202020] focus:outline-none focus:border-[#B9A77A]"
           >
             <option value="created_at_desc">Latest Additions</option>
             <option value="price_asc">Price: Low to High</option>

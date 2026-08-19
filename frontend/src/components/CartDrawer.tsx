@@ -63,18 +63,18 @@ export const CartDrawer: React.FC = () => {
       />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-[#FAF9F5] shadow-2xl flex flex-col justify-between border-l border-[#C5A059]/40">
+        <div className="w-screen max-w-md bg-[#F8F6F1] shadow-2xl flex flex-col justify-between border-l border-[#E5E0D8]">
           
           {/* Header */}
-          <div className="p-5 border-b border-[#E6E1DA] bg-white space-y-3">
+          <div className="p-5 border-b border-[#E5E0D8] bg-white space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-[#C5A059]" />
-                <h2 className="font-serif text-xl font-bold text-[#1A1918]">Your Shopping Bag</h2>
+                <ShoppingBag className="w-5 h-5 text-[#B9A77A]" />
+                <h2 className="font-serif text-xl font-bold text-[#202020]">Your Shopping Bag</h2>
               </div>
               <button 
                 onClick={() => setIsCartOpen(false)}
-                className="p-1.5 text-gray-500 hover:text-black rounded-full hover:bg-gray-100 transition-colors"
+                className="p-1.5 text-gray-400 hover:text-[#202020] rounded-full hover:bg-[#F1EFEB] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -82,16 +82,16 @@ export const CartDrawer: React.FC = () => {
 
             {/* Dynamic Cart Mode Banner & Progress Indicator */}
             {totalQuantity > 0 && (
-              <div className={`p-3.5 rounded-2xl border transition-all ${
+              <div className={`p-3.5 rounded-xl border transition-all ${
                 isWholesale 
-                  ? 'bg-[#1A1918] border-[#C5A059] text-white shadow-md' 
-                  : 'bg-white border-[#E6E1DA] text-[#1A1918]'
+                  ? 'bg-[#202020] border-[#B9A77A] text-white shadow-xs' 
+                  : 'bg-[#F8F6F1] border-[#E5E0D8] text-[#202020]'
               }`}>
                 <div className="flex items-center justify-between mb-1.5">
                   <span className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full ${
                     isWholesale 
-                      ? 'bg-[#C5A059] text-[#1A1918]' 
-                      : 'bg-[#1A1918] text-white'
+                      ? 'bg-[#B9A77A] text-[#202020]' 
+                      : 'bg-[#202020] text-white'
                   }`}>
                     🛒 {cartType} CART
                   </span>
@@ -101,10 +101,10 @@ export const CartDrawer: React.FC = () => {
                 </div>
 
                 {/* Progress Bar */}
-                <div className="w-full bg-[#E6E1DA]/40 h-2 rounded-full overflow-hidden mb-2">
+                <div className="w-full bg-[#E5E0D8] h-2 rounded-full overflow-hidden mb-2">
                   <div 
                     className={`h-full transition-all duration-500 ${
-                      isWholesale ? 'bg-[#C5A059]' : 'bg-[#1A1918]'
+                      isWholesale ? 'bg-[#B9A77A]' : 'bg-[#202020]'
                     }`}
                     style={{ width: `${progressPercent}%` }}
                   />
@@ -114,14 +114,14 @@ export const CartDrawer: React.FC = () => {
                 <div className="text-[11px] font-medium flex items-center gap-1.5">
                   {isWholesale ? (
                     <>
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#C5A059] shrink-0" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#B9A77A] shrink-0" />
                       <span className="text-gray-200">🎉 Wholesale Pricing Unlocked! (Admin Requisition Mode)</span>
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-3.5 h-3.5 text-[#C5A059] shrink-0" />
+                      <Sparkles className="w-3.5 h-3.5 text-[#B9A77A] shrink-0" />
                       <span className="text-gray-600">
-                        Add <strong className="text-[#1A1918]">{itemsToWholesale} more item(s)</strong> to unlock Wholesale Pricing (MOQ: {WHOLESALE_MOQ})
+                        Add <strong className="text-[#202020]">{itemsToWholesale} more item(s)</strong> to unlock Wholesale Pricing (MOQ: {WHOLESALE_MOQ})
                       </span>
                     </>
                   )}

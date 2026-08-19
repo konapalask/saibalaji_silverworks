@@ -11,16 +11,16 @@ export const Contact: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
+    <div className="min-h-screen bg-[#F8F6F1] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12 text-[#202020]">
       
       <div className="text-center max-w-3xl mx-auto space-y-3">
-        <span className="text-xs uppercase tracking-[0.3em] text-[#C5A059] font-bold">
+        <span className="text-xs uppercase tracking-[0.3em] text-[#B9A77A] font-bold">
           GET IN TOUCH
         </span>
-        <h1 className="font-serif text-4xl sm:text-5xl font-light text-[#1A1918]">
+        <h1 className="font-serif text-4xl sm:text-5xl font-light text-[#202020]">
           Contact Sai Balaji Silverworks
         </h1>
-        <p className="text-xs sm:text-sm text-gray-600">
+        <p className="text-xs sm:text-sm text-[#666666]">
           Visit our Tenali showroom or submit your retail & wholesale inquiries directly.
         </p>
       </div>
@@ -28,34 +28,34 @@ export const Contact: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Info Box */}
-        <div className="lg:col-span-5 bg-[#1A1918] text-white rounded-3xl p-8 space-y-8 border border-[#C5A059]/40 shadow-xl flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-[#202020] text-white rounded-3xl p-8 space-y-8 border border-[#E5E0D8] shadow-md flex flex-col justify-between">
           <div className="space-y-6">
-            <span className="bg-[#C5A059] text-[#1A1918] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+            <span className="bg-[#B9A77A] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
               TENALI FACTORY SHOWROOM
             </span>
             <h3 className="font-serif text-2xl font-bold">Sai Balaji Silverworks Pvt Ltd</h3>
             
-            <div className="space-y-4 text-xs">
+            <div className="space-y-4 text-xs text-gray-200">
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#C5A059] shrink-0 mt-0.5" />
+                <MapPin className="w-5 h-5 text-[#B9A77A] shrink-0 mt-0.5" />
                 <p className="leading-relaxed">Main Silver Market, Autonagar, Tenali, Andhra Pradesh - 522201</p>
               </div>
               <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-[#C5A059] shrink-0" />
+                <Phone className="w-5 h-5 text-[#B9A77A] shrink-0" />
                 <p>+91 9492664870</p>
               </div>
               <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-[#C5A059] shrink-0" />
+                <Mail className="w-5 h-5 text-[#B9A77A] shrink-0" />
                 <p>wholesale@saibalajisilverworks.com</p>
               </div>
               <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-[#C5A059] shrink-0" />
+                <Clock className="w-5 h-5 text-[#B9A77A] shrink-0" />
                 <p>Monday – Saturday: 10:00 AM – 8:30 PM IST</p>
               </div>
             </div>
           </div>
 
-          <div className="pt-6 border-t border-white/10 text-xs text-[#C5A059] italic">
+          <div className="pt-6 border-t border-white/10 text-xs text-[#B9A77A] italic">
             <p>"Direct Manufacturing & Wholesale Inquiries Welcome"</p>
           </div>
         </div>

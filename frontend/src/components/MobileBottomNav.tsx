@@ -7,14 +7,14 @@ export const MobileBottomNav: React.FC = () => {
   const { totalQuantity, cartType, setIsCartOpen } = useCart();
 
   return (
-    <div className="lg:hidden fixed bottom-0 inset-x-0 bg-[#1A1918]/95 backdrop-blur-md text-[#FAF9F5] border-t border-[#C5A059]/40 z-40 py-2.5 px-4">
+    <div className="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md text-[#202020] border-t border-[#E5E0D8] z-40 py-2.5 px-4 shadow-lg">
       <div className="flex items-center justify-around text-center font-sans">
         
         <NavLink 
           to="/home" 
           className={({ isActive }) => 
             `flex flex-col items-center gap-1 text-[10px] uppercase font-semibold transition-colors ${
-              isActive ? 'text-[#C5A059]' : 'text-gray-400 hover:text-white'
+              isActive ? 'text-[#B9A77A]' : 'text-gray-500 hover:text-[#202020]'
             }`
           }
         >
@@ -26,7 +26,7 @@ export const MobileBottomNav: React.FC = () => {
           to="/shop/retail" 
           className={({ isActive }) => 
             `flex flex-col items-center gap-1 text-[10px] uppercase font-semibold transition-colors ${
-              isActive ? 'text-[#C5A059]' : 'text-gray-400 hover:text-white'
+              isActive ? 'text-[#B9A77A]' : 'text-gray-500 hover:text-[#202020]'
             }`
           }
         >
@@ -38,22 +38,22 @@ export const MobileBottomNav: React.FC = () => {
           to="/shop/wholesale" 
           className={({ isActive }) => 
             `flex flex-col items-center gap-1 text-[10px] uppercase font-semibold transition-colors ${
-              isActive ? 'text-[#C5A059]' : 'text-gray-400 hover:text-white'
+              isActive ? 'text-[#B9A77A]' : 'text-gray-500 hover:text-[#202020]'
             }`
           }
         >
-          <Briefcase className="w-5 h-5 text-[#C5A059]" />
+          <Briefcase className="w-5 h-5 text-[#B9A77A]" />
           <span>Wholesale</span>
         </NavLink>
 
         <button 
           onClick={() => setIsCartOpen(true)} 
-          className="relative flex flex-col items-center gap-1 text-[10px] uppercase font-semibold transition-colors text-gray-400 hover:text-white"
+          className="relative flex flex-col items-center gap-1 text-[10px] uppercase font-semibold transition-colors text-gray-500 hover:text-[#202020]"
         >
-          <ShoppingBag className="w-5 h-5 text-[#C5A059]" />
-          <span>Bag ({cartType})</span>
+          <ShoppingBag className="w-5 h-5 text-[#B9A77A]" />
+          <span>Bag</span>
           {totalQuantity > 0 && (
-            <span className="absolute -top-1.5 right-1 bg-[#C5A059] text-[#1A1918] font-bold text-[9px] min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center border border-[#1A1918]">
+            <span className="absolute -top-1.5 right-1 bg-[#202020] text-white font-bold text-[9px] min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center border border-white">
               {totalQuantity}
             </span>
           )}
@@ -63,7 +63,7 @@ export const MobileBottomNav: React.FC = () => {
           to="/account" 
           className={({ isActive }) => 
             `flex flex-col items-center gap-1 text-[10px] uppercase font-semibold transition-colors ${
-              isActive ? 'text-[#C5A059]' : 'text-gray-400 hover:text-white'
+              isActive ? 'text-[#B9A77A]' : 'text-gray-500 hover:text-[#202020]'
             }`
           }
         >

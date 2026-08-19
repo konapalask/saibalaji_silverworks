@@ -191,11 +191,11 @@ export const CategoryPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] text-[#1A1918]">
+    <div className="min-h-screen bg-[#F8F6F1] text-[#202020]">
       
       {/* Category Banner & Editorial Header */}
-      <div className="relative bg-[#1A1918] text-[#FAF9F5] py-12 px-4 sm:px-6 lg:px-8 border-b border-[#C5A059]/30 overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
+      <div className="relative bg-white text-[#202020] py-12 px-4 sm:px-6 lg:px-8 border-b border-[#E5E0D8] overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
           <img 
             src={currentCategory.bannerImage} 
             alt={currentCategory.name} 
@@ -207,13 +207,13 @@ export const CategoryPage: React.FC = () => {
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#C5A059]">
+              <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#B9A77A]">
                 SAI BALAJI SILVERWORKS CATALOGUE
               </span>
-              <h1 className="font-serif text-3xl sm:text-5xl font-light tracking-wide text-white mt-1">
+              <h1 className="font-serif text-3xl sm:text-5xl font-light tracking-wide text-[#202020] mt-1">
                 {currentCategory.name}
               </h1>
-              <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mt-2 font-sans leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#666666] max-w-2xl mt-2 font-sans leading-relaxed">
                 {currentCategory.description}
               </p>
             </div>
@@ -222,7 +222,7 @@ export const CategoryPage: React.FC = () => {
       </div>
 
       {/* 10 Main Categories Pills / Chips Navigation Bar */}
-      <div className="bg-white border-b border-[#E6E1DA] sticky top-20 z-30 shadow-xs">
+      <div className="bg-white border-b border-[#E5E0D8] sticky top-20 z-30 shadow-2xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
             {MAIN_CATEGORIES.map((cat) => {
@@ -236,12 +236,12 @@ export const CategoryPage: React.FC = () => {
                   }}
                   className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
                     isSelected
-                      ? 'bg-[#C5A059] text-white shadow-sm font-bold'
-                      : 'bg-[#FAF9F5] text-[#1A1918] hover:bg-[#E6E1DA] border border-[#E6E1DA]'
+                      ? 'bg-[#202020] text-white shadow-2xs font-bold'
+                      : 'bg-[#F8F6F1] text-[#202020] hover:bg-[#E5E0D8] border border-[#E5E0D8]'
                   }`}
                 >
                   <span>{cat.name}</span>
-                  {isSelected && <Check className="w-3.5 h-3.5" />}
+                  {isSelected && <Check className="w-3.5 h-3.5 text-[#B9A77A]" />}
                 </button>
               );
             })}
@@ -253,32 +253,32 @@ export const CategoryPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Top Control Bar (Mobile Filters Trigger & Sorting) */}
-        <div className="flex flex-col sm:flex-row justify-between items-center pb-6 mb-6 border-b border-[#E6E1DA] gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center pb-6 mb-6 border-b border-[#E5E0D8] gap-4">
           
           <div className="flex items-center gap-3 w-full sm:w-auto">
             {/* Mobile Filter Toggle Button */}
             <button
               onClick={() => setIsMobileFilterOpen(true)}
-              className="lg:hidden flex items-center justify-center gap-2 bg-[#1A1918] text-white px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider flex-1 sm:flex-initial"
+              className="lg:hidden flex items-center justify-center gap-2 bg-[#202020] text-white px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider flex-1 sm:flex-initial shadow-2xs"
             >
-              <SlidersHorizontal className="w-4 h-4 text-[#C5A059]" />
+              <SlidersHorizontal className="w-4 h-4 text-[#B9A77A]" />
               <span>Filters</span>
               {(selectedSubcategories.length > 0 || selectedPriceRange !== 'all' || selectedWeightRange !== 'all' || availability !== 'all') && (
-                <span className="bg-[#C5A059] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="bg-[#B9A77A] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                   !
                 </span>
               )}
             </button>
 
-            <span className="text-xs text-gray-600 font-medium">
-              Showing <strong className="text-[#1A1918] font-bold">{filteredProducts.length}</strong> Products
+            <span className="text-xs text-[#666666] font-medium">
+              Showing <strong className="text-[#202020] font-bold">{filteredProducts.length}</strong> Products
             </span>
           </div>
 
           {/* Sort By Dropdown */}
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <label htmlFor="sortBy" className="text-xs font-semibold text-gray-600 uppercase tracking-wider flex items-center gap-1">
-              <ArrowUpDown className="w-3.5 h-3.5 text-[#C5A059]" />
+            <label htmlFor="sortBy" className="text-xs font-semibold text-[#666666] uppercase tracking-wider flex items-center gap-1">
+              <ArrowUpDown className="w-3.5 h-3.5 text-[#B9A77A]" />
               <span>Sort By:</span>
             </label>
             <select

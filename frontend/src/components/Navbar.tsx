@@ -43,27 +43,27 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* Primary Desktop & Mobile Header (88px Optical Baseline Height) */}
+      {/* Primary Desktop & Mobile Header (Sticky Light Ivory/White E-Commerce Navbar) */}
       <header
-        className={`sticky top-0 z-40 h-[88px] transition-all duration-400 flex items-center ${isScrolled
-          ? 'bg-[#090909]/95 backdrop-blur-[18px] border-b border-white/12 shadow-2xl'
-          : 'bg-gradient-to-b from-[#090909]/90 to-transparent backdrop-blur-sm'
+        className={`sticky top-0 z-40 h-[84px] transition-all duration-300 flex items-center ${isScrolled
+          ? 'bg-white/95 backdrop-blur-md border-b border-[#E5E0D8] shadow-xs'
+          : 'bg-[#F8F6F1]/90 backdrop-blur-xs border-b border-[#E5E0D8]/60'
           }`}
       >
-        <div className="max-w-[1450px] mx-auto w-full px-6 lg:px-10 flex items-center justify-between">
+        <div className="max-w-[1450px] mx-auto w-full px-4 sm:px-8 lg:px-12 flex items-center justify-between">
 
           {/* Mobile Menu Trigger */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-[#A8A8A8] hover:text-[#F2F2F0] transition-colors"
+            className="lg:hidden p-2 text-[#444444] hover:text-[#202020] transition-colors"
             aria-label="Toggle Navigation"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
 
-          {/* LEFT ZONE: Brand Lockup with White Logo Background */}
-          <RouterLink to="/" className="flex items-center gap-3.5 group shrink-0">
-            <div className="bg-white p-1 rounded-xl shadow-sm border border-[#C7C7C7]/40">
+          {/* LEFT ZONE: Brand Lockup with White Logo Container */}
+          <RouterLink to="/" className="flex items-center gap-3 group shrink-0">
+            <div className="bg-white p-1 rounded-xl shadow-xs border border-[#E5E0D8]">
               <img
                 src="/logo.PNG"
                 alt="Sai Balaji Silverworks Logo"
@@ -71,87 +71,92 @@ export const Navbar: React.FC = () => {
               />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="font-serif text-xl sm:text-[22px] font-normal tracking-[0.18em] text-[#F2F2F0] group-hover:text-white transition-colors leading-tight">
+              <span className="font-serif text-xl sm:text-[22px] font-normal tracking-[0.16em] text-[#202020] group-hover:text-[#B9A77A] transition-colors leading-tight">
                 SAI BALAJI
               </span>
-              <span className="text-[9px] uppercase tracking-[0.35em] text-[#C7C7C7] font-semibold font-sans mt-0.5">
+              <span className="text-[9px] uppercase tracking-[0.3em] text-[#666666] font-semibold font-sans mt-0.5">
                 SILVERWORKS
-              </span>
-              <span className="text-[8px] uppercase tracking-[0.2em] text-[#A8A8A8] font-sans hidden sm:block">
-                EST. 1998 • TENALI
               </span>
             </div>
           </RouterLink>
 
-          {/* CENTER ZONE: Clean Editorial Navigation Links (NO PILL BUTTONS) */}
-          <nav className="hidden lg:flex items-center space-x-9 text-[13px] uppercase tracking-[0.12em] font-medium text-[#A8A8A8]">
+          {/* CENTER ZONE: Clean Editorial E-Commerce Navigation Links */}
+          <nav className="hidden lg:flex items-center space-x-7 text-[12px] uppercase tracking-[0.12em] font-medium text-[#555555]">
             <RouterLink
               to="/home"
-              className={`transition-colors py-1 relative group ${isActive('/home') ? 'text-[#F2F2F0]' : 'hover:text-[#F2F2F0]'}`}
+              className={`transition-colors py-1 relative group ${isActive('/home') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
             >
               HOME
-              <span className={`absolute bottom-0 left-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 ${isActive('/home') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-            </RouterLink>
-
-            <RouterLink
-              to="/about"
-              className={`transition-colors py-1 relative group ${isActive('/about') ? 'text-[#F2F2F0]' : 'hover:text-[#F2F2F0]'}`}
-            >
-              OUR STORY
-              <span className={`absolute bottom-0 left-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 ${isActive('/about') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/home') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
 
             <RouterLink
               to="/shop/retail"
-              className={`transition-colors py-1 relative group ${isActive('/shop/retail') ? 'text-[#F2F2F0]' : 'hover:text-[#F2F2F0]'}`}
+              className={`transition-colors py-1 relative group ${isActive('/shop/retail') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
             >
-              COLLECTIONS
-              <span className={`absolute bottom-0 left-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 ${isActive('/shop/retail') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              SHOP
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/shop/retail') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
 
-            <a
-              href="/home#craftsmanship"
-              className="hover:text-[#F2F2F0] transition-colors py-1 relative group"
+            <RouterLink
+              to="/category/silver-pooja-articles"
+              className={`transition-colors py-1 relative group ${isActive('/category') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
             >
-              CRAFTSMANSHIP
-              <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 group-hover:w-full" />
-            </a>
+              COLLECTIONS
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/category') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+            </RouterLink>
+
+            <RouterLink
+              to="/about"
+              className={`transition-colors py-1 relative group ${isActive('/about') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
+            >
+              ABOUT
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/about') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+            </RouterLink>
+
+            <RouterLink
+              to="/category/customized-silver-products"
+              className={`transition-colors py-1 relative group ${isActive('/category/customized-silver-products') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
+            >
+              CUSTOM ORDERS
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/category/customized-silver-products') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+            </RouterLink>
 
             <RouterLink
               to="/shop/wholesale"
-              className={`transition-colors py-1 relative group ${isActive('/shop/wholesale') ? 'text-[#F2F2F0]' : 'hover:text-[#F2F2F0]'}`}
+              className={`transition-colors py-1 relative group ${isActive('/shop/wholesale') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
             >
               WHOLESALE
-              <span className={`absolute bottom-0 left-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 ${isActive('/shop/wholesale') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/shop/wholesale') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
 
             <RouterLink
               to="/contact"
-              className={`transition-colors py-1 relative group ${isActive('/contact') ? 'text-[#F2F2F0]' : 'hover:text-[#F2F2F0]'}`}
+              className={`transition-colors py-1 relative group ${isActive('/contact') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
             >
               CONTACT
-              <span className={`absolute bottom-0 left-0 h-[1px] bg-[#C7C7C7] transition-all duration-300 ${isActive('/contact') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/contact') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
           </nav>
 
-          {/* RIGHT ZONE: Minimal Utility Actions (20px Line Icons) */}
-          <div className="flex items-center space-x-6 text-[#A8A8A8]">
+          {/* RIGHT ZONE: Utility Icons (Search, Account, Wishlist, Cart) */}
+          <div className="flex items-center space-x-5 text-[#333333]">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="p-1.5 hover:text-[#F2F2F0] transition-colors"
+              className="p-2 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all"
               title="Search"
             >
-              <Search className="w-5 h-5 stroke-[1.5]" />
+              <Search className="w-5 h-5 stroke-[1.75]" />
             </button>
 
             <RouterLink
               to="/account/wishlist"
-              className="p-1.5 hover:text-[#F2F2F0] transition-colors relative hidden sm:block"
+              className="p-2 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all relative hidden sm:block"
               title="Wishlist"
             >
-              <Heart className="w-5 h-5 stroke-[1.5]" />
+              <Heart className="w-5 h-5 stroke-[1.75]" />
               {wishlistIds.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#C7C7C7] text-[#090909] text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                <span className="absolute top-0 right-0 bg-[#B9A77A] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                   {wishlistIds.length}
                 </span>
               )}
@@ -159,84 +164,83 @@ export const Navbar: React.FC = () => {
 
             <RouterLink
               to={user ? "/account" : "/account/login"}
-              className="p-1.5 hover:text-[#F2F2F0] transition-colors"
+              className="p-2 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all"
               title={user ? user.full_name : "Account Sign In"}
             >
-              <UserIcon className="w-5 h-5 stroke-[1.5]" />
+              <UserIcon className="w-5 h-5 stroke-[1.75]" />
             </RouterLink>
 
-            {/* Shopping Bag Button with Subtle Count Badge */}
+            {/* Cart Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="p-1.5 hover:text-[#F2F2F0] transition-colors relative flex items-center gap-1.5"
+              className="p-2 bg-[#202020] hover:bg-[#B9A77A] text-white rounded-full transition-all relative flex items-center gap-1.5 px-3 shadow-xs"
               title="Shopping Cart"
             >
-              <ShoppingBag className="w-5 h-5 stroke-[1.5]" />
-              {totalQuantity > 0 && (
-                <span className="bg-[#C7C7C7] text-[#090909] text-[9px] px-1.5 py-0.2 rounded-full font-extrabold">
-                  {totalQuantity}
-                </span>
-              )}
+              <ShoppingBag className="w-4 h-4 stroke-[1.75]" />
+              <span className="text-[11px] font-bold tracking-wider">
+                CART ({totalQuantity})
+              </span>
             </button>
           </div>
 
         </div>
       </header>
 
-      {/* Fullscreen Mobile Luxury Menu */}
+      {/* Fullscreen Mobile Light Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-[#090909] text-[#F2F2F0] flex flex-col justify-between p-8 font-serif animate-fade-in">
-          <div className="flex justify-between items-center border-b border-white/12 pb-6">
+        <div className="fixed inset-0 z-50 bg-[#F8F6F1] text-[#202020] flex flex-col justify-between p-8 font-serif animate-fade-in">
+          <div className="flex justify-between items-center border-b border-[#E5E0D8] pb-6">
             <div className="flex items-center gap-3">
-              <div className="bg-white p-1 rounded-xl shadow-sm border border-[#C7C7C7]/40">
+              <div className="bg-white p-1 rounded-xl shadow-xs border border-[#E5E0D8]">
                 <img src="/logo.PNG" alt="Sai Balaji" className="h-9 w-auto object-contain" />
               </div>
-              <span className="font-serif text-xl tracking-[0.18em] text-[#F2F2F0]">SAI BALAJI</span>
+              <span className="font-serif text-xl tracking-[0.16em] text-[#202020]">SAI BALAJI</span>
             </div>
-            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-[#A8A8A8] hover:text-white">
+            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-[#666666] hover:text-[#202020]">
               <X className="w-7 h-7" />
             </button>
           </div>
 
-          <nav className="flex flex-col space-y-7 text-2xl font-light tracking-wide text-center">
-            <RouterLink to="/" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">HOME</RouterLink>
-            <RouterLink to="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">OUR STORY</RouterLink>
-            <RouterLink to="/shop/retail" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">COLLECTIONS</RouterLink>
-            <a href="/home#craftsmanship" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">CRAFTSMANSHIP</a>
-            <RouterLink to="/shop/wholesale" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">WHOLESALE</RouterLink>
-            <RouterLink to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#C7C7C7]">CONTACT</RouterLink>
+          <nav className="flex flex-col space-y-6 text-xl font-light tracking-wide text-center">
+            <RouterLink to="/" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">HOME</RouterLink>
+            <RouterLink to="/shop/retail" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">SHOP</RouterLink>
+            <RouterLink to="/category/silver-pooja-articles" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">COLLECTIONS</RouterLink>
+            <RouterLink to="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">ABOUT</RouterLink>
+            <RouterLink to="/category/customized-silver-products" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">CUSTOM ORDERS</RouterLink>
+            <RouterLink to="/shop/wholesale" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">WHOLESALE</RouterLink>
+            <RouterLink to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">CONTACT</RouterLink>
           </nav>
 
-          <div className="border-t border-white/12 pt-6 text-center space-y-2 font-sans text-xs text-[#A8A8A8]">
-            <p className="text-[#C7C7C7] font-semibold">+91 9492664870 • Tenali Atelier</p>
-            <p>NABL Hallmarked Silver Manufacturers</p>
+          <div className="border-t border-[#E5E0D8] pt-6 text-center space-y-1 font-sans text-xs text-[#666666]">
+            <p className="text-[#202020] font-semibold">+91 9492664870 • Tenali Atelier</p>
+            <p>100% NABL Hallmarked Silver</p>
           </div>
         </div>
       )}
 
-      {/* Search Overlay */}
+      {/* Light Search Overlay */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-50 bg-[#090909]/95 backdrop-blur-xl flex items-center justify-center p-6">
+        <div className="fixed inset-0 z-50 bg-[#F8F6F1]/98 backdrop-blur-md flex items-center justify-center p-6">
           <button
             onClick={() => setIsSearchOpen(false)}
-            className="absolute top-8 right-8 text-[#A8A8A8] hover:text-white p-2"
+            className="absolute top-8 right-8 text-[#666666] hover:text-[#202020] p-2"
           >
             <X className="w-8 h-8" />
           </button>
 
-          <form onSubmit={handleSearchSubmit} className="w-full max-w-2xl space-y-4 text-center">
-            <span className="text-xs uppercase tracking-[0.3em] text-[#C7C7C7] font-semibold block">
-              SEARCH THE HOUSE CATALOGUE
+          <form onSubmit={handleSearchSubmit} className="w-full max-w-2xl space-y-5 text-center">
+            <span className="text-xs uppercase tracking-[0.3em] text-[#B9A77A] font-bold block">
+              SEARCH SAI BALAJI SILVER STORE
             </span>
             <input
               type="text"
               autoFocus
-              placeholder="Search 999 Pure Idols, 925 Tableware, Pooja Articles..."
+              placeholder="Search 999 Fine Idols, Pooja Thalis, Silver Lamps..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-transparent border-b-2 border-[#C7C7C7] py-4 text-2xl font-serif text-white placeholder-[#555555] focus:outline-none text-center"
+              className="w-full bg-white border-b-2 border-[#B9A77A] p-4 text-2xl font-serif text-[#202020] placeholder-[#999999] focus:outline-none text-center shadow-xs rounded-t-xl"
             />
-            <p className="text-xs text-[#A8A8A8]">Press Enter to search collections</p>
+            <p className="text-xs text-[#666666]">Press Enter to view results</p>
           </form>
         </div>
       )}

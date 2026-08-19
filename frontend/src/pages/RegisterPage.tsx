@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Eye, EyeOff, Lock } from 'lucide-react';
+import { Eye, EyeOff, Lock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { AddressModal, UserAddress } from '../components/AddressModal';
 import { getErrorMessage } from '../utils/apiError';
@@ -76,25 +76,20 @@ export const RegisterPage: React.FC = () => {
     }
   };
 
-  const handleAddressSaved = (address: UserAddress) => {
-    setShowAddressModal(false);
-    navigate(targetRedirect);
-  };
-
   return (
-    <div className="min-h-[80vh] bg-[#FAF9F5] flex items-center justify-center py-12 px-4 text-[#1A1918]">
-      <div className="bg-white border border-[#E6E1DA] rounded-3xl p-8 max-w-lg w-full shadow-xl space-y-6">
+    <div className="min-h-screen bg-[#F8F6F1] py-16 px-4 flex items-center justify-center text-[#202020]">
+      <div className="bg-white border border-[#E5E0D8] rounded-3xl p-8 sm:p-10 max-w-lg w-full product-shadow space-y-6">
         
         <div className="text-center space-y-2">
-          <span className="text-xs uppercase tracking-[0.3em] text-[#C5A059] font-bold">
+          <span className="text-xs uppercase tracking-[0.3em] text-[#B9A77A] font-bold">
             JOIN SAI BALAJI
           </span>
-          <h2 className="font-serif text-3xl font-bold text-[#1A1918]">Create Account</h2>
-          <p className="text-xs text-gray-500">Register for retail shopping & B2B wholesale request management.</p>
+          <h2 className="font-serif text-3xl font-bold text-[#202020]">Create Account</h2>
+          <p className="text-xs text-[#666666]">Register for retail shopping & B2B wholesale request management.</p>
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs text-center">
+          <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs text-center font-medium">
             {error}
           </div>
         )}
@@ -104,7 +99,7 @@ export const RegisterPage: React.FC = () => {
           onClick={handleGoogleSignIn}
           disabled={googleLoading}
           type="button"
-          className="w-full bg-white hover:bg-gray-50 text-[#1A1918] border border-[#E6E1DA] py-3.5 px-4 rounded-2xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-3 hover:border-[#C5A059]"
+          className="w-full bg-[#F8F6F1] hover:bg-white text-[#202020] border border-[#E5E0D8] py-3.5 px-4 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-3 hover:border-[#B9A77A]"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -128,36 +123,36 @@ export const RegisterPage: React.FC = () => {
         </button>
 
         <div className="flex items-center gap-3">
-          <div className="flex-1 h-px bg-[#E6E1DA]" />
+          <div className="flex-1 h-px bg-[#E5E0D8]" />
           <span className="text-[10px] uppercase font-bold text-gray-400">or register with email</span>
-          <div className="flex-1 h-px bg-[#E6E1DA]" />
+          <div className="flex-1 h-px bg-[#E5E0D8]" />
         </div>
 
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Full Name *</label>
+            <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Full Name *</label>
             <input 
               type="text" 
               required
               value={formData.full_name}
               onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-              className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-4 py-2.5 text-xs"
+              className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Email Address *</label>
+              <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Email Address *</label>
               <input 
                 type="email" 
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-4 py-2.5 text-xs"
+                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Password *</label>
+              <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Password *</label>
               <div className="relative flex items-center">
                 <input 
                   type={showPassword ? 'text' : 'password'} 
@@ -165,12 +160,12 @@ export const RegisterPage: React.FC = () => {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="••••••••"
-                  className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl pl-4 pr-10 py-2.5 text-xs focus:outline-none focus:border-[#C5A059]"
+                  className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl pl-4 pr-10 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 text-gray-400 hover:text-[#C5A059] focus:outline-none transition-colors p-1"
+                  className="absolute right-3 text-gray-400 hover:text-[#B9A77A] focus:outline-none transition-colors p-1"
                   title={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -179,50 +174,43 @@ export const RegisterPage: React.FC = () => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Phone Number</label>
-            <input 
-              type="text" 
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-4 py-2.5 text-xs"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Company (Optional)</label>
+              <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Phone Number</label>
+              <input 
+                type="text" 
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Company / Store Name</label>
               <input 
                 type="text" 
                 value={formData.company_name}
                 onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                placeholder="For B2B Wholesalers"
-                className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-4 py-2.5 text-xs"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold uppercase text-gray-600 mb-1">GSTIN (Optional)</label>
-              <input 
-                type="text" 
-                value={formData.gstin}
-                onChange={(e) => setFormData({ ...formData, gstin: e.target.value })}
-                className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-4 py-2.5 text-xs"
+                placeholder="Optional for wholesale"
+                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
               />
             </div>
           </div>
 
-          <button 
+          <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-md"
+            className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-xs flex items-center justify-center gap-2 mt-2"
           >
-            {loading ? 'Creating Account...' : 'Register Account'}
+            <span>{loading ? 'Creating Account...' : 'Complete Registration'}</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
-        <div className="text-center pt-4 border-t border-[#E6E1DA] text-xs text-gray-600">
+        <div className="pt-4 border-t border-[#E5E0D8] text-center text-xs text-[#666666]">
           <span>Already registered? </span>
-          <Link to={`/account/login?redirect=${encodeURIComponent(targetRedirect)}`} className="font-bold text-[#C5A059] hover:underline">Sign In</Link>
+          <Link to={`/account/login?redirect=${encodeURIComponent(targetRedirect)}`} className="text-[#B9A77A] font-bold hover:underline">
+            Sign In Here
+          </Link>
         </div>
 
       </div>
@@ -230,7 +218,11 @@ export const RegisterPage: React.FC = () => {
       {/* Address Modal post-register */}
       <AddressModal 
         isOpen={showAddressModal}
-        onSave={handleAddressSaved}
+        onSave={(addr: UserAddress) => {
+          localStorage.setItem('sbs_user_address', JSON.stringify(addr));
+          setShowAddressModal(false);
+          navigate(targetRedirect);
+        }}
         onSkip={() => {
           setShowAddressModal(false);
           navigate(targetRedirect);

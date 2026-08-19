@@ -74,7 +74,7 @@ export const App: React.FC = () => {
           <WishlistProvider>
             <WholesaleProvider>
               
-              <div className="min-h-screen flex flex-col justify-between bg-[#0A0A09] text-[#F5F1E8]">
+              <div className="min-h-screen flex flex-col justify-between bg-[#F8F6F1] text-[#202020]">
                 
                 <Routes>
                   {/* Admin Routes */}

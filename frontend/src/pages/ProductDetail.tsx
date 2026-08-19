@@ -91,30 +91,28 @@ export const ProductDetail: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-[#1A1918]">
+    <div className="min-h-screen bg-[#F8F6F1] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-[#202020]">
       
       {/* Breadcrumb */}
-      <nav className="text-xs text-gray-500 mb-8 flex items-center gap-2">
-        <Link to="/" className="hover:text-[#C5A059]">Home</Link>
+      <nav className="text-xs text-[#666666] mb-8 flex items-center gap-2">
+        <Link to="/" className="hover:text-[#B9A77A]">Home</Link>
         <span>/</span>
-        <Link to="/shop/retail" className="hover:text-[#C5A059]">Retail Shop</Link>
+        <Link to="/shop/retail" className="hover:text-[#B9A77A]">Retail Store</Link>
         <span>/</span>
-        <span className="text-[#1A1918] font-semibold">{product.title}</span>
+        <span className="text-[#202020] font-semibold">{product.title}</span>
       </nav>
 
       {/* Main Detail Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         
-        {/* Left Side Gallery */}
+        {/* Left Side Gallery — Clean Uncropped Display */}
         <div className="lg:col-span-6 space-y-4">
-          <div className="bg-[#F4EFEA] border border-[#C5A059]/40 p-4 rounded-3xl overflow-hidden shadow-lg">
-            <div className="arch-top overflow-hidden bg-white p-2 aspect-4/5 w-full">
-              <img 
-                src={activeImage} 
-                alt={product.title} 
-                className="w-full h-full object-cover rounded-t-full transition-all duration-500"
-              />
-            </div>
+          <div className="bg-white border border-[#E5E0D8] p-6 rounded-3xl overflow-hidden product-shadow flex items-center justify-center aspect-4/5">
+            <img 
+              src={activeImage} 
+              alt={product.title} 
+              className="w-full h-full object-contain drop-shadow-xl transition-all duration-500"
+            />
           </div>
 
           {/* Thumbnails */}
@@ -122,21 +120,21 @@ export const ProductDetail: React.FC = () => {
             <div className="flex gap-3 overflow-x-auto pb-2">
               <button 
                 onClick={() => setActiveImage(product.featured_image)}
-                className={`w-20 h-24 rounded-xl overflow-hidden border-2 transition-all ${
-                  activeImage === product.featured_image ? 'border-[#C5A059]' : 'border-transparent opacity-60'
+                className={`w-20 h-24 rounded-xl overflow-hidden border-2 p-1 bg-white transition-all ${
+                  activeImage === product.featured_image ? 'border-[#B9A77A] shadow-xs' : 'border-[#E5E0D8] opacity-70'
                 }`}
               >
-                <img src={product.featured_image} alt="" className="w-full h-full object-cover" />
+                <img src={product.featured_image} alt="" className="w-full h-full object-contain" />
               </button>
               {product.images.map((img) => (
                 <button 
                   key={img.id}
                   onClick={() => setActiveImage(img.image_url)}
-                  className={`w-20 h-24 rounded-xl overflow-hidden border-2 transition-all ${
-                    activeImage === img.image_url ? 'border-[#C5A059]' : 'border-transparent opacity-60'
+                  className={`w-20 h-24 rounded-xl overflow-hidden border-2 p-1 bg-white transition-all ${
+                    activeImage === img.image_url ? 'border-[#B9A77A] shadow-xs' : 'border-[#E5E0D8] opacity-70'
                   }`}
                 >
-                  <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+                  <img src={img.image_url} alt="" className="w-full h-full object-contain" />
                 </button>
               ))}
             </div>
@@ -146,58 +144,60 @@ export const ProductDetail: React.FC = () => {
         {/* Right Side Info & Actions */}
         <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-[#1A1918] text-[#FAF9F5] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+            <div className="flex items-center gap-2 mb-3">
+              <span className="bg-[#202020] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-[#B9A77A]" />
                 {product.silver_purity}
               </span>
-              <span className="bg-[#FAF9F5] text-[#1A1918] border border-[#E6E1DA] text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                Weight: {product.weight_g}g
-              </span>
+              {product.weight_g > 0 && (
+                <span className="bg-white text-[#202020] border border-[#E5E0D8] text-xs font-semibold px-3 py-0.5 rounded-full">
+                  Weight: {product.weight_g}g
+                </span>
+              )}
             </div>
 
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1918]">{product.title}</h1>
-            <p className="text-xs text-gray-400 mt-1">SKU: {product.sku}</p>
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#202020]">{product.title}</h1>
+            <p className="text-xs text-[#777777] mt-1">SKU: {product.sku}</p>
 
             <div className="mt-6 flex items-baseline gap-4">
-              <span className="font-sans text-4xl font-bold text-[#1A1918]">
+              <span className="font-sans text-4xl font-bold text-[#202020]">
                 ₹{product.retail_price.toLocaleString()}
               </span>
               {product.wholesale_price && (
-                <span className="text-xs text-[#C5A059] font-semibold bg-[#FAF9F5] px-3 py-1 rounded-full border border-[#C5A059]/30">
-                  Bulk Wholesale Quote Available
+                <span className="text-xs text-[#B9A77A] font-semibold bg-white px-3 py-1 rounded-full border border-[#B9A77A]/40">
+                  Bulk Wholesale Rates Available
                 </span>
               )}
             </div>
 
             <div className="mt-6 space-y-3">
-              <p className="text-xs text-gray-600 leading-relaxed font-sans">
+              <p className="text-xs text-[#555555] leading-relaxed font-sans">
                 {product.description}
               </p>
             </div>
 
             {/* Guarantees */}
-            <div className="mt-6 grid grid-cols-3 gap-3 p-4 bg-white rounded-2xl border border-[#E6E1DA] text-center text-xs">
+            <div className="mt-6 grid grid-cols-3 gap-3 p-4 bg-white rounded-2xl border border-[#E5E0D8] text-center text-xs">
               <div>
-                <ShieldCheck className="w-5 h-5 text-[#C5A059] mx-auto mb-1" />
-                <span className="font-bold text-[11px] block">NABL Hallmarked</span>
-                <span className="text-[10px] text-gray-500">100% Pure Silver</span>
+                <ShieldCheck className="w-5 h-5 text-[#B9A77A] mx-auto mb-1" />
+                <span className="font-bold text-[11px] block text-[#202020]">NABL Hallmarked</span>
+                <span className="text-[10px] text-[#666666]">100% Pure Silver</span>
               </div>
               <div>
-                <Truck className="w-5 h-5 text-[#C5A059] mx-auto mb-1" />
-                <span className="font-bold text-[11px] block">Insured Transit</span>
-                <span className="text-[10px] text-gray-500">Safe Delivery</span>
+                <Truck className="w-5 h-5 text-[#B9A77A] mx-auto mb-1" />
+                <span className="font-bold text-[11px] block text-[#202020]">Insured Transit</span>
+                <span className="text-[10px] text-[#666666]">Safe Delivery</span>
               </div>
               <div>
-                <RefreshCw className="w-5 h-5 text-[#C5A059] mx-auto mb-1" />
-                <span className="font-bold text-[11px] block">Direct Factory</span>
-                <span className="text-[10px] text-gray-500">Tenali Unit</span>
+                <RefreshCw className="w-5 h-5 text-[#B9A77A] mx-auto mb-1" />
+                <span className="font-bold text-[11px] block text-[#202020]">Direct Factory</span>
+                <span className="text-[10px] text-[#666666]">Tenali Unit</span>
               </div>
             </div>
           </div>
 
           {/* Buying Actions */}
-          <div className="space-y-3 pt-6 border-t border-[#E6E1DA]">
+          <div className="space-y-3 pt-6 border-t border-[#E5E0D8]">
             <div className="flex items-center gap-4">
               <div className="flex items-center border border-[#E6E1DA] rounded-2xl bg-white px-4 py-3">
                 <button 

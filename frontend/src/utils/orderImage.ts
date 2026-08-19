@@ -45,7 +45,7 @@ export const getItemImageUrl = (
   // 3. Catalog Lookup Fallback (for older orders saved without images)
   if (!fullImageUrl && item.product_id && productCatalogMap && productCatalogMap[item.product_id]) {
     const catalogProduct = productCatalogMap[item.product_id];
-    const catalogImg = catalogProduct.featured_image || catalogProduct.image_url || (catalogProduct as any).image;
+    const catalogImg = catalogProduct.featured_image || (catalogProduct as any).image_url || (catalogProduct as any).image;
     if (catalogImg) {
       if (catalogImg.startsWith('http://') || catalogImg.startsWith('https://')) {
         fullImageUrl = catalogImg;
