@@ -9,8 +9,13 @@ echo.
 :: Get workspace directory
 set WORKSPACE_DIR=%~dp0
 
-:: Free port 8000 if occupied by a previous process
+:: Free ports and old tunnel if occupied
 for /f "tokens=5" %%a in ('netstat -aon ^| findstr :8000 ^| findstr LISTENING') do taskkill /F /PID %%a >nul 2>&1
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :5173 ^| findstr LISTENING') do taskkill /F /PID %%a >nul 2>&1
+taskkill /F /IM cloudflared.exe >nul 2>&1
+
+:: Set Cloudflare Named Tunnel Token for saibalaji.e3di.org
+set CF_TOKEN=eyJhIjoiMjQ2ZDQxN2Q1YzNkMGRlYTA3NDA4ZDFlYzAyNmMzOGMiLCJ0IjoiNzcxYmFhYzYtZjM2Zi00MzM4LTkzN2YtODY1YzVkNGY3YTJkIiwicyI6IllXUmtaREJpWldFdFpqVTBZeTAwTTJZeUxXRTRaVEV0TUdZd1pqQTNZVGMxTldVeSJ9
 
 :: Launch Node.js JSON Backend Server in a new window
 echo [1/3] Launching Node.js Backend Server (Express on http://localhost:8000)...
@@ -27,11 +32,11 @@ start "Sai Balaji Frontend" cmd /k "cd /d "%WORKSPACE_DIR%frontend" && npm run d
 timeout /t 3 /nobreak >nul
 
 :: Launch Cloudflare Tunnel in a new window
-echo [3/3] Launching Cloudflare Public Live Tunnel...
+echo [3/3] Launching Cloudflare Named Tunnel for http://saibalaji.e3di.org/...
 if exist "%WORKSPACE_DIR%cloudflared.exe" (
-    start "Sai Balaji Cloudflare Tunnel" cmd /k "cd /d "%WORKSPACE_DIR%" && cloudflared.exe tunnel --url http://localhost:5173"
+    start "Sai Balaji Cloudflare Tunnel" cmd /k "cd /d "%WORKSPACE_DIR%" && cloudflared.exe tunnel run --token %CF_TOKEN%"
 ) else (
-    start "Sai Balaji Cloudflare Tunnel" cmd /k "cloudflared tunnel --url http://localhost:5173"
+    start "Sai Balaji Cloudflare Tunnel" cmd /k "cloudflared tunnel run --token %CF_TOKEN%"
 )
 
 echo.
@@ -39,7 +44,7 @@ echo ========================================================
 echo   All 3 services launched successfully!
 echo   - Local Backend API:  http://localhost:8000/docs
 echo   - Local Frontend App: http://localhost:5173
-echo   - Live Public Link:   Check the Cloudflare window for your trycloudflare.com URL!
+echo   - Fixed Live Domain:  http://saibalaji.e3di.org/
 echo ========================================================
 echo.
 pause

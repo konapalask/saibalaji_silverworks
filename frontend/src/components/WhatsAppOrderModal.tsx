@@ -12,6 +12,7 @@ import {
   generateFullCartWhatsAppMessage, 
   openWhatsAppOrderUrl 
 } from '../utils/whatsappOrder';
+import { CountryPhoneInput } from './CountryPhoneInput';
 
 interface WhatsAppOrderModalProps {
   isOpen: boolean;
@@ -241,13 +242,12 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
 
               <div>
                 <label className="block text-[11px] font-bold uppercase text-gray-600 mb-1">Mobile / WhatsApp Number *</label>
-                <input 
-                  type="text" 
+                <CountryPhoneInput
                   required
                   value={customer.mobile}
-                  onChange={(e) => setCustomer({ ...customer, mobile: e.target.value })}
-                  placeholder="e.g. 9876543210"
-                  className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#C5A059]"
+                  onChange={(fullPhone) => setCustomer({ ...customer, mobile: fullPhone })}
+                  placeholder="98765 43210"
+                  bgClass="bg-white"
                 />
               </div>
             </div>

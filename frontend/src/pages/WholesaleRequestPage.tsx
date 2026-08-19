@@ -4,6 +4,7 @@ import { Briefcase, Trash2, Plus, Minus, Send, CheckCircle2, ShieldCheck } from 
 import { useWholesale } from '../context/WholesaleContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { CountryPhoneInput } from '../components/CountryPhoneInput';
 import { getErrorMessage } from '../utils/apiError';
 
 export const WholesaleRequestPage: React.FC = () => {
@@ -224,13 +225,12 @@ export const WholesaleRequestPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Mobile / Phone *</label>
-                    <input 
-                      type="text" 
+                    <CountryPhoneInput
                       required
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="+91 98765 43210"
-                      className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#C5A059]"
+                      onChange={(fullPhone) => setFormData({ ...formData, phone: fullPhone })}
+                      placeholder="98765 43210"
+                      bgClass="bg-[#FAF9F5]"
                     />
                   </div>
                   <div>

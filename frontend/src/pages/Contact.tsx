@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { CountryPhoneInput } from '../components/CountryPhoneInput';
 
 export const Contact: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -85,7 +86,12 @@ export const Contact: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Phone Number</label>
-                  <input type="text" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-4 py-2.5 text-xs" />
+                  <CountryPhoneInput
+                    value={formData.phone}
+                    onChange={(fullPhone) => setFormData({ ...formData, phone: fullPhone })}
+                    placeholder="98765 43210"
+                    bgClass="bg-[#FAF9F5]"
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Subject</label>

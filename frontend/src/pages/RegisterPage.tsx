@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Eye, EyeOff, Lock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { AddressModal, UserAddress } from '../components/AddressModal';
+import { CountryPhoneInput } from '../components/CountryPhoneInput';
 import { getErrorMessage } from '../utils/apiError';
 
 export const RegisterPage: React.FC = () => {
@@ -151,13 +152,12 @@ export const RegisterPage: React.FC = () => {
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Mobile Number *</label>
-              <input 
-                type="text" 
+              <CountryPhoneInput
                 required
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="+91 98765 43210"
-                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
+                onChange={(fullPhone) => setFormData({ ...formData, phone: fullPhone })}
+                placeholder="98765 43210"
+                bgClass="bg-[#F8F6F1]"
               />
             </div>
           </div>
