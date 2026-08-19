@@ -18,7 +18,7 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const targetRedirect = searchParams.get('redirect') || '/about';
+  const targetRedirect = searchParams.get('redirect') || '/shop/retail';
 
   const onAuthSuccess = (loggedUser: any) => {
     if (loggedUser.role === 'ADMIN' || loggedUser.role === 'SUPER_ADMIN') {

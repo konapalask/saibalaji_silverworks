@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Trash2, Plus, Minus, ArrowRight, ShoppingBag, Sparkles, CheckCircle2, AlertCircle, MessageSquare, Briefcase } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { WhatsAppOrderModal } from './WhatsAppOrderModal';
-import { FullCartOrder } from '../utils/whatsappOrder';
-
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
+import { generateOrderId, generateFullCartWhatsAppMessage, openWhatsAppOrderUrl } from '../utils/whatsappOrder';
 
 export const CartDrawer: React.FC = () => {
   const { user } = useAuth();
@@ -20,12 +19,12 @@ export const CartDrawer: React.FC = () => {
     cartType,
     isWholesale,
     WHOLESALE_MOQ,
-    itemsToWholesale
+    itemsToWholesale,
+    clearCart
   } = useCart();
   const navigate = useNavigate();
 
-  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
-  const [whatsappCartData, setWhatsappCartData] = useState<FullCartOrder | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isCartOpen) return null;
 
@@ -35,23 +34,75 @@ export const CartDrawer: React.FC = () => {
 
   const progressPercent = Math.min(100, Math.round((totalQuantity / WHOLESALE_MOQ) * 100));
 
-  const handleOrderCartOnWhatsApp = () => {
+  const handleOrderCartOnWhatsApp = async () => {
+    // 1. Mandatory login check
     if (!user) {
+      sessionStorage.setItem('sbs_open_cart_after_login', 'true');
       setIsCartOpen(false);
-      navigate(`/account/login?redirect=${encodeURIComponent('/checkout')}`);
+      navigate(`/account/login?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
 
-    setWhatsappCartData({
-      items: effectiveCartItems,
-      totalQuantity,
-      cartType,
-      subtotal,
-      tax,
-      shipping: 0,
-      grandTotal
-    });
-    setIsWhatsAppModalOpen(true);
+    // 2. Direct order placement for logged in user (no address modal)
+    setIsSubmitting(true);
+    try {
+      const orderId = generateOrderId();
+      const customer = {
+        name: user.full_name || user.email.split('@')[0],
+        mobile: user.phone || 'Not Provided',
+        address: user.street_address || '',
+        city: user.city || '',
+        pincode: user.pincode || '',
+        notes: ''
+      };
+
+      const orderItems = effectiveCartItems.map(item => ({
+        id: item.product.id,
+        product_id: item.product.id,
+        product_name: item.product.title,
+        product_sku: item.product.sku,
+        unit_price: item.effectivePrice,
+        quantity: item.quantity,
+        subtotal: item.itemSubtotal,
+        featured_image: item.product.featured_image,
+        image_url: item.product.featured_image
+      }));
+
+      await api.post('/orders', {
+        order_number: orderId,
+        user_id: user.id,
+        customer_name: customer.name,
+        customer_email: user.email,
+        customer_phone: customer.mobile,
+        shipping_address: customer.address,
+        shipping_city: customer.city,
+        shipping_pincode: customer.pincode,
+        items: orderItems,
+        subtotal,
+        tax_amount: tax,
+        shipping_charge: 0,
+        grand_total: grandTotal,
+        status: 'Order Placed'
+      });
+
+      const rawMessage = generateFullCartWhatsAppMessage(orderId, customer, {
+        items: effectiveCartItems,
+        totalQuantity,
+        cartType,
+        subtotal,
+        tax,
+        shipping: 0,
+        grandTotal
+      });
+
+      clearCart();
+      setIsCartOpen(false);
+      openWhatsAppOrderUrl(rawMessage);
+    } catch (err) {
+      console.error('Failed to create WhatsApp order', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -259,6 +310,12 @@ export const CartDrawer: React.FC = () => {
                     {/* WHOLESALE ORDERS GO DIRECTLY TO ADMIN (NO WHATSAPP MSG) */}
                     <button 
                       onClick={() => {
+                        if (!user) {
+                          sessionStorage.setItem('sbs_open_cart_after_login', 'true');
+                          setIsCartOpen(false);
+                          navigate(`/account/login?redirect=${encodeURIComponent('/wholesale/request')}`);
+                          return;
+                        }
                         setIsCartOpen(false);
                         navigate('/wholesale/request');
                       }}
@@ -279,15 +336,6 @@ export const CartDrawer: React.FC = () => {
 
         </div>
       </div>
-
-      {/* WhatsApp Order Modal for Retail Cart */}
-      {!isWholesale && (
-        <WhatsAppOrderModal 
-          isOpen={isWhatsAppModalOpen}
-          onClose={() => setIsWhatsAppModalOpen(false)}
-          fullCartOrder={whatsappCartData}
-        />
-      )}
     </div>
   );
 };

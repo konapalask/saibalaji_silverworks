@@ -6,8 +6,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useWholesale } from '../context/WholesaleContext';
 import { useAuth } from '../context/AuthContext';
-import { WhatsAppOrderModal } from '../components/WhatsAppOrderModal';
-import { SingleProductOrder } from '../utils/whatsappOrder';
+import { generateOrderId, generateSingleProductWhatsAppMessage, openWhatsAppOrderUrl } from '../utils/whatsappOrder';
 import api from '../services/api';
 
 export const ProductDetail: React.FC = () => {
@@ -23,12 +22,11 @@ export const ProductDetail: React.FC = () => {
   const [related, setRelated] = useState<Product[]>([]);
   const [added, setAdded] = useState(false);
 
-  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
-  const [whatsappOrderData, setWhatsappOrderData] = useState<SingleProductOrder | null>(null);
-
   const { addToCart, isWholesale, cartType } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { addToWholesaleCart } = useWholesale();
+
+  const [isSubmittingWhatsApp, setIsSubmittingWhatsApp] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -71,23 +69,77 @@ export const ProductDetail: React.FC = () => {
     navigate('/checkout');
   };
 
-  const handleBuyNowOnWhatsApp = () => {
+  const handleBuyNowOnWhatsApp = async () => {
+    if (!product) return;
+
     if (!user) {
+      sessionStorage.setItem('sbs_open_cart_after_login', 'true');
       navigate(`/account/login?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
 
-    const unitPrice = (isWholesale && product.wholesale_price) 
-      ? product.wholesale_price 
-      : product.retail_price;
+    setIsSubmittingWhatsApp(true);
+    try {
+      const orderId = generateOrderId();
+      const unitPrice = (isWholesale && product.wholesale_price) 
+        ? product.wholesale_price 
+        : product.retail_price;
 
-    setWhatsappOrderData({
-      product,
-      quantity: qty,
-      unitPrice,
-      cartType
-    });
-    setIsWhatsAppModalOpen(true);
+      const customer = {
+        name: user.full_name || user.email.split('@')[0],
+        mobile: user.phone || 'Not Provided',
+        address: user.street_address || '',
+        city: user.city || '',
+        pincode: user.pincode || '',
+        notes: ''
+      };
+
+      const singleOrder = {
+        product,
+        quantity: qty,
+        unitPrice,
+        cartType
+      };
+
+      const orderItems = [{
+        id: product.id,
+        product_id: product.id,
+        product_name: product.title,
+        product_sku: product.sku,
+        unit_price: unitPrice,
+        quantity: qty,
+        subtotal: unitPrice * qty,
+        featured_image: product.featured_image,
+        image_url: product.featured_image
+      }];
+
+      const subtotal = unitPrice * qty;
+      const tax = Math.round(subtotal * 0.03);
+
+      await api.post('/orders', {
+        order_number: orderId,
+        user_id: user.id,
+        customer_name: customer.name,
+        customer_email: user.email,
+        customer_phone: customer.mobile,
+        shipping_address: customer.address,
+        shipping_city: customer.city,
+        shipping_pincode: customer.pincode,
+        items: orderItems,
+        subtotal,
+        tax_amount: tax,
+        shipping_charge: 0,
+        grand_total: subtotal + tax,
+        status: 'Order Placed'
+      });
+
+      const rawMessage = generateSingleProductWhatsAppMessage(orderId, customer, singleOrder);
+      openWhatsAppOrderUrl(rawMessage);
+    } catch (err) {
+      console.error('Error placing single WhatsApp order:', err);
+    } finally {
+      setIsSubmittingWhatsApp(false);
+    }
   };
 
   return (
@@ -299,13 +351,6 @@ export const ProductDetail: React.FC = () => {
           )}
         </div>
       </div>
-
-      {/* WhatsApp Order Modal */}
-      <WhatsAppOrderModal 
-        isOpen={isWhatsAppModalOpen}
-        onClose={() => setIsWhatsAppModalOpen(false)}
-        singleProductOrder={whatsappOrderData}
-      />
 
     </div>
   );

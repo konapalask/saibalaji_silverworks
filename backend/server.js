@@ -70,6 +70,17 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+// Admin Verification Middleware
+const requireAdmin = (req, res, next) => {
+  authenticateToken(req, res, () => {
+    if (req.user && (req.user.role === 'ADMIN' || req.user.role === 'SUPER_ADMIN')) {
+      next();
+    } else {
+      res.status(403).json({ detail: 'Access denied. Admin privileges required.' });
+    }
+  });
+};
+
 // --- AUTH API ENDPOINTS ---
 
 const getUsers = () => loadJsonFile('users.json', []);
@@ -81,6 +92,9 @@ app.post('/api/v1/auth/register', (req, res) => {
   if (!email || !password) {
     return res.status(400).json({ detail: 'Email and password are required' });
   }
+  if (!full_name || !phone || !street_address || !city || !pincode) {
+    return res.status(400).json({ detail: 'Full name, phone, street address, city, and pincode are required for account creation.' });
+  }
 
   const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
   if (existing) {
@@ -90,7 +104,6 @@ app.post('/api/v1/auth/register', (req, res) => {
   const newUser = {
     id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
     email: email.toLowerCase(),
-    password_plain: password, // For easy recovery/testing as requested
     password_hash: bcrypt.hashSync(password, 10),
     full_name: full_name || email.split('@')[0],
     phone: phone || '',
@@ -109,7 +122,7 @@ app.post('/api/v1/auth/register', (req, res) => {
   saveJsonFile('users.json', users);
 
   const token = jwt.sign({ id: newUser.id, email: newUser.email, role: newUser.role }, JWT_SECRET, { expiresIn: '7d' });
-  const { password_plain, password_hash, ...userResponse } = newUser;
+  const { password_hash, ...userResponse } = newUser;
   res.status(201).json({ access_token: token, token_type: 'bearer', user: userResponse });
 });
 
@@ -124,7 +137,6 @@ app.post('/api/v1/auth/google', (req, res) => {
     user = {
       id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
       email: email.toLowerCase(),
-      password_plain: '',
       password_hash: '',
       full_name: full_name || email.split('@')[0],
       phone: '',
@@ -143,7 +155,7 @@ app.post('/api/v1/auth/google', (req, res) => {
   }
 
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
-  const { password_plain, password_hash, ...userResponse } = user;
+  const { password_hash, ...userResponse } = user;
   res.json({ access_token: token, token_type: 'bearer', user: userResponse });
 });
 
@@ -158,16 +170,15 @@ app.post('/api/v1/auth/login', (req, res) => {
     return res.status(401).json({ detail: 'Invalid email or password' });
   }
 
-  // Check password against plain or hashed
-  const isMatch = (user.password_plain && user.password_plain === password) ||
-                  (user.password_hash && bcrypt.compareSync(password, user.password_hash));
+  // Check password strictly against bcrypt hash
+  const isMatch = user.password_hash && bcrypt.compareSync(password, user.password_hash);
 
   if (!isMatch) {
     return res.status(401).json({ detail: 'Invalid email or password' });
   }
 
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
-  const { password_plain, password_hash, ...userResponse } = user;
+  const { password_hash, ...userResponse } = user;
   res.json({ access_token: token, token_type: 'bearer', user: userResponse });
 });
 
@@ -176,7 +187,7 @@ app.get('/api/v1/auth/me', authenticateToken, (req, res) => {
   users = getUsers();
   const user = users.find(u => u.id === req.user.id);
   if (!user) return res.status(404).json({ detail: 'User not found' });
-  const { password_plain, password_hash, ...userResponse } = user;
+  const { password_hash, ...userResponse } = user;
   res.json(userResponse);
 });
 
@@ -199,24 +210,24 @@ app.put('/api/v1/auth/me', authenticateToken, (req, res) => {
 
   saveJsonFile('users.json', users);
 
-  const { password_plain, password_hash, ...userResponse } = users[userIndex];
+  const { password_hash, ...userResponse } = users[userIndex];
   res.json(userResponse);
 });
 
 // --- USER MANAGEMENT ENDPOINTS ---
 
-// Get All Users (for Admin)
-app.get('/api/v1/users', (req, res) => {
+// Get All Users (Strictly for Admin)
+app.get('/api/v1/users', requireAdmin, (req, res) => {
   users = getUsers();
   const sanitizedUsers = users.map(u => {
-    const { password_plain, password_hash, ...rest } = u;
+    const { password_hash, ...rest } = u;
     return rest;
   });
   res.json(sanitizedUsers);
 });
 
-// Delete User
-app.delete('/api/v1/users/:id', (req, res) => {
+// Delete User (Strictly for Admin)
+app.delete('/api/v1/users/:id', requireAdmin, (req, res) => {
   users = getUsers();
   const userId = parseInt(req.params.id);
   users = users.filter(u => u.id !== userId);
@@ -372,7 +383,7 @@ app.get('/api/v1/products/:id_or_slug', (req, res) => {
 
 // --- ADMIN DASHBOARD & ANALYTICS ---
 
-app.get('/api/v1/dashboard/analytics', (req, res) => {
+app.get('/api/v1/dashboard/analytics', requireAdmin, (req, res) => {
   const totalRevenue = orders.reduce((sum, o) => sum + (o.grand_total || o.total_amount || 0), 0);
   const pendingOrders = orders.filter(o => o.status === 'PENDING').length;
 
@@ -391,12 +402,13 @@ app.get('/api/v1/dashboard/analytics', (req, res) => {
 
 // --- ORDER & FULFILLMENT ENDPOINTS ---
 
-app.get('/api/v1/orders', (req, res) => {
+// Admin view all orders
+app.get('/api/v1/orders', requireAdmin, (req, res) => {
   orders = loadJsonFile('orders_data.json', []);
   res.json(orders);
 });
 
-// Get User Order History
+// Get User Order History (Customer view own orders)
 app.get('/api/v1/orders/my-orders', authenticateToken, (req, res) => {
   orders = loadJsonFile('orders_data.json', []);
   users = getUsers();
@@ -417,17 +429,37 @@ app.get('/api/v1/orders/my-orders', authenticateToken, (req, res) => {
 app.post('/api/v1/orders', (req, res) => {
   orders = loadJsonFile('orders_data.json', []);
   const orderData = req.body;
+
+  if (!orderData || ((!orderData.items || orderData.items.length === 0) && (!orderData.grand_total && !orderData.total_amount))) {
+    return res.status(400).json({ detail: 'Order payload cannot be empty and must contain items.' });
+  }
+
+  users = getUsers();
+  let boundUserId = orderData.user_id || null;
+  let loggedInUser = null;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      if (decoded && decoded.id) {
+        boundUserId = decoded.id;
+        loggedInUser = users.find(u => u.id === decoded.id);
+      }
+    } catch (e) {}
+  }
+
   const newOrder = {
     id: orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
     order_number: orderData.order_number || `SBS-ORD-${Date.now().toString().slice(-6)}`,
-    user_id: orderData.user_id || null,
-    customer_name: orderData.customer_name || 'Retail Customer',
-    customer_email: orderData.customer_email || orderData.email || '',
-    customer_phone: orderData.customer_phone || orderData.mobile || orderData.phone || '',
-    shipping_address: orderData.shipping_address || '',
-    shipping_city: orderData.shipping_city || '',
-    shipping_state: orderData.shipping_state || '',
-    shipping_pincode: orderData.shipping_pincode || '',
+    user_id: boundUserId,
+    customer_name: orderData.customer_name || loggedInUser?.full_name || 'Retail Customer',
+    customer_email: orderData.customer_email || orderData.email || loggedInUser?.email || '',
+    customer_phone: orderData.customer_phone || orderData.mobile || orderData.phone || loggedInUser?.phone || '',
+    shipping_address: orderData.shipping_address || loggedInUser?.street_address || '',
+    shipping_city: orderData.shipping_city || loggedInUser?.city || '',
+    shipping_state: orderData.shipping_state || loggedInUser?.state || '',
+    shipping_pincode: orderData.shipping_pincode || loggedInUser?.pincode || '',
     items: orderData.items || [],
     subtotal: orderData.subtotal || 0,
     tax_amount: orderData.tax_amount ?? orderData.tax ?? 0,
@@ -441,7 +473,7 @@ app.post('/api/v1/orders', (req, res) => {
   res.status(201).json(newOrder);
 });
 
-app.put('/api/v1/orders/:id/status', (req, res) => {
+app.put('/api/v1/orders/:id/status', requireAdmin, (req, res) => {
   orders = loadJsonFile('orders_data.json', []);
   const orderId = parseInt(req.params.id);
   const { status } = req.body;
@@ -457,7 +489,8 @@ app.put('/api/v1/orders/:id/status', (req, res) => {
 
 // --- WHOLESALE & QUOTATION ENDPOINTS ---
 
-app.get('/api/v1/wholesale/requests', (req, res) => {
+// Admin view all wholesale requests
+app.get('/api/v1/wholesale/requests', requireAdmin, (req, res) => {
   wholesaleRequests = loadJsonFile('wholesale_requests_data.json', []);
   res.json(wholesaleRequests);
 });
@@ -482,10 +515,22 @@ app.get('/api/v1/wholesale/my-requests', authenticateToken, (req, res) => {
 app.post(['/api/v1/wholesale/requests', '/api/v1/wholesale/quote'], (req, res) => {
   wholesaleRequests = loadJsonFile('wholesale_requests_data.json', []);
   const reqData = req.body;
+  let boundUserId = reqData.user_id || null;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      if (decoded && decoded.id) {
+        boundUserId = decoded.id;
+      }
+    } catch (e) {}
+  }
+
   const newReq = {
     id: wholesaleRequests.length > 0 ? Math.max(...wholesaleRequests.map(r => r.id)) + 1 : 1,
     request_number: reqData.request_number || `SBS-QT-${Date.now().toString().slice(-6)}`,
-    user_id: reqData.user_id || null,
+    user_id: boundUserId,
     company_name: reqData.company_name || '',
     contact_person: reqData.contact_person || '',
     phone: reqData.phone || '',
@@ -514,7 +559,7 @@ app.get('/api/v1/quotations/all', (req, res) => {
   res.json(quotations);
 });
 
-app.post('/api/v1/quotations', (req, res) => {
+app.post('/api/v1/quotations', requireAdmin, (req, res) => {
   const quoteData = req.body;
   const newQuote = {
     id: quotations.length + 1,
@@ -534,7 +579,7 @@ app.get('/api/v1/content/homepage_hero', (req, res) => {
   res.json(homepageHero);
 });
 
-app.put(['/api/v1/content/homepage_hero', '/api/v1/content/admin/homepage_hero'], (req, res) => {
+app.put(['/api/v1/content/homepage_hero', '/api/v1/content/admin/homepage_hero'], requireAdmin, (req, res) => {
   homepageHero = { ...homepageHero, ...req.body };
   saveJsonFile('homepage_hero_data.json', homepageHero);
   res.json(homepageHero);
@@ -544,7 +589,7 @@ app.get('/api/v1/content/videos/all', (req, res) => {
   res.json(videos);
 });
 
-app.post('/api/v1/content/videos', (req, res) => {
+app.post('/api/v1/content/videos', requireAdmin, (req, res) => {
   const newVideo = {
     id: videos.length + 1,
     ...req.body,
@@ -555,7 +600,7 @@ app.post('/api/v1/content/videos', (req, res) => {
   res.status(201).json(newVideo);
 });
 
-app.delete('/api/v1/content/videos/:id', (req, res) => {
+app.delete('/api/v1/content/videos/:id', requireAdmin, (req, res) => {
   const vidId = parseInt(req.params.id);
   videos = videos.filter(v => v.id !== vidId);
   saveJsonFile('videos_data.json', videos);
@@ -757,9 +802,10 @@ app.get('/openapi.json', (req, res) => {
       },
       "/api/v1/users": {
         get: {
-          summary: "Get list of registered users and customers",
+          summary: "Get list of registered users and customers (Admin Only)",
           tags: ["Users & Management"],
-          responses: { "200": { description: "List of registered users" } }
+          security: [{ BearerAuth: [] }],
+          responses: { "200": { description: "List of registered users" }, "401": { description: "Missing token" }, "403": { description: "Admin access required" } }
         }
       }
     },

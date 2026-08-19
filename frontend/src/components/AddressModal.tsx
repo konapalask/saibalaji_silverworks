@@ -186,22 +186,12 @@ export const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onSave, onSk
             </div>
           </div>
 
-          <div className="flex gap-3 pt-2">
-            {onSkip && (
-              <button 
-                type="button"
-                onClick={onSkip}
-                className="px-5 py-3 border border-[#E6E1DA] text-gray-500 rounded-xl text-xs uppercase font-bold hover:bg-gray-50"
-              >
-                Skip for now
-              </button>
-            )}
-
+          <div className="pt-2">
             <button 
               type="submit"
-              className="flex-1 bg-[#1A1918] hover:bg-[#C5A059] text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-md flex items-center justify-center gap-2"
+              className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-md flex items-center justify-center gap-2"
             >
-              <span>Save Details & Continue</span>
+              <span>Save Address & Complete Setup</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

@@ -11,6 +11,10 @@ export const RegisterPage: React.FC = () => {
     password: '',
     full_name: '',
     phone: '',
+    street_address: '',
+    city: '',
+    state: '',
+    pincode: '',
     company_name: '',
     gstin: ''
   });
@@ -24,7 +28,7 @@ export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const targetRedirect = searchParams.get('redirect') || '/about';
+  const targetRedirect = searchParams.get('redirect') || '/shop/retail';
 
   const onAuthSuccess = (loggedUser: any) => {
     if (loggedUser.role === 'ADMIN' || loggedUser.role === 'SUPER_ADMIN') {
@@ -32,12 +36,17 @@ export const RegisterPage: React.FC = () => {
       return;
     }
 
-    // For brand new account registrations, clear stale address from previous browser sessions
-    localStorage.removeItem('sbs_user_address');
-
     // Check if the user profile already contains address & phone from backend
     const hasAddress = Boolean(loggedUser?.street_address && loggedUser?.phone);
     if (hasAddress) {
+      localStorage.setItem('sbs_user_address', JSON.stringify({
+        fullName: loggedUser.full_name || '',
+        phone: loggedUser.phone || '',
+        street_address: loggedUser.street_address || '',
+        city: loggedUser.city || '',
+        state: loggedUser.state || '',
+        pincode: loggedUser.pincode || ''
+      }));
       navigate(targetRedirect);
     } else {
       setShowAddressModal(true);
@@ -85,7 +94,7 @@ export const RegisterPage: React.FC = () => {
             JOIN SAI BALAJI
           </span>
           <h2 className="font-serif text-3xl font-bold text-[#202020]">Create Account</h2>
-          <p className="text-xs text-[#666666]">Register for retail shopping & B2B wholesale request management.</p>
+          <p className="text-xs text-[#666666]">Register with your delivery address to manage orders & quotations.</p>
         </div>
 
         {error && (
@@ -129,15 +138,28 @@ export const RegisterPage: React.FC = () => {
         </div>
 
         <form onSubmit={handleRegister} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Full Name *</label>
-            <input 
-              type="text" 
-              required
-              value={formData.full_name}
-              onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-              className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Full Name *</label>
+              <input 
+                type="text" 
+                required
+                value={formData.full_name}
+                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Mobile Number *</label>
+              <input 
+                type="text" 
+                required
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="+91 98765 43210"
+                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -174,26 +196,60 @@ export const RegisterPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Street Address / Door No. *</label>
+            <textarea 
+              required
+              rows={2}
+              value={formData.street_address}
+              onChange={(e) => setFormData({ ...formData, street_address: e.target.value })}
+              placeholder="Door No., Building, Street, Landmark..."
+              className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
+            />
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Phone Number</label>
+              <label className="block text-xs font-bold uppercase text-[#666666] mb-1">City *</label>
               <input 
                 type="text" 
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
+                required
+                value={formData.city}
+                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#B9A77A]"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Company / Store Name</label>
+              <label className="block text-xs font-bold uppercase text-[#666666] mb-1">State *</label>
               <input 
                 type="text" 
-                value={formData.company_name}
-                onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                placeholder="Optional for wholesale"
-                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
+                required
+                value={formData.state}
+                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#B9A77A]"
               />
             </div>
+            <div>
+              <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Pincode *</label>
+              <input 
+                type="text" 
+                required
+                value={formData.pincode}
+                onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
+                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#B9A77A]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Company / Store Name (Optional)</label>
+            <input 
+              type="text" 
+              value={formData.company_name}
+              onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+              placeholder="Optional for B2B wholesale"
+              className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
+            />
           </div>
 
           <button

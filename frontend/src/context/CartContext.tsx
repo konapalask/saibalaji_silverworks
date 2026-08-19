@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { Product, CartItem } from '../types';
 import { WHOLESALE_MOQ } from '../config/cartConfig';
+import { useAuth } from './AuthContext';
 
 export type CartType = 'RETAIL' | 'WHOLESALE';
 
@@ -32,6 +33,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
       const saved = localStorage.getItem('sbs_cart');
@@ -42,6 +44,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Automatically open cart drawer if user just completed login after clicking book/cart action
+  useEffect(() => {
+    if (user) {
+      const shouldOpenCart = sessionStorage.getItem('sbs_open_cart_after_login');
+      if (shouldOpenCart === 'true') {
+        sessionStorage.removeItem('sbs_open_cart_after_login');
+        setIsCartOpen(true);
+      }
+    }
+  }, [user]);
 
   useEffect(() => {
     localStorage.setItem('sbs_cart', JSON.stringify(cart));

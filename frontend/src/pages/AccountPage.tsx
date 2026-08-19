@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { User as UserIcon, Package, Briefcase, FileText, Download, Heart, LogOut, MapPin, Phone, Edit3, Check, X } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { User as UserIcon, Package, Briefcase, FileText, Download, Heart, LogOut, MapPin, Phone, Edit3, Check, X, ShoppingBag, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useWishlist } from '../context/WishlistContext';
+import { useCart } from '../context/CartContext';
 import { RetailOrder, WholesaleRequest, Product } from '../types';
 import { AddressModal, UserAddress } from '../components/AddressModal';
 import api from '../services/api';
@@ -9,9 +11,22 @@ import { getItemImageUrl } from '../utils/orderImage';
 
 export const AccountPage: React.FC = () => {
   const { user, logout, updateProfile } = useAuth();
+  const { wishlistIds, toggleWishlist } = useWishlist();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [activeTab, setActiveTab] = useState<'orders' | 'wholesale' | 'wishlist'>('orders');
+  const [activeTab, setActiveTab] = useState<'orders' | 'wholesale' | 'wishlist'>(() => {
+    if (window.location.pathname.includes('/wishlist')) return 'wishlist';
+    return 'orders';
+  });
+
+  useEffect(() => {
+    if (location.pathname.includes('/wishlist')) {
+      setActiveTab('wishlist');
+    }
+  }, [location.pathname]);
+
   const [orders, setOrders] = useState<RetailOrder[]>([]);
   const [wholesaleRequests, setWholesaleRequests] = useState<WholesaleRequest[]>([]);
   const [quotations, setQuotations] = useState<any[]>([]);
@@ -276,7 +291,7 @@ export const AccountPage: React.FC = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white border border-[#E6E1DA] rounded-2xl p-2 flex space-x-2 text-xs font-bold uppercase tracking-wider">
+      <div className="bg-white border border-[#E6E1DA] rounded-2xl p-2 flex flex-col sm:flex-row gap-2 text-xs font-bold uppercase tracking-wider">
         <button 
           onClick={() => setActiveTab('orders')}
           className={`flex-1 py-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
@@ -294,7 +309,17 @@ export const AccountPage: React.FC = () => {
           }`}
         >
           <Briefcase className="w-4 h-4 text-[#C5A059]" />
-          <span>Wholesale Requests & Quotations ({wholesaleRequests.length})</span>
+          <span>Wholesale Requests ({wholesaleRequests.length})</span>
+        </button>
+
+        <button 
+          onClick={() => setActiveTab('wishlist')}
+          className={`flex-1 py-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
+            activeTab === 'wishlist' ? 'bg-[#1A1918] text-white shadow-md' : 'text-gray-600 hover:bg-[#FAF9F5]'
+          }`}
+        >
+          <Heart className="w-4 h-4 text-[#C5A059]" />
+          <span>My Saved Wishlist ({wishlistIds.length})</span>
         </button>
       </div>
 
@@ -425,6 +450,76 @@ export const AccountPage: React.FC = () => {
                 </div>
               );
             })
+          )}
+        </div>
+      )}
+
+      {activeTab === 'wishlist' && (
+        <div className="space-y-4">
+          <h3 className="font-serif text-xl font-bold text-[#1A1918]">My Saved Wishlist Items</h3>
+          {wishlistIds.length === 0 ? (
+            <div className="bg-white rounded-3xl p-12 text-center border border-[#E6E1DA]">
+              <Heart className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <p className="font-serif text-lg font-bold text-[#1A1918]">Your Wishlist is Empty</p>
+              <p className="text-xs text-gray-500 mb-4">Explore our pure silver collection and click heart icon to save favorite items.</p>
+              <Link to="/shop/retail" className="px-6 py-2.5 bg-[#1A1918] text-white rounded-xl text-xs uppercase font-bold">Explore Silver Collection</Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {wishlistIds.map((pId) => {
+                const prod = productCatalogMap[pId];
+                if (!prod) return null;
+                const rawImg = (prod.images && prod.images.length > 0) ? prod.images[0] : null;
+                const prodImg = typeof rawImg === 'string' ? rawImg : (rawImg?.image_url || '/placeholder.jpg');
+
+                return (
+                  <div key={prod.id} className="bg-white rounded-3xl border border-[#E6E1DA] p-5 shadow-xs flex flex-col justify-between space-y-4">
+                    <div className="relative group">
+                      <Link to={`/shop/retail/${prod.slug}`}>
+                        <img 
+                          src={prodImg} 
+                          alt={prod.title} 
+                          className="w-full h-48 object-cover rounded-2xl bg-[#FAF9F5] border border-[#E6E1DA]"
+                        />
+                      </Link>
+                      <button
+                        onClick={() => toggleWishlist(prod.id)}
+                        className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-xs rounded-full text-red-500 hover:bg-red-50 transition-colors shadow-xs"
+                        title="Remove from Wishlist"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-1 flex-1">
+                      <span className="text-[10px] uppercase font-bold text-[#C5A059] tracking-wider block">
+                        {prod.silver_purity || '92.5% Pure Silver'}
+                      </span>
+                      <Link to={`/shop/retail/${prod.slug}`}>
+                        <h4 className="font-serif text-base font-bold text-[#1A1918] hover:text-[#C5A059] transition-colors line-clamp-1">
+                          {prod.title}
+                        </h4>
+                      </Link>
+                      <div className="flex justify-between items-center text-xs text-gray-500 pt-1">
+                        <span>Weight: <strong className="text-[#1A1918]">{prod.weight_g}g</strong></span>
+                        <span className="font-serif font-bold text-base text-[#1A1918]">₹{prod.retail_price.toLocaleString()}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        addToCart(prod, 1);
+                        toggleWishlist(prod.id);
+                      }}
+                      className="w-full py-2.5 bg-[#1A1918] hover:bg-[#C5A059] text-white rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-sm"
+                    >
+                      <ShoppingBag className="w-4 h-4 text-[#C5A059]" />
+                      <span>Move to Cart</span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       )}

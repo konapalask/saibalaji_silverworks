@@ -122,5 +122,87 @@
     "grand_total": 9800,
     "status": "Order Placed",
     "created_at": "2026-08-19T11:50:42.545Z"
+  },
+  {
+    "id": 5,
+    "order_number": "SBS-ORD-470104",
+    "user_id": null,
+    "customer_name": "Customer",
+    "customer_email": "",
+    "customer_phone": "Not Provided",
+    "shipping_address": "Default Address",
+    "shipping_city": "",
+    "shipping_state": "",
+    "shipping_pincode": "",
+    "items": [
+      {
+        "product_id": 4,
+        "title": "Embossed Silver Pooja Thali Plate 10-inch",
+        "product_name": "Embossed Silver Pooja Thali Plate 10-inch",
+        "product_sku": "SBS-PA-004",
+        "quantity": 1,
+        "price": 32000,
+        "unit_price": 32000,
+        "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Pooja-Plates/DSC_7725.webp",
+        "image_url": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Pooja-Plates/DSC_7725.webp",
+        "image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Pooja-Plates/DSC_7725.webp",
+        "full_image_url": "https://proudly-mem-dan-restaurants.trycloudflare.com/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Pooja-Plates/DSC_7725.webp",
+        "full_featured_image": "https://proudly-mem-dan-restaurants.trycloudflare.com/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Pooja-Plates/DSC_7725.webp"
+      }
+    ],
+    "subtotal": 0,
+    "tax_amount": 0,
+    "shipping_charge": 0,
+    "grand_total": 32960,
+    "status": "Order Placed",
+    "created_at": "2026-08-19T18:17:50.104Z"
+  },
+  {
+    "id": 6,
+    "order_number": "SBS-ORD-519787",
+    "user_id": null,
+    "customer_name": "Customer",
+    "customer_email": "",
+    "customer_phone": "Not Provided",
+    "shipping_address": "Default Address",
+    "shipping_city": "",
+    "shipping_state": "",
+    "shipping_pincode": "",
+    "items": [
+      {
+        "product_id": 1,
+        "title": "Royal Silver Lakshmi Ganesha Idol Set",
+        "product_name": "Royal Silver Lakshmi Ganesha Idol Set",
+        "product_sku": "SBS-PA-001",
+        "quantity": 1,
+        "price": 28500,
+        "unit_price": 28500,
+        "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-God-Idols/AMS-115-0054.webp",
+        "image_url": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-God-Idols/AMS-115-0054.webp",
+        "image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-God-Idols/AMS-115-0054.webp",
+        "full_image_url": "https://proudly-mem-dan-restaurants.trycloudflare.com/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-God-Idols/AMS-115-0054.webp",
+        "full_featured_image": "https://proudly-mem-dan-restaurants.trycloudflare.com/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-God-Idols/AMS-115-0054.webp"
+      },
+      {
+        "product_id": 2,
+        "title": "Handcrafted Sterling Silver Nakshi Diya",
+        "product_name": "Handcrafted Sterling Silver Nakshi Diya",
+        "product_sku": "SBS-PA-002",
+        "quantity": 1,
+        "price": 9800,
+        "unit_price": 9800,
+        "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Deepams/silver-lamp-silver-article-by-unniyarcha-jewellery-844414_1800x1800.webp",
+        "image_url": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Deepams/silver-lamp-silver-article-by-unniyarcha-jewellery-844414_1800x1800.webp",
+        "image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Deepams/silver-lamp-silver-article-by-unniyarcha-jewellery-844414_1800x1800.webp",
+        "full_image_url": "https://proudly-mem-dan-restaurants.trycloudflare.com/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Deepams/silver-lamp-silver-article-by-unniyarcha-jewellery-844414_1800x1800.webp",
+        "full_featured_image": "https://proudly-mem-dan-restaurants.trycloudflare.com/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Deepams/silver-lamp-silver-article-by-unniyarcha-jewellery-844414_1800x1800.webp"
+      }
+    ],
+    "subtotal": 0,
+    "tax_amount": 0,
+    "shipping_charge": 0,
+    "grand_total": 39449,
+    "status": "Order Placed",
+    "created_at": "2026-08-19T18:18:39.787Z"
   }
 ]
