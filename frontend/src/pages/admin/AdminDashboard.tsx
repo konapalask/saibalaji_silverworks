@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { DollarSign, ShoppingBag, Briefcase, Package, FileText, ArrowRight, MessageSquare, Download, CheckCircle2, RefreshCw } from 'lucide-react';
-import { DashboardStats, RetailOrder, WholesaleRequest } from '../../types';
+import { DashboardStats, RetailOrder, WholesaleRequest, Product } from '../../types';
 import { openWhatsAppOrderMessage } from '../../utils/whatsapp';
 import api from '../../services/api';
 import { getErrorMessage } from '../../utils/apiError';
+import { getItemImageUrl } from '../../utils/orderImage';
 
 export const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [orders, setOrders] = useState<RetailOrder[]>([]);
   const [wholesaleRequests, setWholesaleRequests] = useState<WholesaleRequest[]>([]);
   const [quotations, setQuotations] = useState<any[]>([]);
+  const [productCatalogMap, setProductCatalogMap] = useState<Record<number, Product>>({});
   const [loading, setLoading] = useState(true);
 
   const [activeTab, setActiveTab] = useState<'retail' | 'wholesale'>('retail');
@@ -26,16 +28,24 @@ export const AdminDashboard: React.FC = () => {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const [statRes, ordRes, reqRes, quoteRes] = await Promise.all([
+      const [statRes, ordRes, reqRes, quoteRes, prodRes] = await Promise.all([
         api.get('/dashboard/analytics'),
         api.get('/orders'),
         api.get('/wholesale/requests'),
-        api.get('/quotations/all')
+        api.get('/quotations/all'),
+        api.get('/products?limit=500')
       ]);
       setStats(statRes.data);
       setOrders(ordRes.data);
       setWholesaleRequests(reqRes.data);
       setQuotations(quoteRes.data);
+      const catMap: Record<number, Product> = {};
+      if (Array.isArray(prodRes.data)) {
+        prodRes.data.forEach((p: Product) => {
+          if (p.id) catMap[p.id] = p;
+        });
+      }
+      setProductCatalogMap(catMap);
     } catch (err) {
       console.error('Error fetching dashboard analytics', err);
     } finally {
@@ -240,7 +250,7 @@ export const AdminDashboard: React.FC = () => {
                       <div className="space-y-2">
                         {ord.items && ord.items.length > 0 ? (
                           ord.items.map((item: any, idx: number) => {
-                            const img = item.featured_image || item.image_url || item.image;
+                            const img = getItemImageUrl(item, productCatalogMap);
                             return (
                               <div key={item.id || idx} className="flex items-center gap-2.5 bg-[#FAF9F5] p-2 rounded-xl border border-[#E6E1DA]">
                                 {img ? (

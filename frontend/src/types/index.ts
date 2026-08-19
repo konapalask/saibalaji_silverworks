@@ -71,13 +71,20 @@ export interface WholesaleCartItem {
 }
 
 export interface RetailOrderItem {
-  id: number;
-  product_id: number;
+  id?: number;
+  product_id?: number;
+  title?: string;
   product_name: string;
   product_sku: string;
   unit_price: number;
+  price?: number;
   quantity: number;
   subtotal: number;
+  featured_image?: string;
+  image_url?: string;
+  image?: string;
+  full_image_url?: string;
+  product?: Partial<Product>;
 }
 
 export interface RetailOrder {

@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "id": 1,
+    "request_number": "SBS-QT-716103",
+    "user_id": 2,
+    "company_name": "Sai Silver",
+    "contact_person": "Nikhil",
+    "phone": "9121266269",
+    "email": "samuelnikhilmddali123@gmail.com",
+    "gstin": "",
+    "address": "",
+    "city": "",
+    "state": "",
+    "pincode": "",
+    "items": [
+      {
+        "product_id": 1,
+        "title": "Silver Diya",
+        "quantity": 10,
+        "unit_price": 5000
+      }
+    ],
+    "status": "PENDING",
+    "created_at": "2026-08-19T11:41:56.103Z"
+  }
+]

@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Truck, CheckCircle2, Clock } from 'lucide-react';
-import { RetailOrder } from '../../types';
+import { RetailOrder, Product } from '../../types';
 import api from '../../services/api';
+import { getItemImageUrl } from '../../utils/orderImage';
 
 export const AdminOrders: React.FC = () => {
   const [orders, setOrders] = useState<RetailOrder[]>([]);
+  const [productCatalogMap, setProductCatalogMap] = useState<Record<number, Product>>({});
   const [loading, setLoading] = useState(true);
 
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/orders');
-      setOrders(res.data);
+      const [ordRes, prodRes] = await Promise.all([
+        api.get('/orders'),
+        api.get('/products?limit=500')
+      ]);
+      setOrders(ordRes.data);
+      const catMap: Record<number, Product> = {};
+      if (Array.isArray(prodRes.data)) {
+        prodRes.data.forEach((p: Product) => {
+          if (p.id) catMap[p.id] = p;
+        });
+      }
+      setProductCatalogMap(catMap);
     } catch (err) {
       console.error('Error fetching admin orders', err);
     } finally {
@@ -69,7 +81,7 @@ export const AdminOrders: React.FC = () => {
                     <div className="space-y-2">
                       {ord.items && ord.items.length > 0 ? (
                         ord.items.map((item: any, idx: number) => {
-                          const img = item.featured_image || item.image_url || item.image;
+                          const img = getItemImageUrl(item, productCatalogMap);
                           return (
                             <div key={item.id || idx} className="flex items-center gap-2.5 bg-[#FAF9F5] p-2 rounded-xl border border-[#E6E1DA]">
                               {img ? (

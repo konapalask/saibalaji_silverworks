@@ -98,8 +98,10 @@ export const CheckoutPage: React.FC = () => {
         product_sku: item.product.sku,
         unit_price: item.effectivePrice,
         quantity: item.quantity,
-        subtotal: item.itemSubtotal,
-        featured_image: item.product.featured_image
+        featured_image: item.product.featured_image,
+        image_url: item.product.featured_image,
+        image: item.product.featured_image,
+        full_image_url: item.product.featured_image ? (item.product.featured_image.startsWith('http') ? item.product.featured_image : `${window.location.origin}${item.product.featured_image.startsWith('/') ? '' : '/'}${item.product.featured_image}`) : undefined
       }));
 
       await api.post('/orders', {

@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { RetailOrder, WholesaleRequest, Product } from '../types';
 import { AddressModal, UserAddress } from '../components/AddressModal';
 import api from '../services/api';
+import { getItemImageUrl } from '../utils/orderImage';
 
 export const AccountPage: React.FC = () => {
   const { user, logout, updateProfile } = useAuth();
@@ -14,6 +15,7 @@ export const AccountPage: React.FC = () => {
   const [orders, setOrders] = useState<RetailOrder[]>([]);
   const [wholesaleRequests, setWholesaleRequests] = useState<WholesaleRequest[]>([]);
   const [quotations, setQuotations] = useState<any[]>([]);
+  const [productCatalogMap, setProductCatalogMap] = useState<Record<number, Product>>({});
   const [loading, setLoading] = useState(true);
   
   const [isEditAddressOpen, setIsEditAddressOpen] = useState(false);
@@ -71,12 +73,21 @@ export const AccountPage: React.FC = () => {
     const fetchUserData = async () => {
       setLoading(true);
       try {
-        const [ordRes, reqRes] = await Promise.all([
+        const [ordRes, reqRes, prodRes] = await Promise.all([
           api.get('/orders/my-orders'),
-          api.get('/wholesale/my-requests')
+          api.get('/wholesale/my-requests'),
+          api.get('/products?limit=500')
         ]);
         setOrders(ordRes.data);
         setWholesaleRequests(reqRes.data);
+
+        const catMap: Record<number, Product> = {};
+        if (Array.isArray(prodRes.data)) {
+          prodRes.data.forEach((p: Product) => {
+            if (p.id) catMap[p.id] = p;
+          });
+        }
+        setProductCatalogMap(catMap);
 
         const quoteRes = await api.get('/quotations/all');
         setQuotations(quoteRes.data);
@@ -316,7 +327,7 @@ export const AccountPage: React.FC = () => {
 
                 <div className="space-y-3 pt-1">
                   {ord.items && ord.items.map((item: any, index: number) => {
-                    const itemImg = item.featured_image || item.image_url || item.image || item.product?.featured_image;
+                    const itemImg = getItemImageUrl(item, productCatalogMap);
                     return (
                       <div key={item.id || index} className="flex items-center gap-4 p-3 bg-[#FAF9F5] rounded-2xl border border-[#E6E1DA]">
                         {itemImg ? (
