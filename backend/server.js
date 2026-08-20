@@ -84,8 +84,6 @@ const requireAdmin = (req, res, next) => {
 
 // --- AUTH API ENDPOINTS ---
 
-const getUsers = () => loadJsonFile('users.json', []);
-
 // Register New User
 app.post('/api/v1/auth/register', (req, res) => {
   users = getUsers();
@@ -439,6 +437,10 @@ app.get('/api/v1/products/:id_or_slug', (req, res) => {
 // --- ADMIN DASHBOARD & ANALYTICS ---
 
 app.get('/api/v1/dashboard/analytics', requireAdmin, (req, res) => {
+  const orders = getOrders();
+  const wholesaleRequests = getWholesaleRequests();
+  const products = getProducts();
+  const users = getUsers();
   const totalRevenue = orders.reduce((sum, o) => sum + (o.grand_total || o.total_amount || 0), 0);
   const pendingOrders = orders.filter(o => o.status === 'PENDING').length;
 
@@ -790,10 +792,12 @@ app.post(['/api/v1/wholesale/requests', '/api/v1/wholesale/quote'], (req, res) =
 });
 
 app.get('/api/v1/quotations/all', (req, res) => {
+  const quotations = getQuotations();
   res.json(quotations);
 });
 
 app.post('/api/v1/quotations', requireAdmin, (req, res) => {
+  const quotations = getQuotations();
   const quoteData = req.body;
   const newQuote = {
     id: quotations.length + 1,
@@ -1059,8 +1063,8 @@ app.get('/openapi.json', (req, res) => {
 app.listen(PORT, () => {
   console.log(`========================================================`);
   console.log(`  🚀 Node.js Express Server running on http://localhost:${PORT}`);
-  console.log(`  📁 Products loaded from JSON: ${products.length} products`);
-  console.log(`  📁 Categories loaded from JSON: ${categories.length} categories`);
+  console.log(`  📁 Products loaded from JSON: ${getProducts().length} products`);
+  console.log(`  📁 Categories loaded from JSON: ${getCategories().length} categories`);
   console.log(`  📖 Interactive API Docs: http://localhost:${PORT}/docs`);
   console.log(`========================================================`);
 });
