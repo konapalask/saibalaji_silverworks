@@ -65,15 +65,12 @@ export const LoginPage: React.FC = () => {
     setGoogleLoading(true);
     setError('');
     try {
-      const googleEmail = prompt('Enter your Google Account email:', 'customer@gmail.com');
-      if (!googleEmail) {
-        setGoogleLoading(false);
-        return;
+      const loggedUser = await loginWithGoogle();
+      if (loggedUser) {
+        onAuthSuccess(loggedUser);
       }
-      const user = await loginWithGoogle(googleEmail, googleEmail.split('@')[0].toUpperCase());
-      onAuthSuccess(user);
     } catch (err: any) {
-      setError(getErrorMessage(err, 'Google authentication failed'));
+      setError(getErrorMessage(err, 'Google authentication failed. Please try again.'));
     } finally {
       setGoogleLoading(false);
     }

@@ -167,9 +167,18 @@ export const AccountPage: React.FC = () => {
       <div className="bg-white border border-[#E6E1DA] rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xs">
         
         <div className="flex items-center gap-4 flex-1 w-full">
-          <div className="w-16 h-16 rounded-full bg-[#1A1918] text-[#C5A059] flex items-center justify-center font-serif text-2xl font-bold border-2 border-[#C5A059] shrink-0">
-            {user.full_name ? user.full_name.charAt(0).toUpperCase() : 'U'}
-          </div>
+          {user.photo_url ? (
+            <img 
+              src={user.photo_url} 
+              alt={user.full_name || 'User Profile'} 
+              className="w-16 h-16 rounded-full object-cover border-2 border-[#C5A059] shrink-0 shadow-xs"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-[#1A1918] text-[#C5A059] flex items-center justify-center font-serif text-2xl font-bold border-2 border-[#C5A059] shrink-0">
+              {user.full_name ? user.full_name.charAt(0).toUpperCase() : 'U'}
+            </div>
+          )}
 
           {!isEditingProfile ? (
             <div className="space-y-1 flex-1">

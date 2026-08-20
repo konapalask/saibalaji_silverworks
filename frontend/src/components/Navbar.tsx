@@ -164,10 +164,21 @@ export const Navbar: React.FC = () => {
 
             <RouterLink
               to={user ? "/account" : "/account/login"}
-              className="p-2 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all"
+              className="p-1 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all flex items-center justify-center"
               title={user ? user.full_name : "Account Sign In"}
             >
-              <UserIcon className="w-5 h-5 stroke-[1.75]" />
+              {user?.photo_url ? (
+                <img 
+                  src={user.photo_url} 
+                  alt={user.full_name || 'Account'} 
+                  className="w-7 h-7 rounded-full object-cover border border-[#B9A77A]"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="p-1">
+                  <UserIcon className="w-5 h-5 stroke-[1.75]" />
+                </div>
+              )}
             </RouterLink>
 
             {/* Cart Button */}

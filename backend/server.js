@@ -129,16 +129,64 @@ app.post('/api/v1/auth/register', (req, res) => {
 // Google Login / Register
 app.post('/api/v1/auth/google', (req, res) => {
   users = getUsers();
-  const { email, full_name } = req.body;
-  if (!email) return res.status(400).json({ detail: 'Email is required' });
+  const { idToken, firebase_uid, email, full_name, photo_url } = req.body;
 
-  let user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-  if (!user) {
+  let verifiedEmail = email;
+  let verifiedUid = firebase_uid;
+  let verifiedName = full_name;
+  let verifiedPhoto = photo_url;
+
+  if (idToken) {
+    try {
+      const decoded = jwt.decode(idToken);
+      if (decoded) {
+        if (decoded.email) verifiedEmail = decoded.email;
+        if (decoded.user_id || decoded.sub) verifiedUid = decoded.user_id || decoded.sub;
+        if (decoded.name && !verifiedName) verifiedName = decoded.name;
+        if (decoded.picture && !verifiedPhoto) verifiedPhoto = decoded.picture;
+      }
+    } catch (err) {
+      console.warn('ID Token decode warning:', err.message);
+    }
+  }
+
+  if (!verifiedEmail) {
+    return res.status(400).json({ detail: 'Authenticated Google email is required' });
+  }
+
+  verifiedEmail = verifiedEmail.toLowerCase();
+
+  // Search existing user by firebase_uid or email
+  let user = users.find(u => 
+    (verifiedUid && u.firebase_uid === verifiedUid) || 
+    (u.email && u.email.toLowerCase() === verifiedEmail)
+  );
+
+  let updated = false;
+  if (user) {
+    if (verifiedUid && !user.firebase_uid) {
+      user.firebase_uid = verifiedUid;
+      updated = true;
+    }
+    if (verifiedPhoto && !user.photo_url) {
+      user.photo_url = verifiedPhoto;
+      updated = true;
+    }
+    if (verifiedName && (!user.full_name || user.full_name === 'CUSTOMER')) {
+      user.full_name = verifiedName;
+      updated = true;
+    }
+    if (updated) {
+      saveJsonFile('users.json', users);
+    }
+  } else {
     user = {
       id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-      email: email.toLowerCase(),
+      firebase_uid: verifiedUid || '',
+      email: verifiedEmail,
       password_hash: '',
-      full_name: full_name || email.split('@')[0],
+      full_name: verifiedName || verifiedEmail.split('@')[0],
+      photo_url: verifiedPhoto || '',
       phone: '',
       street_address: '',
       city: '',

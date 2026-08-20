@@ -16,13 +16,12 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      const email = prompt('Enter your Google Account email:', 'customer@gmail.com');
-      if (email) {
-        await loginWithGoogle(email, email.split('@')[0].toUpperCase());
+      const loggedUser = await loginWithGoogle();
+      if (loggedUser) {
         onClose();
       }
     } catch (err) {
-      console.error(err);
+      console.error('Google Auth Modal Error:', err);
     } finally {
       setLoading(false);
     }
