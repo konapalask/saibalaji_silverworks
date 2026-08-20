@@ -43,13 +43,14 @@ const saveJsonFile = (filename, data) => {
   }
 };
 
-// Data Sources (Loaded directly from JSON files)
-let categories = loadJsonFile('categories_data.json');
-let products = loadJsonFile('products_data.json');
-let users = loadJsonFile('users.json');
-let orders = loadJsonFile('orders_data.json', []);
-let wholesaleRequests = loadJsonFile('wholesale_requests_data.json', []);
-let quotations = loadJsonFile('quotations_data.json', []);
+// Data Helper Functions (Always load LIVE directly from JSON files on disk)
+const getCategories = () => loadJsonFile('categories_data.json', []);
+const getProducts = () => loadJsonFile('products_data.json', []);
+const getUsers = () => loadJsonFile('users.json', []);
+const getOrders = () => loadJsonFile('orders_data.json', []);
+const getWholesaleRequests = () => loadJsonFile('wholesale_requests_data.json', []);
+const getQuotations = () => loadJsonFile('quotations_data.json', []);
+const getWishlists = () => loadJsonFile('wishlists_data.json', []);
 let homepageHero = loadJsonFile('homepage_hero_data.json', {
   title: 'Crafted in Silver. Created with Precision.',
   content: 'From traditional craftsmanship to contemporary silver designs, Sai Balaji Silverworks creates premium silver products for retail and wholesale markets.',
@@ -287,16 +288,18 @@ app.delete('/api/v1/users/:id', requireAdmin, (req, res) => {
 // --- CATEGORY API ENDPOINTS ---
 
 app.get('/api/v1/categories', (req, res) => {
-  res.json(categories);
+  res.json(getCategories());
 });
 
 app.get('/api/v1/categories/:id_or_slug', (req, res) => {
+  const categoriesList = getCategories();
+  const productsList = getProducts();
   const param = req.params.id_or_slug;
-  const category = categories.find(c => String(c.id) === param || c.slug === param);
+  const category = categoriesList.find(c => String(c.id) === param || c.slug === param);
   if (!category) return res.status(404).json({ detail: 'Category not found' });
 
   // Compute subcategories under this category
-  const catProducts = products.filter(p => p.category_id === category.id || p.category_slug === category.slug);
+  const catProducts = productsList.filter(p => p.category_id === category.id || p.category_slug === category.slug);
   const subcategoriesSet = new Set();
   catProducts.forEach(p => { if (p.subcategory) subcategoriesSet.add(p.subcategory); });
 
@@ -310,7 +313,9 @@ app.get('/api/v1/categories/:id_or_slug', (req, res) => {
 // --- PRODUCT API ENDPOINTS ---
 
 app.get('/api/v1/products', (req, res) => {
-  let result = [...products];
+  const productsList = getProducts();
+  const categoriesList = getCategories();
+  let result = [...productsList];
 
   // Category Filter
   if (req.query.category_id) {
@@ -404,7 +409,7 @@ app.get('/api/v1/products', (req, res) => {
 
   // Attach category object to each product matching FastAPI schema
   const responseData = paginatedResult.map(p => {
-    const cat = categories.find(c => c.id === p.category_id || c.slug === p.category_slug);
+    const cat = categoriesList.find(c => c.id === p.category_id || c.slug === p.category_slug);
     return {
       ...p,
       category: cat || null,
@@ -416,11 +421,13 @@ app.get('/api/v1/products', (req, res) => {
 });
 
 app.get('/api/v1/products/:id_or_slug', (req, res) => {
+  const productsList = getProducts();
+  const categoriesList = getCategories();
   const param = req.params.id_or_slug;
-  const product = products.find(p => String(p.id) === param || p.slug === param);
+  const product = productsList.find(p => String(p.id) === param || p.slug === param);
   if (!product) return res.status(404).json({ detail: 'Product not found' });
 
-  const cat = categories.find(c => c.id === product.category_id || c.slug === product.category_slug);
+  const cat = categoriesList.find(c => c.id === product.category_id || c.slug === product.category_slug);
   res.json({
     ...product,
     category: cat || null,
@@ -532,6 +539,185 @@ app.put('/api/v1/orders/:id/status', requireAdmin, (req, res) => {
     return res.json(order);
   }
   res.status(404).json({ detail: 'Order not found' });
+});
+
+
+// --- REAL-TIME WISHLIST ENDPOINTS ---
+
+let wishlistsData = loadJsonFile('wishlists_data.json', []);
+
+const getWishlistForUser = (userId) => {
+  const wishlistsData = loadJsonFile('wishlists_data.json', []);
+  const key = userId || 'guest';
+  let userWishlist = wishlistsData.find(w => String(w.user_id) === String(key));
+  if (!userWishlist) {
+    userWishlist = { user_id: typeof key === 'number' ? key : (isNaN(Number(key)) ? key : Number(key)), product_ids: [], updated_at: new Date().toISOString() };
+  }
+  return userWishlist;
+};
+
+const saveWishlistForUser = (userId, productIds) => {
+  const wishlistsData = loadJsonFile('wishlists_data.json', []);
+  const cleanIds = Array.from(new Set(productIds.map(Number))).filter(id => !isNaN(id) && id > 0);
+  const key = userId || 'guest';
+  const existingIdx = wishlistsData.findIndex(w => String(w.user_id) === String(key));
+  const updatedWishlist = {
+    user_id: typeof key === 'number' ? key : (isNaN(Number(key)) ? key : Number(key)),
+    product_ids: cleanIds,
+    updated_at: new Date().toISOString()
+  };
+  if (existingIdx >= 0) {
+    wishlistsData[existingIdx] = updatedWishlist;
+  } else {
+    wishlistsData.push(updatedWishlist);
+  }
+  saveJsonFile('wishlists_data.json', wishlistsData);
+  return updatedWishlist;
+};
+
+// GET /api/v1/wishlist
+app.get('/api/v1/wishlist', (req, res) => {
+  const productsList = getProducts();
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  let userId = null;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      if (decoded && decoded.id) userId = decoded.id;
+    } catch (e) {}
+  }
+
+  const targetUserKey = userId || 'guest';
+  const userWishlist = getWishlistForUser(targetUserKey);
+  const matchedProducts = productsList.filter(p => userWishlist.product_ids.includes(p.id));
+
+  res.json({
+    success: true,
+    user_id: targetUserKey,
+    wishlist_ids: userWishlist.product_ids,
+    products: matchedProducts,
+    count: userWishlist.product_ids.length,
+    updated_at: userWishlist.updated_at
+  });
+});
+
+// POST /api/v1/wishlist/toggle
+app.post('/api/v1/wishlist/toggle', (req, res) => {
+  const productsList = getProducts();
+  const productId = Number(req.body.product_id || req.body.productId);
+  if (!productId || isNaN(productId)) {
+    return res.status(400).json({ detail: 'Valid product_id is required' });
+  }
+
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  let userId = null;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      if (decoded && decoded.id) userId = decoded.id;
+    } catch (e) {}
+  }
+
+  const targetUserKey = userId || 'guest';
+  const currentWishlist = getWishlistForUser(targetUserKey);
+  let updatedIds = [...currentWishlist.product_ids];
+  const isInList = updatedIds.includes(productId);
+
+  if (isInList) {
+    updatedIds = updatedIds.filter(id => id !== productId);
+  } else {
+    updatedIds.push(productId);
+  }
+
+  const saved = saveWishlistForUser(targetUserKey, updatedIds);
+  const matchedProducts = productsList.filter(p => saved.product_ids.includes(p.id));
+
+  res.json({
+    success: true,
+    message: isInList ? 'Removed from wishlist' : 'Added to wishlist',
+    is_in_wishlist: !isInList,
+    wishlist_ids: saved.product_ids,
+    products: matchedProducts,
+    count: saved.product_ids.length,
+    updated_at: saved.updated_at
+  });
+});
+
+// GET & POST /api/v1/wishlist/sync
+app.get('/api/v1/wishlist/sync', (req, res) => {
+  const productsList = getProducts();
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  let userId = null;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      if (decoded && decoded.id) userId = decoded.id;
+    } catch (e) {}
+  }
+
+  if (userId) {
+    const userWishlist = getWishlistForUser(userId);
+    const matchedProducts = productsList.filter(p => userWishlist.product_ids.includes(p.id));
+    return res.json({
+      success: true,
+      user_id: userId,
+      wishlist_ids: userWishlist.product_ids,
+      products: matchedProducts,
+      message: 'Wishlist endpoint active. Use POST to sync local product_ids.'
+    });
+  }
+
+  res.json({
+    success: true,
+    message: 'Wishlist sync endpoint active. Send POST with product_ids to sync, or GET /api/v1/wishlist to retrieve items.'
+  });
+});
+
+app.post('/api/v1/wishlist/sync', (req, res) => {
+  const productsList = getProducts();
+  const localIds = Array.isArray(req.body.product_ids) ? req.body.product_ids.map(Number).filter(n => !isNaN(n)) : [];
+
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  let userId = null;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      if (decoded && decoded.id) userId = decoded.id;
+    } catch (e) {}
+  }
+
+  if (!userId) {
+    const matchedProducts = productsList.filter(p => localIds.includes(p.id));
+    return res.json({
+      success: true,
+      message: 'Guest wishlist synced locally',
+      wishlist_ids: localIds,
+      products: matchedProducts,
+      count: localIds.length
+    });
+  }
+
+  const currentWishlist = getWishlistForUser(userId);
+  const mergedIds = Array.from(new Set([...currentWishlist.product_ids, ...localIds])).filter(n => !isNaN(n));
+  const saved = saveWishlistForUser(userId, mergedIds);
+  const matchedProducts = productsList.filter(p => saved.product_ids.includes(p.id));
+
+  res.json({
+    success: true,
+    message: 'Wishlist synced successfully',
+    wishlist_ids: saved.product_ids,
+    products: matchedProducts,
+    count: saved.product_ids.length,
+    updated_at: saved.updated_at
+  });
 });
 
 

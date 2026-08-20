@@ -7,7 +7,8 @@ import { QuickViewModal } from '../components/QuickViewModal';
 import { Breadcrumb, BreadcrumbItem } from '../components/Breadcrumb';
 import { MAIN_CATEGORIES, getCategoryBySlug, MainCategory } from '../data/categoriesData';
 import { useWholesale } from '../context/WholesaleContext';
-import { ArrowRight, Briefcase } from 'lucide-react';
+import { useCart } from '../context/CartContext';
+import { ArrowRight, Briefcase, ShoppingBag } from 'lucide-react';
 import api from '../services/api';
 
 export const CategoryPage: React.FC = () => {
@@ -15,6 +16,7 @@ export const CategoryPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { wholesaleCount } = useWholesale();
+  const { totalQuantity, setIsCartOpen } = useCart();
 
   // Selected Category (default to first category if invalid or default route)
   const currentCategory: MainCategory = useMemo(() => {
@@ -548,20 +550,20 @@ export const CategoryPage: React.FC = () => {
         />
       )}
 
-      {/* Floating Bottom Action Bar for Bulk Wholesale */}
-      {wholesaleCount > 0 && (
-        <div className="fixed bottom-6 right-6 z-40 bg-[#1A1918] text-[#FAF9F5] p-4 rounded-2xl shadow-2xl border border-[#C5A059] flex items-center gap-4 animate-bounce-short">
+      {/* Floating Bottom Action Bar for Cart */}
+      {(totalQuantity > 0 || wholesaleCount > 0) && (
+        <div className="fixed bottom-6 right-6 z-40 bg-[#1A1918] text-[#FAF9F5] p-4 rounded-2xl shadow-2xl border border-[#C5A059] flex items-center gap-4">
           <div>
-            <p className="text-xs font-bold">{wholesaleCount} Bulk Items Selected</p>
-            <p className="text-[10px] text-gray-400">Ready to request formal quotation PDF</p>
+            <p className="text-xs font-bold">{totalQuantity || wholesaleCount} Items Selected</p>
+            <p className="text-[10px] text-gray-400">Items ready in your cart</p>
           </div>
-          <Link 
-            to="/wholesale/request"
-            className="bg-[#C5A059] text-[#1A1918] px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors flex items-center gap-2"
+          <button 
+            onClick={() => setIsCartOpen(true)}
+            className="bg-[#C5A059] text-[#1A1918] px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors flex items-center gap-2 cursor-pointer shadow-md"
           >
-            <span>Proceed to Request Form</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+            <span>VIEW CART</span>
+            <ShoppingBag className="w-4 h-4" />
+          </button>
         </div>
       )}
 

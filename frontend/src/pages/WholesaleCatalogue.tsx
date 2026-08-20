@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Briefcase, ArrowRight, Sparkles } from 'lucide-react';
+import { Briefcase, ArrowRight, Sparkles, ShoppingBag } from 'lucide-react';
 import { MAIN_CATEGORIES } from '../data/categoriesData';
 import { useWholesale } from '../context/WholesaleContext';
+import { useCart } from '../context/CartContext';
 
 export const WholesaleCatalogue: React.FC = () => {
   const { wholesaleCount } = useWholesale();
+  const { totalQuantity, setIsCartOpen } = useCart();
 
   return (
     <div className="min-h-screen bg-[#F8F6F1] py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-[#202020]">
@@ -89,20 +91,20 @@ export const WholesaleCatalogue: React.FC = () => {
         </div>
       </div>
 
-      {/* Floating Bottom Action Bar */}
-      {wholesaleCount > 0 && (
+      {/* Floating Bottom Action Bar for Cart */}
+      {(totalQuantity > 0 || wholesaleCount > 0) && (
         <div className="fixed bottom-6 right-6 z-40 bg-[#1A1918] text-[#FAF9F5] p-4 rounded-2xl shadow-2xl border border-[#C5A059] flex items-center gap-4">
           <div>
-            <p className="text-xs font-bold">{wholesaleCount} Bulk Items Selected</p>
-            <p className="text-[10px] text-gray-400">Ready to request formal quotation PDF</p>
+            <p className="text-xs font-bold">{totalQuantity || wholesaleCount} Items Selected</p>
+            <p className="text-[10px] text-gray-400">Items ready in your cart</p>
           </div>
-          <Link 
-            to="/wholesale/request"
-            className="bg-[#C5A059] text-[#1A1918] px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors flex items-center gap-2"
+          <button 
+            onClick={() => setIsCartOpen(true)}
+            className="bg-[#C5A059] text-[#1A1918] px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors flex items-center gap-2 cursor-pointer shadow-md"
           >
-            <span>Proceed to Request Form</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+            <span>VIEW CART</span>
+            <ShoppingBag className="w-4 h-4" />
+          </button>
         </div>
       )}
 

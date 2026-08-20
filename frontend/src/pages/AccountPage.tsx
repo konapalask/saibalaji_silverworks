@@ -478,8 +478,7 @@ export const AccountPage: React.FC = () => {
               {wishlistIds.map((pId) => {
                 const prod = productCatalogMap[pId];
                 if (!prod) return null;
-                const rawImg = (prod.images && prod.images.length > 0) ? prod.images[0] : null;
-                const prodImg = typeof rawImg === 'string' ? rawImg : (rawImg?.image_url || '/placeholder.jpg');
+                const prodImg = getItemImageUrl(prod, productCatalogMap) || prod.featured_image || (prod.images && prod.images.length > 0 ? (typeof prod.images[0] === 'string' ? prod.images[0] : prod.images[0]?.image_url) : '/hero_balaji_4k.png');
 
                 return (
                   <div key={prod.id} className="bg-white rounded-3xl border border-[#E6E1DA] p-5 shadow-xs flex flex-col justify-between space-y-4">
@@ -488,7 +487,7 @@ export const AccountPage: React.FC = () => {
                         <img 
                           src={prodImg} 
                           alt={prod.title} 
-                          className="w-full h-48 object-cover rounded-2xl bg-[#FAF9F5] border border-[#E6E1DA]"
+                          className="w-full h-48 object-contain rounded-2xl bg-[#FAF9F5] border border-[#E6E1DA] p-2"
                         />
                       </Link>
                       <button
