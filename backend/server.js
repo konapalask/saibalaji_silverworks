@@ -1045,6 +1045,64 @@ app.get('/openapi.json', (req, res) => {
           security: [{ BearerAuth: [] }],
           responses: { "200": { description: "List of registered users" }, "401": { description: "Missing token" }, "403": { description: "Admin access required" } }
         }
+      },
+      "/api/v1/wishlist": {
+        get: {
+          summary: "Get current user or guest wishlist",
+          tags: ["Wishlist"],
+          security: [{ BearerAuth: [] }],
+          responses: { "200": { description: "User wishlist products and item IDs" } }
+        }
+      },
+      "/api/v1/wishlist/toggle": {
+        post: {
+          summary: "Add or remove product from wishlist (Toggle)",
+          tags: ["Wishlist"],
+          security: [{ BearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["product_id"],
+                  properties: {
+                    product_id: { type: "integer", description: "ID of product to add or remove" }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": { description: "Wishlist updated status and item list" },
+            "400": { description: "Valid product_id required" }
+          }
+        }
+      },
+      "/api/v1/wishlist/sync": {
+        post: {
+          summary: "Sync local guest wishlist with user account",
+          tags: ["Wishlist"],
+          security: [{ BearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    product_ids: {
+                      type: "array",
+                      items: { type: "integer" },
+                      description: "Array of product IDs to sync"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          responses: { "200": { description: "Wishlist merged and synced" } }
+        }
       }
     },
     components: {
