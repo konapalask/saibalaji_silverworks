@@ -193,7 +193,7 @@ export const Home: React.FC = () => {
               />
 
               {/* Floating Quality Seal Badge */}
-              <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-full border border-[#E5E0D8] shadow-md flex items-center gap-2.5 text-xs text-[#202020] font-medium whitespace-nowrap">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-full border border-[#E5E0D8] shadow-md flex items-center gap-2.5 text-xs text-[#202020] font-medium whitespace-nowrap">
                 <Sparkles className="w-4 h-4 text-[#B9A77A]" />
                 <span className="font-serif italic font-semibold text-sm">999 Fine Silver Deity Idol</span>
               </div>
