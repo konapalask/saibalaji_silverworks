@@ -9,6 +9,7 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { CartDrawer } from './components/CartDrawer';
 import { MobileBottomNav } from './components/MobileBottomNav';
+import { ScrollToTop } from './components/ScrollToTop';
 
 import { Home } from './pages/Home';
 import { About } from './pages/About';
@@ -69,6 +70,7 @@ const StoreShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 export const App: React.FC = () => {
   return (
     <Router>
+      <ScrollToTop />
       <AuthProvider>
         <CartProvider>
           <WishlistProvider>

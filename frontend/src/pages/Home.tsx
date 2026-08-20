@@ -134,7 +134,7 @@ export const Home: React.FC = () => {
               </span>
               <h1 className="font-serif text-5xl sm:text-7xl lg:text-8xl font-light text-[#202020] leading-[1.02] tracking-tight">
                 CRAFTED IN <br />
-                <span className="text-silver-shimmer font-normal italic">PURE SILVER.</span>
+                <span className="text-[#00276B] font-normal not-italic" style={{ color: '#00276B' }}>PURE SILVER.</span>
               </h1>
             </div>
 
@@ -319,120 +319,7 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 05. FEATURED SILVER COLLECTION (E-COMMERCE PRODUCTS GRID) */}
-      <section className="py-24 bg-white border-y border-[#E5E0D8] px-6 lg:px-12">
-        <div className="max-w-7xl mx-auto space-y-12">
-          
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-2">
-              <span className="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#B9A77A] block">
-                CURATED SELECTIONS
-              </span>
-              <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
-                Featured Silver Collection
-              </h2>
-            </div>
-            <Link
-              to="/shop/retail"
-              className="px-6 py-3 bg-[#F8F6F1] hover:bg-[#202020] text-[#202020] hover:text-white border border-[#E5E0D8] text-[11px] font-bold uppercase tracking-[0.2em] rounded-xl transition-all"
-            >
-              VIEW ALL PRODUCTS
-            </Link>
-          </div>
 
-          {/* Product Cards Grid */}
-          {loadingProducts ? (
-            <div className="py-16 text-center text-[#B9A77A] font-serif text-lg animate-pulse">
-              Loading featured silver products...
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.slice(0, 8).map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onQuickView={(p) => setQuickViewProduct(p)}
-                />
-              ))}
-            </div>
-          )}
-
-        </div>
-      </section>
-
-      {/* 06. HERITAGE / CRAFTSMANSHIP SECTION (ALTERNATING LIGHT EDITORIAL) */}
-      <section id="craftsmanship" className="py-28 px-6 lg:px-12 max-w-7xl mx-auto space-y-20">
-        
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 relative aspect-4/5 rounded-3xl overflow-hidden border border-[#E5E0D8] product-shadow">
-            <img
-              src="/silver_artisan_4k.png"
-              alt="Artisan Silver Craftsmanship"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6 text-white space-y-1">
-              <span className="text-[10px] font-sans font-bold uppercase tracking-[0.3em] text-[#B9A77A]">TENALI ATELIER HAND</span>
-              <p className="font-serif text-lg text-white">Hand-Sculpted Nakshi Engraving & Relief Work</p>
-            </div>
-          </div>
-
-          <div id="manufacturing" className="lg:col-span-6 space-y-6">
-            <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
-              THE ART OF SILVER
-            </span>
-            <h2 className="font-serif text-4xl sm:text-5xl font-light text-[#202020] leading-tight">
-              Where heritage hands meet modern induction casting.
-            </h2>
-            <p className="text-sm text-[#555555] font-light leading-relaxed">
-              Every creation bearing the Sai Balaji Silverworks hallmark undergoes multi-stage metallurgical casting. High-frequency vacuum furnaces eliminate air pockets to yield solid, dense silver items finished with micro anti-tarnish protective barriers.
-            </p>
-
-            <div className="grid grid-cols-2 gap-6 pt-4 border-t border-[#E5E0D8]">
-              <div>
-                <span className="text-3xl font-serif text-[#202020]">99.9%</span>
-                <h4 className="font-sans text-[10px] uppercase tracking-widest font-bold text-[#B9A77A] mt-1">Spectrometry Verified</h4>
-                <p className="text-xs text-[#666666] font-light">NABL assay lab purity testing.</p>
-              </div>
-
-              <div>
-                <span className="text-3xl font-serif text-[#202020]">01/01</span>
-                <h4 className="font-sans text-[10px] uppercase tracking-widest font-bold text-[#B9A77A] mt-1">Tenali Direct Atelier</h4>
-                <p className="text-xs text-[#666666] font-light">Zero middleman markup.</p>
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <Link to="/about" className="px-6 py-3.5 border border-[#202020] hover:bg-[#202020] hover:text-white text-[#202020] text-[10.5px] font-bold uppercase tracking-[0.2em] rounded-xl transition-all inline-flex">
-                <span>EXPLORE OUR ATELIER PROCESS</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Manufacturing Workflow 6 Steps Grid */}
-        <div className="pt-12 border-t border-[#E5E0D8] space-y-10">
-          <div className="text-center space-y-2">
-            <span className="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#B9A77A] block">
-              PRECISION MANUFACTURING
-            </span>
-            <h3 className="font-serif text-3xl font-light text-[#202020]">
-              From Craft to Creation
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {manufacturingSteps.map((step, idx) => (
-              <div key={idx} className="p-6 bg-white rounded-2xl border border-[#E5E0D8] space-y-2 product-shadow hover:border-[#B9A77A] transition-all">
-                <span className="text-xl font-serif text-[#B9A77A] font-bold block">{step.num}</span>
-                <h4 className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-[#202020]">{step.name}</h4>
-                <p className="text-xs text-[#666666] font-light leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </section>
 
       {/* 07. B2B / WHOLESALE SECTION (LIGHT CHAMPAGNE PORTAL CARD) */}
       <section className="py-24 bg-[#F3EFE6] border-y border-[#E5E0D8] px-6 lg:px-12">
