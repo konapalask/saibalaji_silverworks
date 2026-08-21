@@ -1,1 +1,33 @@
-[]
+[
+  {
+    "id": 1,
+    "order_number": "SBS-20260821-4490",
+    "user_id": 2,
+    "customer_name": "Sai",
+    "customer_email": "sai@gmail.com",
+    "customer_phone": "+91 99876543210",
+    "shipping_address": "Hsjaiaj",
+    "shipping_city": "Jdjehe",
+    "shipping_state": "Shehd",
+    "shipping_pincode": "Hdudh",
+    "items": [
+      {
+        "id": 5,
+        "product_id": 5,
+        "product_name": "Pure Silver Peacock Kumkum Bharani Box",
+        "product_sku": "SBS-PA-005",
+        "unit_price": 4800,
+        "quantity": 3,
+        "subtotal": 14400,
+        "featured_image": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Kumkum-Bharani/silver-peacock-lamp-silver-article-by-unniyarcha-jewellery-732650_1800x1800.jpg",
+        "image_url": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Kumkum-Bharani/silver-peacock-lamp-silver-article-by-unniyarcha-jewellery-732650_1800x1800.jpg"
+      }
+    ],
+    "subtotal": 14400,
+    "tax_amount": 432,
+    "shipping_charge": 0,
+    "grand_total": 14832,
+    "status": "Order Placed",
+    "created_at": "2026-08-21T08:23:54.845Z"
+  }
+]

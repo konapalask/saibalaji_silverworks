@@ -90,13 +90,20 @@ export const Navbar: React.FC = () => {
               <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/home') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
 
+            <RouterLink
+              to="/shop/retail"
+              className={`transition-colors py-1 relative group ${isActive('/shop/retail') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
+            >
+              RETAIL
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/shop/retail') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+            </RouterLink>
 
             <RouterLink
-              to="/category/silver-pooja-articles"
-              className={`transition-colors py-1 relative group ${isActive('/category') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
+              to="/shop/wholesale"
+              className={`transition-colors py-1 relative group ${isActive('/shop/wholesale') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
             >
-              COLLECTIONS
-              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/category') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              WHOLESALE
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/shop/wholesale') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
 
             <RouterLink
@@ -105,15 +112,6 @@ export const Navbar: React.FC = () => {
             >
               ABOUT
               <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/about') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-            </RouterLink>
-
-
-            <RouterLink
-              to="/shop/wholesale"
-              className={`transition-colors py-1 relative group ${isActive('/shop/wholesale') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
-            >
-              WHOLESALE
-              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/shop/wholesale') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
 
             <RouterLink
@@ -200,9 +198,9 @@ export const Navbar: React.FC = () => {
 
           <nav className="flex flex-col space-y-6 text-xl font-light tracking-wide text-center">
             <RouterLink to="/" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">HOME</RouterLink>
-            <RouterLink to="/category/silver-pooja-articles" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">COLLECTIONS</RouterLink>
-            <RouterLink to="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">ABOUT</RouterLink>
+            <RouterLink to="/shop/retail" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">RETAIL</RouterLink>
             <RouterLink to="/shop/wholesale" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">WHOLESALE</RouterLink>
+            <RouterLink to="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">ABOUT</RouterLink>
             <RouterLink to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">CONTACT</RouterLink>
           </nav>
 
