@@ -192,6 +192,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('sbs_user_address');
+      localStorage.removeItem('sbs_wishlist');
       setToken(null);
       setUser(null);
       setFirebaseUser(null);

@@ -56,14 +56,23 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   useEffect(() => {
-    fetchWishlist();
+    if (!user) {
+      setWishlistIds([]);
+      try {
+        localStorage.removeItem('sbs_wishlist');
+      } catch {}
+    } else {
+      fetchWishlist();
+    }
   }, [user]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('sbs_wishlist', JSON.stringify(wishlistIds));
-    } catch {}
-  }, [wishlistIds]);
+    if (user && wishlistIds.length >= 0) {
+      try {
+        localStorage.setItem('sbs_wishlist', JSON.stringify(wishlistIds));
+      } catch {}
+    }
+  }, [wishlistIds, user]);
 
   const toggleWishlist = async (productId: number) => {
     // 1. Optimistic UI update for immediate response
