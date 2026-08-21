@@ -56,6 +56,20 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 // Store Shell Component (Provides Header, Footer, Cart Drawer, Mobile Bar)
 const StoreShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAdmin, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center font-serif text-sm text-[#C8A96B] animate-pulse">
+        Authenticating Sai Balaji Silverworks...
+      </div>
+    );
+  }
+
+  if (isAdmin) {
+    return <Navigate to="/admin" replace />;
+  }
+
   return (
     <>
       <Navbar />

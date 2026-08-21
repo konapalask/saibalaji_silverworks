@@ -113,14 +113,6 @@ export const AdminLayout: React.FC = () => {
 
         <div className="pt-6 border-t border-white/10 space-y-3">
           <button 
-            onClick={() => navigate('/')}
-            className="w-full flex items-center gap-2 text-xs text-gray-400 hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Return to Live Storefront</span>
-          </button>
-
-          <button 
             onClick={logout}
             className="w-full flex items-center gap-2 text-xs text-red-400 hover:text-red-300 transition-colors"
           >
