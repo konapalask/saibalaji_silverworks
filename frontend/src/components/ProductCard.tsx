@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Eye, ShoppingBag, Briefcase, Sparkles } from 'lucide-react';
+import { Heart, Eye, ShoppingBag, Briefcase, Sparkles, Plus, Minus } from 'lucide-react';
 import { Product } from '../types';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
 import { useWholesale } from '../context/WholesaleContext';
+
+import { useLiveSilver } from '../context/LiveSilverContext';
 
 interface ProductCardProps {
   product: Product;
@@ -14,37 +16,39 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, isWholesaleOnly }) => {
   const { isInWishlist, toggleWishlist } = useWishlist();
-  const { addToCart } = useCart();
+  const { cart, addToCart, updateQuantity, removeFromCart } = useCart();
   const { addToWholesaleCart } = useWholesale();
+  const { calculateCurrentPrice } = useLiveSilver();
 
   const isLiked = isInWishlist(product.id);
+  const displayPrice = calculateCurrentPrice(product.base_price || product.retail_price, product.base_silver_rate);
+
+  // Check current item quantity in cart
+  const cartItem = cart.find((i) => i.product.id === product.id);
+  const currentQuantity = cartItem ? cartItem.quantity : 0;
 
   return (
     <div className="group relative bg-white rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] product-card-hover overflow-hidden flex flex-col justify-between h-full">
 
-      {/* Top Product Image Container with Neutral Off-White Studio Backdrop */}
-      <div className="relative aspect-4/5 w-full bg-[#FAF8F5] overflow-hidden p-4 flex items-center justify-center border-b border-[#F0ECE6]">
+      {/* Top Product Image Container with 3:2 Aspect Ratio */}
+      <div className="relative aspect-3/2 w-full bg-[#FAF8F5] overflow-hidden p-2 sm:p-3 flex items-center justify-center border-b border-[#F0ECE6]">
 
-        {/* Product Photography - Uncropped object-contain with soft pedestal drop-shadow */}
+        {/* Product Photography - Clean 3:2 filled studio photography */}
         <img
           src={product.featured_image}
           alt={product.title}
-          className="w-full h-full object-contain img-editorial drop-shadow-md group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover rounded-xl img-editorial drop-shadow-md group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
 
-        {/* Badges Overlay */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
-          <span className="bg-white/95 text-[#202020] text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full border border-[#E5E0D8] shadow-2xs flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-[#B9A77A]" />
-            {product.silver_purity}
-          </span>
-          {product.weight_g > 0 && (
-            <span className="bg-[#F8F6F1]/90 text-[#666666] text-[9.5px] font-semibold tracking-wider px-2 py-0.5 rounded-full border border-[#E5E0D8]/80 w-fit">
-              {product.weight_g}g
+        {/* Out of Stock Overlay Badge */}
+        {(product.stock <= 0 || product.in_stock === false) && (
+          <div className="absolute top-3 left-3 z-10">
+            <span className="bg-red-600 text-white text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">
+              OUT OF STOCK
             </span>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Wishlist Button */}
         <button
@@ -93,9 +97,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
         <div className="mt-4 pt-3 border-t border-[#F0ECE6] space-y-3">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-[9.5px] text-[#777777] uppercase tracking-wider block font-medium">Price</span>
+              <div className="flex items-center gap-1">
+                <span className="text-[9.5px] text-[#777777] uppercase tracking-wider font-medium">Price</span>
+                <span className="text-[8.5px] text-[#C5A059] font-bold bg-[#FAF9F5] px-1.5 py-0.2 rounded border border-[#C5A059]/30">Live</span>
+              </div>
               <span className="font-sans font-bold text-base text-[#202020]">
-                ₹{product.retail_price.toLocaleString()}
+                ₹{displayPrice.toLocaleString()}
               </span>
             </div>
 
@@ -107,24 +114,76 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
             )}
           </div>
 
-          {isWholesaleOnly ? (
+          {(product.stock <= 0 || product.in_stock === false) ? (
             <button
-              onClick={() => addToWholesaleCart(product)}
-              className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-xs"
-              title={`Add Wholesale MOQ (${product.min_wholesale_qty || 5} Pcs) to Request`}
+              disabled
+              className="w-full bg-gray-100 text-gray-400 py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider cursor-not-allowed flex items-center justify-center gap-2 border border-gray-200"
             >
-              <Briefcase className="w-3.5 h-3.5 text-[#B9A77A] group-hover:text-white" />
-              <span>+ ADD BULK ({product.min_wholesale_qty || 5} PCS)</span>
+              <span>OUT OF STOCK</span>
             </button>
+          ) : isWholesaleOnly ? (
+            currentQuantity > 0 ? (
+              <div className="w-full flex items-center justify-between bg-[#F8F6F1] border border-[#B9A77A] rounded-xl p-1 shadow-2xs">
+                <button
+                  onClick={() => updateQuantity(product.id, Math.max(0, currentQuantity - 1))}
+                  className="w-8 h-8 rounded-lg bg-white text-[#202020] hover:bg-red-50 hover:text-red-600 font-bold flex items-center justify-center transition-colors shadow-2xs text-sm"
+                  title="Decrease Quantity"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <span className="font-bold text-xs text-[#202020] px-2 font-sans">
+                  {currentQuantity} Pcs
+                </span>
+                <button
+                  onClick={() => updateQuantity(product.id, currentQuantity + 1)}
+                  className="w-8 h-8 rounded-lg bg-[#202020] text-white hover:bg-[#B9A77A] font-bold flex items-center justify-center transition-colors shadow-2xs text-sm"
+                  title="Increase Quantity"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => addToWholesaleCart(product)}
+                className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                title={`Add Wholesale MOQ (${product.min_wholesale_qty || 5} Pcs) to Request`}
+              >
+                <Briefcase className="w-3.5 h-3.5 text-[#B9A77A] group-hover:text-white" />
+                <span>+ ADD BULK ({product.min_wholesale_qty || 5} PCS)</span>
+              </button>
+            )
           ) : (
-            <button
-              onClick={() => addToCart(product, 1)}
-              className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs"
-              title="Add to Cart"
-            >
-              <ShoppingBag className="w-4 h-4 text-[#B9A77A] group-hover:text-white" />
-              <span>ADD TO CART</span>
-            </button>
+            currentQuantity > 0 ? (
+              /* Instamart / Zepto Style Inline Stepper Button (- 1 +) */
+              <div className="w-full flex items-center justify-between bg-[#FAF9F5] border-2 border-[#B9A77A] rounded-xl p-0.5 shadow-2xs">
+                <button
+                  onClick={() => updateQuantity(product.id, currentQuantity - 1)}
+                  className="w-9 h-8 rounded-lg bg-white text-[#202020] hover:bg-red-50 hover:text-red-600 font-bold flex items-center justify-center transition-colors shadow-2xs"
+                  title="Decrease Quantity"
+                >
+                  <Minus className="w-4 h-4 text-[#202020]" />
+                </button>
+                <span className="font-bold text-sm text-[#202020] font-sans px-3">
+                  {currentQuantity}
+                </span>
+                <button
+                  onClick={() => updateQuantity(product.id, currentQuantity + 1)}
+                  className="w-9 h-8 rounded-lg bg-[#202020] text-white hover:bg-[#B9A77A] font-bold flex items-center justify-center transition-colors shadow-2xs"
+                  title="Increase Quantity"
+                >
+                  <Plus className="w-4 h-4 text-white" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => addToCart(product, 1)}
+                className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs"
+                title="Add to Cart"
+              >
+                <Plus className="w-4 h-4 text-[#B9A77A] group-hover:text-white" />
+                <span>ADD TO CART</span>
+              </button>
+            )
           )}
         </div>
 

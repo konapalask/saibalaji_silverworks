@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { WholesaleProvider } from './context/WholesaleContext';
+import { LiveSilverProvider } from './context/LiveSilverContext';
 
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -89,6 +90,7 @@ export const App: React.FC = () => {
         <CartProvider>
           <WishlistProvider>
             <WholesaleProvider>
+              <LiveSilverProvider>
               
               <div className="min-h-screen flex flex-col justify-between bg-[#F8F6F1] text-[#202020]">
                 
@@ -148,7 +150,7 @@ export const App: React.FC = () => {
                 </Routes>
 
               </div>
-
+              </LiveSilverProvider>
             </WholesaleProvider>
           </WishlistProvider>
         </CartProvider>

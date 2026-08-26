@@ -478,7 +478,7 @@ export const AccountPage: React.FC = () => {
               {wishlistIds.map((pId) => {
                 const prod = productCatalogMap[pId];
                 if (!prod) return null;
-                const prodImg = getItemImageUrl(prod, productCatalogMap) || prod.featured_image || (prod.images && prod.images.length > 0 ? (typeof prod.images[0] === 'string' ? prod.images[0] : prod.images[0]?.image_url) : '/hero_balaji_4k.png');
+                const prodImg = getItemImageUrl(prod, productCatalogMap) || prod.featured_image || (prod.images && prod.images.length > 0 ? (typeof prod.images[0] === 'string' ? prod.images[0] : prod.images[0]?.image_url) : '/hero_balaji_4k.webp');
 
                 return (
                   <div key={prod.id} className="bg-white rounded-3xl border border-[#E6E1DA] p-5 shadow-xs flex flex-col justify-between space-y-4">

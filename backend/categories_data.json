@@ -3,40 +3,105 @@
     "id": 1,
     "name": "Silver Pooja Articles",
     "slug": "silver-pooja-articles",
-    "description": "Sacred 925 sterling & 999 fine silver ritual essentials and puja accessories.",
-    "image_url": "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-God-Idols/AMS-115-0054.webp",
-    "is_featured": true
+    "description": "Sacred 925 sterling & 999 fine silver ritual essentials, deepams, thalis, and puja accessories.",
+    "image_url": "/public/sai balajji products/Floral Engraved Silver Pooja Thali Set.webp",
+    "is_featured": true,
+    "subcategories": [
+      {
+        "id": "sub-kalash",
+        "name": "Silver Kalash & Pots",
+        "slug": "silver-kalash-pots"
+      },
+      {
+        "id": "sub-pooja-thalis",
+        "name": "Silver Pooja Thalis & Sets",
+        "slug": "silver-pooja-thalis-sets"
+      },
+      {
+        "id": "sub-diyas",
+        "name": "Silver Diyas & Oil Lamps",
+        "slug": "silver-diyas-oil-lamps"
+      },
+      {
+        "id": "sub-pooja-spoons",
+        "name": "Silver Pooja Spoons & Accessories",
+        "slug": "silver-pooja-spoons-accessories"
+      }
+    ]
   },
   {
     "id": 2,
-    "name": "Silver God & Temple Items",
-    "slug": "silver-god-temple-items",
-    "description": "Hand-crafted 999 fine silver deities, sanctum adornments, and temple accessories.",
-    "image_url": "/Sai-Balaji-Silverworks-Products/02-Silver-God-Temple-Items/Balaji-Idols/download.webp",
-    "is_featured": true
+    "name": "Silver Dining & Tableware",
+    "slug": "silver-dining-tableware",
+    "description": "Luxury 925 sterling dinner sets, tumblers, bowls, trays, and royal silverware.",
+    "image_url": "/public/sai balajji products/Royal Floral Engraved Silver Serving Tray.webp",
+    "is_featured": true,
+    "subcategories": [
+      {
+        "id": "sub-serving-trays",
+        "name": "Silver Serving Trays & Platters",
+        "slug": "silver-serving-trays-platters"
+      },
+      {
+        "id": "sub-bowls",
+        "name": "Silver Bowls & Pedestal Bowls",
+        "slug": "silver-bowls-pedestal-bowls"
+      },
+      {
+        "id": "sub-urlis",
+        "name": "Silver Urlis & Decorative Vessels",
+        "slug": "silver-urlis-decorative-vessels"
+      },
+      {
+        "id": "sub-tumblers",
+        "name": "Silver Tumblers & Drinkware",
+        "slug": "silver-tumblers-drinkware"
+      },
+      {
+        "id": "sub-dinner-sets",
+        "name": "Silver Dinner Plates & Thali Sets",
+        "slug": "silver-dinner-plates-thali-sets"
+      }
+    ]
   },
   {
     "id": 3,
-    "name": "Silver Dining & Tableware",
-    "slug": "silver-dining-tableware",
-    "description": "Luxury 925 sterling dinner sets, tumblers, bowls, and royal silverware.",
-    "image_url": "/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Dinner-Sets/images.jpg",
-    "is_featured": true
+    "name": "Silver God & Temple Items",
+    "slug": "silver-god-temple-items",
+    "description": "Hand-crafted 999 fine silver deities, sanctum adornments, frames, and temple accessories.",
+    "image_url": "/public/sai balajji products/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp",
+    "is_featured": true,
+    "subcategories": [
+      {
+        "id": "sub-idols",
+        "name": "Silver Idols & Statues",
+        "slug": "silver-idols-statues"
+      },
+      {
+        "id": "sub-frames",
+        "name": "Silver Photo Frames & Sacred Displays",
+        "slug": "silver-photo-frames-sacred-displays"
+      }
+    ]
   },
   {
     "id": 4,
-    "name": "Silver Baby & Kids Gifts",
-    "slug": "silver-baby-kids-gifts",
-    "description": "Auspicious pure silver baby feeding articles, anklets, and keepsake gifts.",
-    "image_url": "/Sai-Balaji-Silverworks-Products/04-Silver-Baby-Kids-Gifts/Silver-Feeding-Sets/images (1).jpg",
-    "is_featured": true
-  },
-  {
-    "id": 5,
     "name": "Silver Wedding & Return Gifts",
     "slug": "silver-wedding-return-gifts",
-    "description": "Memorable silver keepsakes, return gift thalis, and custom wedding tokens.",
-    "image_url": "/Sai-Balaji-Silverworks-Products/05-Silver-Wedding-Return-Gifts/Silver-Wedding-Gifts/images (1).jpg",
-    "is_featured": true
+    "description": "Memorable silver keepsakes, return gift sets, engraved storage boxes, and custom wedding tokens.",
+    "image_url": "/public/sai balajji products/Shree Divya Silver Masala Box Set.webp",
+    "is_featured": true,
+    "subcategories": [
+      {
+        "id": "sub-storage-boxes",
+        "name": "Silver Storage Containers & Boxes",
+        "slug": "silver-storage-containers-boxes"
+      },
+      {
+        "id": "sub-return-gift-sets",
+        "name": "Silver Return Gift Sets & Utensils",
+        "slug": "silver-return-gift-sets-utensils"
+      }
+    ]
   }
 ]

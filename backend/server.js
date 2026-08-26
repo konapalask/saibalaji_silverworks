@@ -4,6 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const https = require('https');
+const http = require('http');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -54,7 +56,7 @@ const getWishlists = () => loadJsonFile('wishlists_data.json', []);
 let homepageHero = loadJsonFile('homepage_hero_data.json', {
   title: 'Crafted in Silver. Created with Precision.',
   content: 'From traditional craftsmanship to contemporary silver designs, Sai Balaji Silverworks creates premium silver products for retail and wholesale markets.',
-  media_url: '/hero_balaji_4k.png'
+  media_url: '/homescreen.webp'
 });
 let videos = loadJsonFile('videos_data.json', []);
 
@@ -402,7 +404,7 @@ app.get('/api/v1/products', (req, res) => {
 
   // Pagination
   const skip = parseInt(req.query.skip) || 0;
-  const limit = parseInt(req.query.limit) || 100;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 500;
   const paginatedResult = result.slice(skip, skip + limit);
 
   // Attach category object to each product matching FastAPI schema
@@ -431,6 +433,366 @@ app.get('/api/v1/products/:id_or_slug', (req, res) => {
     category: cat || null,
     images: product.images || []
   });
+});
+
+// Alias GET /api/products
+app.get('/api/products', (req, res) => {
+  req.url = '/api/v1/products' + (req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '');
+  const productsList = getProducts();
+  const categoriesList = getCategories();
+  let result = [...productsList];
+
+  if (req.query.category_id) {
+    result = result.filter(p => p.category_id === parseInt(req.query.category_id));
+  }
+  if (req.query.category_slug) {
+    const slug = req.query.category_slug.toLowerCase();
+    result = result.filter(p => p.category_slug && p.category_slug.toLowerCase() === slug);
+  }
+
+  const limit = parseInt(req.query.limit) || 200;
+  const paginatedResult = result.slice(0, limit);
+  const responseData = paginatedResult.map(p => {
+    const cat = categoriesList.find(c => c.id === p.category_id || c.slug === p.category_slug);
+    return { ...p, category: cat || null, images: p.images || [] };
+  });
+  res.json(responseData);
+});
+
+app.get('/api/products/:id_or_slug', (req, res) => {
+  const productsList = getProducts();
+  const categoriesList = getCategories();
+  const param = req.params.id_or_slug;
+  const product = productsList.find(p => String(p.id) === param || p.slug === param);
+  if (!product) return res.status(404).json({ detail: 'Product not found' });
+
+  const cat = categoriesList.find(c => c.id === product.category_id || c.slug === product.category_slug);
+  res.json({ ...product, category: cat || null, images: product.images || [] });
+});
+
+// Admin Product Create (POST)
+const handleCreateProduct = (req, res) => {
+  const productsList = getProducts();
+  const categoriesList = getCategories();
+
+  const {
+    title, sku, category_id, subcategory, product_type, silver_purity,
+    weight_g, gross_weight_g, net_silver_weight_g, making_charges, dimensions,
+    retail_price, wholesale_price, min_wholesale_qty, stock, description, specifications,
+    featured_image, is_featured, is_new_arrival
+  } = req.body;
+
+  const category = categoriesList.find(c => c.id === Number(category_id));
+  const newId = productsList.length > 0 ? Math.max(...productsList.map(p => p.id)) + 1 : 1;
+
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+  const newProduct = {
+    id: newId,
+    title: title || 'New Silver Product',
+    slug,
+    sku: sku || `SBS-SLV-${newId}`,
+    category_id: category_id ? Number(category_id) : 1,
+    category_name: category ? category.name : 'Silver Pooja Articles',
+    category_slug: category ? category.slug : 'silver-pooja-articles',
+    subcategory: subcategory || '',
+    product_type: product_type || 'BOTH',
+    silver_purity: silver_purity || '925 Sterling Silver',
+    weight_g: weight_g ? parseFloat(weight_g) : 50.0,
+    gross_weight_g: gross_weight_g ? parseFloat(gross_weight_g) : (weight_g ? parseFloat(weight_g) : 50.0),
+    net_silver_weight_g: net_silver_weight_g ? parseFloat(net_silver_weight_g) : (weight_g ? parseFloat(weight_g) : 50.0),
+    making_charges: making_charges ? parseFloat(making_charges) : 0,
+    dimensions: dimensions || '',
+    retail_price: retail_price ? parseFloat(retail_price) : 0,
+    wholesale_price: wholesale_price ? parseFloat(wholesale_price) : (retail_price ? parseFloat(retail_price) : 0),
+    min_wholesale_qty: min_wholesale_qty ? parseInt(min_wholesale_qty) : 5,
+    stock: stock !== undefined ? parseInt(stock) : 25,
+    description: description || '',
+    specifications: specifications || '',
+    featured_image: featured_image || '/public/sai balajji products/Floral Engraved Silver Pooja Thali Set.webp',
+    is_featured: Boolean(is_featured),
+    is_new_arrival: is_new_arrival !== undefined ? Boolean(is_new_arrival) : true,
+    is_active: true,
+    created_at: new Date().toISOString()
+  };
+
+  productsList.push(newProduct);
+  saveJsonFile('products_data.json', productsList);
+  res.status(201).json(newProduct);
+};
+
+app.post('/api/v1/products', requireAdmin, handleCreateProduct);
+app.post('/api/products', handleCreateProduct);
+
+// Admin Product Update (PUT)
+const handleUpdateProduct = (req, res) => {
+  const productsList = getProducts();
+  const categoriesList = getCategories();
+  const productId = parseInt(req.params.id);
+
+  const index = productsList.findIndex(p => p.id === productId);
+  if (index === -1) {
+    return res.status(404).json({ detail: 'Product not found' });
+  }
+
+  const existing = productsList[index];
+  const {
+    title, sku, category_id, subcategory, product_type, silver_purity,
+    weight_g, gross_weight_g, net_silver_weight_g, making_charges, dimensions,
+    retail_price, wholesale_price, min_wholesale_qty, stock, description, specifications,
+    featured_image, is_featured, is_new_arrival, is_active
+  } = req.body;
+
+  const catId = category_id !== undefined ? Number(category_id) : existing.category_id;
+  const category = categoriesList.find(c => c.id === catId);
+
+  const updatedProduct = {
+    ...existing,
+    title: title !== undefined ? title : existing.title,
+    sku: sku !== undefined ? sku : existing.sku,
+    category_id: catId,
+    category_name: category ? category.name : existing.category_name,
+    category_slug: category ? category.slug : existing.category_slug,
+    subcategory: subcategory !== undefined ? subcategory : existing.subcategory,
+    product_type: product_type !== undefined ? product_type : existing.product_type,
+    silver_purity: silver_purity !== undefined ? silver_purity : existing.silver_purity,
+    weight_g: weight_g !== undefined ? parseFloat(weight_g) : existing.weight_g,
+    gross_weight_g: gross_weight_g !== undefined ? parseFloat(gross_weight_g) : (existing.gross_weight_g || existing.weight_g),
+    net_silver_weight_g: net_silver_weight_g !== undefined ? parseFloat(net_silver_weight_g) : (existing.net_silver_weight_g || existing.weight_g),
+    making_charges: making_charges !== undefined ? parseFloat(making_charges) : (existing.making_charges || 0),
+    dimensions: dimensions !== undefined ? dimensions : (existing.dimensions || ''),
+    retail_price: retail_price !== undefined ? parseFloat(retail_price) : existing.retail_price,
+    wholesale_price: wholesale_price !== undefined ? parseFloat(wholesale_price) : existing.wholesale_price,
+    min_wholesale_qty: min_wholesale_qty !== undefined ? parseInt(min_wholesale_qty) : existing.min_wholesale_qty,
+    stock: stock !== undefined ? parseInt(stock) : existing.stock,
+    description: description !== undefined ? description : existing.description,
+    specifications: specifications !== undefined ? specifications : existing.specifications,
+    featured_image: featured_image !== undefined ? featured_image : existing.featured_image,
+    is_featured: is_featured !== undefined ? Boolean(is_featured) : existing.is_featured,
+    is_new_arrival: is_new_arrival !== undefined ? Boolean(is_new_arrival) : existing.is_new_arrival,
+    is_active: is_active !== undefined ? Boolean(is_active) : existing.is_active
+  };
+
+  productsList[index] = updatedProduct;
+  saveJsonFile('products_data.json', productsList);
+  res.json(updatedProduct);
+};
+
+app.put('/api/v1/products/:id', requireAdmin, handleUpdateProduct);
+app.put('/api/products/:id', handleUpdateProduct);
+
+// Admin Product Delete (DELETE)
+const handleDeleteProduct = (req, res) => {
+  let productsList = getProducts();
+  const productId = parseInt(req.params.id);
+
+  const initialLength = productsList.length;
+  productsList = productsList.filter(p => p.id !== productId);
+
+  if (productsList.length === initialLength) {
+    return res.status(404).json({ detail: 'Product not found' });
+  }
+
+  saveJsonFile('products_data.json', productsList);
+  res.json({ message: 'Product deleted successfully' });
+};
+
+app.delete('/api/v1/products/:id', requireAdmin, handleDeleteProduct);
+app.delete('/api/products/:id', handleDeleteProduct);
+
+
+// --- LIVE SILVER RATE SERVICE (RB GOLD SPOT API) ---
+
+const RB_GOLD_API_URL = process.env.RB_GOLD_API_URL || 'https://bcast.rbgoldspot.com:7768/VOTSBroadcastStreaming/Services/xml/GetLiveRateByTemplateID/rbgold';
+
+let silverRateCache = {
+  live_silver_rate: 250.64,
+  previous_silver_rate: 250.64,
+  rate_difference: 0.0,
+  rate_per_kg: 250641,
+  silver_999_rate: 250.64,
+  silver_925_rate: 231.84,
+  last_updated_at: new Date().toISOString(),
+  api_status: 'CONNECTED',
+  error_message: null
+};
+
+// SSE subscribers list
+let sseSubscribers = [];
+
+function broadcastSilverRateUpdate(data) {
+  sseSubscribers.forEach(res => {
+    try {
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    } catch (err) {
+      // ignore closed connections
+    }
+  });
+}
+
+function floatVal(val, defaultVal = 0) {
+  const n = parseFloat(val);
+  return isNaN(n) ? defaultVal : n;
+}
+
+// Recalculate currentPrice = basePrice + (currentSilverRate - baseSilverRate) for all 177 products
+function updateAllProductPrices(newSilverRate) {
+  let productsList = getProducts();
+  if (!productsList || productsList.length === 0) return;
+
+  let modified = false;
+  productsList = productsList.map(p => {
+    const baseP = floatVal(p.base_price !== undefined ? p.base_price : p.retail_price, 2500);
+    const baseSR = floatVal(p.base_silver_rate !== undefined ? p.base_silver_rate : 250.64, 250.64);
+    
+    // Formula: currentPrice = basePrice + (currentSilverRate - baseSilverRate)
+    const calculatedPrice = Math.max(1, Math.round((baseP + (newSilverRate - baseSR)) * 100) / 100);
+
+    if (p.current_price !== calculatedPrice || p.current_silver_rate !== newSilverRate || p.base_price === undefined) {
+      modified = true;
+      return {
+        ...p,
+        base_price: baseP,
+        base_silver_rate: baseSR,
+        current_silver_rate: newSilverRate,
+        current_price: calculatedPrice,
+        retail_price: calculatedPrice,
+        last_silver_rate_updated_at: new Date().toISOString()
+      };
+    }
+    return p;
+  });
+
+  if (modified) {
+    saveJsonFile('products_data.json', productsList);
+  }
+}
+
+// Function to fetch live rate from RB Gold Spot API
+function fetchLiveSilverRate() {
+  try {
+    const urlObj = new URL(RB_GOLD_API_URL);
+    const client = urlObj.protocol === 'https:' ? https : http;
+
+    const req = client.get({
+      hostname: urlObj.hostname,
+      port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
+      path: urlObj.pathname + urlObj.search,
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+      rejectUnauthorized: false,
+      timeout: 6000
+    }, (res) => {
+      let rawData = '';
+      res.on('data', chunk => { rawData += chunk; });
+      res.on('end', () => {
+        try {
+          const lines = rawData.trim().split(/\r?\n/);
+          let parsedRate = null;
+          let rawKgPrice = null;
+
+          for (const line of lines) {
+            const parts = line.split('\t').map(p => p.trim()).filter(Boolean);
+            if (parts.length >= 3) {
+              const name = parts[1] || '';
+              if (name.toLowerCase().includes('silver 999')) {
+                const numbers = parts.slice(2).map(p => parseFloat(p)).filter(n => !isNaN(n) && n > 1000);
+                if (numbers.length > 0) {
+                  rawKgPrice = numbers[0];
+                  parsedRate = Math.round((rawKgPrice / 1000) * 100) / 100;
+                  break;
+                }
+              }
+            }
+          }
+
+          if (parsedRate !== null && !isNaN(parsedRate)) {
+            if (parsedRate !== silverRateCache.live_silver_rate) {
+              silverRateCache.previous_silver_rate = silverRateCache.live_silver_rate;
+              silverRateCache.live_silver_rate = parsedRate;
+              silverRateCache.rate_difference = Math.round((parsedRate - silverRateCache.previous_silver_rate) * 100) / 100;
+            }
+            silverRateCache.rate_per_kg = rawKgPrice || (parsedRate * 1000);
+            silverRateCache.silver_999_rate = parsedRate;
+            silverRateCache.silver_925_rate = Math.round(parsedRate * 0.925 * 100) / 100;
+            silverRateCache.last_updated_at = new Date().toISOString();
+            silverRateCache.api_status = 'CONNECTED';
+            silverRateCache.error_message = null;
+
+            updateAllProductPrices(silverRateCache.live_silver_rate);
+            broadcastSilverRateUpdate(silverRateCache);
+          }
+        } catch (parseErr) {
+          console.warn('RB Gold Spot response parse warning:', parseErr.message);
+          silverRateCache.api_status = 'RETRYING';
+        }
+      });
+    });
+
+    req.on('error', (err) => {
+      console.warn('RB Gold Spot API network fetch warning:', err.message);
+      silverRateCache.api_status = 'RETRYING';
+      silverRateCache.error_message = err.message;
+    });
+
+    req.on('timeout', () => {
+      req.destroy();
+      silverRateCache.api_status = 'RETRYING';
+    });
+  } catch (err) {
+    console.warn('Live silver rate fetch exception:', err.message);
+    silverRateCache.api_status = 'RETRYING';
+  }
+}
+
+// Background polling interval every 1 second (1000ms real-time live sync)
+setInterval(fetchLiveSilverRate, 1000);
+fetchLiveSilverRate();
+
+// --- LIVE SILVER RATE ENDPOINTS ---
+
+const getSilverRateResponse = (req, res) => {
+  const productsList = getProducts();
+  res.json({
+    ...silverRateCache,
+    total_products_linked: productsList.length
+  });
+};
+
+app.get('/api/v1/silver-rate', getSilverRateResponse);
+app.get('/api/silver-rate', getSilverRateResponse);
+
+// SSE Stream for Real-Time Live Price Updates
+app.get('/api/v1/silver-rate/stream', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+
+  res.write(`data: ${JSON.stringify(silverRateCache)}\n\n`);
+  sseSubscribers.push(res);
+
+  req.on('close', () => {
+    sseSubscribers = sseSubscribers.filter(client => client !== res);
+  });
+});
+
+// Admin endpoint to manually update/set silver rate baseline or trigger sync
+app.post('/api/v1/admin/silver-rate/baseline', (req, res) => {
+  const { new_silver_rate } = req.body;
+  if (new_silver_rate && !isNaN(parseFloat(new_silver_rate))) {
+    const rateVal = parseFloat(new_silver_rate);
+    silverRateCache.previous_silver_rate = silverRateCache.live_silver_rate;
+    silverRateCache.live_silver_rate = rateVal;
+    silverRateCache.rate_difference = Math.round((rateVal - silverRateCache.previous_silver_rate) * 100) / 100;
+    silverRateCache.last_updated_at = new Date().toISOString();
+    silverRateCache.api_status = 'CONNECTED';
+
+    updateAllProductPrices(rateVal);
+    broadcastSilverRateUpdate(silverRateCache);
+    return res.json({ message: 'Live silver rate updated successfully', silver_rate: silverRateCache });
+  }
+  fetchLiveSilverRate();
+  res.json({ message: 'Sync triggered', silver_rate: silverRateCache });
 });
 
 
@@ -823,7 +1185,7 @@ app.put(['/api/v1/content/homepage_hero', '/api/v1/content/admin/homepage_hero']
   res.json(homepageHero);
 });
 
-app.get('/api/v1/content/videos/all', (req, res) => {
+app.get(['/api/v1/content/videos', '/api/v1/content/videos/all'], (req, res) => {
   res.json(videos);
 });
 
@@ -884,6 +1246,42 @@ app.get('/openapi.json', (req, res) => {
       description: "Complete Express.js API specification for Sai Balaji Silverworks backend."
     },
     paths: {
+      "/api/v1/silver-rate": {
+        get: {
+          summary: "Get Live Silver Rate (Per Gram, 999 Fine, 925 Sterling)",
+          tags: ["Live Silver Rate"],
+          description: "Returns live silver rates polled every 1 second from RB Gold Spot API, rate_per_kg, per-gram rates, and total products linked.",
+          responses: {
+            "200": {
+              description: "Live silver rate statistics",
+              content: {
+                "application/json": {
+                  example: {
+                    live_silver_rate: 250.64,
+                    silver_999_rate: 250.64,
+                    silver_925_rate: 231.84,
+                    rate_per_kg: 250641,
+                    rate_difference: 0,
+                    api_status: "CONNECTED",
+                    total_products_linked: 177,
+                    last_updated_at: "2026-08-25T03:30:00.000Z"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/silver-rate/stream": {
+        get: {
+          summary: "Real-time SSE Live Silver Rate Stream (1-Second Polling)",
+          tags: ["Live Silver Rate"],
+          description: "Server-Sent Events (SSE) endpoint pushing 1-second live silver rate updates to clients.",
+          responses: {
+            "200": { description: "Event stream (text/event-stream)" }
+          }
+        }
+      },
       "/api/v1/products": {
         get: {
           summary: "Get all products with filtering & sorting",
@@ -893,19 +1291,49 @@ app.get('/openapi.json', (req, res) => {
             { name: "category_slug", in: "query", schema: { type: "string" }, description: "Filter by Category Slug" },
             { name: "subcategory", in: "query", schema: { type: "string" }, description: "Filter by Subcategory name" },
             { name: "search", in: "query", schema: { type: "string" }, description: "Search by title, SKU, or description" },
-            { name: "purity", in: "query", schema: { type: "string" }, description: "Filter by Silver Purity (e.g. 92.5%, 99.9%)" },
+            { name: "purity", in: "query", schema: { type: "string" }, description: "Filter by Silver Purity" },
             { name: "min_price", in: "query", schema: { type: "number" }, description: "Minimum price in INR" },
             { name: "max_price", in: "query", schema: { type: "number" }, description: "Maximum price in INR" },
             { name: "min_weight", in: "query", schema: { type: "number" }, description: "Minimum weight in grams" },
             { name: "max_weight", in: "query", schema: { type: "number" }, description: "Maximum weight in grams" },
             { name: "is_featured", in: "query", schema: { type: "boolean" }, description: "Filter featured products" },
             { name: "is_new_arrival", in: "query", schema: { type: "boolean" }, description: "Filter new arrivals" },
-            { name: "in_stock", in: "query", schema: { type: "boolean" }, description: "Filter in-stock products" },
+            { name: "in_stock", in: "query", schema: { type: "boolean" }, description: "Filter in-stock products (ON/OFF status)" },
             { name: "sort_by", in: "query", schema: { type: "string" }, description: "Sort order: price_asc, price_desc, weight_asc, weight_desc, newest, featured" },
             { name: "skip", in: "query", schema: { type: "integer", default: 0 }, description: "Pagination skip offset" },
-            { name: "limit", in: "query", schema: { type: "integer", default: 100 }, description: "Pagination limit" }
+            { name: "limit", in: "query", schema: { type: "integer", default: 500 }, description: "Pagination limit (default 500 to fetch full catalog)" }
           ],
-          responses: { "200": { description: "List of products" } }
+          responses: { "200": { description: "List of 177 products with dynamic live silver price calculation" } }
+        },
+        post: {
+          summary: "Create New Product (Admin Only)",
+          tags: ["Products"],
+          security: [{ BearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["title", "sku", "category_id", "retail_price"],
+                  properties: {
+                    title: { type: "string" },
+                    sku: { type: "string" },
+                    category_id: { type: "integer" },
+                    silver_purity: { type: "string" },
+                    weight_g: { type: "number" },
+                    making_charges: { type: "number" },
+                    retail_price: { type: "number" },
+                    wholesale_price: { type: "number" },
+                    stock: { type: "integer" },
+                    in_stock: { type: "boolean" },
+                    featured_image: { type: "string" }
+                  }
+                }
+              }
+            }
+          },
+          responses: { "201": { description: "Product created successfully" } }
         }
       },
       "/api/v1/products/{id_or_slug}": {
@@ -916,6 +1344,40 @@ app.get('/openapi.json', (req, res) => {
             { name: "id_or_slug", in: "path", required: true, schema: { type: "string" }, description: "Product ID or URL slug" }
           ],
           responses: { "200": { description: "Product details" }, "404": { description: "Product not found" } }
+        },
+        put: {
+          summary: "Update Product / Toggle Stock ON-OFF (Admin Only)",
+          tags: ["Products"],
+          security: [{ BearerAuth: [] }],
+          parameters: [
+            { name: "id_or_slug", in: "path", required: true, schema: { type: "string" }, description: "Product ID" }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    stock: { type: "integer", description: "Stock quantity (0 for out of stock)" },
+                    in_stock: { type: "boolean", description: "In stock toggle status (true=ON, false=OFF)" },
+                    title: { type: "string" },
+                    retail_price: { type: "number" }
+                  }
+                }
+              }
+            }
+          },
+          responses: { "200": { description: "Product updated successfully" } }
+        },
+        delete: {
+          summary: "Delete Product (Admin Only)",
+          tags: ["Products"],
+          security: [{ BearerAuth: [] }],
+          parameters: [
+            { name: "id_or_slug", in: "path", required: true, schema: { type: "string" }, description: "Product ID" }
+          ],
+          responses: { "200": { description: "Product deleted" } }
         }
       },
       "/api/v1/categories": {
@@ -925,14 +1387,39 @@ app.get('/openapi.json', (req, res) => {
           responses: { "200": { description: "List of categories" } }
         }
       },
-      "/api/v1/categories/{id_or_slug}": {
+      "/api/v1/content/homepage_hero": {
         get: {
-          summary: "Get category details & subcategories",
-          tags: ["Categories"],
-          parameters: [
-            { name: "id_or_slug", in: "path", required: true, schema: { type: "string" }, description: "Category ID or URL slug" }
-          ],
-          responses: { "200": { description: "Category details with subcategories" }, "404": { description: "Category not found" } }
+          summary: "Get Homepage Hero Banner Content",
+          tags: ["Content & CMS"],
+          responses: { "200": { description: "Hero title, narrative content, and media_url" } }
+        },
+        put: {
+          summary: "Update Homepage Hero Banner Content (Admin Only)",
+          tags: ["Content & CMS"],
+          security: [{ BearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    title: { type: "string" },
+                    content: { type: "string" },
+                    media_url: { type: "string" }
+                  }
+                }
+              }
+            }
+          },
+          responses: { "200": { description: "Hero content updated" } }
+        }
+      },
+      "/api/v1/content/videos": {
+        get: {
+          summary: "Get 171 Manufacturing & Showcase Videos",
+          tags: ["Content & CMS"],
+          responses: { "200": { description: "List of 171 manufacturing and showcase video clips" } }
         }
       },
       "/api/v1/auth/register": {
@@ -958,7 +1445,7 @@ app.get('/openapi.json', (req, res) => {
               }
             }
           },
-          responses: { "201": { description: "User registered successfully with access token" }, "400": { description: "Validation error or user exists" } }
+          responses: { "201": { description: "User registered successfully with access token" } }
         }
       },
       "/api/v1/auth/login": {
@@ -980,7 +1467,7 @@ app.get('/openapi.json', (req, res) => {
               }
             }
           },
-          responses: { "200": { description: "Login successful with access token" }, "401": { description: "Invalid credentials" } }
+          responses: { "200": { description: "Login successful with access token" } }
         }
       },
       "/api/v1/auth/me": {
@@ -988,7 +1475,7 @@ app.get('/openapi.json', (req, res) => {
           summary: "Get Current User Profile",
           tags: ["Auth"],
           security: [{ BearerAuth: [] }],
-          responses: { "200": { description: "Current user profile" }, "401": { description: "Unauthorized / Missing token" } }
+          responses: { "200": { description: "Current user profile" } }
         }
       },
       "/api/v1/orders": {
@@ -1043,7 +1530,7 @@ app.get('/openapi.json', (req, res) => {
           summary: "Get list of registered users and customers (Admin Only)",
           tags: ["Users & Management"],
           security: [{ BearerAuth: [] }],
-          responses: { "200": { description: "List of registered users" }, "401": { description: "Missing token" }, "403": { description: "Admin access required" } }
+          responses: { "200": { description: "List of registered users" } }
         }
       },
       "/api/v1/wishlist": {
@@ -1051,57 +1538,7 @@ app.get('/openapi.json', (req, res) => {
           summary: "Get current user or guest wishlist",
           tags: ["Wishlist"],
           security: [{ BearerAuth: [] }],
-          responses: { "200": { description: "User wishlist products and item IDs" } }
-        }
-      },
-      "/api/v1/wishlist/toggle": {
-        post: {
-          summary: "Add or remove product from wishlist (Toggle)",
-          tags: ["Wishlist"],
-          security: [{ BearerAuth: [] }],
-          requestBody: {
-            required: true,
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  required: ["product_id"],
-                  properties: {
-                    product_id: { type: "integer", description: "ID of product to add or remove" }
-                  }
-                }
-              }
-            }
-          },
-          responses: {
-            "200": { description: "Wishlist updated status and item list" },
-            "400": { description: "Valid product_id required" }
-          }
-        }
-      },
-      "/api/v1/wishlist/sync": {
-        post: {
-          summary: "Sync local guest wishlist with user account",
-          tags: ["Wishlist"],
-          security: [{ BearerAuth: [] }],
-          requestBody: {
-            required: true,
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  properties: {
-                    product_ids: {
-                      type: "array",
-                      items: { type: "integer" },
-                      description: "Array of product IDs to sync"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          responses: { "200": { description: "Wishlist merged and synced" } }
+          responses: { "200": { description: "User wishlist products" } }
         }
       }
     },

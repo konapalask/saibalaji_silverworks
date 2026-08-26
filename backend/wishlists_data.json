@@ -8,11 +8,21 @@
       8,
       7
     ],
-    "updated_at": "2026-08-21T08:44:39.568Z"
+    "updated_at": "2026-08-26T12:05:02.938Z"
   },
   {
     "user_id": 2,
     "product_ids": [],
     "updated_at": "2026-08-21T08:32:03.296Z"
+  },
+  {
+    "user_id": 4,
+    "product_ids": [],
+    "updated_at": "2026-08-24T21:22:10.561Z"
+  },
+  {
+    "user_id": 3,
+    "product_ids": [],
+    "updated_at": "2026-08-25T13:53:54.630Z"
   }
 ]

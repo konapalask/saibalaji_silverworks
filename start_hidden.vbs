@@ -35,6 +35,6 @@ WshShell.Run "cmd.exe /c ""set PATH=" & nodePath & ";%PATH% && cd /d """ & works
 
 WScript.Sleep 3000
 
-' 7. Start Cloudflare Named Tunnel (saibalaji.e3di.org)
-cfToken = "eyJhIjoiMjQ2ZDQxN2Q1YzNkMGRlYTA3NDA4ZDFlYzAyNmMzOGMiLCJ0IjoiNzcxYmFhYzYtZjM2Zi00MzM4LTkzN2YtODY1YzVkNGY3YTJkIiwicyI6IllXUmtaREJpWldFdFpqVTBZeTAwTTJZeUxXRTRaVEV0TUdZd1pqQTNZVGMxTldVeSJ9"
+' 7. Start Cloudflare Named Tunnel (saibalajisilverworkspvtltd.com)
+cfToken = "eyJhIjoiMDU4NzM5ZmEzOGM4MzNjMTI4NDYxNmJiYjg4Yjk1MGMiLCJ0IjoiYjNiOGIyOWQtYWExZC00NTEwLTgzODYtMmVkYzYzYWY0MThiIiwicyI6Ik9HTTRZMk5qTnpRdE56UXlNQzAwTTJZd0xXRTNOMk10TXpSa1lXWXpZamsyTW1KbSJ9"
 WshShell.Run """" & workspaceDir & "\cloudflared.exe"" tunnel run --token " & cfToken, 0, False

@@ -7,12 +7,14 @@ import { useWishlist } from '../context/WishlistContext';
 import { useWholesale } from '../context/WholesaleContext';
 import { useAuth } from '../context/AuthContext';
 import { generateOrderId, generateSingleProductWhatsAppMessage, openWhatsAppOrderUrl } from '../utils/whatsappOrder';
+import { useLiveSilver } from '../context/LiveSilverContext';
 import api from '../services/api';
 
 export const ProductDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { calculateCurrentPrice } = useLiveSilver();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
@@ -159,11 +161,11 @@ export const ProductDetail: React.FC = () => {
         
         {/* Left Side Gallery — Clean Uncropped Display */}
         <div className="lg:col-span-6 space-y-4">
-          <div className="bg-white border border-[#E5E0D8] p-6 rounded-3xl overflow-hidden product-shadow flex items-center justify-center aspect-4/5">
+          <div className="bg-white border border-[#E5E0D8] p-3 rounded-3xl overflow-hidden product-shadow flex items-center justify-center aspect-3/2">
             <img 
               src={activeImage} 
               alt={product.title} 
-              className="w-full h-full object-contain drop-shadow-xl transition-all duration-500"
+              className="w-full h-full object-cover rounded-2xl drop-shadow-xl transition-all duration-500"
             />
           </div>
 
@@ -201,23 +203,36 @@ export const ProductDetail: React.FC = () => {
                 <Sparkles className="w-3.5 h-3.5 text-[#B9A77A]" />
                 {product.silver_purity}
               </span>
-              {product.weight_g > 0 && (
+              {(product.net_silver_weight_g || product.weight_g > 0) && (
                 <span className="bg-white text-[#202020] border border-[#E5E0D8] text-xs font-semibold px-3 py-0.5 rounded-full">
-                  Weight: {product.weight_g}g
+                  Net Weight: {product.net_silver_weight_g || product.weight_g}g
+                </span>
+              )}
+              {product.gross_weight_g && product.gross_weight_g !== (product.net_silver_weight_g || product.weight_g) && (
+                <span className="bg-[#FAF9F5] text-gray-600 border border-[#E5E0D8] text-xs font-medium px-3 py-0.5 rounded-full">
+                  Gross: {product.gross_weight_g}g
+                </span>
+              )}
+              {product.dimensions && (
+                <span className="bg-[#FAF9F5] text-[#C5A059] border border-[#C5A059]/30 text-xs font-medium px-3 py-0.5 rounded-full">
+                  {product.dimensions}
                 </span>
               )}
             </div>
 
             <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#202020]">{product.title}</h1>
-            <p className="text-xs text-[#777777] mt-1">SKU: {product.sku}</p>
+            <p className="text-xs text-[#777777] mt-1">SKU: {product.sku} {product.subcategory ? `| ${product.subcategory}` : ''}</p>
 
-            <div className="mt-6 flex items-baseline gap-4">
+            <div className="mt-6 flex flex-wrap items-baseline gap-4">
               <span className="font-sans text-4xl font-bold text-[#202020]">
-                ₹{product.retail_price.toLocaleString()}
+                ₹{calculateCurrentPrice(product.base_price || product.retail_price, product.base_silver_rate).toLocaleString()}
               </span>
-              {product.wholesale_price && (
-                <span className="text-xs text-[#B9A77A] font-semibold bg-white px-3 py-1 rounded-full border border-[#B9A77A]/40">
-                  Bulk Wholesale Rates Available
+              <span className="text-[11px] text-[#C5A059] font-bold bg-[#FAF9F5] px-3 py-1 rounded-full border border-[#C5A059]/30 flex items-center gap-1">
+                <Sparkles className="w-3 h-3" /> Price linked to live silver rate
+              </span>
+              {product.making_charges !== undefined && (
+                <span className="text-xs text-gray-600 font-medium bg-[#FAF9F5] px-3 py-1 rounded-full border border-[#E6E1DA]">
+                  Making Charges: {product.making_charges > 0 ? `₹${product.making_charges.toLocaleString()}` : 'Included'}
                 </span>
               )}
             </div>
@@ -341,7 +356,15 @@ export const ProductDetail: React.FC = () => {
             <p>{product.description || 'Artisanal silver masterpiece crafted at Sai Balaji Silverworks manufacturing facility.'}</p>
           )}
           {activeTab === 'specs' && (
-            <p className="whitespace-pre-line">{product.specifications || `Material: ${product.silver_purity}\nWeight: ${product.weight_g} grams\nSKU: ${product.sku}`}</p>
+            <div className="space-y-2 max-w-lg">
+              <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Silver Purity:</span> <span className="font-bold text-[#1A1918]">{product.silver_purity}</span></div>
+              <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Net Silver Weight:</span> <span className="font-bold text-[#1A1918]">{product.net_silver_weight_g || product.weight_g} grams</span></div>
+              {product.gross_weight_g && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Gross Weight:</span> <span className="font-bold text-[#1A1918]">{product.gross_weight_g} grams</span></div>}
+              {product.making_charges !== undefined && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Making Charges:</span> <span className="font-bold text-[#1A1918]">{product.making_charges > 0 ? `₹${product.making_charges}` : 'Included'}</span></div>}
+              {product.dimensions && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Dimensions:</span> <span className="font-bold text-[#1A1918]">{product.dimensions}</span></div>}
+              <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">SKU Code:</span> <span className="font-mono text-[#1A1918]">{product.sku}</span></div>
+              <div className="grid grid-cols-2 py-1.5"><span className="font-semibold text-gray-500">Hallmarking:</span> <span className="font-bold text-[#C5A059]">NABL Laser Hallmarked</span></div>
+            </div>
           )}
           {activeTab === 'silver' && (
             <p>Every piece crafted by Sai Balaji Silverworks is subjected to strict XRF spectroscopic testing and laser hallmarking, guaranteeing standard 925 sterling or 999 fine silver composition.</p>

@@ -65,7 +65,7 @@ export const Navbar: React.FC = () => {
           <RouterLink to="/" className="flex items-center gap-3 group shrink-0">
             <div className="bg-white p-1 rounded-xl shadow-xs border border-[#E5E0D8]">
               <img
-                src="/logo.PNG"
+                src="/logo.webp"
                 alt="Sai Balaji Silverworks Logo"
                 className="h-10 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               />
@@ -87,7 +87,7 @@ export const Navbar: React.FC = () => {
               className={`transition-colors py-1 relative group ${isActive('/home') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
             >
               HOME
-              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/home') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#00276B] transition-all duration-300 ${isActive('/home') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
 
             <RouterLink
@@ -95,7 +95,7 @@ export const Navbar: React.FC = () => {
               className={`transition-colors py-1 relative group ${isActive('/shop/retail') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
             >
               RETAIL
-              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/shop/retail') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#00276B] transition-all duration-300 ${isActive('/shop/retail') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
 
             <RouterLink
@@ -103,7 +103,7 @@ export const Navbar: React.FC = () => {
               className={`transition-colors py-1 relative group ${isActive('/shop/wholesale') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
             >
               WHOLESALE
-              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/shop/wholesale') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#00276B] transition-all duration-300 ${isActive('/shop/wholesale') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
 
             <RouterLink
@@ -111,7 +111,7 @@ export const Navbar: React.FC = () => {
               className={`transition-colors py-1 relative group ${isActive('/about') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
             >
               ABOUT
-              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/about') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#00276B] transition-all duration-300 ${isActive('/about') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
 
             <RouterLink
@@ -119,7 +119,7 @@ export const Navbar: React.FC = () => {
               className={`transition-colors py-1 relative group ${isActive('/contact') ? 'text-[#202020] font-semibold' : 'hover:text-[#202020]'}`}
             >
               CONTACT
-              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 ${isActive('/contact') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              <span className={`absolute bottom-0 left-0 h-[2px] bg-[#00276B] transition-all duration-300 ${isActive('/contact') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
           </nav>
 
@@ -187,7 +187,7 @@ export const Navbar: React.FC = () => {
           <div className="flex justify-between items-center border-b border-[#E5E0D8] pb-6">
             <div className="flex items-center gap-3">
               <div className="bg-white p-1 rounded-xl shadow-xs border border-[#E5E0D8]">
-                <img src="/logo.PNG" alt="Sai Balaji" className="h-9 w-auto object-contain" />
+                <img src="/logo.webp" alt="Sai Balaji" className="h-9 w-auto object-contain" />
               </div>
               <span className="font-serif text-xl tracking-[0.16em] text-[#202020]">SAI BALAJI</span>
             </div>

@@ -41,14 +41,26 @@ export interface Product {
   slug: string;
   sku: string;
   category_id: number;
+  category_name?: string;
+  category_slug?: string;
   subcategory?: string;
   product_type: ProductType;
   silver_purity: string;
   weight_g: number;
+  gross_weight_g?: number;
+  net_silver_weight_g?: number;
+  making_charges?: number;
+  dimensions?: string;
+  base_price?: number;
+  base_silver_rate?: number;
+  current_silver_rate?: number;
+  current_price?: number;
+  last_silver_rate_updated_at?: string;
   retail_price: number;
   wholesale_price?: number;
   min_wholesale_qty: number;
   stock: number;
+  in_stock?: boolean;
   description?: string;
   specifications?: string;
   featured_image: string;
@@ -58,6 +70,16 @@ export interface Product {
   category?: Category;
   images?: ProductImage[];
   created_at: string;
+}
+
+export interface SilverRateStats {
+  live_silver_rate: number;
+  previous_silver_rate: number;
+  rate_difference: number;
+  last_updated_at: string;
+  api_status: 'CONNECTED' | 'RETRYING' | 'OFFLINE';
+  error_message?: string;
+  total_products_linked?: number;
 }
 
 export interface CartItem {
@@ -185,6 +207,8 @@ export interface CompanyVideo {
   description?: string;
   video_url: string;
   thumbnail_url?: string;
+  category?: string;
+  filename?: string;
   section: string;
   sort_order: number;
   is_active: boolean;

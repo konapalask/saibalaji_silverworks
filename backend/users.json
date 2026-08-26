@@ -26,5 +26,23 @@
     "role": "CUSTOMER",
     "is_active": true,
     "created_at": "2026-08-21T08:22:52.562Z"
+  },
+  {
+    "id": 3,
+    "firebase_uid": "lHz8Wair4zcdvvF3mrle29yl6wR2",
+    "email": "samuelnikhilmddali123@gmail.com",
+    "password_hash": "",
+    "full_name": "Nikhil Maddali",
+    "photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjVSV5drfQEke_T6oZFtEsXyYKTVELgJ935RNPnxj5ucN5hH_TJwQJHV0QB_b70Uxa4DxqlyR9PPFCGHD3If5NbKJUxSIdEDFmH_THhtlZ7Lhi8MZNWyE0U_-lIQjo_JR71zkw00Spgtj2qo50ybWAuZ15q1XwalfVniewyGBoqfywP1mUuztIx4ZXgaMuMEti3ybZ9pgj4pHLor-T9n4xDEwvbNWimvuIcsncgNyQhATDWjBK9YriOYYAS6egpcL1flbzP_tKvSQwyS1xrUTtFe3o8Dzi_mUiYea8lIx6PkDQXs5BY6EhDt7nl12fU6UKcsEmUzgBJLxTvfrqpNCVAOxUC7l6x3tQpi7vZs4sLD0OJb2xcGx3osRZRXzxxLsKAoymUTQgTKr79Fu3Va4fSGAcrMlg9RgUI1Sb3rWujpj_Mus_cfiKojjoxnjcdtYJhNj-2F4Gt8tlLI4iRyjOxJagi1Ll-HP0rHVLZvUj8k9rdLauorcVZnBKj5XWfM7ffMgCgilKuXBiZpZORB8e32Cb3sEY2cRHMkc3viYvr5X9Rzqk7TWtPONKplEW38u-Dq-SkRilsx8loa80_2w7xFLXqPv5qyP-zqz92TKjpLlaqx1Z3qPYw256OM0cUgP9n7C64794x9best_zyx4IISf3fDd2RY60j5UUnGIIrINjjfOUH9WGI9Z2EtSuPDAheaY_xXIQDzWqoSHB-OHWk2foTxc0ocWC5Eur4zJSH4tZdgfmvFclghE-iL9mcWRukKmNMF5De60eKRzm9eP3exSbufllUPR_HNmQHHggmAMHnTylsQRCLutJJ_NqHcLYru60bv0ZZbobMb9-bQSO4KP_4oyd-DTOO2ljdoq9h8OlkBm1CLIqcd3s3PiNjjrGvtfsezDBT91BQh-7YF7dUxhV9KA_JIHpNgbNi33doVi29sVIrQ9q-nRRUNvmhyxfz1j75Fs6Wfdax1WY8-LqS726g4lgWvKC3n4NGRamVxJPEWXgyrfMPvSAEXqsQrS8WW46Pwcn_whRNQiYK5rQ2-hg117jjpv8ndQANIWsN9Lf7Vh6bf2e4g1vg=s96-c",
+    "phone": "+91 9121266269",
+    "street_address": "5 147 SF 1 PUCHALAPALLI SUNDARAIAH STREET\nNEAR INDIAN PETROL BUNK\nRAMAVARAPPADU VTC RAMAVARAPPADU",
+    "city": "VIJAYAWADA",
+    "state": "Andhra Pradesh",
+    "pincode": "520008",
+    "company_name": "",
+    "gstin": "",
+    "role": "CUSTOMER",
+    "is_active": true,
+    "created_at": "2026-08-25T12:55:19.504Z"
   }
 ]

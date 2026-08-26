@@ -49,11 +49,11 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
           
           {/* Image Container — Uncropped Display */}
           <div className="bg-white p-6 flex items-center justify-center border-r border-[#E5E0D8]">
-            <div className="w-full aspect-4/5 overflow-hidden bg-[#FAF8F5] p-4 flex items-center justify-center rounded-2xl border border-[#E5E0D8]">
+            <div className="w-full aspect-3/2 overflow-hidden bg-[#FAF8F5] p-2 flex items-center justify-center rounded-2xl border border-[#E5E0D8]">
               <img 
                 src={product.featured_image} 
                 alt={product.title}
-                className="w-full h-full object-contain drop-shadow-md"
+                className="w-full h-full object-cover rounded-xl drop-shadow-md"
               />
             </div>
           </div>

@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Play, ArrowRight, ShieldCheck, Award, Sparkles, Briefcase, ChevronDown, Check, Star, Lock, Truck, RefreshCw, Layers } from 'lucide-react';
+import { Play, ArrowRight, ShieldCheck, Award, Sparkles, Briefcase, ChevronDown, Check, Star, Lock, Truck, RefreshCw, Layers, Search, Film, Video } from 'lucide-react';
 import { Product, CompanyVideo } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { VideoPlayerModal } from '../components/VideoPlayerModal';
 import { QuickViewModal } from '../components/QuickViewModal';
 import { CustomCursor } from '../components/CustomCursor';
+import { initialVideosData } from '../data/videosData';
 import api from '../services/api';
 import { MAIN_CATEGORIES } from '../data/categoriesData';
 
@@ -14,11 +15,36 @@ export const Home: React.FC = () => {
 
   // State
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [videos, setVideos] = useState<CompanyVideo[]>([]);
+  const [videos, setVideos] = useState<CompanyVideo[]>(initialVideosData);
   const [activeVideo, setActiveVideo] = useState<CompanyVideo | null>(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [loadingProducts, setLoadingProducts] = useState(true);
+
+  // Home Video Gallery Filter State
+  const [videoCategory, setVideoCategory] = useState<string>('ALL');
+  const [videoSearch, setVideoSearch] = useState<string>('');
+  const [videoDisplayCount, setVideoDisplayCount] = useState<number>(8);
+
+  const videoCategories = useMemo(() => {
+    const set = new Set<string>();
+    videos.forEach(v => {
+      if (v.category) set.add(v.category);
+    });
+    return ['ALL', ...Array.from(set)];
+  }, [videos]);
+
+  const homeFilteredVideos = useMemo(() => {
+    return videos.filter(vid => {
+      const matchCat = videoCategory === 'ALL' || vid.category === videoCategory;
+      const q = videoSearch.toLowerCase().trim();
+      const matchQ = !q ||
+        vid.title.toLowerCase().includes(q) ||
+        (vid.description && vid.description.toLowerCase().includes(q)) ||
+        (vid.filename && vid.filename.toLowerCase().includes(q));
+      return matchCat && matchQ;
+    });
+  }, [videos, videoCategory, videoSearch]);
 
   // Fetch Featured Products & Videos from API
   useEffect(() => {
@@ -27,10 +53,12 @@ export const Home: React.FC = () => {
       try {
         const [prodRes, vidRes] = await Promise.all([
           api.get('/products?is_featured=true'),
-          api.get('/videos')
+          api.get('/content/videos').catch(() => ({ data: [] }))
         ]);
         setFeaturedProducts(Array.isArray(prodRes.data) && prodRes.data.length > 0 ? prodRes.data : []);
-        setVideos(Array.isArray(vidRes.data) ? vidRes.data : []);
+        if (Array.isArray(vidRes.data) && vidRes.data.length > 0) {
+          setVideos(vidRes.data);
+        }
       } catch (err) {
         console.error("Error fetching homepage data:", err);
       } finally {
@@ -66,7 +94,7 @@ export const Home: React.FC = () => {
       year: "2016",
       title: "Tradition Meets Technology",
       description: "Integrated 3D CAD modeling and automated magnetic pin polishing, becoming the premier B2B wholesale silver supplier across South India.",
-      image: "/Sai-Balaji-Silverworks-Products/03-Silver-Dining-Tableware/Silver-Dinner-Sets/images.jpg"
+      image: "/public/sai balajji products/Royal Floral Engraved Silver Serving Tray.webp"
     },
     {
       era: "TODAY / SAI BALAJI",
@@ -93,7 +121,7 @@ export const Home: React.FC = () => {
     title: "The Heritage of Sai Balaji Silverworks",
     description: "Discover 25+ years of South Indian silver craftsmanship, from raw 99.9% silver bullion to hallmarked masterpieces.",
     video_url: "https://assets.mixkit.co/videos/preview/mixkit-silversmith-crafting-metal-work-41584-large.mp4",
-    thumbnail_url: "/hero_balaji_4k.png",
+    thumbnail_url: "/hero_balaji_4k.webp",
     section: "hero",
     sort_order: 1,
     is_active: true,
@@ -187,7 +215,7 @@ export const Home: React.FC = () => {
 
               {/* Featured Silver Deity Hero Photography with Soft Studio Drop Shadow */}
               <img
-                src="/hero_balaji_4k.png"
+                src="/homescreen.webp"
                 alt="Sai Balaji Pure Silver Lord Balaji Idol"
                 className="w-full h-full object-contain drop-shadow-2xl img-editorial"
               />
@@ -279,14 +307,14 @@ export const Home: React.FC = () => {
             to="/shop/retail"
             className="text-xs font-bold uppercase tracking-[0.2em] text-[#202020] hover:text-[#B9A77A] flex items-center gap-2 transition-colors"
           >
-            <span>VIEW ALL 10 CATEGORIES</span>
+            <span>VIEW CATEGORIES</span>
             <ArrowRight className="w-4 h-4 text-[#B9A77A]" />
           </Link>
         </div>
 
-        {/* Collections Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {MAIN_CATEGORIES.slice(0, 6).map((cat) => (
+        {/* Collections Grid — 4 Main Categories */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {MAIN_CATEGORIES.map((cat) => (
             <Link
               key={cat.id}
               to={`/category/${cat.slug}`}
@@ -346,38 +374,147 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 08. VIDEO ATELIER SECTION (DOCUMENTARY PREVIEW) */}
-      <section className="py-24 px-6 lg:px-12 max-w-7xl mx-auto space-y-8 text-center">
-        <div className="max-w-3xl mx-auto space-y-3">
-          <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
-            ATELIER FILMS
-          </span>
-          <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
-            Watch Our Atelier Documentary
-          </h2>
-        </div>
-
-        <div className="relative h-[60vh] max-w-5xl mx-auto rounded-3xl overflow-hidden border border-[#E5E0D8] product-shadow flex items-center justify-center">
-          <img
-            src={storyVid.thumbnail_url}
-            alt="Story Video"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/30" />
-
-          <div className="relative z-10 space-y-4">
-            <button
-              onClick={() => openVideo(storyVid)}
-              className="w-20 h-20 rounded-full bg-white/95 text-[#202020] hover:bg-[#B9A77A] hover:text-white flex items-center justify-center mx-auto transition-all duration-300 shadow-2xl group"
-              title="Play Atelier Video"
-            >
-              <Play className="w-7 h-7 fill-current ml-1" />
-            </button>
-            <p className="text-xs uppercase tracking-[0.2em] font-bold text-white shadow-xs">
-              CLICK TO WATCH FILM
+      {/* 08. VIDEO ATELIER SECTION (COMPLETE 171-VIDEO GALLERY & REELS) */}
+      <section className="py-24 px-6 lg:px-12 max-w-7xl mx-auto space-y-10" id="home-video-gallery">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#E5E0D8] pb-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="p-1.5 bg-[#B9A77A]/10 text-[#B9A77A] rounded-lg">
+                <Film className="w-4 h-4" />
+              </span>
+              <span className="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#B9A77A]">
+                LIVE FACTORY & STUDIO REELS
+              </span>
+            </div>
+            <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
+              Craftsmanship Video Atelier
+            </h2>
+            <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
+              Browse all 171 unscripted, silent video clips from our Tenali silver manufacturing plant.
             </p>
           </div>
+
+          <div className="flex items-center gap-3">
+            <div className="px-4 py-2 bg-white rounded-full border border-[#E5E0D8] text-xs font-medium text-gray-700 shadow-xs flex items-center gap-2">
+              <Video className="w-3.5 h-3.5 text-[#B9A77A]" />
+              <span><strong>{homeFilteredVideos.length}</strong> Videos Available</span>
+            </div>
+          </div>
         </div>
+
+        {/* Filter Tabs & Search Bar */}
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-[#E5E0D8] shadow-xs">
+          {/* Category Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
+            {videoCategories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => {
+                  setVideoCategory(cat);
+                  setVideoDisplayCount(8);
+                }}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                  videoCategory === cat
+                    ? 'bg-[#202020] text-white shadow-xs'
+                    : 'bg-[#FAF8F5] text-gray-600 hover:bg-[#E5E0D8] hover:text-[#202020]'
+                }`}
+              >
+                {cat === 'ALL' ? `All Videos (${videos.length})` : cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Search Input */}
+          <div className="relative w-full md:w-72 shrink-0">
+            <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search title or video code..."
+              value={videoSearch}
+              onChange={(e) => {
+                setVideoSearch(e.target.value);
+                setVideoDisplayCount(8);
+              }}
+              className="w-full pl-9 pr-4 py-2 text-xs bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl focus:outline-none focus:border-[#B9A77A] transition-colors"
+            />
+          </div>
+        </div>
+
+        {/* Video Grid */}
+        {homeFilteredVideos.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {homeFilteredVideos.slice(0, videoDisplayCount).map((vid) => (
+              <div
+                key={vid.id}
+                onClick={() => openVideo(vid)}
+                className="group relative bg-black rounded-2xl overflow-hidden aspect-9/14 border border-[#E5E0D8] shadow-md hover:shadow-2xl cursor-pointer transition-all duration-300 flex flex-col justify-between p-4"
+              >
+                <video
+                  src={vid.video_url}
+                  className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500 pointer-events-none"
+                  muted
+                  loop
+                  playsInline
+                  autoPlay
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/40" />
+
+                <div className="relative z-10 flex justify-between items-start">
+                  <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md text-[#B9A77A] text-[10px] font-bold uppercase tracking-wider rounded-lg border border-white/10">
+                    {vid.category || 'Craftsmanship'}
+                  </span>
+                  {vid.filename && (
+                    <span className="px-2 py-0.5 bg-white/20 backdrop-blur-md text-white text-[10px] font-mono rounded">
+                      #{vid.filename.replace('.MP4', '')}
+                    </span>
+                  )}
+                </div>
+
+                <div className="relative z-10 space-y-2">
+                  <div className="w-10 h-10 rounded-full bg-white/90 text-[#1A1918] group-hover:bg-[#B9A77A] group-hover:text-white flex items-center justify-center transition-all shadow-lg">
+                    <Play className="w-4 h-4 fill-current ml-0.5" />
+                  </div>
+                  <h4 className="font-serif text-sm font-bold text-white line-clamp-1">
+                    {vid.title}
+                  </h4>
+                  <p className="text-[10px] text-gray-300 line-clamp-2 leading-relaxed">
+                    {vid.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16 bg-white rounded-3xl border border-[#E5E0D8] space-y-3">
+            <Film className="w-10 h-10 text-gray-400 mx-auto" />
+            <h3 className="font-serif text-lg font-bold text-[#202020]">No videos found</h3>
+            <p className="text-xs text-gray-500 max-w-sm mx-auto">
+              Try adjusting your search query or switching category filters.
+            </p>
+            <button
+              onClick={() => {
+                setVideoSearch('');
+                setVideoCategory('ALL');
+              }}
+              className="px-4 py-2 bg-[#202020] text-white text-xs font-bold rounded-xl hover:bg-[#B9A77A] transition-colors"
+            >
+              Reset Filters
+            </button>
+          </div>
+        )}
+
+        {/* Load More Button */}
+        {homeFilteredVideos.length > videoDisplayCount && (
+          <div className="text-center pt-4">
+            <button
+              onClick={() => setVideoDisplayCount(prev => prev + 12)}
+              className="px-8 py-3.5 bg-[#202020] hover:bg-[#B9A77A] text-white rounded-2xl text-xs font-bold uppercase tracking-widest shadow-md hover:shadow-xl transition-all cursor-pointer inline-flex items-center gap-2"
+            >
+              <span>Load More Craftsmanship Videos ({homeFilteredVideos.length - videoDisplayCount} remaining)</span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </section>
 
       {/* 09. WHY SAI BALAJI & E-COMMERCE TRUST SIGNALS */}

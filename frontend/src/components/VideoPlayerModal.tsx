@@ -20,12 +20,14 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
     if (isOpen && videoRef.current) {
+      videoRef.current.muted = true;
+      setIsMuted(true);
       videoRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
     }
   }, [isOpen, videoUrl]);
@@ -106,6 +108,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
           className="w-full h-full object-cover cursor-pointer"
           playsInline
           autoPlay
+          muted
         />
 
         {/* Controls Overlay */}

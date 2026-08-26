@@ -35,7 +35,7 @@ export const Footer: React.FC = () => {
             <Link to="/" className="flex items-center gap-3 group">
               <div className="bg-white p-1.5 rounded-xl shadow-xs border border-white/20">
                 <img
-                  src="/logo.PNG"
+                  src="/logo.webp"
                   alt="Sai Balaji Silverworks Logo"
                   className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                 />
