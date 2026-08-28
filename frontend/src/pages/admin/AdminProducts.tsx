@@ -721,7 +721,7 @@ export const AdminProducts: React.FC = () => {
                             <img 
                               src={p.featured_image} 
                               alt="" 
-                              className="w-14 h-14 object-cover rounded-xl bg-[#FAF9F5] border border-[#E6E1DA] shrink-0" 
+                              className="w-14 h-14 object-cover rounded-xl bg-black border border-[#E6E1DA] shrink-0" 
                             />
                             <div className="min-w-0 flex-1">
                               <span className="font-serif font-bold text-xs text-[#1A1918] line-clamp-2 leading-snug block" title={p.title}>

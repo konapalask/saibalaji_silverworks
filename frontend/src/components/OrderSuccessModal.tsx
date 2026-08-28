@@ -162,7 +162,7 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({
                   return (
                     <div key={idx} className="flex items-center gap-3 p-2 bg-[#FAF9F5] rounded-xl border border-gray-200 text-xs">
                       {img ? (
-                        <img src={img} alt="" className="w-10 h-12 object-cover rounded-lg bg-white shrink-0" />
+                        <img src={img} alt="" className="w-10 h-12 object-cover rounded-lg bg-black shrink-0" />
                       ) : (
                         <div className="w-10 h-12 bg-white rounded-lg flex items-center justify-center text-[#C5A059] shrink-0">
                           <Package className="w-5 h-5" />

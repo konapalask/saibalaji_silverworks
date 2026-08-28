@@ -374,7 +374,7 @@ export const AccountPage: React.FC = () => {
                           <img 
                             src={itemImg} 
                             alt={item.product_name || 'Silver Product'} 
-                            className="w-14 h-16 object-cover rounded-xl bg-white border border-[#E6E1DA] shrink-0"
+                            className="w-14 h-16 object-cover rounded-xl bg-black border border-[#E6E1DA] shrink-0"
                           />
                         ) : (
                           <div className="w-14 h-16 bg-white border border-[#E6E1DA] rounded-xl flex items-center justify-center text-[#C5A059] shrink-0">
@@ -499,7 +499,7 @@ export const AccountPage: React.FC = () => {
                         <img 
                           src={prodImg} 
                           alt={prod.title} 
-                          className="w-full h-48 object-contain rounded-2xl bg-[#FAF9F5] border border-[#E6E1DA] p-2"
+                          className="w-full h-48 object-cover rounded-2xl bg-black border border-[#E6E1DA] p-2"
                         />
                       </Link>
                       <button

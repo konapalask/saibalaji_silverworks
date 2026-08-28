@@ -300,7 +300,7 @@ export const CheckoutPage: React.FC = () => {
               {effectiveCartItems.map(({ product, quantity, effectivePrice, itemSubtotal }) => (
                 <div key={product.id} className="flex justify-between items-center text-xs py-1 border-b border-gray-50 last:border-0">
                   <div className="flex gap-3 items-center">
-                    <img src={product.featured_image} alt="" className="w-12 h-12 object-cover rounded-lg bg-[#FAF9F5]" />
+                    <img src={product.featured_image} alt="" className="w-12 h-12 object-cover rounded-lg bg-black" />
                     <div>
                       <h5 className="font-bold text-[#1A1918] line-clamp-1">{product.title}</h5>
                       <span className="text-gray-400">Qty: {quantity} × ₹{effectivePrice.toLocaleString()}</span>

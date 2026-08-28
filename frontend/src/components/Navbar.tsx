@@ -38,6 +38,12 @@ export const Navbar: React.FC = () => {
     if (path === '/' || path === '/home') {
       return location.pathname === '/' || location.pathname === '/home';
     }
+    if (path === '/shop/wholesale') {
+      return location.pathname.startsWith('/shop/wholesale') || location.pathname.includes('wholesale');
+    }
+    if (path === '/shop/retail') {
+      return location.pathname.startsWith('/shop/retail') || (location.pathname.startsWith('/category') && !location.pathname.includes('wholesale'));
+    }
     return location.pathname.startsWith(path);
   };
 

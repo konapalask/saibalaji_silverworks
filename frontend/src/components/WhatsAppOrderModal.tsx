@@ -362,7 +362,7 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
                   <img 
                     src={singleProductOrder.product.featured_image} 
                     alt="" 
-                    className="w-12 h-14 object-cover rounded-lg bg-[#FAF9F5]"
+                    className="w-12 h-14 object-cover rounded-lg bg-black"
                   />
                   <div className="flex-1">
                     <p className="font-bold text-[#1A1918]">{singleProductOrder.product.title}</p>
@@ -376,7 +376,7 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
                     <img 
                       src={item.product.featured_image} 
                       alt="" 
-                      className="w-10 h-12 object-cover rounded-lg bg-[#FAF9F5]"
+                      className="w-10 h-12 object-cover rounded-lg bg-black"
                     />
                     <div className="flex-1">
                       <p className="font-bold text-[#1A1918] line-clamp-1">{item.product.title}</p>

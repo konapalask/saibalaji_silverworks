@@ -39,7 +39,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
         <img
           src={product.featured_image}
           alt={product.title}
-          className="w-full h-full object-cover rounded-xl img-editorial drop-shadow-md group-hover/img:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover rounded-xl img-editorial drop-shadow-md group-hover/img:scale-105 transition-transform duration-500 bg-black"
           loading="lazy"
         />
 

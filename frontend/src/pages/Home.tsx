@@ -320,11 +320,11 @@ export const Home: React.FC = () => {
               to={`/category/${cat.slug}`}
               className="group bg-white rounded-2xl border border-[#E5E0D8] overflow-hidden product-card-hover flex flex-col justify-between"
             >
-              <div className="relative aspect-4/3 w-full bg-[#FAF8F5] overflow-hidden p-3 border-b border-[#F0ECE6]">
+              <div className="relative aspect-4/3 w-full bg-black overflow-hidden p-3 border-b border-[#F0ECE6]">
                 <img
                   src={cat.cardImage}
                   alt={cat.name}
-                  className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-700 bg-black"
                 />
               </div>
 

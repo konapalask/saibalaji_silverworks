@@ -247,7 +247,7 @@ export const CartDrawer: React.FC = () => {
                     <img 
                       src={product.featured_image} 
                       alt={product.title}
-                      className="w-20 h-24 object-cover rounded-xl bg-[#FAF9F5]"
+                      className="w-20 h-24 object-cover rounded-xl bg-black"
                     />
                     <div className="flex-1 flex flex-col justify-between">
                       <div>

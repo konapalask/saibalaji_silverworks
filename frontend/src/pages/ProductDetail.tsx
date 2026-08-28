@@ -231,11 +231,11 @@ export const ProductDetail: React.FC = () => {
         
         {/* Left Side Gallery — Clean Uncropped Display */}
         <div className="lg:col-span-6 space-y-4">
-          <div className="bg-white border border-[#E5E0D8] p-3 rounded-3xl overflow-hidden product-shadow flex items-center justify-center aspect-3/2">
+          <div className="bg-black border border-gray-800 p-3 rounded-3xl overflow-hidden product-shadow flex items-center justify-center aspect-3/2">
             <img 
               src={activeImage} 
               alt={product.title} 
-              className="w-full h-full object-cover rounded-2xl drop-shadow-xl transition-all duration-500"
+              className="w-full h-full object-cover rounded-2xl drop-shadow-xl transition-all duration-500 bg-black"
             />
           </div>
 
@@ -244,21 +244,21 @@ export const ProductDetail: React.FC = () => {
             <div className="flex gap-3 overflow-x-auto pb-2">
               <button 
                 onClick={() => setActiveImage(product.featured_image)}
-                className={`w-20 h-24 rounded-xl overflow-hidden border-2 p-1 bg-white transition-all ${
+                className={`w-20 h-24 rounded-xl overflow-hidden border-2 p-1 bg-black transition-all ${
                   activeImage === product.featured_image ? 'border-[#B9A77A] shadow-xs' : 'border-[#E5E0D8] opacity-70'
                 }`}
               >
-                <img src={product.featured_image} alt="" className="w-full h-full object-contain" />
+                <img src={product.featured_image} alt="" className="w-full h-full object-contain bg-black" />
               </button>
               {product.images.map((img) => (
                 <button 
                   key={img.id}
                   onClick={() => setActiveImage(img.image_url)}
-                  className={`w-20 h-24 rounded-xl overflow-hidden border-2 p-1 bg-white transition-all ${
+                  className={`w-20 h-24 rounded-xl overflow-hidden border-2 p-1 bg-black transition-all ${
                     activeImage === img.image_url ? 'border-[#B9A77A] shadow-xs' : 'border-[#E5E0D8] opacity-70'
                   }`}
                 >
-                  <img src={img.image_url} alt="" className="w-full h-full object-contain" />
+                  <img src={img.image_url} alt="" className="w-full h-full object-contain bg-black" />
                 </button>
               ))}
             </div>
