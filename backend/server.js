@@ -470,6 +470,51 @@ app.get('/api/products/:id_or_slug', (req, res) => {
   res.json({ ...product, category: cat || null, images: product.images || [] });
 });
 
+// Reusable Dynamic Product Price Calculation Function
+function calculateProductPrice(weight_g, making_charge, making_charge_type = 'fixed', silver_purity = '925', live_silver_rate = 250.64, wholesale_making_charge = null) {
+  const weight = parseFloat(weight_g) || 0;
+  const mc = parseFloat(making_charge) || 0;
+  const wmc = wholesale_making_charge !== null && wholesale_making_charge !== undefined
+    ? parseFloat(wholesale_making_charge)
+    : Math.round(mc * 0.75 * 100) / 100;
+
+  const rate = parseFloat(live_silver_rate) || 250.64;
+  
+  let purityFactor = 1.0;
+  const purityStr = String(silver_purity).toLowerCase();
+  if (purityStr.includes('925') || purityStr.includes('sterling')) {
+    purityFactor = 0.925;
+  } else if (purityStr.includes('999') || purityStr.includes('fine')) {
+    purityFactor = 1.0;
+  }
+
+  const silverValue = Math.round(weight * purityFactor * rate * 100) / 100;
+  
+  let calculatedMC = mc;
+  let calculatedWMC = wmc;
+
+  if (making_charge_type === 'per_gram') {
+    calculatedMC = Math.round(mc * weight * 100) / 100;
+    calculatedWMC = Math.round(wmc * weight * 100) / 100;
+  } else if (making_charge_type === 'percentage') {
+    calculatedMC = Math.round(((silverValue * mc) / 100) * 100) / 100;
+    calculatedWMC = Math.round(((silverValue * wmc) / 100) * 100) / 100;
+  }
+  
+  const finalPrice = Math.max(1, Math.round((silverValue + calculatedMC) * 100) / 100);
+  const wholesalePrice = Math.max(1, Math.round((silverValue + calculatedWMC) * 100) / 100);
+  return {
+    weight: weight,
+    silverRate: rate,
+    silverValue,
+    makingCharge: calculatedMC,
+    wholesaleMakingCharge: calculatedWMC,
+    makingChargeType: making_charge_type,
+    finalPrice,
+    wholesalePrice
+  };
+}
+
 // Admin Product Create (POST)
 const handleCreateProduct = (req, res) => {
   const productsList = getProducts();
@@ -477,9 +522,9 @@ const handleCreateProduct = (req, res) => {
 
   const {
     title, sku, category_id, subcategory, product_type, silver_purity,
-    weight_g, gross_weight_g, net_silver_weight_g, making_charges, dimensions,
+    weight_g, gross_weight_g, net_silver_weight_g, making_charges, making_charge_type, dimensions,
     retail_price, wholesale_price, min_wholesale_qty, stock, description, specifications,
-    featured_image, is_featured, is_new_arrival
+    featured_image, is_featured, is_new_arrival, variants
   } = req.body;
 
   const category = categoriesList.find(c => c.id === Number(category_id));
@@ -502,6 +547,7 @@ const handleCreateProduct = (req, res) => {
     gross_weight_g: gross_weight_g ? parseFloat(gross_weight_g) : (weight_g ? parseFloat(weight_g) : 50.0),
     net_silver_weight_g: net_silver_weight_g ? parseFloat(net_silver_weight_g) : (weight_g ? parseFloat(weight_g) : 50.0),
     making_charges: making_charges ? parseFloat(making_charges) : 0,
+    making_charge_type: making_charge_type || 'fixed',
     dimensions: dimensions || '',
     retail_price: retail_price ? parseFloat(retail_price) : 0,
     wholesale_price: wholesale_price ? parseFloat(wholesale_price) : (retail_price ? parseFloat(retail_price) : 0),
@@ -509,10 +555,11 @@ const handleCreateProduct = (req, res) => {
     stock: stock !== undefined ? parseInt(stock) : 25,
     description: description || '',
     specifications: specifications || '',
-    featured_image: featured_image || '/public/sai balajji products/Floral Engraved Silver Pooja Thali Set.webp',
+    featured_image: featured_image || '/public/Saibalaji products S/Floral Engraved Silver Pooja Thali Set.webp',
     is_featured: Boolean(is_featured),
     is_new_arrival: is_new_arrival !== undefined ? Boolean(is_new_arrival) : true,
     is_active: true,
+    variants: Array.isArray(variants) ? variants : [],
     created_at: new Date().toISOString()
   };
 
@@ -538,9 +585,9 @@ const handleUpdateProduct = (req, res) => {
   const existing = productsList[index];
   const {
     title, sku, category_id, subcategory, product_type, silver_purity,
-    weight_g, gross_weight_g, net_silver_weight_g, making_charges, dimensions,
+    weight_g, gross_weight_g, net_silver_weight_g, making_charges, making_charge_type, dimensions,
     retail_price, wholesale_price, min_wholesale_qty, stock, description, specifications,
-    featured_image, is_featured, is_new_arrival, is_active
+    featured_image, is_featured, is_new_arrival, is_active, variants
   } = req.body;
 
   const catId = category_id !== undefined ? Number(category_id) : existing.category_id;
@@ -560,6 +607,7 @@ const handleUpdateProduct = (req, res) => {
     gross_weight_g: gross_weight_g !== undefined ? parseFloat(gross_weight_g) : (existing.gross_weight_g || existing.weight_g),
     net_silver_weight_g: net_silver_weight_g !== undefined ? parseFloat(net_silver_weight_g) : (existing.net_silver_weight_g || existing.weight_g),
     making_charges: making_charges !== undefined ? parseFloat(making_charges) : (existing.making_charges || 0),
+    making_charge_type: making_charge_type !== undefined ? making_charge_type : (existing.making_charge_type || 'fixed'),
     dimensions: dimensions !== undefined ? dimensions : (existing.dimensions || ''),
     retail_price: retail_price !== undefined ? parseFloat(retail_price) : existing.retail_price,
     wholesale_price: wholesale_price !== undefined ? parseFloat(wholesale_price) : existing.wholesale_price,
@@ -570,7 +618,8 @@ const handleUpdateProduct = (req, res) => {
     featured_image: featured_image !== undefined ? featured_image : existing.featured_image,
     is_featured: is_featured !== undefined ? Boolean(is_featured) : existing.is_featured,
     is_new_arrival: is_new_arrival !== undefined ? Boolean(is_new_arrival) : existing.is_new_arrival,
-    is_active: is_active !== undefined ? Boolean(is_active) : existing.is_active
+    is_active: is_active !== undefined ? Boolean(is_active) : existing.is_active,
+    variants: variants !== undefined ? (Array.isArray(variants) ? variants : []) : (existing.variants || [])
   };
 
   productsList[index] = updatedProduct;
@@ -752,7 +801,16 @@ fetchLiveSilverRate();
 
 const getSilverRateResponse = (req, res) => {
   const productsList = getProducts();
+  const ratePerGram = silverRateCache.live_silver_rate;
   res.json({
+    success: true,
+    metal: 'silver',
+    ratePerGram: ratePerGram,
+    rate_per_gram: ratePerGram,
+    currency: 'INR',
+    unit: 'gram',
+    updatedAt: silverRateCache.last_updated_at,
+    apiStatus: silverRateCache.api_status,
     ...silverRateCache,
     total_products_linked: productsList.length
   });
@@ -868,6 +926,63 @@ app.post('/api/v1/orders', (req, res) => {
     } catch (e) {}
   }
 
+  // Validate & Recalculate Order Item Prices using Backend Live Silver Rate
+  const productsList = getProducts();
+  const currentLiveRate = silverRateCache.live_silver_rate || 250.64;
+
+  const validatedItems = (orderData.items || []).map(item => {
+    const prodId = item.product_id || (item.product && item.product.id);
+    const foundProduct = productsList.find(p => p.id === Number(prodId));
+
+    if (foundProduct) {
+      let variantWeight = item.weight_g || foundProduct.weight_g || 50;
+      let variantMakingCharge = item.making_charge !== undefined ? item.making_charge : (foundProduct.making_charges || 0);
+      let makingChargeType = foundProduct.making_charge_type || 'fixed';
+      let silverPurity = foundProduct.silver_purity || '925';
+
+      if (item.variant_id && Array.isArray(foundProduct.variants)) {
+        const selectedVariant = foundProduct.variants.find(v => String(v.id) === String(item.variant_id));
+        if (selectedVariant) {
+          variantWeight = selectedVariant.weight_g;
+          variantMakingCharge = selectedVariant.making_charge;
+          if (selectedVariant.making_charge_type) makingChargeType = selectedVariant.making_charge_type;
+        }
+      }
+
+      const calc = calculateProductPrice(variantWeight, variantMakingCharge, makingChargeType, silverPurity, currentLiveRate);
+      const validatedUnitPrice = calc.finalPrice;
+      const qty = parseInt(item.quantity) || 1;
+
+      return {
+        ...item,
+        product_id: foundProduct.id,
+        product_name: item.product_name || foundProduct.title,
+        product_sku: item.product_sku || foundProduct.sku,
+        unit_price: validatedUnitPrice,
+        price: validatedUnitPrice,
+        quantity: qty,
+        subtotal: validatedUnitPrice * qty,
+        silver_rate_used: currentLiveRate,
+        weight_g: variantWeight,
+        making_charge: variantMakingCharge,
+        measurement: item.measurement || (item.variant_id ? item.measurement : foundProduct.dimensions)
+      };
+    }
+    const qty = parseInt(item.quantity) || 1;
+    const unitP = parseFloat(item.unit_price || item.price || 0);
+    return {
+      ...item,
+      quantity: qty,
+      unit_price: unitP,
+      subtotal: unitP * qty
+    };
+  });
+
+  const calculatedSubtotal = validatedItems.reduce((acc, item) => acc + (item.subtotal || 0), 0);
+  const taxAmount = orderData.tax_amount !== undefined ? parseFloat(orderData.tax_amount) : Math.round(calculatedSubtotal * 0.03);
+  const shippingCharge = orderData.shipping_charge !== undefined ? parseFloat(orderData.shipping_charge) : 0;
+  const calculatedGrandTotal = calculatedSubtotal + taxAmount + shippingCharge;
+
   const newOrder = {
     id: orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
     order_number: orderData.order_number || `SBS-ORD-${Date.now().toString().slice(-6)}`,
@@ -879,11 +994,12 @@ app.post('/api/v1/orders', (req, res) => {
     shipping_city: orderData.shipping_city || loggedInUser?.city || '',
     shipping_state: orderData.shipping_state || loggedInUser?.state || '',
     shipping_pincode: orderData.shipping_pincode || loggedInUser?.pincode || '',
-    items: orderData.items || [],
-    subtotal: orderData.subtotal || 0,
-    tax_amount: orderData.tax_amount ?? orderData.tax ?? 0,
-    shipping_charge: orderData.shipping_charge ?? orderData.shipping ?? 0,
-    grand_total: orderData.grand_total ?? orderData.total_amount ?? 0,
+    items: validatedItems,
+    subtotal: calculatedSubtotal,
+    tax_amount: taxAmount,
+    shipping_charge: shippingCharge,
+    grand_total: calculatedGrandTotal,
+    live_silver_rate_applied: currentLiveRate,
     status: orderData.status || 'Order Placed',
     created_at: new Date().toISOString()
   };
@@ -1160,16 +1276,284 @@ app.get('/api/v1/quotations/all', (req, res) => {
 
 app.post('/api/v1/quotations', requireAdmin, (req, res) => {
   const quotations = getQuotations();
+  const wholesaleRequests = getWholesaleRequests();
+  const productsList = getProducts();
   const quoteData = req.body;
+
+  const reqId = quoteData.wholesale_request_id;
+  const matchedReq = wholesaleRequests.find(r => r.id === reqId || r.request_number === reqId);
+
+  let items = quoteData.items || [];
+  if (items.length === 0 && matchedReq && matchedReq.items) {
+    items = matchedReq.items.map(it => {
+      const p = productsList.find(prod => prod.id === it.product_id);
+      const unitP = p ? (p.wholesale_price || p.retail_price || 3500) : 3500;
+      const qty = it.requested_quantity || 1;
+      return {
+        product_id: it.product_id,
+        product_name: it.product_name || p?.title || 'Silver Item',
+        product_sku: it.product_sku || p?.sku || 'SBS-SKU',
+        measurement: it.measurement || p?.dimensions || 'Standard',
+        weight_g: it.weight_g || p?.weight_g || 50,
+        purity: p?.silver_purity || '925 Sterling Silver',
+        quantity: qty,
+        unit_price: unitP,
+        subtotal: unitP * qty,
+        featured_image: p?.featured_image
+      };
+    });
+  }
+
+  const calculatedSubtotal = items.reduce((acc, it) => acc + (it.subtotal || (it.unit_price * it.quantity) || 0), 0);
+  const discount = parseFloat(quoteData.discount_amount || 0);
+  const tax = parseFloat(quoteData.tax_amount || Math.round((calculatedSubtotal - discount) * 0.03));
+  const shipping = parseFloat(quoteData.shipping_charge || 0);
+  const grandTotal = Math.max(0, calculatedSubtotal - discount + tax + shipping);
+
   const newQuote = {
-    id: quotations.length + 1,
-    quote_number: `SB-QT-${Date.now().toString().slice(-6)}`,
-    ...quoteData,
+    id: quotations.length > 0 ? Math.max(...quotations.map(q => q.id)) + 1 : 1,
+    quotation_number: `SBS-QT-${Date.now().toString().slice(-6)}`,
+    quote_number: `SBS-QT-${Date.now().toString().slice(-6)}`,
+    wholesale_request_id: reqId,
+    company_name: quoteData.company_name || matchedReq?.company_name || 'Valued Business Client',
+    contact_person: quoteData.contact_person || matchedReq?.contact_person || '',
+    phone: quoteData.phone || matchedReq?.phone || '',
+    email: quoteData.email || matchedReq?.email || '',
+    gstin: quoteData.gstin || matchedReq?.gstin || '',
+    address: quoteData.address || matchedReq?.address || '',
+    items,
+    subtotal: calculatedSubtotal,
+    discount_amount: discount,
+    tax_amount: tax,
+    shipping_charge: shipping,
+    grand_total: grandTotal,
+    valid_until: quoteData.valid_until || '2026-09-30',
+    payment_terms: quoteData.payment_terms || '50% Advance upon quotation acceptance, 50% prior to dispatch.',
+    delivery_terms: quoteData.delivery_terms || 'Dispatch via insured logistics within 5 business days.',
+    notes: quoteData.notes || 'Official B2B Wholesale Quotation by Sai Balaji Silver Works Sales Desk.',
     created_at: new Date().toISOString()
   };
+
   quotations.push(newQuote);
   saveJsonFile('quotations_data.json', quotations);
+
+  if (matchedReq) {
+    matchedReq.status = 'QUOTE_ISSUED';
+    saveJsonFile('wholesale_requests_data.json', wholesaleRequests);
+  }
+
   res.status(201).json(newQuote);
+});
+
+// Render Printable PDF Quotation HTML
+const renderQuotationPdfHtml = (quote, reqData) => {
+  const qNum = quote.quotation_number || quote.quote_number || `SBS-QT-${quote.id}`;
+  const company = quote.company_name || reqData?.company_name || 'Valued Commercial Buyer';
+  const contact = quote.contact_person || reqData?.contact_person || 'N/A';
+  const phone = quote.phone || reqData?.phone || 'N/A';
+  const email = quote.email || reqData?.email || 'N/A';
+  const gstin = quote.gstin || reqData?.gstin || 'N/A';
+  const address = quote.address || reqData?.address || 'N/A';
+  const dateStr = quote.created_at ? new Date(quote.created_at).toLocaleDateString() : new Date().toLocaleDateString();
+  const validUntil = quote.valid_until || '2026-09-30';
+
+  const items = quote.items || reqData?.items || [];
+  const subtotal = quote.subtotal || items.reduce((a, b) => a + (b.subtotal || (b.unit_price * b.quantity) || 0), 0);
+  const discount = quote.discount_amount || 0;
+  const tax = quote.tax_amount !== undefined ? quote.tax_amount : Math.round((subtotal - discount) * 0.03);
+  const shipping = quote.shipping_charge || 0;
+  const grandTotal = quote.grand_total || (subtotal - discount + tax + shipping);
+
+  const itemsHtml = items.map((it, idx) => {
+    const title = it.product_name || it.title || 'Pure Silver Article';
+    const sku = it.product_sku || it.sku || 'SBS-SILVER';
+    const size = it.measurement || it.selected_measurement || it.size || 'Standard';
+    const weight = it.weight_g ? `${it.weight_g}g` : 'Standard';
+    const qty = it.quantity || it.requested_quantity || 1;
+    const price = it.unit_price || it.price || 3500;
+    const lineTotal = it.subtotal || (price * qty);
+
+    return `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: center;">${idx + 1}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA;">
+          <strong>${title}</strong><br/>
+          <small style="color: #666;">SKU: ${sku} | Size: ${size} | Weight: ${weight} | Purity: 92.5% Sterling</small>
+        </td>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: center;">${qty} Pcs</td>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: right;">₹${price.toLocaleString()}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: right; font-weight: bold;">₹${lineTotal.toLocaleString()}</td>
+      </tr>
+    `;
+  }).join('');
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Quotation ${qNum} - Sai Balaji Silver Works</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1A1918; margin: 0; padding: 20px; background: #FFF; }
+        .invoice-box { max-width: 850px; margin: auto; padding: 30px; border: 1px solid #C5A059; border-radius: 12px; background: #FFF; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .header { text-align: center; border-bottom: 2px solid #C5A059; padding-bottom: 20px; margin-bottom: 25px; }
+        .header h1 { font-family: Georgia, serif; color: #1A1918; margin: 0; font-size: 28px; letter-spacing: 1px; }
+        .header h4 { color: #C5A059; margin: 5px 0 0 0; text-transform: uppercase; font-size: 11px; letter-spacing: 3px; }
+        .header p { color: #666; font-size: 11px; margin: 5px 0 0 0; }
+        .info-table { width: 100%; margin-bottom: 25px; border-collapse: collapse; font-size: 12px; }
+        .info-table td { vertical-align: top; padding: 8px; }
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 12px; }
+        .items-table th { background: #1A1918; color: #FFF; text-transform: uppercase; font-size: 10px; letter-spacing: 1px; padding: 12px 10px; }
+        .summary-box { float: right; width: 320px; font-size: 12px; margin-bottom: 25px; }
+        .summary-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #EEE; }
+        .summary-total { font-size: 16px; font-weight: bold; color: #C5A059; border-top: 2px solid #1A1918; border-bottom: none; padding-top: 10px; }
+        .terms { clear: both; background: #FAF9F5; border: 1px solid #E6E1DA; padding: 15px; border-radius: 8px; font-size: 11px; color: #444; }
+        .terms h5 { margin: 0 0 5px 0; color: #C5A059; text-transform: uppercase; font-size: 11px; }
+        .no-print { text-align: center; margin-bottom: 20px; }
+        .btn-print { background: #C5A059; color: white; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+        @media print { .no-print { display: none; } .invoice-box { border: none; box-shadow: none; padding: 0; } }
+      </style>
+    </head>
+    <body>
+      <div class="no-print">
+        <button class="btn-print" onclick="window.print()">🖨️ Print Quotation / Save as PDF</button>
+      </div>
+      <div class="invoice-box">
+        <div class="header">
+          <h1>SAI BALAJI SILVER WORKS</h1>
+          <h4>Official Commercial B2B Quotation</h4>
+          <p>Manufacturers & Exporters of 925 Sterling Silver & 999 Fine Silverware</p>
+          <p>Address: 5-147 SF-1, Puchalapalli Sundaraiah St, Near Indian Petrol Bunk, Ramavarappadu, Vijayawada - 520008 | Phone: +91 94926 64870 / +91 91212 66269</p>
+        </div>
+
+        <table class="info-table">
+          <tr>
+            <td style="width: 50%;">
+              <strong style="color: #C5A059; font-size: 11px; text-transform: uppercase;">Billed To / Customer Details:</strong><br/>
+              <strong style="font-size: 14px;">${company}</strong><br/>
+              Attn: ${contact}<br/>
+              Phone: ${phone} | Email: ${email}<br/>
+              GSTIN: ${gstin}<br/>
+              Address: ${address}
+            </td>
+            <td style="width: 50%; text-align: right;">
+              <strong style="color: #C5A059; font-size: 11px; text-transform: uppercase;">Quotation Reference:</strong><br/>
+              <strong style="font-size: 16px; color: #1A1918;">${qNum}</strong><br/>
+              Date Issued: <strong>${dateStr}</strong><br/>
+              Valid Until: <strong>${validUntil}</strong><br/>
+              Silver Purity: <strong>92.5% Sterling</strong>
+            </td>
+          </tr>
+        </table>
+
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;">#</th>
+              <th style="text-align: left;">Item Description & Specifications</th>
+              <th style="width: 80px;">Qty</th>
+              <th style="width: 120px; text-align: right;">Unit Rate</th>
+              <th style="width: 130px; text-align: right;">Total Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsHtml}
+          </tbody>
+        </table>
+
+        <div class="summary-box">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span>₹${subtotal.toLocaleString()}</span>
+          </div>
+          ${discount > 0 ? `<div class="summary-row" style="color: green;"><span>Special Discount:</span><span>-₹${discount.toLocaleString()}</span></div>` : ''}
+          <div class="summary-row">
+            <span>GST Tax (3% Silver Rate):</span>
+            <span>₹${tax.toLocaleString()}</span>
+          </div>
+          <div class="summary-row">
+            <span>Insured Freight & Handling:</span>
+            <span>${shipping === 0 ? 'FREE' : `₹${shipping.toLocaleString()}`}</span>
+          </div>
+          <div class="summary-row summary-total">
+            <span>GRAND TOTAL:</span>
+            <span>₹${grandTotal.toLocaleString()}</span>
+          </div>
+        </div>
+
+        <div class="terms">
+          <h5>Terms & Conditions:</h5>
+          <p>• <strong>Payment Terms:</strong> ${quote.payment_terms || '50% Advance upon quotation acceptance, 50% prior to dispatch.'}</p>
+          <p>• <strong>Delivery Terms:</strong> ${quote.delivery_terms || 'Dispatch via insured logistics within 5 business days.'}</p>
+          <p>• <strong>Notes:</strong> ${quote.notes || 'Official quotation issued by Sai Balaji Silver Works Commercial Desk.'}</p>
+          <p>• <strong>Bank Account Details:</strong> Sai Balaji Silver Works | A/C: 987654321098 | IFSC: SBIN0001234 | State Bank of India</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+// Endpoint for viewing/downloading PDF Quotation
+app.get(['/api/v1/quotations/:id/pdf', '/api/v1/wholesale/requests/:id/pdf'], (req, res) => {
+  const quotations = getQuotations();
+  const wholesaleRequests = getWholesaleRequests();
+  const productsList = getProducts();
+  const idOrNum = req.params.id;
+
+  let quote = quotations.find(q => String(q.id) === String(idOrNum) || q.quotation_number === idOrNum || q.quote_number === idOrNum);
+  let reqData = wholesaleRequests.find(r => String(r.id) === String(idOrNum) || r.request_number === idOrNum);
+
+  if (!quote && reqData) {
+    quote = quotations.find(q => String(q.wholesale_request_id) === String(reqData.id));
+  }
+
+  if (!quote && reqData) {
+    // Generate fallback quote on-the-fly for PDF view
+    const items = (reqData.items || []).map(it => {
+      const p = productsList.find(prod => prod.id === it.product_id);
+      const unitP = p ? (p.wholesale_price || p.retail_price || 3500) : 3500;
+      const qty = it.requested_quantity || 1;
+      return {
+        product_id: it.product_id,
+        product_name: it.product_name || p?.title || 'Silver Item',
+        product_sku: it.product_sku || p?.sku || 'SBS-SKU',
+        measurement: it.measurement || p?.dimensions || 'Standard',
+        weight_g: it.weight_g || p?.weight_g || 50,
+        quantity: qty,
+        unit_price: unitP,
+        subtotal: unitP * qty
+      };
+    });
+    const sub = items.reduce((a, b) => a + (b.subtotal || 0), 0);
+    quote = {
+      id: reqData.id,
+      quotation_number: `SBS-QT-${reqData.request_number || reqData.id}`,
+      wholesale_request_id: reqData.id,
+      company_name: reqData.company_name,
+      contact_person: reqData.contact_person,
+      phone: reqData.phone,
+      email: reqData.email,
+      gstin: reqData.gstin,
+      address: reqData.address,
+      items,
+      subtotal: sub,
+      discount_amount: 0,
+      tax_amount: Math.round(sub * 0.03),
+      shipping_charge: 0,
+      grand_total: sub + Math.round(sub * 0.03),
+      valid_until: '2026-09-30',
+      created_at: reqData.created_at
+    };
+  }
+
+  if (!quote) {
+    return res.status(404).send('Quotation not found');
+  }
+
+  const html = renderQuotationPdfHtml(quote, reqData);
+  res.setHeader('Content-Type', 'text/html');
+  res.send(html);
 });
 
 
