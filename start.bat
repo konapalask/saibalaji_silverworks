@@ -9,11 +9,6 @@ echo.
 :: Get workspace directory
 set WORKSPACE_DIR=%~dp0
 
-:: Auto-pull latest code from Git repository
-echo [0/3] Pulling latest updates from Git...
-cd /d "%WORKSPACE_DIR%"
-git pull origin main
-echo.
 
 :: Free ports and old tunnel if occupied
 for /f "tokens=5" %%a in ('netstat -aon ^| findstr :8000 ^| findstr LISTENING') do taskkill /F /PID %%a >nul 2>&1

@@ -5,12 +5,12 @@ backend_dir = r'c:\Users\Nikhil\Downloads\saibalaji_silverworks\backend'
 frontend_dir = r'c:\Users\Nikhil\Downloads\saibalaji_silverworks\frontend\src'
 
 real_images = {
-    'god': '/public/sai balajji products/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp',
-    'pooja': '/public/sai balajji products/Floral Engraved Silver Pooja Thali Set.webp',
-    'dining': '/public/sai balajji products/Royal Floral Engraved Silver Serving Tray.webp',
-    'baby': '/public/sai balajji products/Classic Cartoon Star Border Silver Serving Tray.webp',
-    'wedding': '/public/sai balajji products/Shree Divya Silver Masala Box Set.webp',
-    'default': '/public/sai balajji products/Antique Lakshmi Motif Pure Silver Kalash.webp'
+    'god': '/public/Saibalaji products S/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp',
+    'pooja': '/public/Saibalaji products S/Floral Engraved Silver Pooja Thali Set.webp',
+    'dining': '/public/Saibalaji products S/Royal Floral Engraved Silver Serving Tray.webp',
+    'baby': '/public/Saibalaji products S/Classic Cartoon Star Border Silver Serving Tray.webp',
+    'wedding': '/public/Saibalaji products S/Shree Divya Silver Masala Box Set.webp',
+    'default': '/public/Saibalaji products S/Antique Lakshmi Motif Pure Silver Kalash.webp'
 }
 
 print("=== REMOVING DUMMY IMAGES & REPLACING WITH REAL PRODUCTS ===")
