@@ -29,10 +29,24 @@ export interface Category {
 
 export type ProductType = 'RETAIL' | 'WHOLESALE' | 'BOTH';
 
+export type MakingChargeType = 'fixed' | 'per_gram' | 'percentage';
+
 export interface ProductImage {
   id: number;
   image_url: string;
   display_order: number;
+}
+
+export interface ProductVariant {
+  id: string;
+  measurement: string;
+  weight_g: number;
+  making_charge: number;
+  making_charge_type?: MakingChargeType;
+  sku: string;
+  stock: number;
+  image?: string;
+  is_active: boolean;
 }
 
 export interface Product {
@@ -50,6 +64,7 @@ export interface Product {
   gross_weight_g?: number;
   net_silver_weight_g?: number;
   making_charges?: number;
+  making_charge_type?: MakingChargeType;
   dimensions?: string;
   base_price?: number;
   base_silver_rate?: number;
@@ -69,6 +84,7 @@ export interface Product {
   is_active: boolean;
   category?: Category;
   images?: ProductImage[];
+  variants?: ProductVariant[];
   created_at: string;
 }
 
@@ -80,22 +96,39 @@ export interface SilverRateStats {
   api_status: 'CONNECTED' | 'RETRYING' | 'OFFLINE';
   error_message?: string;
   total_products_linked?: number;
+  rate_per_gram?: number;
+  ratePerGram?: number;
+  metal?: string;
+  unit?: string;
+  currency?: string;
 }
 
 export interface CartItem {
   product: Product;
   quantity: number;
+  variant_id?: string;
+  selected_measurement?: string;
+  selected_variant?: ProductVariant;
+  weight_g?: number;
+  making_charge?: number;
+  silver_rate_used?: number;
+  calculated_price?: number;
 }
 
 export interface WholesaleCartItem {
   product: Product;
   requested_quantity: number;
+  variant_id?: string;
+  selected_measurement?: string;
+  selected_variant?: ProductVariant;
   notes?: string;
 }
 
 export interface RetailOrderItem {
   id?: number;
   product_id?: number;
+  variant_id?: string;
+  measurement?: string;
   title?: string;
   product_name: string;
   product_sku: string;
@@ -107,6 +140,8 @@ export interface RetailOrderItem {
   image_url?: string;
   image?: string;
   full_image_url?: string;
+  weight_g?: number;
+  making_charge?: number;
   product?: Partial<Product>;
 }
 

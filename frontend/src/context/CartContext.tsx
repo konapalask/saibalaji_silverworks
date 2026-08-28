@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 import { Product, CartItem } from '../types';
 import { WHOLESALE_MOQ } from '../config/cartConfig';
 import { useAuth } from './AuthContext';
+import { useLiveSilver } from './LiveSilverContext';
 
 export type CartType = 'RETAIL' | 'WHOLESALE';
 
@@ -14,9 +15,9 @@ export interface EffectiveCartItem extends CartItem {
 interface CartContextType {
   cart: CartItem[];
   effectiveCartItems: EffectiveCartItem[];
-  addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
+  addToCart: (product: Product, quantity?: number, selectedVariant?: any) => void;
+  removeFromCart: (productId: number, variantId?: string) => void;
+  updateQuantity: (productId: number, quantity: number, variantId?: string) => void;
   clearCart: () => void;
   totalQuantity: number;
   cartCount: number; // alias for totalQuantity
@@ -27,13 +28,15 @@ interface CartContextType {
   subtotal: number;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
-  getItemEffectivePrice: (product: Product, currentCartType?: CartType) => number;
+  getItemEffectivePrice: (product: Product, selectedVariant?: any, currentCartType?: CartType) => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
+  const { calculateDynamicPrice, calculateCurrentPrice } = useLiveSilver();
+
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
       const saved = localStorage.getItem('sbs_cart');
@@ -74,31 +77,63 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const itemsToWholesale = Math.max(0, WHOLESALE_MOQ - totalQuantity);
 
   // 3. Price helper
-  const getItemEffectivePrice = (product: Product, currentMode: CartType = cartType): number => {
+  const getItemEffectivePrice = (product: Product, selectedVariant?: any, currentMode: CartType = cartType): number => {
+    const varObj = selectedVariant || (Array.isArray(product.variants) && product.variants.length > 0 ? product.variants[0] : null);
+    const weightG = varObj?.weight_g ?? product.weight_g;
+    const mc = varObj?.making_charge ?? product.making_charges ?? 0;
+    const mcType = varObj?.making_charge_type || product.making_charge_type || 'fixed';
+    const purity = product.silver_purity || '925';
+
+    if (typeof weightG === 'number' && weightG > 0) {
+      const breakdown = calculateDynamicPrice(weightG, mc, mcType, purity);
+      return currentMode === 'WHOLESALE' ? breakdown.wholesalePrice : breakdown.finalPrice;
+    }
+
     if (currentMode === 'WHOLESALE') {
       if (typeof product.wholesale_price === 'number' && product.wholesale_price > 0) {
         return product.wholesale_price;
       }
-      // If wholesale price is not explicitly set, return retail_price
       return product.retail_price;
     }
-    return product.retail_price;
+    return calculateCurrentPrice(product);
   };
 
   // 4. Effective Cart Items with exact price per item
   const effectiveCartItems: EffectiveCartItem[] = useMemo(() => {
     return cart.map((item) => {
       const hasWholesalePrice = typeof item.product.wholesale_price === 'number' && item.product.wholesale_price > 0;
-      const effectivePrice = getItemEffectivePrice(item.product, cartType);
+      
+      const varId = item.variant_id || item.selected_measurement || 'default';
+      const matchedVariant = item.selected_variant || item.product.variants?.find(
+        v => v.id === varId || v.measurement === item.selected_measurement || v.measurement === varId
+      );
+
+      const weightG = item.weight_g ?? matchedVariant?.weight_g ?? item.product.weight_g;
+      const mc = item.making_charge ?? matchedVariant?.making_charge ?? item.product.making_charges ?? 0;
+      const mcType = matchedVariant?.making_charge_type || item.product.making_charge_type || 'fixed';
+      const purity = item.product.silver_purity || '925';
+
+      let effectivePrice = 0;
+
+      if (typeof weightG === 'number' && weightG > 0) {
+        const breakdown = calculateDynamicPrice(weightG, mc, mcType, purity);
+        effectivePrice = cartType === 'WHOLESALE' ? breakdown.wholesalePrice : breakdown.finalPrice;
+      } else {
+        effectivePrice = getItemEffectivePrice(item.product, matchedVariant, cartType);
+      }
+
       const itemSubtotal = effectivePrice * item.quantity;
       return {
         ...item,
+        selected_variant: matchedVariant,
+        weight_g: weightG,
+        making_charge: mc,
         effectivePrice,
         hasWholesalePrice,
         itemSubtotal
       };
     });
-  }, [cart, cartType]);
+  }, [cart, cartType, calculateDynamicPrice, calculateCurrentPrice]);
 
   // 5. Subtotal calculation
   const subtotal = useMemo(() => {
@@ -106,29 +141,55 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [effectiveCartItems]);
 
   // Actions
-  const addToCart = (product: Product, quantity: number = 1) => {
+  const addToCart = (product: Product, quantity: number = 1, selectedVariant?: any) => {
     setCart((prev) => {
-      const existing = prev.find((i) => i.product.id === product.id);
+      const varId = selectedVariant?.id || selectedVariant?.measurement || 'default';
+      const isMatch = (i: CartItem) => {
+        const itemVarId = i.variant_id || i.selected_measurement || 'default';
+        return i.product.id === product.id && itemVarId === varId;
+      };
+
+      const existing = prev.find(isMatch);
       if (existing) {
         return prev.map((i) =>
-          i.product.id === product.id ? { ...i, quantity: i.quantity + quantity } : i
+          isMatch(i) ? { ...i, quantity: i.quantity + quantity } : i
         );
       }
-      return [...prev, { product, quantity }];
+      return [...prev, {
+        product,
+        quantity,
+        variant_id: varId,
+        selected_measurement: selectedVariant?.measurement,
+        selected_variant: selectedVariant,
+        weight_g: selectedVariant?.weight_g ?? product.weight_g,
+        making_charge: selectedVariant?.making_charge ?? product.making_charges
+      }];
     });
   };
 
-  const removeFromCart = (productId: number) => {
-    setCart((prev) => prev.filter((i) => i.product.id !== productId));
+  const removeFromCart = (productId: number, variantId?: string) => {
+    setCart((prev) => prev.filter((i) => {
+      if (variantId) {
+        const itemVarId = i.variant_id || i.selected_measurement || 'default';
+        return !(i.product.id === productId && itemVarId === variantId);
+      }
+      return i.product.id !== productId;
+    }));
   };
 
-  const updateQuantity = (productId: number, quantity: number) => {
+  const updateQuantity = (productId: number, quantity: number, variantId?: string) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(productId, variantId);
       return;
     }
     setCart((prev) =>
-      prev.map((i) => (i.product.id === productId ? { ...i, quantity } : i))
+      prev.map((i) => {
+        const itemVarId = i.variant_id || i.selected_measurement || 'default';
+        if (variantId) {
+          return (i.product.id === productId && itemVarId === variantId) ? { ...i, quantity } : i;
+        }
+        return i.product.id === productId ? { ...i, quantity } : i;
+      })
     );
   };
 
@@ -165,3 +226,4 @@ export const useCart = () => {
   if (!context) throw new Error('useCart must be used within CartProvider');
   return context;
 };
+

@@ -13,6 +13,7 @@ import {
   openWhatsAppOrderUrl 
 } from '../utils/whatsappOrder';
 import { CountryPhoneInput } from './CountryPhoneInput';
+import { OrderSuccessModal } from './OrderSuccessModal';
 
 interface WhatsAppOrderModalProps {
   isOpen: boolean;
@@ -51,8 +52,45 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
   const [buttonState, setButtonState] = useState<'idle' | 'preparing' | 'opening' | 'success'>('idle');
   const [showNotice, setShowNotice] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [preparedWhatsAppMsg, setPreparedWhatsAppMsg] = useState('');
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    if (isSuccessModalOpen) {
+      return (
+        <OrderSuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          orderNumber={orderId}
+          customerName={customer.name}
+          grandTotal={
+            (singleProductOrder ? singleProductOrder.unitPrice * singleProductOrder.quantity : (fullCartOrder?.subtotal || 0)) * 1.03
+          }
+          items={singleProductOrder ? [{
+            title: singleProductOrder.product.title,
+            product_name: singleProductOrder.product.title,
+            sku: singleProductOrder.product.sku,
+            quantity: singleProductOrder.quantity,
+            measurement: singleProductOrder.selected_measurement || singleProductOrder.selected_variant?.measurement || singleProductOrder.product.dimensions,
+            effectivePrice: singleProductOrder.unitPrice,
+            featured_image: singleProductOrder.product.featured_image
+          }] : (fullCartOrder?.items || []).map(item => ({
+            title: item.product.title,
+            product_name: item.product.title,
+            sku: item.product.sku,
+            quantity: item.quantity,
+            measurement: item.selected_measurement || item.selected_variant?.measurement || item.product.dimensions,
+            effectivePrice: item.effectivePrice,
+            featured_image: item.product.featured_image
+          }))}
+          whatsappMessage={preparedWhatsAppMsg}
+          isWholesale={false}
+        />
+      );
+    }
+    return null;
+  }
+
 
   // Determine items and totals for review
   const isSingle = !!singleProductOrder;
@@ -94,6 +132,8 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
         product_id: singleProductOrder.product.id,
         product_name: singleProductOrder.product.title,
         product_sku: singleProductOrder.product.sku,
+        measurement: singleProductOrder.selected_measurement || singleProductOrder.selected_variant?.measurement || singleProductOrder.product.dimensions,
+        weight_g: singleProductOrder.weight_g ?? singleProductOrder.selected_variant?.weight_g ?? singleProductOrder.product.weight_g,
         unit_price: singleProductOrder.unitPrice,
         quantity: singleProductOrder.quantity,
         subtotal: singleProductOrder.unitPrice * singleProductOrder.quantity,
@@ -106,6 +146,8 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
         product_id: item.product.id,
         product_name: item.product.title,
         product_sku: item.product.sku,
+        measurement: item.selected_measurement || item.selected_variant?.measurement || item.product.dimensions,
+        weight_g: item.weight_g ?? item.selected_variant?.weight_g ?? item.product.weight_g,
         unit_price: item.effectivePrice,
         quantity: item.quantity,
         subtotal: item.itemSubtotal,
@@ -129,7 +171,7 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
         tax_amount: tax,
         shipping_charge: shipping,
         grand_total: grandTotal,
-        status: 'Order Placed'
+        status: 'Order Confirmed'
       });
 
       if (!isSingle) {
@@ -155,6 +197,8 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
         });
       }
 
+      setPreparedWhatsAppMsg(rawMessage);
+
       // Save customer address to localStorage for future use
       try {
         localStorage.setItem('sbs_user_address', JSON.stringify({
@@ -170,6 +214,7 @@ export const WhatsAppOrderModal: React.FC<WhatsAppOrderModalProps> = ({
 
       setButtonState('success');
       setShowNotice(true);
+      setIsSuccessModalOpen(true);
     }, 600);
   };
 

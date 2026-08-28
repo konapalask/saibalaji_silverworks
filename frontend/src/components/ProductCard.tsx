@@ -31,13 +31,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
     <div className="group relative bg-white rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] product-card-hover overflow-hidden flex flex-col justify-between h-full">
 
       {/* Top Product Image Container with 3:2 Aspect Ratio */}
-      <div className="relative aspect-3/2 w-full bg-[#FAF8F5] overflow-hidden p-2 sm:p-3 flex items-center justify-center border-b border-[#F0ECE6]">
-
+      <Link
+        to={`/shop/retail/${product.slug}`}
+        className="relative aspect-3/2 w-full bg-[#000000] overflow-hidden p-2 sm:p-3 flex items-center justify-center border-b border-[#F0ECE6] block group/img"
+      >
         {/* Product Photography - Clean 3:2 filled studio photography */}
         <img
           src={product.featured_image}
           alt={product.title}
-          className="w-full h-full object-cover rounded-xl img-editorial drop-shadow-md group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover rounded-xl img-editorial drop-shadow-md group-hover/img:scale-105 transition-transform duration-500"
           loading="lazy"
         />
 
@@ -54,6 +56,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
         <button
           onClick={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             toggleWishlist(product.id);
           }}
           className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-all z-10 ${isLiked ? 'bg-red-50 text-red-500 shadow-sm border border-red-200' : 'bg-white/90 text-gray-500 hover:text-red-500 hover:bg-white border border-[#E5E0D8]'
@@ -62,20 +65,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
         >
           <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
         </button>
-
-        {/* Quick View Button on Hover */}
-        {onQuickView && (
-          <div className="absolute inset-x-0 bottom-3 px-4 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-            <button
-              onClick={() => onQuickView(product)}
-              className="w-full bg-white/95 hover:bg-[#202020] text-[#202020] hover:text-white border border-[#E5E0D8] py-2 rounded-xl text-[11px] uppercase tracking-widest font-semibold backdrop-blur-sm transition-colors flex items-center justify-center gap-2 shadow-md"
-            >
-              <Eye className="w-3.5 h-3.5 text-[#B9A77A]" />
-              Quick View
-            </button>
-          </div>
-        )}
-      </div>
+      </Link>
 
       {/* Product Details Content */}
       <div className="p-4 flex-1 flex flex-col justify-between bg-white">
@@ -98,7 +88,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-1">
-                <span className="text-[9.5px] text-[#777777] uppercase tracking-wider font-medium">Price</span>
+                <span className="text-[9.5px] text-[#777777] uppercase tracking-wider font-medium">
+                  {Array.isArray(product.variants) && product.variants.length > 1 ? 'Starting from' : 'Price'}
+                </span>
                 <span className="text-[8.5px] text-[#C5A059] font-bold bg-[#FAF9F5] px-1.5 py-0.2 rounded border border-[#C5A059]/30">Live</span>
               </div>
               <span className="font-sans font-bold text-base text-[#202020]">
@@ -153,37 +145,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
               </button>
             )
           ) : (
-            currentQuantity > 0 ? (
-              /* Instamart / Zepto Style Inline Stepper Button (- 1 +) */
-              <div className="w-full flex items-center justify-between bg-[#FAF9F5] border-2 border-[#B9A77A] rounded-xl p-0.5 shadow-2xs">
-                <button
-                  onClick={() => updateQuantity(product.id, currentQuantity - 1)}
-                  className="w-9 h-8 rounded-lg bg-white text-[#202020] hover:bg-red-50 hover:text-red-600 font-bold flex items-center justify-center transition-colors shadow-2xs"
-                  title="Decrease Quantity"
-                >
-                  <Minus className="w-4 h-4 text-[#202020]" />
-                </button>
-                <span className="font-bold text-sm text-[#202020] font-sans px-3">
-                  {currentQuantity}
-                </span>
-                <button
-                  onClick={() => updateQuantity(product.id, currentQuantity + 1)}
-                  className="w-9 h-8 rounded-lg bg-[#202020] text-white hover:bg-[#B9A77A] font-bold flex items-center justify-center transition-colors shadow-2xs"
-                  title="Increase Quantity"
-                >
-                  <Plus className="w-4 h-4 text-white" />
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => addToCart(product, 1)}
-                className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs"
-                title="Add to Cart"
-              >
-                <Plus className="w-4 h-4 text-[#B9A77A] group-hover:text-white" />
-                <span>ADD TO CART</span>
-              </button>
-            )
+            <Link
+              to={`/shop/retail/${product.slug}`}
+              className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs text-center"
+            >
+              <span>VIEW DETAILS</span>
+            </Link>
           )}
         </div>
 

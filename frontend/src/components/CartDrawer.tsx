@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { generateOrderId, generateFullCartWhatsAppMessage, openWhatsAppOrderUrl } from '../utils/whatsappOrder';
+import { OrderSuccessModal } from './OrderSuccessModal';
 
 export const CartDrawer: React.FC = () => {
   const { user } = useAuth();
@@ -25,8 +26,27 @@ export const CartDrawer: React.FC = () => {
   const navigate = useNavigate();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [successOrderData, setSuccessOrderData] = useState<any>(null);
 
-  if (!isCartOpen) return null;
+  if (!isCartOpen) {
+    if (isSuccessModalOpen && successOrderData) {
+      return (
+        <OrderSuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          orderNumber={successOrderData.orderNumber}
+          customerName={successOrderData.customerName}
+          grandTotal={successOrderData.grandTotal}
+          items={successOrderData.items}
+          whatsappMessage={successOrderData.whatsappMessage}
+          isWholesale={false}
+        />
+      );
+    }
+    return null;
+  }
+
 
   const tax = Math.round(subtotal * 0.03);
   const shipping = 0; // No shipping fee
@@ -61,6 +81,8 @@ export const CartDrawer: React.FC = () => {
         product_id: item.product.id,
         product_name: item.product.title,
         product_sku: item.product.sku,
+        measurement: item.selected_measurement || item.selected_variant?.measurement || item.product.dimensions,
+        weight_g: item.weight_g ?? item.selected_variant?.weight_g ?? item.product.weight_g,
         unit_price: item.effectivePrice,
         quantity: item.quantity,
         subtotal: item.itemSubtotal,
@@ -82,7 +104,7 @@ export const CartDrawer: React.FC = () => {
         tax_amount: tax,
         shipping_charge: 0,
         grand_total: grandTotal,
-        status: 'Order Placed'
+        status: 'Order Confirmed'
       });
 
       const rawMessage = generateFullCartWhatsAppMessage(orderId, customer, {
@@ -95,8 +117,25 @@ export const CartDrawer: React.FC = () => {
         grandTotal
       });
 
+      setSuccessOrderData({
+        orderNumber: orderId,
+        customerName: customer.name,
+        grandTotal,
+        items: effectiveCartItems.map(item => ({
+          title: item.product.title,
+          product_name: item.product.title,
+          sku: item.product.sku,
+          quantity: item.quantity,
+          measurement: item.selected_measurement || item.selected_variant?.measurement || item.product.dimensions,
+          effectivePrice: item.effectivePrice,
+          featured_image: item.product.featured_image
+        })),
+        whatsappMessage: rawMessage
+      });
+
       clearCart();
       setIsCartOpen(false);
+      setIsSuccessModalOpen(true);
       openWhatsAppOrderUrl(rawMessage);
     } catch (err) {
       console.error('Failed to create WhatsApp order', err);
@@ -201,74 +240,84 @@ export const CartDrawer: React.FC = () => {
                 </button>
               </div>
             ) : (
-              effectiveCartItems.map(({ product, quantity, effectivePrice, hasWholesalePrice, itemSubtotal }) => (
-                <div key={product.id} className="flex gap-3 p-3 bg-white rounded-2xl border border-[#E6E1DA] shadow-xs">
-                  <img 
-                    src={product.featured_image} 
-                    alt={product.title}
-                    className="w-20 h-24 object-cover rounded-xl bg-[#FAF9F5]"
-                  />
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-start">
-                        <h4 className="font-serif text-sm font-bold text-[#1A1918] line-clamp-1">{product.title}</h4>
-                        <button 
-                          onClick={() => removeFromCart(product.id)}
-                          className="text-gray-400 hover:text-red-500 p-1 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <p className="text-[10px] text-gray-500">SKU: {product.sku} | {product.weight_g}g</p>
+              effectiveCartItems.map(({ product, quantity, effectivePrice, hasWholesalePrice, itemSubtotal, selected_measurement, variant_id, weight_g }) => {
+                const varKey = variant_id || selected_measurement || 'default';
+                return (
+                  <div key={`${product.id}-${varKey}`} className="flex gap-3 p-3 bg-white rounded-2xl border border-[#E6E1DA] shadow-xs">
+                    <img 
+                      src={product.featured_image} 
+                      alt={product.title}
+                      className="w-20 h-24 object-cover rounded-xl bg-[#FAF9F5]"
+                    />
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-serif text-sm font-bold text-[#1A1918] line-clamp-1">{product.title}</h4>
+                          <button 
+                            onClick={() => removeFromCart(product.id, varKey)}
+                            className="text-gray-400 hover:text-red-500 p-1 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          {selected_measurement && (
+                            <span className="text-[10px] font-bold bg-[#1A1918] text-white px-2 py-0.5 rounded-full">
+                              Size: {selected_measurement}
+                            </span>
+                          )}
+                          <span className="text-[10px] text-gray-500 font-mono">SKU: {product.sku} | {weight_g || product.weight_g}g</span>
+                        </div>
 
-                      {/* Pricing Tag */}
-                      <div className="mt-1">
-                        {isWholesale ? (
-                          hasWholesalePrice ? (
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-xs font-bold text-[#C5A059]">₹{effectivePrice.toLocaleString()} / unit</span>
-                              <span className="text-[9px] bg-[#C5A059]/15 text-[#C5A059] font-bold px-1.5 py-0.5 rounded">Wholesale</span>
-                            </div>
-                          ) : (
-                            <div className="space-y-0.5">
-                              <span className="text-xs font-bold text-[#1A1918]">₹{effectivePrice.toLocaleString()} / unit</span>
-                              <div className="text-[9px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 flex items-center gap-1">
-                                <AlertCircle className="w-3 h-3 text-amber-600 shrink-0" />
-                                <span>Wholesale rate unavailable (Retail applied)</span>
+                        {/* Pricing Tag */}
+                        <div className="mt-1">
+                          {isWholesale ? (
+                            hasWholesalePrice ? (
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-bold text-[#C5A059]">₹{effectivePrice.toLocaleString()} / unit</span>
+                                <span className="text-[9px] bg-[#C5A059]/15 text-[#C5A059] font-bold px-1.5 py-0.5 rounded">Wholesale</span>
                               </div>
-                            </div>
-                          )
-                        ) : (
-                          <span className="text-xs font-bold text-[#1A1918]">₹{effectivePrice.toLocaleString()} / unit</span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Quantity Controls */}
-                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
-                      <div className="flex items-center border border-[#E6E1DA] rounded-lg bg-[#FAF9F5]">
-                        <button 
-                          onClick={() => updateQuantity(product.id, quantity - 1)}
-                          className="p-1 text-gray-600 hover:text-black transition-colors"
-                        >
-                          <Minus className="w-3.5 h-3.5" />
-                        </button>
-                        <span className="px-3 text-xs font-bold">{quantity}</span>
-                        <button 
-                          onClick={() => updateQuantity(product.id, quantity + 1)}
-                          className="p-1 text-gray-600 hover:text-black transition-colors"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </button>
+                            ) : (
+                              <div className="space-y-0.5">
+                                <span className="text-xs font-bold text-[#1A1918]">₹{effectivePrice.toLocaleString()} / unit</span>
+                                <div className="text-[9px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 flex items-center gap-1">
+                                  <AlertCircle className="w-3 h-3 text-amber-600 shrink-0" />
+                                  <span>Wholesale rate unavailable (Retail applied)</span>
+                                </div>
+                              </div>
+                            )
+                          ) : (
+                            <span className="text-xs font-bold text-[#1A1918]">₹{effectivePrice.toLocaleString()} / unit</span>
+                          )}
+                        </div>
                       </div>
 
-                      <span className="text-xs font-bold text-[#1A1918]">
-                        ₹{itemSubtotal.toLocaleString()}
-                      </span>
+                      {/* Quantity Controls */}
+                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+                        <div className="flex items-center border border-[#E6E1DA] rounded-lg bg-[#FAF9F5]">
+                          <button 
+                            onClick={() => updateQuantity(product.id, quantity - 1, varKey)}
+                            className="p-1 text-gray-600 hover:text-black transition-colors"
+                          >
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <span className="px-3 text-xs font-bold">{quantity}</span>
+                          <button 
+                            onClick={() => updateQuantity(product.id, quantity + 1, varKey)}
+                            className="p-1 text-gray-600 hover:text-black transition-colors"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
+                        <span className="text-xs font-bold text-[#1A1918]">
+                          ₹{itemSubtotal.toLocaleString()}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
 
