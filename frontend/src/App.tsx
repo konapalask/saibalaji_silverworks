@@ -87,10 +87,10 @@ export const App: React.FC = () => {
     <Router>
       <ScrollToTop />
       <AuthProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <WholesaleProvider>
-              <LiveSilverProvider>
+        <LiveSilverProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <WholesaleProvider>
               
               <div className="min-h-screen flex flex-col justify-between bg-[#F8F6F1] text-[#202020]">
                 
@@ -150,10 +150,10 @@ export const App: React.FC = () => {
                 </Routes>
 
               </div>
-              </LiveSilverProvider>
-            </WholesaleProvider>
-          </WishlistProvider>
-        </CartProvider>
+              </WholesaleProvider>
+            </WishlistProvider>
+          </CartProvider>
+        </LiveSilverProvider>
       </AuthProvider>
     </Router>
   );

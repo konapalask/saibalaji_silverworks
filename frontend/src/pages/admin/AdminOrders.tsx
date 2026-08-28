@@ -109,19 +109,31 @@ export const AdminOrders: React.FC = () => {
                   </td>
                   <td className="py-4 px-6">
                     <span className={`px-2.5 py-1 rounded-full text-[10px] uppercase font-bold ${
-                      ord.status === 'DELIVERED' ? 'bg-green-100 text-green-700' :
-                      ord.status === 'SHIPPED' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-800'
+                      ord.status === 'Order Accepted' ? 'bg-green-100 text-green-700 border border-green-300' :
+                      ord.status === 'Order Confirmed' ? 'bg-[#C5A059]/15 text-[#C5A059] border border-[#C5A059]/30' :
+                      ord.status === 'DELIVERED' || ord.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+                      ord.status === 'SHIPPED' || ord.status === 'Shipped' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-800'
                     }`}>
                       {ord.status}
                     </span>
                   </td>
-                  <td className="py-4 px-6 text-right">
+                  <td className="py-4 px-6 text-right space-y-1">
+                    {ord.status !== 'Order Accepted' && (
+                      <button
+                        onClick={() => handleUpdateStatus(ord.id, 'Order Accepted')}
+                        className="bg-green-600 hover:bg-green-700 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 ml-auto shadow-xs transition-colors"
+                      >
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span>Accept Order</span>
+                      </button>
+                    )}
                     <select 
                       value={ord.status}
                       onChange={(e) => handleUpdateStatus(ord.id, e.target.value)}
                       className="bg-[#FAF9F5] border border-[#E6E1DA] rounded-lg px-2 py-1 text-xs font-semibold"
                     >
-                      <option value="PENDING">PENDING</option>
+                      <option value="Order Confirmed">Order Confirmed</option>
+                      <option value="Order Accepted">Order Accepted</option>
                       <option value="PROCESSING">PROCESSING</option>
                       <option value="SHIPPED">SHIPPED</option>
                       <option value="DELIVERED">DELIVERED</option>

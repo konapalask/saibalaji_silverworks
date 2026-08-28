@@ -352,7 +352,12 @@ export const AccountPage: React.FC = () => {
                     <span className="text-[10px] text-gray-400">{new Date(ord.created_at).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="bg-green-100 text-green-700 text-[10px] uppercase font-bold px-2.5 py-1 rounded-full">
+                    <span className={`text-[10px] uppercase font-bold px-2.5 py-1 rounded-full flex items-center gap-1 ${
+                      ord.status === 'Order Accepted' ? 'bg-green-100 text-green-800 border border-green-300 font-bold' :
+                      ord.status === 'Order Confirmed' ? 'bg-[#C5A059]/15 text-[#C5A059] border border-[#C5A059]/40 font-bold' :
+                      'bg-green-100 text-green-700'
+                    }`}>
+                      {ord.status === 'Order Accepted' && <Check className="w-3 h-3 text-green-600 stroke-[3]" />}
                       {ord.status}
                     </span>
                     <span className="font-bold text-sm text-[#1A1918]">₹{ord.grand_total.toLocaleString()}</span>
@@ -362,6 +367,7 @@ export const AccountPage: React.FC = () => {
                 <div className="space-y-3 pt-1">
                   {ord.items && ord.items.map((item: any, index: number) => {
                     const itemImg = getItemImageUrl(item, productCatalogMap);
+                    const sizeVar = item.measurement || item.selected_measurement || item.size;
                     return (
                       <div key={item.id || index} className="flex items-center gap-4 p-3 bg-[#FAF9F5] rounded-2xl border border-[#E6E1DA]">
                         {itemImg ? (
@@ -381,6 +387,8 @@ export const AccountPage: React.FC = () => {
                           </h4>
                           <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-gray-500 mt-0.5">
                             {item.product_sku && <span>SKU: {item.product_sku}</span>}
+                            {sizeVar && <span className="bg-[#1A1918] text-white px-1.5 py-0.2 rounded text-[10px] font-bold">Size: {sizeVar}</span>}
+                            {item.weight_g && <span>Weight: {item.weight_g}g</span>}
                             <span>Quantity: <strong className="text-[#1A1918]">{item.quantity}</strong></span>
                             {item.unit_price && <span>Price: ₹{item.unit_price.toLocaleString()}</span>}
                           </div>
@@ -426,15 +434,19 @@ export const AccountPage: React.FC = () => {
                       <span className="text-[10px] text-gray-400">Company: {req.company_name} | Date: {new Date(req.created_at).toLocaleDateString()}</span>
                     </div>
 
-                    {matchedQuote && (
-                      <button 
-                        onClick={() => downloadPDF(matchedQuote.id, matchedQuote.quotation_number)}
-                        className="bg-[#1A1918] hover:bg-[#C5A059] text-white px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-bold flex items-center gap-2 shadow-md"
-                      >
-                        <Download className="w-4 h-4 text-[#C5A059]" />
-                        <span>Download Quotation PDF ({matchedQuote.quotation_number})</span>
-                      </button>
-                    )}
+                    <button 
+                      onClick={() => {
+                        if (matchedQuote) {
+                          downloadPDF(matchedQuote.id, matchedQuote.quotation_number);
+                        } else {
+                          window.open(`/api/v1/wholesale/requests/${req.id}/pdf`, '_blank');
+                        }
+                      }}
+                      className="bg-[#1A1918] hover:bg-[#C5A059] text-white px-4 py-2 rounded-xl text-xs uppercase tracking-widest font-bold flex items-center gap-2 shadow-md transition-colors"
+                    >
+                      <Download className="w-4 h-4 text-[#C5A059]" />
+                      <span>Download Quotation PDF</span>
+                    </button>
                   </div>
 
                   <div className="space-y-1 text-xs">

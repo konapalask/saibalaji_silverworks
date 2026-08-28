@@ -8,6 +8,7 @@ import { useWholesale } from '../context/WholesaleContext';
 import { useAuth } from '../context/AuthContext';
 import { generateOrderId, generateSingleProductWhatsAppMessage, openWhatsAppOrderUrl } from '../utils/whatsappOrder';
 import { useLiveSilver } from '../context/LiveSilverContext';
+import { OrderSuccessModal } from '../components/OrderSuccessModal';
 import api from '../services/api';
 
 export const ProductDetail: React.FC = () => {
@@ -16,6 +17,8 @@ export const ProductDetail: React.FC = () => {
   const { user } = useAuth();
   const { calculateCurrentPrice } = useLiveSilver();
 
+  const { calculateDynamicPrice, silverStats } = useLiveSilver();
+
   const [product, setProduct] = useState<Product | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'desc' | 'specs' | 'silver' | 'care'>('desc');
@@ -23,6 +26,9 @@ export const ProductDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [related, setRelated] = useState<Product[]>([]);
   const [added, setAdded] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<any | null>(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [successOrderData, setSuccessOrderData] = useState<any>(null);
 
   const { addToCart, isWholesale, cartType } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
@@ -38,6 +44,27 @@ export const ProductDetail: React.FC = () => {
         setProduct(res.data);
         setActiveImage(res.data.featured_image);
 
+        // Compute or select initial variant
+        let initialVar = null;
+        if (Array.isArray(res.data.variants) && res.data.variants.length > 0) {
+          initialVar = res.data.variants[0];
+        } else {
+          const baseW = res.data.weight_g || 25;
+          const baseMC = res.data.making_charges || 300;
+          const baseDim = res.data.dimensions || '2 inch';
+          initialVar = {
+            id: 'v-1',
+            measurement: baseDim.includes('inch') || baseDim.includes('cm') ? baseDim : '2 inch',
+            weight_g: baseW,
+            making_charge: baseMC,
+            making_charge_type: res.data.making_charge_type || 'fixed',
+            sku: res.data.sku,
+            stock: res.data.stock || 10,
+            is_active: true
+          };
+        }
+        setSelectedVariant(initialVar);
+
         // Fetch related products
         const relRes = await api.get(`/products?category_id=${res.data.category_id}&limit=4`);
         setRelated(relRes.data.filter((p: Product) => p.id !== res.data.id));
@@ -50,6 +77,23 @@ export const ProductDetail: React.FC = () => {
     if (slug) fetchProduct();
   }, [slug]);
 
+  // Compute available variants (synthesize 2", 3", 4", 6" if explicit variants list is empty)
+  const availableVariants = React.useMemo(() => {
+    if (!product) return [];
+    if (Array.isArray(product.variants) && product.variants.length > 0) {
+      return product.variants.filter(v => v.is_active !== false);
+    }
+    const baseW = product.weight_g || 25;
+    const baseMC = product.making_charges || 300;
+    const baseDim = product.dimensions || '2 inch';
+    return [
+      { id: 'v-1', measurement: baseDim.includes('inch') || baseDim.includes('cm') ? baseDim : '2 inch', weight_g: baseW, making_charge: baseMC, making_charge_type: product.making_charge_type || 'fixed', sku: `${product.sku}-2IN`, stock: product.stock || 10, is_active: true },
+      { id: 'v-2', measurement: '3 inch', weight_g: Math.round(baseW * 1.6 * 10) / 10, making_charge: Math.round(baseMC * 1.5), making_charge_type: product.making_charge_type || 'fixed', sku: `${product.sku}-3IN`, stock: product.stock || 10, is_active: true },
+      { id: 'v-3', measurement: '4 inch', weight_g: Math.round(baseW * 2.5 * 10) / 10, making_charge: Math.round(baseMC * 2.0), making_charge_type: product.making_charge_type || 'fixed', sku: `${product.sku}-4IN`, stock: product.stock || 10, is_active: true },
+      { id: 'v-4', measurement: '6 inch', weight_g: Math.round(baseW * 4.0 * 10) / 10, making_charge: Math.round(baseMC * 3.0), making_charge_type: product.making_charge_type || 'fixed', sku: `${product.sku}-6IN`, stock: product.stock || 10, is_active: true }
+    ];
+  }, [product]);
+
   if (loading || !product) {
     return (
       <div className="min-h-screen bg-[#FAF9F5] flex items-center justify-center">
@@ -58,16 +102,19 @@ export const ProductDetail: React.FC = () => {
     );
   }
 
+  const activeVar = selectedVariant || availableVariants[0] || { weight_g: product.weight_g || 25, making_charge: product.making_charges || 300, making_charge_type: 'fixed', measurement: product.dimensions || 'Standard' };
+  const priceBreakdown = calculateDynamicPrice(activeVar.weight_g, activeVar.making_charge, activeVar.making_charge_type || 'fixed', product.silver_purity);
+
   const isLiked = isInWishlist(product.id);
 
   const handleAddToCart = () => {
-    addToCart(product, qty);
+    addToCart(product, qty, activeVar);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
   const handleBuyNow = () => {
-    addToCart(product, qty);
+    addToCart(product, qty, activeVar);
     navigate('/checkout');
   };
 
@@ -100,7 +147,10 @@ export const ProductDetail: React.FC = () => {
         product,
         quantity: qty,
         unitPrice,
-        cartType
+        cartType,
+        selected_measurement: activeVar?.measurement || product.dimensions,
+        selected_variant: activeVar,
+        weight_g: activeVar?.weight_g ?? product.weight_g
       };
 
       const orderItems = [{
@@ -108,6 +158,8 @@ export const ProductDetail: React.FC = () => {
         product_id: product.id,
         product_name: product.title,
         product_sku: product.sku,
+        measurement: activeVar?.measurement || product.dimensions,
+        weight_g: activeVar?.weight_g ?? product.weight_g,
         unit_price: unitPrice,
         quantity: qty,
         subtotal: unitPrice * qty,
@@ -132,10 +184,28 @@ export const ProductDetail: React.FC = () => {
         tax_amount: tax,
         shipping_charge: 0,
         grand_total: subtotal + tax,
-        status: 'Order Placed'
+        status: 'Order Confirmed'
       });
 
       const rawMessage = generateSingleProductWhatsAppMessage(orderId, customer, singleOrder);
+
+      setSuccessOrderData({
+        orderNumber: orderId,
+        customerName: customer.name,
+        grandTotal: subtotal + tax,
+        items: [{
+          title: product.title,
+          product_name: product.title,
+          sku: product.sku,
+          quantity: qty,
+          measurement: activeVar?.measurement || product.dimensions,
+          effectivePrice: unitPrice,
+          featured_image: product.featured_image
+        }],
+        whatsappMessage: rawMessage
+      });
+
+      setIsSuccessModalOpen(true);
       openWhatsAppOrderUrl(rawMessage);
     } catch (err) {
       console.error('Error placing single WhatsApp order:', err);
@@ -221,21 +291,75 @@ export const ProductDetail: React.FC = () => {
             </div>
 
             <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#202020]">{product.title}</h1>
-            <p className="text-xs text-[#777777] mt-1">SKU: {product.sku} {product.subcategory ? `| ${product.subcategory}` : ''}</p>
+            <p className="text-xs text-[#777777] mt-1">SKU: {activeVar?.sku || product.sku} {product.subcategory ? `| ${product.subcategory}` : ''}</p>
 
-            <div className="mt-6 flex flex-wrap items-baseline gap-4">
-              <span className="font-sans text-4xl font-bold text-[#202020]">
-                ₹{calculateCurrentPrice(product.base_price || product.retail_price, product.base_silver_rate).toLocaleString()}
-              </span>
-              <span className="text-[11px] text-[#C5A059] font-bold bg-[#FAF9F5] px-3 py-1 rounded-full border border-[#C5A059]/30 flex items-center gap-1">
-                <Sparkles className="w-3 h-3" /> Price linked to live silver rate
-              </span>
-              {product.making_charges !== undefined && (
-                <span className="text-xs text-gray-600 font-medium bg-[#FAF9F5] px-3 py-1 rounded-full border border-[#E6E1DA]">
-                  Making Charges: {product.making_charges > 0 ? `₹${product.making_charges.toLocaleString()}` : 'Included'}
+            {/* DYNAMIC PRICE DISPLAY */}
+            <div className="mt-6 space-y-3">
+              <div className="flex flex-wrap items-baseline gap-3">
+                <span className="font-sans text-4xl font-bold text-[#202020]">
+                  ₹{priceBreakdown.finalPrice.toLocaleString()}
                 </span>
-              )}
+                <span className="text-[11px] text-[#C5A059] font-bold bg-[#FAF9F5] px-3 py-1 rounded-full border border-[#C5A059]/30 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" /> Dynamic Live Silver Rate Price
+                </span>
+              </div>
+
+              {/* Dynamic Formula Breakdown Pill */}
+              <div className="bg-white p-3.5 rounded-2xl border border-[#E5E0D8] text-xs grid grid-cols-3 gap-3 text-center shadow-xs">
+                <div>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wider block font-semibold">Net Weight</span>
+                  <span className="font-bold text-[#202020] font-mono">{priceBreakdown.weight} g</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wider block font-semibold">Live Rate</span>
+                  <span className="font-bold text-[#C5A059] font-mono">₹{priceBreakdown.silverRate}/g</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wider block font-semibold">Making Charge</span>
+                  <span className="font-bold text-[#202020] font-mono">₹{priceBreakdown.makingCharge.toLocaleString()}</span>
+                </div>
+              </div>
             </div>
+
+            {/* MEASUREMENT / SIZE SELECTOR BUTTONS */}
+            {availableVariants.length > 0 && (
+              <div className="mt-6 space-y-2 bg-white p-4 rounded-2xl border border-[#E5E0D8]">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs uppercase font-bold text-[#202020] tracking-wider">
+                    Select Measurement / Size:
+                  </span>
+                  <span className="text-xs font-bold text-[#C5A059]">
+                    {activeVar?.measurement} ({activeVar?.weight_g}g)
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap gap-2.5 pt-1">
+                  {availableVariants.map((variant) => {
+                    const isSelected = activeVar?.id === variant.id || activeVar?.measurement === variant.measurement;
+                    const vCalc = calculateDynamicPrice(variant.weight_g, variant.making_charge, variant.making_charge_type || 'fixed', product.silver_purity);
+                    return (
+                      <button
+                        key={variant.id || variant.measurement}
+                        onClick={() => {
+                          setSelectedVariant(variant);
+                          if (variant.image) setActiveImage(variant.image);
+                        }}
+                        className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border flex flex-col items-center gap-0.5 cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#1A1918] text-white border-[#1A1918] shadow-md scale-105'
+                            : 'bg-[#FAF8F5] text-[#202020] border-[#E5E0D8] hover:border-[#C5A059]'
+                        }`}
+                      >
+                        <span className="font-serif text-sm">{variant.measurement}</span>
+                        <span className={`text-[10px] font-mono ${isSelected ? 'text-[#C5A059]' : 'text-gray-500'}`}>
+                          ₹{vCalc.finalPrice.toLocaleString()} ({variant.weight_g}g)
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             <div className="mt-6 space-y-3">
               <p className="text-xs text-[#555555] leading-relaxed font-sans">
@@ -374,6 +498,19 @@ export const ProductDetail: React.FC = () => {
           )}
         </div>
       </div>
+
+      {successOrderData && (
+        <OrderSuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          orderNumber={successOrderData.orderNumber}
+          customerName={successOrderData.customerName}
+          grandTotal={successOrderData.grandTotal}
+          items={successOrderData.items}
+          whatsappMessage={successOrderData.whatsappMessage}
+          isWholesale={false}
+        />
+      )}
 
     </div>
   );

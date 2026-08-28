@@ -158,7 +158,7 @@ export const About: React.FC = () => {
         <div className="lg:col-span-6">
           <div className="arch-top overflow-hidden border border-[#C5A059]/40 bg-white p-3 shadow-xl">
             <img
-              src="/public/sai balajji products/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp"
+              src="/public/Saibalaji products S/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp"
               alt="Artisanal Silver Carving"
               className="w-full aspect-4/3 object-cover rounded-t-full"
             />

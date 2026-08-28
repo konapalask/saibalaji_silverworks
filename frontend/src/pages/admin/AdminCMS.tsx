@@ -224,7 +224,7 @@ export const AdminCMS: React.FC = () => {
                   {videos.map((vid) => (
                     <tr key={vid.id} className="hover:bg-[#FAF9F5]/50 transition-colors">
                       <td className="py-4 px-6 flex items-center gap-3">
-                        <img src={vid.thumbnail_url || '/public/sai balajji products/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp'} alt="" className="w-16 h-10 object-cover rounded-lg border border-gray-200" />
+                        <img src={vid.thumbnail_url || '/public/Saibalaji products S/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp'} alt="" className="w-16 h-10 object-cover rounded-lg border border-gray-200" />
                         <div>
                           <span className="font-serif text-sm font-bold text-[#1A1918] block">{vid.title}</span>
                           <span className="text-[10px] text-gray-500 truncate max-w-xs block">{vid.description}</span>

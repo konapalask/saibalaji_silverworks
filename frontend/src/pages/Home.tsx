@@ -94,7 +94,7 @@ export const Home: React.FC = () => {
       year: "2016",
       title: "Tradition Meets Technology",
       description: "Integrated 3D CAD modeling and automated magnetic pin polishing, becoming the premier B2B wholesale silver supplier across South India.",
-      image: "/public/sai balajji products/Royal Floral Engraved Silver Serving Tray.webp"
+      image: "/public/Saibalaji products S/Royal Floral Crest Silver Serving Tray.webp"
     },
     {
       era: "TODAY / SAI BALAJI",

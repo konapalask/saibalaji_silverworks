@@ -24,8 +24,8 @@ export const MAIN_CATEGORIES: MainCategory[] = [
     slug: "silver-pooja-articles",
     shortDescription: "Sacred 925 sterling & 999 fine silver ritual essentials, deepams, thalis, and puja accessories.",
     description: "Discover our hallmarked collection of pure silver pooja articles, from ornate deepams and kalashes to hand-sculpted idols and complete ritual thali sets.",
-    cardImage: "/public/sai balajji products/Floral Engraved Silver Pooja Thali Set.webp",
-    bannerImage: "/public/sai balajji products/Floral Engraved Silver Pooja Thali Set.webp",
+    cardImage: "/public/Saibalaji products S/Floral Engraved Silver Pooja Thali Set.webp",
+    bannerImage: "/public/Saibalaji products S/Floral Engraved Silver Pooja Thali Set.webp",
     subcategories: [
       { id: "sub-kalash-pots", name: "Silver Kalash & Pots", slug: "silver-kalash-pots" },
       { id: "sub-pooja-thalis-sets", name: "Silver Pooja Thalis & Sets", slug: "silver-pooja-thalis-sets" },
@@ -38,8 +38,8 @@ export const MAIN_CATEGORIES: MainCategory[] = [
     slug: "silver-dining-tableware",
     shortDescription: "Luxury 925 sterling dinner sets, tumblers, bowls, trays, and royal silverware.",
     description: "Elevate fine dining with pure silver dinner plates, embossed tumblers, bowls, serving trays, and urlis crafted for family traditions and grand celebrations.",
-    cardImage: "/public/sai balajji products/Royal Floral Engraved Silver Serving Tray.webp",
-    bannerImage: "/public/sai balajji products/Royal Floral Engraved Silver Serving Tray.webp",
+    cardImage: "/public/Saibalaji products S/Royal Floral Crest Silver Serving Tray.webp",
+    bannerImage: "/public/Saibalaji products S/Royal Floral Crest Silver Serving Tray.webp",
     subcategories: [
       { id: "sub-serving-trays-platters", name: "Silver Serving Trays & Platters", slug: "silver-serving-trays-platters" },
       { id: "sub-bowls-pedestal-bowls", name: "Silver Bowls & Pedestal Bowls", slug: "silver-bowls-pedestal-bowls" },
@@ -53,8 +53,8 @@ export const MAIN_CATEGORIES: MainCategory[] = [
     slug: "silver-god-temple-items",
     shortDescription: "Hand-crafted 999 fine silver deities, sanctum adornments, frames, and temple accessories.",
     description: "Artisanal South Indian solid silver idols of Lord Balaji, Goddess Lakshmi, Ganesha, Krishna, and sacred frames crafted with precision Nakshi work.",
-    cardImage: "/public/sai balajji products/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp",
-    bannerImage: "/public/sai balajji products/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp",
+    cardImage: "/public/Saibalaji products S/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp",
+    bannerImage: "/public/Saibalaji products S/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp",
     subcategories: [
       { id: "sub-idols-statues", name: "Silver Idols & Statues", slug: "silver-idols-statues" },
       { id: "sub-photo-frames-displays", name: "Silver Photo Frames & Sacred Displays", slug: "silver-photo-frames-sacred-displays" }
@@ -66,8 +66,8 @@ export const MAIN_CATEGORIES: MainCategory[] = [
     slug: "silver-wedding-return-gifts",
     shortDescription: "Memorable silver keepsakes, return gift sets, engraved storage boxes, and custom wedding tokens.",
     description: "Premium bulk and retail silver wedding favors, hallmarked coins, engraved silver masala boxes, storage pots, and customized gift sets for guests.",
-    cardImage: "/public/sai balajji products/Shree Divya Silver Masala Box Set.webp",
-    bannerImage: "/public/sai balajji products/Shree Divya Silver Masala Box Set.webp",
+    cardImage: "/public/Saibalaji products S/Shree Divya Silver Masala Box Set.webp",
+    bannerImage: "/public/Saibalaji products S/Shree Divya Silver Masala Box Set.webp",
     subcategories: [
       { id: "sub-storage-containers-boxes", name: "Silver Storage Containers & Boxes", slug: "silver-storage-containers-boxes" },
       { id: "sub-return-gift-sets-utensils", name: "Silver Return Gift Sets & Utensils", slug: "silver-return-gift-sets-utensils" }

@@ -289,18 +289,27 @@ export const AdminDashboard: React.FC = () => {
                         onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value)}
                         className="bg-[#FAF9F5] border border-[#E6E1DA] rounded-lg px-2.5 py-1.5 text-xs font-bold text-[#1A1918] focus:outline-none focus:border-[#C5A059]"
                       >
-                        <option value="Pending Payment">Pending Payment</option>
-                        <option value="Payment Confirmed">Payment Confirmed</option>
+                        <option value="Order Confirmed">Order Confirmed</option>
+                        <option value="Order Accepted">Order Accepted</option>
                         <option value="Processing">Processing</option>
                         <option value="Packed">Packed</option>
                         <option value="Shipped">Shipped</option>
-                        <option value="Out for Delivery">Out for Delivery</option>
                         <option value="Delivered">Delivered</option>
                         <option value="Cancelled">Cancelled</option>
                       </select>
                     </td>
 
-                    <td className="py-4 px-4 text-right">
+                    <td className="py-4 px-4 text-right space-y-1">
+                      {ord.status !== 'Order Accepted' && (
+                        <button
+                          onClick={() => handleUpdateOrderStatus(ord.id, 'Order Accepted')}
+                          className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1 ml-auto shadow-xs transition-colors"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Accept Order</span>
+                        </button>
+                      )}
+
                       <button
                         onClick={() => openWhatsAppOrderMessage(ord)}
                         className="bg-[#25D366] text-white px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1 ml-auto shadow-xs hover:bg-[#128C7E]"
@@ -351,20 +360,20 @@ export const AdminDashboard: React.FC = () => {
 
                     <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center text-xs">
                       <span className="text-gray-600">{req.items?.length || 0} Bulk Line Items</span>
-                      {matchedQuote ? (
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (matchedQuote) {
                             downloadPDF(matchedQuote.id);
-                          }}
-                          className="bg-[#1A1918] text-[#FAF9F5] px-3 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 hover:bg-[#C5A059]"
-                        >
-                          <Download className="w-3.5 h-3.5 text-[#C5A059]" />
-                          <span>Download PDF ({matchedQuote.quotation_number})</span>
-                        </button>
-                      ) : (
-                        <span className="text-[#C5A059] font-bold">Click to Issue Quote &rarr;</span>
-                      )}
+                          } else {
+                            window.open(`/api/v1/wholesale/requests/${req.id}/pdf`, '_blank');
+                          }
+                        }}
+                        className="bg-[#1A1918] text-[#FAF9F5] px-3 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 hover:bg-[#C5A059] transition-colors"
+                      >
+                        <Download className="w-3.5 h-3.5 text-[#C5A059]" />
+                        <span>View Quotation PDF</span>
+                      </button>
                     </div>
                   </div>
                 );

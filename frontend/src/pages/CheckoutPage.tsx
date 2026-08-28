@@ -10,6 +10,7 @@ import {
   openWhatsAppOrderUrl 
 } from '../utils/whatsappOrder';
 import { CountryPhoneInput } from '../components/CountryPhoneInput';
+import { OrderSuccessModal } from '../components/OrderSuccessModal';
 
 export const CheckoutPage: React.FC = () => {
   const { effectiveCartItems, totalQuantity, cartType, subtotal, clearCart } = useCart();
@@ -51,6 +52,8 @@ export const CheckoutPage: React.FC = () => {
   const [buttonState, setButtonState] = useState<'idle' | 'preparing' | 'opening' | 'success'>('idle');
   const [showNotice, setShowNotice] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [preparedWhatsAppMsg, setPreparedWhatsAppMsg] = useState('');
 
   const tax = Math.round(subtotal * 0.03);
   const grandTotal = subtotal + tax;
@@ -97,6 +100,8 @@ export const CheckoutPage: React.FC = () => {
         product_id: item.product.id,
         product_name: item.product.title,
         product_sku: item.product.sku,
+        measurement: item.selected_measurement || item.selected_variant?.measurement || item.product.dimensions,
+        weight_g: item.weight_g ?? item.selected_variant?.weight_g ?? item.product.weight_g,
         unit_price: item.effectivePrice,
         quantity: item.quantity,
         featured_image: item.product.featured_image,
@@ -119,7 +124,7 @@ export const CheckoutPage: React.FC = () => {
         tax_amount: tax,
         shipping_charge: 0,
         grand_total: grandTotal,
-        status: 'Order Placed'
+        status: 'Order Confirmed'
       });
     } catch (err) {
       console.error('Failed to save order history to backend', err);
@@ -138,6 +143,8 @@ export const CheckoutPage: React.FC = () => {
         grandTotal
       });
 
+      setPreparedWhatsAppMsg(rawMessage);
+
       // Clear Shopping Cart after order save
       clearCart();
 
@@ -146,8 +153,10 @@ export const CheckoutPage: React.FC = () => {
 
       setButtonState('success');
       setShowNotice(true);
+      setIsSuccessModalOpen(true);
     }, 600);
   };
+
 
   return (
     <div className="min-h-screen bg-[#FAF9F5] py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-[#1A1918]">
@@ -330,6 +339,26 @@ export const CheckoutPage: React.FC = () => {
 
       </div>
 
+      <OrderSuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        orderNumber={orderId}
+        customerName={customer.name}
+        grandTotal={grandTotal}
+        items={effectiveCartItems.map(item => ({
+          title: item.product.title,
+          product_name: item.product.title,
+          sku: item.product.sku,
+          quantity: item.quantity,
+          measurement: item.selected_measurement || item.selected_variant?.measurement || item.product.dimensions,
+          effectivePrice: item.effectivePrice,
+          featured_image: item.product.featured_image
+        }))}
+        whatsappMessage={preparedWhatsAppMsg}
+        isWholesale={false}
+      />
+
     </div>
   );
 };
+

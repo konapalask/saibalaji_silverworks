@@ -5,6 +5,7 @@ import { useWholesale } from '../context/WholesaleContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { CountryPhoneInput } from '../components/CountryPhoneInput';
+import { OrderSuccessModal } from '../components/OrderSuccessModal';
 import { getErrorMessage } from '../utils/apiError';
 
 export const WholesaleRequestPage: React.FC = () => {
@@ -65,6 +66,18 @@ export const WholesaleRequestPage: React.FC = () => {
   if (submittedRequest) {
     return (
       <div className="min-h-screen bg-[#FAF9F5] py-16 px-4 max-w-3xl mx-auto text-center space-y-6">
+        <OrderSuccessModal
+          isOpen={true}
+          onClose={() => navigate('/account')}
+          orderNumber={submittedRequest.request_number}
+          customerName={submittedRequest.company_name}
+          items={(submittedRequest.items || []).map((it: any) => ({
+            title: it.product_name || 'Wholesale Product',
+            quantity: it.requested_quantity || 1
+          }))}
+          isWholesale={true}
+        />
+
         <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto border border-green-300">
           <CheckCircle2 className="w-10 h-10" />
         </div>
