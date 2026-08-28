@@ -1,50 +1,82 @@
 # Sai Balaji Silverworks - 24/7 Service Daemon & Self-Healing Watchdog
 # Keeps Backend (8000), Frontend (5173), Cloudflare Tunnel, and Git Sync running permanently.
 
-$workspace = "D:\server"
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$workspace = (Resolve-Path "$scriptDir\..").Path
 Set-Location $workspace
+
+# Ensure logs directory exists
+$logDir = "$workspace\logs"
+if (-not (Test-Path $logDir)) {
+    New-Item -ItemType Directory -Path $logDir -Force | Out-Null
+}
+$logFile = "$logDir\service_daemon.log"
+
+function Write-DaemonLog {
+    param([string]$Message, [string]$Level = "INFO")
+    $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $formatted = "[$ts] [$Level] $Message"
+    try {
+        Add-Content -Path $logFile -Value $formatted -ErrorAction SilentlyContinue
+    } catch {}
+}
+
+Write-DaemonLog "Service Daemon started successfully in $workspace"
 
 $nodePath = "C:\Program Files\nodejs;C:\Program Files (x86)\nodejs;$workspace\bin\git\cmd;$env:LOCALAPPDATA\Programs\nodejs;$env:APPDATA\npm"
 $env:PATH = "$nodePath;$env:PATH"
 
-# Prevent Sleep
+# Prevent Sleep / Hibernate on AC power
 powercfg /change standby-timeout-ac 0 2>$null
 powercfg /change hibernate-timeout-ac 0 2>$null
 powercfg /change disk-timeout-ac 0 2>$null
 
-# Start Keep-Awake thread
-Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$workspace\scripts\keep_awake.ps1`"" -WindowStyle Hidden
-
-# Start Git Auto-Sync (60s)
-Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$workspace\scripts\git_sync.ps1`"" -WindowStyle Hidden
-
-# Read Cloudflare Tunnel Token
-$token = "eyJhIjoiMjQ2ZDQxN2Q1YzNkMGRlYTA3NDA4ZDFlYzAyNmMzOGMiLCJ0IjoiNzcxYmFhYzYtZjM2Zi00MzM4LTkzN2YtODY1YzVkNGY3YTJkIiwicyI6IllXUmtaREJpWldFdFpqVTBZeTAwTTJZeUxXRTRaVEV0TUdZd1pqQTNZVGMxTldVeSJ9"
+# Cloudflare Tunnel Token
+$token = "eyJhIjoiMDU4NzM5ZmEzOGM4MzNjMTI4NDYxNmJiYjg4Yjk1MGMiLCJ0IjoiYjNiOGIyOWQtYWExZC00NTEwLTgzODYtMmVkYzYzYWY0MThiIiwicyI6Ik9HTTRZMk5qTnpRdE56UXlNQzAwTTJZd0xXRTNOMk10TXpSa1lXWXpZamsyTW1KbSJ9"
 
 while ($true) {
     try {
-        # 1. Check Backend on port 8000
+        # 1. Keep-Awake Watchdog
+        $keepAwakeRunning = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*keep_awake.ps1*" }
+        if (-not $keepAwakeRunning) {
+            Write-DaemonLog "Starting keep_awake.ps1 background thread..."
+            Start-Process powershell.exe -ArgumentList @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "$workspace\scripts\keep_awake.ps1") -WindowStyle Hidden
+        }
+
+        # 2. Git Auto-Sync Watchdog (60s cycle)
+        $gitSyncRunning = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*git_sync.ps1*" }
+        if (-not $gitSyncRunning) {
+            Write-DaemonLog "Starting git_sync.ps1 background thread..."
+            Start-Process powershell.exe -ArgumentList @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "$workspace\scripts\git_sync.ps1") -WindowStyle Hidden
+        }
+
+        # 3. Backend Watchdog (Port 8000)
         $backendActive = (Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue)
         if (-not $backendActive) {
-            Start-Process cmd -ArgumentList "/c `"set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node server.js`"" -WindowStyle Hidden
+            Write-DaemonLog "Backend on port 8000 not active. Spawning node server.js..." "WARN"
+            Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node server.js") -WindowStyle Hidden
             Start-Sleep -Seconds 2
         }
 
-        # 2. Check Production Frontend on port 5173
+        # 4. Frontend Watchdog (Port 5173)
         $frontendActive = (Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue)
         if (-not $frontendActive) {
-            Start-Process cmd -ArgumentList "/c `"set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node serve_frontend.js`"" -WindowStyle Hidden
+            Write-DaemonLog "Frontend on port 5173 not active. Spawning node serve_frontend.js..." "WARN"
+            Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node serve_frontend.js") -WindowStyle Hidden
             Start-Sleep -Seconds 2
         }
 
-        # 3. Check Cloudflare Tunnel
+        # 5. Cloudflare Tunnel Watchdog
         $cfProc = Get-Process -Name "cloudflared" -ErrorAction SilentlyContinue
         if (-not $cfProc) {
-            Start-Process "$workspace\cloudflared.exe" -ArgumentList "tunnel run --token $token" -WindowStyle Hidden
+            Write-DaemonLog "Cloudflare tunnel not running. Spawning cloudflared.exe..." "WARN"
+            $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
+            Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--token", $token) -WindowStyle Hidden
+            Start-Sleep -Seconds 2
         }
     } catch {
-        # Ignore and retry
+        Write-DaemonLog "Exception in daemon loop: $($_.Exception.Message)" "ERROR"
     }
 
-    Start-Sleep -Seconds 4
+    Start-Sleep -Seconds 3
 }
