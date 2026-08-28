@@ -34,28 +34,24 @@ if ($cfProc) {
     Write-Host "  [WARN] Cloudflared process not running" -ForegroundColor Yellow
 }
 
-# 3. Check Background Daemons
-Write-Host "`n[3/5] Checking Background Daemons..." -ForegroundColor Yellow
+# 3. Check Background / Live Daemons
+Write-Host "`n[3/5] Checking Monitor & Daemon Processes..." -ForegroundColor Yellow
 $keepAwake = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*keep_awake.ps1*" }
+$liveMonitor = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*live_monitor.ps1*" }
 $gitSync = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*git_sync.ps1*" }
-$serviceDaemon = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*service_daemon.ps1*" }
 
-if ($serviceDaemon) {
-    Write-Host "  [OK] Service Daemon Watchdog running (PID: $($serviceDaemon.ProcessId))" -ForegroundColor Green
+if ($liveMonitor) {
+    Write-Host "  [OK] Live Console Monitor running (PID: $($liveMonitor.ProcessId))" -ForegroundColor Green
+} elseif ($gitSync) {
+    Write-Host "  [OK] 60-Second Git Sync running (PID: $($gitSync.ProcessId))" -ForegroundColor Green
 } else {
-    Write-Host "  [WARN] Service Daemon Watchdog not running" -ForegroundColor Yellow
+    Write-Host "  [INFO] Live Console not currently active (Will launch on boot or via start.bat)" -ForegroundColor Cyan
 }
 
 if ($keepAwake) {
     Write-Host "  [OK] 24/7 Keep-Awake thread running (PID: $($keepAwake.ProcessId))" -ForegroundColor Green
 } else {
-    Write-Host "  [WARN] Keep-Awake thread not running" -ForegroundColor Yellow
-}
-
-if ($gitSync) {
-    Write-Host "  [OK] 60-Second Git Sync daemon running (PID: $($gitSync.ProcessId))" -ForegroundColor Green
-} else {
-    Write-Host "  [WARN] Git Sync daemon not running" -ForegroundColor Yellow
+    Write-Host "  [INFO] Keep-Awake will start with Live Console" -ForegroundColor Cyan
 }
 
 # 4. Check Git Status & Remote Hashes
@@ -69,7 +65,7 @@ try {
     if ($localHash -eq $remoteHash) {
         Write-Host "  [OK] Up-to-date with GitHub (No pull needed)" -ForegroundColor Green
     } else {
-        Write-Host "  [INFO] Remote changes available (Will be pulled by daemon on next cycle)" -ForegroundColor Cyan
+        Write-Host "  [INFO] Remote changes available (Will be pulled on next 60s cycle)" -ForegroundColor Cyan
     }
 } catch {
     Write-Host "  [ERROR] Failed checking git: $($_.Exception.Message)" -ForegroundColor Red
@@ -77,11 +73,11 @@ try {
 
 # 5. Check Windows Startup Entries
 Write-Host "`n[5/5] Checking Windows Autostart Registration..." -ForegroundColor Yellow
-$startupVbs = [Environment]::GetFolderPath('Startup') + '\Start_SaiBalaji_Server.vbs'
-if (Test-Path $startupVbs) {
-    Write-Host "  [OK] Startup folder script exists: $startupVbs" -ForegroundColor Green
+$startupBat = [Environment]::GetFolderPath('Startup') + '\Start_SaiBalaji_LiveConsole.bat'
+if (Test-Path $startupBat) {
+    Write-Host "  [OK] Visible Startup folder launcher exists: $startupBat" -ForegroundColor Green
 } else {
-    Write-Host "  [FAIL] Startup folder script missing!" -ForegroundColor Red
+    Write-Host "  [WARN] Startup folder launcher missing. Run scripts\setup_autostart.bat" -ForegroundColor Yellow
 }
 
 $regVal = (Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -ErrorAction SilentlyContinue).SaiBalajiServer
