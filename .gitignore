@@ -51,3 +51,12 @@ Thumbs.db
 bin/
 *.exe
 *.old
+
+# Logs
+logs/
+*.log
+
+# Large media files (videos)
+backend/public/videos/
+*.mp4
+*.MP4

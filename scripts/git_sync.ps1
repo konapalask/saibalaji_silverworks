@@ -1,57 +1,96 @@
-# Sai Balaji Silverworks - Bulletproof Git Auto-Sync Daemon (60s)
-# Automatically syncs with origin/main on GitHub and builds frontend seamlessly.
+# Sai Balaji Silverworks - 60-Second Conditional Git Auto-Sync Daemon
+# Only pulls from Git when new commits are pushed to remote origin/main.
 
-$workspace = "D:\server"
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$workspace = (Resolve-Path "$scriptDir\..").Path
 Set-Location $workspace
 
-$gitExe = "$workspace\bin\git\cmd\git.exe"
-if (-not (Test-Path $gitExe)) {
-    $gitExe = (Get-Command git -ErrorAction SilentlyContinue).Source
+# Ensure standard Node.js, Git, and NPM paths
+$env:PATH = "C:\Program Files\nodejs;C:\Program Files (x86)\nodejs;$workspace\bin\git\cmd;$env:LOCALAPPDATA\Programs\nodejs;$env:APPDATA\npm;$env:PATH"
+
+$gitExe = "git.exe"
+if (Test-Path "$workspace\bin\git\cmd\git.exe") {
+    $gitExe = "$workspace\bin\git\cmd\git.exe"
 }
 
-Write-Host "========================================================" -ForegroundColor Cyan
-Write-Host "   Sai Balaji Silverworks - Git Auto-Sync Daemon (60s)" -ForegroundColor Cyan
-Write-Host "========================================================" -ForegroundColor Cyan
-Write-Host "[Sync] Actively monitoring branch 'origin/main' every 60s..." -ForegroundColor Gray
+# Create logs directory if it doesn't exist
+$logDir = "$workspace\logs"
+if (-not (Test-Path $logDir)) {
+    New-Item -ItemType Directory -Path $logDir -Force | Out-Null
+}
+$logFile = "$logDir\git_sync.log"
+
+function Write-SyncLog {
+    param([string]$Message, [string]$Level = "INFO")
+    $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $formatted = "[$ts] [$Level] $Message"
+    Write-Host $formatted
+    try {
+        Add-Content -Path $logFile -Value $formatted -ErrorAction SilentlyContinue
+        # Trim log if larger than 2MB
+        if ((Get-Item $logFile -ErrorAction SilentlyContinue).Length -gt 2MB) {
+            $lines = Get-Content $logFile -Tail 500
+            Set-Content -Path $logFile -Value $lines
+        }
+    } catch {}
+}
+
+Write-SyncLog "Git Auto-Sync Daemon started (Checking remote every 60s in $workspace)"
 
 while ($true) {
     try {
-        # 1. Fetch remote silently
+        # 1. Fetch remote silently to check for new commits
         & $gitExe fetch origin main --quiet 2>$null
         
-        $localHash = (& $gitExe rev-parse HEAD).Trim()
-        $remoteHash = (& $gitExe rev-parse origin/main).Trim()
+        $localHash = ""
+        $remoteHash = ""
 
-        if ($localHash -ne $remoteHash) {
-            $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-            Write-Host "[$timestamp] [UPDATE DETECTED] New commit on GitHub: $remoteHash" -ForegroundColor Yellow
+        try {
+            $localHash = (& $gitExe rev-parse HEAD 2>$null).Trim()
+            $remoteHash = (& $gitExe rev-parse origin/main 2>$null).Trim()
+        } catch {}
+
+        # 2. ONLY pull if new changes were pushed to GitHub
+        if ($localHash -and $remoteHash -and ($localHash -ne $remoteHash)) {
+            Write-SyncLog "UPDATE DETECTED: Remote commit $remoteHash differs from local $localHash" "UPDATE"
             
-            # 2. Get list of modified files
+            # Identify which files changed
             $diffFiles = (& $gitExe diff --name-only $localHash $remoteHash 2>$null)
 
-            # 3. Force clean sync to match GitHub exactly (zero conflict halts)
-            & $gitExe reset --hard origin/main --quiet
+            # Pull changes cleanly (matching origin/main)
+            & $gitExe reset --hard origin/main --quiet 2>$null
 
-            # 4. Check if package.json in backend or frontend was modified
+            # Check if backend dependencies changed
             if ($diffFiles -match "backend/package\.json") {
-                Write-Host "[$timestamp] Updating backend dependencies..." -ForegroundColor Magenta
-                cmd.exe /c "set PATH=C:\Program Files\nodejs;%PATH% && cd /d D:\server\backend && npm install"
+                Write-SyncLog "Updating backend dependencies (npm install)..." "BUILD"
+                cmd.exe /c "cd /d `"$workspace\backend`" && npm install" 2>&1 | Out-Null
             }
+
+            # Check if frontend dependencies changed
             if ($diffFiles -match "frontend/package\.json") {
-                Write-Host "[$timestamp] Updating frontend dependencies..." -ForegroundColor Magenta
-                cmd.exe /c "set PATH=C:\Program Files\nodejs;%PATH% && cd /d D:\server\frontend && npm install"
+                Write-SyncLog "Updating frontend dependencies (npm install)..." "BUILD"
+                cmd.exe /c "cd /d `"$workspace\frontend`" && npm install" 2>&1 | Out-Null
             }
 
-            # 5. Automatically build frontend if any frontend UI files changed
-            if ($diffFiles -match "frontend/") {
-                Write-Host "[$timestamp] Compiling updated frontend UI bundle..." -ForegroundColor Magenta
-                cmd.exe /c "set PATH=C:\Program Files\nodejs;%PATH% && cd /d D:\server\frontend && npm run build"
+            # Check if frontend files changed -> rebuild UI bundle
+            if ($diffFiles -match "^frontend/") {
+                Write-SyncLog "Rebuilding frontend UI production bundle..." "BUILD"
+                cmd.exe /c "cd /d `"$workspace\frontend`" && npm run build" 2>&1 | Out-Null
             }
 
-            Write-Host "[$timestamp] [SUCCESS] Site updated live to commit: $remoteHash" -ForegroundColor Green
+            # Check if backend files changed -> restart backend server smoothly
+            if ($diffFiles -match "^backend/") {
+                Write-SyncLog "Backend code updated - restarting backend server on port 8000..." "RELOAD"
+                $backendConn = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
+                if ($backendConn) {
+                    Stop-Process -Id $backendConn.OwningProcess -Force -ErrorAction SilentlyContinue
+                }
+            }
+
+            Write-SyncLog "Successfully synced and updated to commit $remoteHash" "SUCCESS"
         }
     } catch {
-        # Catch and continue on transient network errors
+        Write-SyncLog "Transient error checking git: $($_.Exception.Message)" "WARN"
     }
 
     Start-Sleep -Seconds 60
