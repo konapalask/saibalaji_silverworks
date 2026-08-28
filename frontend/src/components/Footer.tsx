@@ -16,9 +16,9 @@ export const Footer: React.FC = () => {
       <div className="relative z-10 max-w-[1450px] mx-auto px-6 sm:px-12 lg:px-16 space-y-16">
 
         {/* 01. TOP EDITORIAL STATEMENT & BRAND LOCKUP */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end border-b border-white/10 pb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center lg:items-end border-b border-white/10 pb-12 text-center sm:text-left">
 
-          <div className="lg:col-span-8 space-y-4">
+          <div className="lg:col-span-8 space-y-4 flex flex-col items-center sm:items-start">
             <span className="text-[10px] font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
               THE HOUSE OF SAI BALAJI
             </span>
@@ -31,7 +31,7 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Brand Lockup */}
-          <div className="lg:col-span-4 flex flex-col items-start lg:items-end space-y-3">
+          <div className="lg:col-span-4 flex flex-col items-center sm:items-start lg:items-end space-y-3">
             <Link to="/" className="flex items-center gap-3 group">
               <div className="bg-white p-1.5 rounded-xl shadow-xs border border-white/20">
                 <img
@@ -40,7 +40,7 @@ export const Footer: React.FC = () => {
                   className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col text-left">
                 <span className="font-serif text-xl font-normal tracking-[0.16em] text-white leading-tight">
                   SAI BALAJI
                 </span>
@@ -57,34 +57,34 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* 02. 4-COLUMN NAVIGATION GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-sm text-center sm:text-left">
 
           {/* Column 1: Explore */}
-          <div className="space-y-4">
+          <div className="space-y-4 flex flex-col items-center sm:items-start">
             <h3 className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#B9A77A] border-b border-white/10 pb-2 inline-block">
               QUICK LINKS
             </h3>
-            <ul className="space-y-2.5 text-[#A0A0A0] font-light text-xs sm:text-sm">
+            <ul className="space-y-2.5 text-[#A0A0A0] font-light text-xs sm:text-sm flex flex-col items-center sm:items-start">
               <li>
-                <Link to="/home" className="hover:text-white transition-colors flex items-center gap-1 group">
+                <Link to="/home" className="hover:text-white transition-colors flex items-center gap-1 group justify-center sm:justify-start">
                   <span>Home</span>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#B9A77A]" />
                 </Link>
               </li>
               <li>
-                <Link to="/shop/retail" className="hover:text-white transition-colors flex items-center gap-1 group">
+                <Link to="/shop/retail" className="hover:text-white transition-colors flex items-center gap-1 group justify-center sm:justify-start">
                   <span>Shop All Products</span>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#B9A77A]" />
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="hover:text-white transition-colors flex items-center gap-1 group">
+                <Link to="/about" className="hover:text-white transition-colors flex items-center gap-1 group justify-center sm:justify-start">
                   <span>About Our Atelier</span>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#B9A77A]" />
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-white transition-colors flex items-center gap-1 group">
+                <Link to="/contact" className="hover:text-white transition-colors flex items-center gap-1 group justify-center sm:justify-start">
                   <span>Contact & Showroom</span>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#B9A77A]" />
                 </Link>
@@ -93,11 +93,11 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Column 2: Collections */}
-          <div className="space-y-4">
+          <div className="space-y-4 flex flex-col items-center sm:items-start">
             <h3 className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#B9A77A] border-b border-white/10 pb-2 inline-block">
               COLLECTIONS
             </h3>
-            <ul className="space-y-2.5 text-[#A0A0A0] font-light text-xs sm:text-sm">
+            <ul className="space-y-2.5 text-[#A0A0A0] font-light text-xs sm:text-sm flex flex-col items-center sm:items-start">
               <li>
                 <Link to="/category/silver-god-temple-items" className="hover:text-white transition-colors">
                   Silver God & Goddess Idols
@@ -127,11 +127,11 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Column 3: Business & Custom */}
-          <div className="space-y-4">
+          <div className="space-y-4 flex flex-col items-center sm:items-start">
             <h3 className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#B9A77A] border-b border-white/10 pb-2 inline-block">
               B2B & CUSTOM
             </h3>
-            <ul className="space-y-2.5 text-[#A0A0A0] font-light text-xs sm:text-sm">
+            <ul className="space-y-2.5 text-[#A0A0A0] font-light text-xs sm:text-sm flex flex-col items-center sm:items-start">
               <li>
                 <Link to="/shop/wholesale" className="hover:text-white transition-colors">
                   B2B Wholesale Portal
@@ -156,26 +156,26 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Column 4: Contact & Connect */}
-          <div className="space-y-4">
+          <div className="space-y-4 flex flex-col items-center sm:items-start">
             <h3 className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#B9A77A] border-b border-white/10 pb-2 inline-block">
               CONTACT ATELIER
             </h3>
-            <div className="space-y-2.5 text-[#A0A0A0] font-light text-xs sm:text-sm">
-              <p className="flex items-start gap-2">
+            <div className="space-y-2.5 text-[#A0A0A0] font-light text-xs sm:text-sm flex flex-col items-center sm:items-start">
+              <p className="flex items-start justify-center sm:justify-start gap-2 text-center sm:text-left">
                 <MapPin className="w-4 h-4 text-[#B9A77A] shrink-0 mt-0.5" />
                 <span>Main Silver Market, Autonagar, Tenali, AP - 522201</span>
               </p>
-              <p className="flex items-center gap-2">
+              <p className="flex items-center justify-center sm:justify-start gap-2">
                 <Phone className="w-4 h-4 text-[#B9A77A] shrink-0" />
                 <span>+91 9492664870</span>
               </p>
-              <p className="flex items-center gap-2">
+              <p className="flex items-center justify-center sm:justify-start gap-2">
                 <Mail className="w-4 h-4 text-[#B9A77A] shrink-0" />
                 <span>hello@saibalajisilverworks.com</span>
               </p>
 
               {/* Social Media */}
-              <div className="flex items-center gap-4 pt-2 text-[#A0A0A0]">
+              <div className="flex items-center justify-center sm:justify-start gap-4 pt-2 text-[#A0A0A0]">
                 <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-[#B9A77A] transition-colors" title="Instagram">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
                 </a>
