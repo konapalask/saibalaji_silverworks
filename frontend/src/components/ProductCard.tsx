@@ -45,8 +45,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
 
         {/* Out of Stock Overlay Badge */}
         {(product.stock <= 0 || product.in_stock === false) && (
-          <div className="absolute top-3 left-3 z-10">
-            <span className="bg-red-600 text-white text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">
+          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
+            <span className="bg-red-600 text-white text-[8px] sm:text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-md">
               OUT OF STOCK
             </span>
           </div>
@@ -59,49 +59,49 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
             e.stopPropagation();
             toggleWishlist(product.id);
           }}
-          className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-all z-10 ${isLiked ? 'bg-red-50 text-red-500 shadow-sm border border-red-200' : 'bg-white/90 text-gray-500 hover:text-red-500 hover:bg-white border border-[#E5E0D8]'
+          className={`absolute top-2 right-2 sm:top-3 sm:right-3 p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all z-10 ${isLiked ? 'bg-red-50 text-red-500 shadow-sm border border-red-200' : 'bg-white/90 text-gray-500 hover:text-red-500 hover:bg-white border border-[#E5E0D8]'
             }`}
           title="Add to Wishlist"
         >
-          <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
+          <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isLiked ? 'fill-current' : ''}`} />
         </button>
       </Link>
 
       {/* Product Details Content */}
-      <div className="p-4 flex-1 flex flex-col justify-between bg-white">
+      <div className="p-2.5 sm:p-4 flex-1 flex flex-col justify-between bg-white">
         <div>
-          <div className="text-[10px] uppercase font-bold text-[#B9A77A] tracking-widest mb-1">
+          <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#B9A77A] tracking-widest mb-0.5 sm:mb-1 truncate">
             {product.category?.name || 'Sterling Silver'}
           </div>
           <Link to={`/shop/retail/${product.slug}`} className="block">
-            <h3 className="font-serif text-base font-semibold text-[#202020] group-hover:text-[#B9A77A] transition-colors line-clamp-1">
+            <h3 className="font-serif text-xs sm:text-base font-semibold text-[#202020] group-hover:text-[#B9A77A] transition-colors line-clamp-1">
               {product.title}
             </h3>
           </Link>
-          <p className="text-[11px] text-[#777777] line-clamp-1 mt-0.5">
+          <p className="text-[10px] sm:text-[11px] text-[#777777] line-clamp-1 mt-0.5">
             SKU: {product.sku}
           </p>
         </div>
 
         {/* Price & Action Section */}
-        <div className="mt-4 pt-3 border-t border-[#F0ECE6] space-y-3">
-          <div className="flex items-center justify-between">
+        <div className="mt-2.5 sm:mt-4 pt-2.5 sm:pt-3 border-t border-[#F0ECE6] space-y-2.5 sm:space-y-3">
+          <div className="flex items-center justify-between gap-1">
             <div>
               <div className="flex items-center gap-1">
-                <span className="text-[9.5px] text-[#777777] uppercase tracking-wider font-medium">
-                  {Array.isArray(product.variants) && product.variants.length > 1 ? 'Starting from' : 'Price'}
+                <span className="text-[8.5px] sm:text-[9.5px] text-[#777777] uppercase tracking-wider font-medium">
+                  {Array.isArray(product.variants) && product.variants.length > 1 ? 'From' : 'Price'}
                 </span>
-                <span className="text-[8.5px] text-[#C5A059] font-bold bg-[#FAF9F5] px-1.5 py-0.2 rounded border border-[#C5A059]/30">Live</span>
+                <span className="text-[7.5px] sm:text-[8.5px] text-[#C5A059] font-bold bg-[#FAF9F5] px-1 py-0.2 rounded border border-[#C5A059]/30">Live</span>
               </div>
-              <span className="font-sans font-bold text-base text-[#202020]">
+              <span className="font-sans font-bold text-sm sm:text-base text-[#202020]">
                 ₹{displayPrice.toLocaleString()}
               </span>
             </div>
 
             {isWholesaleOnly && (
               <div className="text-right">
-                <span className="text-[9.5px] text-[#B9A77A] uppercase tracking-wider font-bold block">MOQ</span>
-                <span className="text-xs font-bold text-[#202020]">{product.min_wholesale_qty || 5} Pcs</span>
+                <span className="text-[8.5px] sm:text-[9.5px] text-[#B9A77A] uppercase tracking-wider font-bold block">MOQ</span>
+                <span className="text-[10px] sm:text-xs font-bold text-[#202020]">{product.min_wholesale_qty || 5} Pcs</span>
               </div>
             )}
           </div>
@@ -109,7 +109,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
           {(product.stock <= 0 || product.in_stock === false) ? (
             <button
               disabled
-              className="w-full bg-gray-100 text-gray-400 py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider cursor-not-allowed flex items-center justify-center gap-2 border border-gray-200"
+              className="w-full bg-gray-100 text-gray-400 py-2 sm:py-2.5 px-2 rounded-xl text-[10px] sm:text-xs font-bold uppercase tracking-wider cursor-not-allowed flex items-center justify-center gap-2 border border-gray-200"
             >
               <span>OUT OF STOCK</span>
             </button>

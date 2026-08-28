@@ -82,13 +82,12 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
         className="relative bg-black rounded-3xl overflow-hidden w-full max-w-5xl aspect-video shadow-2xl border border-[#C5A059]/40 flex flex-col justify-between"
       >
         {/* Header bar */}
-        <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/80 to-transparent p-6 flex justify-between items-start text-white">
+        <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/80 to-transparent p-4 sm:p-6 flex justify-between items-start text-white">
           <div>
-            <span className="text-[10px] uppercase tracking-[0.3em] text-[#C5A059] font-bold block">
-              SAI BALAJI SILVERWORKS CINEMATIC EXPERIENCE
+            <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-[#C5A059] font-bold block">
+              SAI BALAJI SILVERWORKS CINEMATIC SHOWCASE
             </span>
-            <h3 className="font-serif text-xl font-bold tracking-wide mt-0.5">{title}</h3>
-            {description && <p className="text-xs text-gray-300 max-w-lg mt-1">{description}</p>}
+            <h3 className="font-serif text-sm sm:text-lg font-bold tracking-wide mt-0.5">{title}</h3>
           </div>
 
           <button 

@@ -31,7 +31,7 @@ export const MobileBottomNav: React.FC = () => {
           }
         >
           <Store className="w-5 h-5" />
-          <span>Shop</span>
+          <span>Retail</span>
         </NavLink>
 
         <NavLink 

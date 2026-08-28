@@ -459,7 +459,7 @@ export const CategoryPage: React.FC = () => {
                 ))}
               </div>
             ) : filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 {filteredProducts.map((product) => (
                   <ProductCard
                     key={product.id}
@@ -552,14 +552,14 @@ export const CategoryPage: React.FC = () => {
 
       {/* Floating Bottom Action Bar for Cart */}
       {(totalQuantity > 0 || wholesaleCount > 0) && (
-        <div className="fixed bottom-6 right-6 z-40 bg-[#1A1918] text-[#FAF9F5] p-4 rounded-2xl shadow-2xl border border-[#C5A059] flex items-center gap-4">
+        <div className="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-40 bg-[#1A1918] text-[#FAF9F5] p-3.5 sm:p-4 rounded-2xl shadow-2xl border border-[#C5A059] flex items-center justify-between sm:justify-start gap-3 sm:gap-4">
           <div>
             <p className="text-xs font-bold">{totalQuantity || wholesaleCount} Items Selected</p>
             <p className="text-[10px] text-gray-400">Items ready in your cart</p>
           </div>
           <button 
             onClick={() => setIsCartOpen(true)}
-            className="bg-[#C5A059] text-[#1A1918] px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors flex items-center gap-2 cursor-pointer shadow-md"
+            className="bg-[#C5A059] text-[#1A1918] px-4 sm:px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors flex items-center gap-2 cursor-pointer shadow-md shrink-0"
           >
             <span>VIEW CART</span>
             <ShoppingBag className="w-4 h-4" />

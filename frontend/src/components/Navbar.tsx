@@ -56,31 +56,31 @@ export const Navbar: React.FC = () => {
           : 'bg-[#F8F6F1]/90 backdrop-blur-xs border-b border-[#E5E0D8]/60'
           }`}
       >
-        <div className="max-w-[1450px] mx-auto w-full px-4 sm:px-8 lg:px-12 flex items-center justify-between">
+        <div className="max-w-[1450px] mx-auto w-full px-3 sm:px-8 lg:px-12 flex items-center justify-between">
 
           {/* Mobile Menu Trigger */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-[#444444] hover:text-[#202020] transition-colors"
+            className="lg:hidden p-1.5 sm:p-2 text-[#444444] hover:text-[#202020] transition-colors shrink-0"
             aria-label="Toggle Navigation"
           >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
           </button>
 
           {/* LEFT ZONE: Brand Lockup with White Logo Container */}
-          <RouterLink to="/" className="flex items-center gap-3 group shrink-0">
+          <RouterLink to="/" className="flex items-center gap-2 sm:gap-3 group shrink-0">
             <div className="bg-white p-1 rounded-xl shadow-xs border border-[#E5E0D8]">
               <img
                 src="/logo.webp"
                 alt="Sai Balaji Silverworks Logo"
-                className="h-10 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                className="h-8 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </div>
-            <div className="flex flex-col justify-center">
-              <span className="font-serif text-xl sm:text-[22px] font-normal tracking-[0.16em] text-[#202020] group-hover:text-[#B9A77A] transition-colors leading-tight">
+            <div className="hidden min-[380px]:flex flex-col justify-center">
+              <span className="font-serif text-base sm:text-[22px] font-normal tracking-[0.12em] sm:tracking-[0.16em] text-[#202020] group-hover:text-[#B9A77A] transition-colors leading-tight">
                 SAI BALAJI
               </span>
-              <span className="text-[9px] uppercase tracking-[0.3em] text-[#666666] font-semibold font-sans mt-0.5">
+              <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.25em] sm:tracking-[0.3em] text-[#666666] font-semibold font-sans mt-0.5">
                 SILVERWORKS
               </span>
             </div>
@@ -130,18 +130,18 @@ export const Navbar: React.FC = () => {
           </nav>
 
           {/* RIGHT ZONE: Utility Icons (Search, Account, Wishlist, Cart) */}
-          <div className="flex items-center space-x-5 text-[#333333]">
+          <div className="flex items-center gap-1 sm:gap-4 text-[#333333] shrink-0">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="p-2 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all"
+              className="p-1.5 sm:p-2 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all shrink-0"
               title="Search"
             >
-              <Search className="w-5 h-5 stroke-[1.75]" />
+              <Search className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.75]" />
             </button>
 
             <RouterLink
               to="/account/wishlist"
-              className="p-2 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all relative hidden sm:block"
+              className="p-2 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all relative hidden sm:block shrink-0"
               title="Wishlist"
             >
               <Heart className="w-5 h-5 stroke-[1.75]" />
@@ -154,19 +154,19 @@ export const Navbar: React.FC = () => {
 
             <RouterLink
               to={user ? "/account" : "/account/login"}
-              className="p-1 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all flex items-center justify-center"
+              className="p-1 sm:p-1.5 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all flex items-center justify-center shrink-0"
               title={user ? user.full_name : "Account Sign In"}
             >
               {user?.photo_url ? (
                 <img 
                   src={user.photo_url} 
                   alt={user.full_name || 'Account'} 
-                  className="w-7 h-7 rounded-full object-cover border border-[#B9A77A]"
+                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-full object-cover border border-[#B9A77A]"
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <div className="p-1">
-                  <UserIcon className="w-5 h-5 stroke-[1.75]" />
+                <div className="p-0.5">
+                  <UserIcon className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.75]" />
                 </div>
               )}
             </RouterLink>
@@ -174,11 +174,11 @@ export const Navbar: React.FC = () => {
             {/* Cart Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="p-2 bg-[#202020] hover:bg-[#B9A77A] text-white rounded-full transition-all relative flex items-center gap-1.5 px-3 shadow-xs"
+              className="p-1.5 sm:p-2 bg-[#202020] hover:bg-[#B9A77A] text-white rounded-full transition-all relative flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 shadow-xs shrink-0 whitespace-nowrap"
               title="Shopping Cart"
             >
-              <ShoppingBag className="w-4 h-4 stroke-[1.75]" />
-              <span className="text-[11px] font-bold tracking-wider">
+              <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[1.75]" />
+              <span className="text-[10px] sm:text-[11px] font-bold tracking-wider">
                 CART ({totalQuantity})
               </span>
             </button>

@@ -313,7 +313,7 @@ export const Home: React.FC = () => {
         </div>
 
         {/* Collections Grid — 4 Main Categories */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {MAIN_CATEGORIES.map((cat) => (
             <Link
               key={cat.id}
@@ -442,7 +442,7 @@ export const Home: React.FC = () => {
 
         {/* Video Grid */}
         {homeFilteredVideos.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {homeFilteredVideos.slice(0, videoDisplayCount).map((vid) => (
               <div
                 key={vid.id}
