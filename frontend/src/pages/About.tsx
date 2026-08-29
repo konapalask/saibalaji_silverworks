@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Play, ShieldCheck, Factory, Award, Search, Film, Sparkles, Filter, ChevronDown, Video } from 'lucide-react';
+import { Play, ShieldCheck, Factory, Award, Film, ChevronDown, Video } from 'lucide-react';
 import { CompanyVideo } from '../types';
 import { VideoPlayerModal } from '../components/VideoPlayerModal';
 import { initialVideosData } from '../data/videosData';
@@ -11,8 +11,6 @@ export const About: React.FC = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   // Gallery state
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [displayCount, setDisplayCount] = useState<number>(12);
 
   useEffect(() => {
@@ -38,32 +36,9 @@ export const About: React.FC = () => {
     return Array.isArray(videos) ? videos : [];
   }, [videos]);
 
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    videoList.forEach(v => {
-      if (v.category) set.add(v.category);
-    });
-    return ['ALL', ...Array.from(set)];
-  }, [videoList]);
-
-  // Filtered video list
-  const filteredVideos = useMemo(() => {
-    return videoList.filter(vid => {
-      const matchesCategory = selectedCategory === 'ALL' || vid.category === selectedCategory;
-      const q = searchQuery.toLowerCase().trim();
-      const matchesQuery = !q || 
-        vid.title.toLowerCase().includes(q) || 
-        (vid.description && vid.description.toLowerCase().includes(q)) ||
-        (vid.filename && vid.filename.toLowerCase().includes(q)) ||
-        (vid.category && vid.category.toLowerCase().includes(q));
-
-      return matchesCategory && matchesQuery;
-    });
-  }, [videoList, selectedCategory, searchQuery]);
-
   const visibleVideos = useMemo(() => {
-    return filteredVideos.slice(0, displayCount);
-  }, [filteredVideos, displayCount]);
+    return videoList.slice(0, displayCount);
+  }, [videoList, displayCount]);
 
   const storyVid = videoList.find(v => v.section === 'story') || videoList[0] || {
     id: 1,
@@ -259,47 +234,8 @@ export const About: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="px-4 py-2 bg-white rounded-full border border-[#E6E1DA] text-xs font-medium text-gray-700 shadow-xs flex items-center gap-2">
               <Video className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span><strong>{filteredVideos.length}</strong> Videos Available</span>
+              <span><strong>{videoList.length}</strong> Videos Available</span>
             </div>
-          </div>
-        </div>
-
-        {/* Search & Filter Controls */}
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-[#E6E1DA] shadow-xs">
-          
-          {/* Category Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  setDisplayCount(12);
-                }}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                  selectedCategory === cat
-                    ? 'bg-[#1A1918] text-white shadow-xs'
-                    : 'bg-[#FAF9F5] text-gray-600 hover:bg-[#E6E1DA] hover:text-[#1A1918]'
-                }`}
-              >
-                {cat === 'ALL' ? `All Videos (${videoList.length})` : cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Search Input */}
-          <div className="relative w-full md:w-72 shrink-0">
-            <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search by title or code..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setDisplayCount(12);
-              }}
-              className="w-full pl-9 pr-4 py-2 text-xs bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl focus:outline-none focus:border-[#C5A059] transition-colors"
-            />
           </div>
         </div>
 
@@ -362,30 +298,18 @@ export const About: React.FC = () => {
         ) : (
           <div className="text-center py-16 bg-white rounded-3xl border border-[#E6E1DA] space-y-3">
             <Film className="w-10 h-10 text-gray-400 mx-auto" />
-            <h3 className="font-serif text-lg font-bold text-[#1A1918]">No videos matched your criteria</h3>
-            <p className="text-xs text-gray-500 max-w-sm mx-auto">
-              Try adjusting your search terms or clearing category filters.
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedCategory('ALL');
-              }}
-              className="px-4 py-2 bg-[#1A1918] text-white text-xs font-bold rounded-xl hover:bg-[#C5A059] transition-colors"
-            >
-              Reset Filters
-            </button>
+            <h3 className="font-serif text-lg font-bold text-[#1A1918]">No videos available</h3>
           </div>
         )}
 
         {/* Load More Button */}
-        {filteredVideos.length > displayCount && (
+        {videoList.length > displayCount && (
           <div className="text-center pt-4">
             <button
               onClick={() => setDisplayCount(prev => prev + 16)}
               className="px-8 py-3 bg-[#1A1918] hover:bg-[#C5A059] text-white rounded-2xl text-xs font-bold uppercase tracking-widest shadow-md hover:shadow-xl transition-all cursor-pointer inline-flex items-center gap-2"
             >
-              <span>Load More Craftsmanship Videos ({filteredVideos.length - displayCount} remaining)</span>
+              <span>Load More Craftsmanship Videos ({videoList.length - displayCount} remaining)</span>
               <ChevronDown className="w-4 h-4" />
             </button>
           </div>
