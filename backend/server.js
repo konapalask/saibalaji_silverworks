@@ -885,15 +885,34 @@ app.get('/api/v1/dashboard/analytics', requireAdmin, (req, res) => {
 
 // --- ORDER & FULFILLMENT ENDPOINTS ---
 
-// Admin view all orders (Sorted Newest First)
-app.get('/api/v1/orders', requireAdmin, (req, res) => {
+// Get Orders (Admin views all orders; Customers view their own orders)
+app.get('/api/v1/orders', authenticateToken, (req, res) => {
   orders = loadJsonFile('orders_data.json', []);
-  const sorted = [...orders].sort((a, b) => {
-    const tA = a.created_at ? new Date(a.created_at).getTime() : (a.id || 0);
-    const tB = b.created_at ? new Date(b.created_at).getTime() : (b.id || 0);
-    return tB - tA;
+
+  // Admin access: return all orders sorted newest first
+  if (req.user && (req.user.role === 'ADMIN' || req.user.role === 'SUPER_ADMIN')) {
+    const sorted = [...orders].sort((a, b) => {
+      const tA = a.created_at ? new Date(a.created_at).getTime() : (a.id || 0);
+      const tB = b.created_at ? new Date(b.created_at).getTime() : (b.id || 0);
+      return tB - tA;
+    });
+    return res.json(sorted);
+  }
+
+  // Regular customer access: return user's own orders
+  users = getUsers();
+  const currentUser = users.find(u => u.id === req.user.id);
+  const userEmail = (currentUser?.email || req.user.email || '').toLowerCase();
+  const userPhone = currentUser?.phone ? currentUser.phone.replace(/\D/g, '') : '';
+
+  const userOrders = orders.filter(o => {
+    if (o.user_id && o.user_id === req.user.id) return true;
+    if (o.customer_email && o.customer_email.toLowerCase() === userEmail) return true;
+    if (userPhone && o.customer_phone && o.customer_phone.replace(/\D/g, '').includes(userPhone)) return true;
+    return false;
   });
-  res.json(sorted);
+
+  return res.json(userOrders.reverse());
 });
 
 // Get User Order History (Customer view own orders)
@@ -1700,18 +1719,34 @@ app.get(['/docs', '/api/v1/docs'], (req, res) => {
     <head>
       <title>Sai Balaji Silverworks - Node.js API Docs</title>
       <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui.css" />
-      <style>html { box-sizing: border-box; overflow-y: scroll; } *, *:before, *:after { box-sizing: inherit; } body { margin:0; background: #fafafa; }</style>
+      <style>
+        html { box-sizing: border-box; overflow-y: scroll; }
+        *, *:before, *:after { box-sizing: inherit; }
+        body { margin:0; background: #fafafa; }
+        .swagger-ui .topbar { display: none; }
+      </style>
     </head>
     <body>
       <div id="swagger-ui"></div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-bundle.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-standalone-preset.js"></script>
       <script>
         window.onload = function() {
           window.ui = SwaggerUIBundle({
             url: "/openapi.json",
             dom_id: '#swagger-ui',
             deepLinking: true,
-            presets: [SwaggerUIBundle.presets.apis]
+            presets: [
+              SwaggerUIBundle.presets.apis,
+              SwaggerUIStandalonePreset
+            ],
+            plugins: [
+              SwaggerUIBundle.plugins.DownloadUrl
+            ],
+            layout: "BaseLayout",
+            persistAuthorization: true,
+            displayRequestDuration: true,
+            tryItOutEnabled: true
           });
         };
       </script>
@@ -1728,6 +1763,12 @@ app.get('/openapi.json', (req, res) => {
       version: "1.0.0",
       description: "Complete Express.js API specification for Sai Balaji Silverworks backend."
     },
+    servers: [
+      {
+        url: "/",
+        description: "Current Express API Server"
+      }
+    ],
     paths: {
       "/api/v1/silver-rate": {
         get: {
@@ -1962,25 +2003,174 @@ app.get('/openapi.json', (req, res) => {
         }
       },
       "/api/v1/orders": {
+        get: {
+          summary: "Get Orders (Admin: All Orders | Customer: Own Orders)",
+          tags: ["Orders"],
+          security: [{ BearerAuth: [] }],
+          description: "Retrieve orders. Admins receive all store orders; authenticated customers receive their own order history.",
+          responses: {
+            "200": {
+              description: "List of retail orders sorted newest first",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "integer" },
+                        order_number: { type: "string" },
+                        user_id: { type: "integer", nullable: true },
+                        customer_name: { type: "string" },
+                        customer_email: { type: "string" },
+                        customer_phone: { type: "string" },
+                        shipping_address: { type: "string" },
+                        shipping_city: { type: "string" },
+                        shipping_state: { type: "string" },
+                        shipping_pincode: { type: "string" },
+                        items: { type: "array" },
+                        subtotal: { type: "number" },
+                        tax_amount: { type: "number" },
+                        shipping_charge: { type: "number" },
+                        grand_total: { type: "number" },
+                        live_silver_rate_applied: { type: "number" },
+                        status: { type: "string" },
+                        created_at: { type: "string", format: "date-time" }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": { description: "Unauthorized - Token missing or invalid" },
+            "403": { description: "Forbidden - Admin privilege required" }
+          }
+        },
         post: {
           summary: "Create New Order",
           tags: ["Orders"],
+          description: "Creates a new retail customer order with server-side live silver rate calculation.",
           requestBody: {
             required: true,
             content: {
               "application/json": {
                 schema: {
                   type: "object",
+                  required: ["items"],
                   properties: {
-                    items: { type: "array" },
-                    shipping_address: { type: "object" },
-                    total_amount: { type: "number" }
+                    customer_name: { type: "string" },
+                    customer_email: { type: "string" },
+                    customer_phone: { type: "string" },
+                    shipping_address: { type: "string" },
+                    shipping_city: { type: "string" },
+                    shipping_state: { type: "string" },
+                    shipping_pincode: { type: "string" },
+                    items: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          product_id: { type: "integer" },
+                          quantity: { type: "integer" },
+                          weight_g: { type: "number" },
+                          variant_id: { type: "string" }
+                        }
+                      }
+                    },
+                    tax_amount: { type: "number" },
+                    shipping_charge: { type: "number" },
+                    grand_total: { type: "number" }
                   }
                 }
               }
             }
           },
-          responses: { "201": { description: "Order created successfully" } }
+          responses: {
+            "201": { description: "Order created successfully" }
+          }
+        }
+      },
+      "/api/v1/orders/my-orders": {
+        get: {
+          summary: "Get Current User Order History",
+          tags: ["Orders"],
+          security: [{ BearerAuth: [] }],
+          description: "Returns all retail orders created by or linked to the authenticated customer.",
+          responses: {
+            "200": {
+              description: "List of orders belonging to the user",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "integer" },
+                        order_number: { type: "string" },
+                        user_id: { type: "integer" },
+                        customer_name: { type: "string" },
+                        customer_email: { type: "string" },
+                        customer_phone: { type: "string" },
+                        items: { type: "array" },
+                        grand_total: { type: "number" },
+                        status: { type: "string" },
+                        created_at: { type: "string", format: "date-time" }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": { description: "Unauthorized - Token missing or invalid" }
+          }
+        }
+      },
+      "/api/v1/orders/{id}/status": {
+        put: {
+          summary: "Update Order Status (Admin Only)",
+          tags: ["Orders"],
+          security: [{ BearerAuth: [] }],
+          description: "Update the fulfillment or processing status of an order.",
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "integer" },
+              description: "Order ID"
+            }
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["status"],
+                  properties: {
+                    status: {
+                      type: "string",
+                      example: "Dispatched",
+                      description: "New status for the order (e.g. Order Placed, Order Accepted, Dispatched, Delivered, Cancelled)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": { description: "Order status updated successfully" },
+            "404": { description: "Order not found" }
+          }
+        }
+      },
+      "/api/v1/dashboard/analytics": {
+        get: {
+          summary: "Get Admin Dashboard Analytics (Admin Only)",
+          tags: ["Dashboard"],
+          security: [{ BearerAuth: [] }],
+          responses: { "200": { description: "Revenue, orders, product count, and recent activity analytics" } }
         }
       },
       "/api/v1/wholesale/quote": {
@@ -2008,6 +2198,14 @@ app.get('/openapi.json', (req, res) => {
           responses: { "201": { description: "Wholesale quote request submitted" } }
         }
       },
+      "/api/v1/wholesale/requests": {
+        get: {
+          summary: "Get All Wholesale Requests (Admin Only)",
+          tags: ["Wholesale"],
+          security: [{ BearerAuth: [] }],
+          responses: { "200": { description: "List of wholesale quote requests" } }
+        }
+      },
       "/api/v1/users": {
         get: {
           summary: "Get list of registered users and customers (Admin Only)",
@@ -2022,6 +2220,28 @@ app.get('/openapi.json', (req, res) => {
           tags: ["Wishlist"],
           security: [{ BearerAuth: [] }],
           responses: { "200": { description: "User wishlist products" } }
+        }
+      },
+      "/api/v1/wishlist/toggle": {
+        post: {
+          summary: "Toggle item in wishlist",
+          tags: ["Wishlist"],
+          security: [{ BearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["product_id"],
+                  properties: {
+                    product_id: { type: "integer" }
+                  }
+                }
+              }
+            }
+          },
+          responses: { "200": { description: "Product added or removed from wishlist" } }
         }
       }
     },

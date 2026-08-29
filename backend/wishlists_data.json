@@ -8,7 +8,7 @@
       8,
       7
     ],
-    "updated_at": "2026-08-29T09:01:10.023Z"
+    "updated_at": "2026-08-29T11:13:56.963Z"
   },
   {
     "user_id": 2,
@@ -18,11 +18,18 @@
   {
     "user_id": 4,
     "product_ids": [],
-    "updated_at": "2026-08-24T21:22:10.561Z"
+    "updated_at": "2026-08-29T15:06:21.918Z"
   },
   {
     "user_id": 3,
     "product_ids": [],
-    "updated_at": "2026-08-29T09:08:08.455Z"
+    "updated_at": "2026-08-29T13:04:59.045Z"
+  },
+  {
+    "user_id": "guest",
+    "product_ids": [
+      1
+    ],
+    "updated_at": "2026-08-29T13:57:07.543Z"
   }
 ]
