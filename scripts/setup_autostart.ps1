@@ -25,9 +25,11 @@ if (Test-Path $legacyVbs) {
 $batContent = @"
 @echo off
 title Sai Balaji Silverworks - Live Server & Git Sync Console
+:loop
 cd /d "$workspace"
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$workspace\scripts\live_monitor.ps1"
-pause
+timeout /t 3 /nobreak >nul 2>&1
+goto loop
 "@
 
 Set-Content -Path $startupBat -Value $batContent -Encoding ASCII

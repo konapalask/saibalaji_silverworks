@@ -9,5 +9,5 @@ echo.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0setup_autostart.ps1"
 
 echo.
-timeout /t 5 /nobreak >nul 2>&1
-pause
+timeout /t 3 /nobreak >nul 2>&1
+
