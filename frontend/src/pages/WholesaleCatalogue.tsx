@@ -386,10 +386,13 @@ export const WholesaleCatalogue: React.FC = () => {
 
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {MAIN_CATEGORIES.map((cat) => (
-            <Link
+            <button
               key={cat.id}
-              to={`/category/${cat.slug}`}
-              className="group bg-white rounded-3xl border border-[#E5E0D8] overflow-hidden product-card-hover flex flex-col justify-between"
+              onClick={() => {
+                updateFilter('category', cat.slug);
+                window.scrollTo({ top: 350, behavior: 'smooth' });
+              }}
+              className="group bg-white rounded-3xl border border-[#E5E0D8] overflow-hidden product-card-hover flex flex-col justify-between text-left cursor-pointer"
             >
               <div className="relative aspect-4/3 w-full bg-black overflow-hidden p-2">
                 <img
@@ -417,7 +420,7 @@ export const WholesaleCatalogue: React.FC = () => {
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#B9A77A]" />
                 </div>
               </div>
-            </Link>
+            </button>
           ))}
         </div>
       </div>

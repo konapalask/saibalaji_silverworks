@@ -317,7 +317,7 @@ export const Home: React.FC = () => {
           {MAIN_CATEGORIES.map((cat) => (
             <Link
               key={cat.id}
-              to={`/category/${cat.slug}`}
+              to={`/shop/retail?category=${cat.slug}`}
               className="group bg-white rounded-2xl border border-[#E5E0D8] overflow-hidden product-card-hover flex flex-col justify-between"
             >
               <div className="relative aspect-4/3 w-full bg-black overflow-hidden p-3 border-b border-[#F0ECE6]">

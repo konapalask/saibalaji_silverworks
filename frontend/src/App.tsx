@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -15,7 +15,6 @@ import { ScrollToTop } from './components/ScrollToTop';
 import { Home } from './pages/Home';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
-import { CategoryPage } from './pages/CategoryPage';
 import { RetailShop } from './pages/RetailShop';
 import { ProductDetail } from './pages/ProductDetail';
 import { WholesaleCatalogue } from './pages/WholesaleCatalogue';
@@ -33,6 +32,12 @@ import { AdminWholesale } from './pages/admin/AdminWholesale';
 import { AdminOrders } from './pages/admin/AdminOrders';
 import { AdminCMS } from './pages/admin/AdminCMS';
 import { AdminUsers } from './pages/admin/AdminUsers';
+
+// Category Redirect Component (Bypasses standalone category page, redirects to Retail storefront with filter)
+const CategoryRedirect: React.FC = () => {
+  const { categorySlug } = useParams<{ categorySlug?: string }>();
+  return <Navigate to={categorySlug ? `/shop/retail?category=${categorySlug}` : '/shop/retail'} replace />;
+};
 
 // Protected Route Component (ONLY applied to Checkout, Purchasing & Account Pages)
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -115,22 +120,22 @@ export const App: React.FC = () => {
                   <Route path="/about" element={<StoreShell><About /></StoreShell>} />
                   <Route path="/contact" element={<StoreShell><Contact /></StoreShell>} />
 
-                  {/* Data-Driven Category Routes (PUBLIC) */}
-                  <Route path="/category/:categorySlug" element={<StoreShell><CategoryPage /></StoreShell>} />
-                  <Route path="/category/:categorySlug/:subcategorySlug" element={<StoreShell><CategoryPage /></StoreShell>} />
+                  {/* Data-Driven Category Redirects (Bypasses CategoryPage -> Goes to Retail Storefront) */}
+                  <Route path="/category/:categorySlug" element={<CategoryRedirect />} />
+                  <Route path="/category/:categorySlug/:subcategorySlug" element={<CategoryRedirect />} />
 
                   {/* Category Aliases */}
-                  <Route path="/silver-pooja-articles" element={<Navigate to="/category/silver-pooja-articles" replace />} />
-                  <Route path="/silver-pooja-articles/:subcategorySlug" element={<StoreShell><CategoryPage /></StoreShell>} />
-                  <Route path="/silver-god-temple-items" element={<Navigate to="/category/silver-god-temple-items" replace />} />
-                  <Route path="/silver-dining-tableware" element={<Navigate to="/category/silver-dining-tableware" replace />} />
-                  <Route path="/silver-baby-kids-gifts" element={<Navigate to="/category/silver-baby-kids-gifts" replace />} />
-                  <Route path="/silver-wedding-return-gifts" element={<Navigate to="/category/silver-wedding-return-gifts" replace />} />
-                  <Route path="/silver-jewellery" element={<Navigate to="/category/silver-jewellery" replace />} />
-                  <Route path="/silver-coins-bars" element={<Navigate to="/category/silver-coins-bars" replace />} />
-                  <Route path="/silver-home-decor" element={<Navigate to="/category/silver-home-decor" replace />} />
-                  <Route path="/silver-corporate-premium-gifts" element={<Navigate to="/category/silver-corporate-premium-gifts" replace />} />
-                  <Route path="/customized-silver-products" element={<Navigate to="/category/customized-silver-products" replace />} />
+                  <Route path="/silver-pooja-articles" element={<Navigate to="/shop/retail?category=silver-pooja-articles" replace />} />
+                  <Route path="/silver-pooja-articles/:subcategorySlug" element={<Navigate to="/shop/retail?category=silver-pooja-articles" replace />} />
+                  <Route path="/silver-god-temple-items" element={<Navigate to="/shop/retail?category=silver-god-temple-items" replace />} />
+                  <Route path="/silver-dining-tableware" element={<Navigate to="/shop/retail?category=silver-dining-tableware" replace />} />
+                  <Route path="/silver-baby-kids-gifts" element={<Navigate to="/shop/retail?category=silver-baby-kids-gifts" replace />} />
+                  <Route path="/silver-wedding-return-gifts" element={<Navigate to="/shop/retail?category=silver-wedding-return-gifts" replace />} />
+                  <Route path="/silver-jewellery" element={<Navigate to="/shop/retail?category=silver-jewellery" replace />} />
+                  <Route path="/silver-coins-bars" element={<Navigate to="/shop/retail?category=silver-coins-bars" replace />} />
+                  <Route path="/silver-home-decor" element={<Navigate to="/shop/retail?category=silver-home-decor" replace />} />
+                  <Route path="/silver-corporate-premium-gifts" element={<Navigate to="/shop/retail?category=silver-corporate-premium-gifts" replace />} />
+                  <Route path="/customized-silver-products" element={<Navigate to="/shop/retail?category=customized-silver-products" replace />} />
 
                   {/* Public Store Pages (PUBLIC) */}
                   <Route path="/shop/retail" element={<StoreShell><RetailShop /></StoreShell>} />

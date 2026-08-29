@@ -113,37 +113,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
             >
               <span>OUT OF STOCK</span>
             </button>
-          ) : isWholesaleOnly ? (
-            currentQuantity > 0 ? (
-              <div className="w-full flex items-center justify-between bg-[#F8F6F1] border border-[#B9A77A] rounded-xl p-1 shadow-2xs">
-                <button
-                  onClick={() => updateQuantity(product.id, Math.max(0, currentQuantity - 1))}
-                  className="w-8 h-8 rounded-lg bg-white text-[#202020] hover:bg-red-50 hover:text-red-600 font-bold flex items-center justify-center transition-colors shadow-2xs text-sm"
-                  title="Decrease Quantity"
-                >
-                  <Minus className="w-3.5 h-3.5" />
-                </button>
-                <span className="font-bold text-xs text-[#202020] px-2 font-sans">
-                  {currentQuantity} Pcs
-                </span>
-                <button
-                  onClick={() => updateQuantity(product.id, currentQuantity + 1)}
-                  className="w-8 h-8 rounded-lg bg-[#202020] text-white hover:bg-[#B9A77A] font-bold flex items-center justify-center transition-colors shadow-2xs text-sm"
-                  title="Increase Quantity"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => addToWholesaleCart(product)}
-                className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-xs"
-                title={`Add Wholesale MOQ (${product.min_wholesale_qty || 5} Pcs) to Request`}
-              >
-                <Briefcase className="w-3.5 h-3.5 text-[#B9A77A] group-hover:text-white" />
-                <span>+ ADD BULK ({product.min_wholesale_qty || 5} PCS)</span>
-              </button>
-            )
           ) : (
             <Link
               to={`/shop/retail/${product.slug}`}

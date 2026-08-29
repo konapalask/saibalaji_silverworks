@@ -343,17 +343,19 @@ export const RetailShop: React.FC = () => {
 
               <div className="space-y-2">
                 {MAIN_CATEGORIES.map((cat) => (
-                  <Link
+                  <button
                     key={cat.id}
-                    to={`/category/${cat.slug}`}
-                    onClick={() => setIsMobileFilterOpen(false)}
-                    className="w-full flex items-center justify-between text-left py-2.5 px-3 rounded-xl bg-[#FAF9F5] hover:bg-[#1A1918] hover:text-white transition-all font-semibold text-xs text-[#1A1918]"
+                    onClick={() => {
+                      updateFilter('category', cat.slug);
+                      setIsMobileFilterOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between text-left py-2.5 px-3 rounded-xl bg-[#FAF9F5] hover:bg-[#1A1918] hover:text-white transition-all font-semibold text-xs text-[#1A1918] cursor-pointer"
                   >
                     <span>{cat.name}</span>
                     <span className="text-[10px] text-[#C5A059] font-bold">
                       {cat.subcategories.length} Subs &rarr;
                     </span>
-                  </Link>
+                  </button>
                 ))}
               </div>
             </div>

@@ -89,7 +89,7 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({
       <div className="bg-white border-2 border-[#C5A059] rounded-3xl max-w-lg w-full shadow-2xl text-[#1A1918] relative z-20 overflow-hidden animate-in zoom-in-95 duration-300">
         
         {/* Header Ribbon */}
-        <div className="bg-gradient-to-r from-[#1A1918] via-[#2A2927] to-[#1A1918] text-white p-6 text-center relative border-b border-[#C5A059]/40">
+        <div className="bg-gradient-to-r from-[#1A1918] via-[#2A2927] to-[#1A1918] text-white pt-8 pb-6 px-6 text-center relative border-b border-[#C5A059]/40">
           <button 
             onClick={onClose}
             className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-white rounded-full bg-white/10 transition-colors"
