@@ -132,3 +132,58 @@ h4,
     cursor: default;
   }
 }
+
+/* Mobile-only Fullscreen Video Landscape Styling */
+@media (max-width: 768px) {
+  .video-player.mobile-video-fullscreen:fullscreen,
+  .video-player.mobile-video-fullscreen:-webkit-full-screen,
+  .video-player.mobile-video-fullscreen:-moz-full-screen,
+  .video-player.mobile-video-fullscreen:-ms-fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background: #000 !important;
+    aspect-ratio: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .video-player.mobile-video-fullscreen:fullscreen video,
+  .video-player.mobile-video-fullscreen:-webkit-full-screen video,
+  .video-player.mobile-video-fullscreen:-moz-full-screen video,
+  .video-player.mobile-video-fullscreen:-ms-fullscreen video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    background: #000 !important;
+  }
+
+  /* YouTube-style forced landscape overlay when phone is in portrait mode */
+  .video-player.mobile-landscape-forced {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 100vh !important;
+    height: 100vw !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+    transform-origin: center center !important;
+    z-index: 99999 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background: #000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .video-player.mobile-landscape-forced video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    background: #000 !important;
+  }
+}
