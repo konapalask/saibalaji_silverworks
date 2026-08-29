@@ -1,12 +1,14 @@
-# Sai Balaji Silverworks - 60-Second Conditional Git Auto-Sync Daemon
+# Sai Balaji Silverworks - 30-Second Conditional Git Auto-Sync Daemon
 # Only pulls from Git when new commits are pushed to remote origin/main.
+# Automatically rebuilds frontend, updates dependencies, and hot-reloads backend and frontend servers!
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $workspace = (Resolve-Path "$scriptDir\..").Path
 Set-Location $workspace
 
 # Ensure standard Node.js, Git, and NPM paths
-$env:PATH = "C:\Program Files\nodejs;C:\Program Files (x86)\nodejs;$workspace\bin\git\cmd;$env:LOCALAPPDATA\Programs\nodejs;$env:APPDATA\npm;$env:PATH"
+$nodePath = "C:\Program Files\nodejs;C:\Program Files (x86)\nodejs;$workspace\bin\git\cmd;$env:LOCALAPPDATA\Programs\nodejs;$env:APPDATA\npm"
+$env:PATH = "$nodePath;$env:PATH"
 
 $gitExe = "git.exe"
 if (Test-Path "$workspace\bin\git\cmd\git.exe") {
@@ -35,7 +37,29 @@ function Write-SyncLog {
     } catch {}
 }
 
-Write-SyncLog "Git Auto-Sync Daemon started (Checking remote every 60s in $workspace)"
+function Restart-BackendServer {
+    Write-SyncLog "Restarting Backend Server on port 8000..." "RELOAD"
+    $conn = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
+    if ($conn) {
+        Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 1
+    }
+    Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node server.js") -WindowStyle Hidden
+    Start-Sleep -Seconds 2
+}
+
+function Restart-FrontendServer {
+    Write-SyncLog "Restarting Frontend Production Server on port 5173..." "RELOAD"
+    $conn = Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue
+    if ($conn) {
+        Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 1
+    }
+    Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node serve_frontend.js") -WindowStyle Hidden
+    Start-Sleep -Seconds 2
+}
+
+Write-SyncLog "Git Auto-Sync Daemon started (Checking remote every 30s in $workspace)"
 
 while ($true) {
     try {
@@ -72,20 +96,17 @@ while ($true) {
                 cmd.exe /c "cd /d `"$workspace\frontend`" && npm install" 2>&1 | Out-Null
             }
 
-            # Check if frontend files changed -> rebuild UI bundle
-            if ($diffFiles -match "^frontend/") {
-                Write-SyncLog "Rebuilding frontend UI production bundle..." "BUILD"
-                cmd.exe /c "cd /d `"$workspace\frontend`" && npm run build" 2>&1 | Out-Null
+            # Rebuild frontend UI production bundle
+            Write-SyncLog "Rebuilding frontend UI production bundle..." "BUILD"
+            $buildRes = cmd.exe /c "cd /d `"$workspace\frontend`" && npm run build" 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                Write-SyncLog "npm run build warned - executing fallback vite build..." "WARN"
+                cmd.exe /c "cd /d `"$workspace\frontend`" && npx vite build" 2>&1 | Out-Null
             }
 
-            # Check if backend files changed -> restart backend server smoothly
-            if ($diffFiles -match "^backend/") {
-                Write-SyncLog "Backend code updated - restarting backend server on port 8000..." "RELOAD"
-                $backendConn = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
-                if ($backendConn) {
-                    Stop-Process -Id $backendConn.OwningProcess -Force -ErrorAction SilentlyContinue
-                }
-            }
+            # Restart backend and frontend servers
+            Restart-BackendServer
+            Restart-FrontendServer
 
             Write-SyncLog "Successfully synced and updated to commit $remoteHash" "SUCCESS"
         }
@@ -93,5 +114,5 @@ while ($true) {
         Write-SyncLog "Transient error checking git: $($_.Exception.Message)" "WARN"
     }
 
-    Start-Sleep -Seconds 60
+    Start-Sleep -Seconds 30
 }

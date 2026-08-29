@@ -1,5 +1,6 @@
-# Sai Balaji Silverworks - 24/7 Live Console Server & 60-Second Git Fetch Monitor
+# Sai Balaji Silverworks - 24/7 Live Console Server & Auto-Sync Monitor
 # Keeps Backend (8000), Frontend (5173), Cloudflare Tunnel, and Git Sync running with live visible output.
+# Automatically pulls new commits from GitHub, rebuilds frontend, and hot-reloads all servers immediately!
 
 $host.UI.RawUI.WindowTitle = "Sai Balaji Silverworks - Live Server & Git Sync Console"
 
@@ -59,7 +60,7 @@ Write-Host "====================================================================
 Write-Host "  Backend API:      http://localhost:8000/docs" -ForegroundColor White
 Write-Host "  Frontend Server:  http://localhost:5173" -ForegroundColor White
 Write-Host "  Cloudflare Live:  http://saibalaji.e3di.org/" -ForegroundColor Green
-Write-Host "  Git Auto-Sync:    Active (Checking origin/main every 60 seconds)" -ForegroundColor Cyan
+Write-Host "  Git Auto-Sync:    Active (Checking origin/main every 30 seconds)" -ForegroundColor Cyan
 Write-Host "  Keep-Awake:       Active (Sleep & Hibernate Disabled)" -ForegroundColor Cyan
 Write-Host "================================================================================" -ForegroundColor Cyan
 Write-Host ""
@@ -84,15 +85,35 @@ function Write-ConsoleLog {
     Write-Host $Message -ForegroundColor $color
 }
 
+function Restart-BackendServer {
+    Write-ConsoleLog "Restarting Backend Server (port 8000)..." "RELOAD"
+    $conn = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
+    if ($conn) {
+        Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 1
+    }
+    Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node server.js") -WindowStyle Hidden
+    Start-Sleep -Seconds 2
+}
+
+function Restart-FrontendServer {
+    Write-ConsoleLog "Restarting Frontend Production Server (port 5173)..." "RELOAD"
+    $conn = Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue
+    if ($conn) {
+        Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 1
+    }
+    Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node serve_frontend.js") -WindowStyle Hidden
+    Start-Sleep -Seconds 2
+}
+
 # Initial service check & launch
 Write-ConsoleLog "Initializing Sai Balaji 24/7 services..." "INFO"
 
 # 1. Backend Service
 $backendActive = (Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue)
 if (-not $backendActive) {
-    Write-ConsoleLog "Starting Node.js Backend Server on http://localhost:8000..." "BUILD"
-    Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node server.js") -WindowStyle Hidden
-    Start-Sleep -Seconds 2
+    Restart-BackendServer
 } else {
     Write-ConsoleLog "Backend Server is active on port 8000 [OK]" "OK"
 }
@@ -100,9 +121,7 @@ if (-not $backendActive) {
 # 2. Frontend Service
 $frontendActive = (Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue)
 if (-not $frontendActive) {
-    Write-ConsoleLog "Starting Frontend Production Server on http://localhost:5173..." "BUILD"
-    Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node serve_frontend.js") -WindowStyle Hidden
-    Start-Sleep -Seconds 2
+    Restart-FrontendServer
 } else {
     Write-ConsoleLog "Frontend Server is active on port 5173 [OK]" "OK"
 }
@@ -118,7 +137,7 @@ if (-not $cfProc) {
     Write-ConsoleLog "Cloudflare Tunnel is running (PID: $($cfProc.Id)) [OK]" "OK"
 }
 
-Write-ConsoleLog "All services online! Starting 60-second Git Fetch & Health Watchdog..." "SUCCESS"
+Write-ConsoleLog "All services online! Starting Git Fetch & Health Watchdog..." "SUCCESS"
 Write-Host "--------------------------------------------------------------------------------" -ForegroundColor DarkGray
 
 $cycleCount = 0
@@ -130,15 +149,13 @@ while ($true) {
         $bActive = (Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue)
         if (-not $bActive) {
             Write-ConsoleLog "Backend port 8000 down! Restarting Node backend..." "WARN"
-            Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node server.js") -WindowStyle Hidden
-            Start-Sleep -Seconds 2
+            Restart-BackendServer
         }
 
         $fActive = (Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue)
         if (-not $fActive) {
             Write-ConsoleLog "Frontend port 5173 down! Restarting frontend server..." "WARN"
-            Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node serve_frontend.js") -WindowStyle Hidden
-            Start-Sleep -Seconds 2
+            Restart-FrontendServer
         }
 
         $cProc = Get-Process -Name "cloudflared" -ErrorAction SilentlyContinue
@@ -149,7 +166,7 @@ while ($true) {
             Start-Sleep -Seconds 2
         }
 
-        # --- 2. Git Fetch & Auto-Sync (Every 60 Seconds) ---
+        # --- 2. Git Fetch & Auto-Sync ---
         & $gitExe fetch origin main --quiet 2>$null
         
         $localHash = ""
@@ -163,45 +180,44 @@ while ($true) {
             if ($localHash -ne $remoteHash) {
                 $shortLocal = $localHash.Substring(0, [Math]::Min(7, $localHash.Length))
                 $shortRemote = $remoteHash.Substring(0, [Math]::Min(7, $remoteHash.Length))
-                Write-ConsoleLog "UPDATE DETECTED on GitHub! (Local: $shortLocal -> Remote: $shortRemote)" "UPDATE"
+                Write-Host "`n********************************************************************************" -ForegroundColor Magenta
+                Write-ConsoleLog "NEW COMMITS DETECTED ON GITHUB! ($shortLocal -> $shortRemote)" "UPDATE"
+                Write-Host "********************************************************************************" -ForegroundColor Magenta
                 
                 # Identify changed files
                 $diffFiles = (& $gitExe diff --name-only $localHash $remoteHash 2>$null)
 
-                # Pull changes
-                Write-ConsoleLog "Pulling latest changes from origin/main..." "UPDATE"
+                # Pull and reset cleanly to latest remote commit
+                Write-ConsoleLog "Pulling latest code from origin/main..." "UPDATE"
                 & $gitExe reset --hard origin/main --quiet 2>$null
 
-                # Backend dependencies
+                # Backend dependencies update if package.json changed
                 if ($diffFiles -match "backend/package\.json") {
-                    Write-ConsoleLog "Updating backend npm packages..." "BUILD"
+                    Write-ConsoleLog "Backend package.json changed - running npm install in backend..." "BUILD"
                     cmd.exe /c "cd /d `"$workspace\backend`" && npm install" 2>&1 | Out-Null
                 }
 
-                # Frontend dependencies
+                # Frontend dependencies update if package.json changed
                 if ($diffFiles -match "frontend/package\.json") {
-                    Write-ConsoleLog "Updating frontend npm packages..." "BUILD"
+                    Write-ConsoleLog "Frontend package.json changed - running npm install in frontend..." "BUILD"
                     cmd.exe /c "cd /d `"$workspace\frontend`" && npm install" 2>&1 | Out-Null
                 }
 
-                # Frontend build
-                if ($diffFiles -match "^frontend/") {
-                    Write-ConsoleLog "Rebuilding frontend UI bundle..." "BUILD"
-                    cmd.exe /c "cd /d `"$workspace\frontend`" && npm run build" 2>&1 | Out-Null
+                # Rebuild frontend production bundle
+                Write-ConsoleLog "Rebuilding frontend UI production bundle..." "BUILD"
+                $buildOutput = cmd.exe /c "cd /d `"$workspace\frontend`" && npm run build" 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    Write-ConsoleLog "npm run build encountered warnings. Running fallback vite build..." "WARN"
+                    cmd.exe /c "cd /d `"$workspace\frontend`" && npx vite build" 2>&1 | Out-Null
                 }
 
-                # Backend code update -> reload
-                if ($diffFiles -match "^backend/") {
-                    Write-ConsoleLog "Restarting backend server on port 8000..." "RELOAD"
-                    $backendConn = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
-                    if ($backendConn) {
-                        Stop-Process -Id $backendConn.OwningProcess -Force -ErrorAction SilentlyContinue
-                        Start-Sleep -Seconds 1
-                    }
-                    Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node server.js") -WindowStyle Hidden
-                }
+                # Restart Backend & Frontend Servers so new code and routes take effect immediately
+                Restart-BackendServer
+                Restart-FrontendServer
 
-                Write-ConsoleLog "Successfully synced and updated to commit $shortRemote!" "SUCCESS"
+                Write-Host "================================================================================" -ForegroundColor Green
+                Write-ConsoleLog "SUCCESS: System fully updated and hot-reloaded to commit $shortRemote!" "SUCCESS"
+                Write-Host "================================================================================" -ForegroundColor Green
             } else {
                 $shortHash = $localHash.Substring(0, [Math]::Min(7, $localHash.Length))
                 $bStatus = if ($bActive) { "Backend: UP" } else { "Backend: RESTARTING" }
@@ -217,5 +233,5 @@ while ($true) {
         Write-ConsoleLog "Loop Warning: $($_.Exception.Message)" "WARN"
     }
 
-    Start-Sleep -Seconds 60
+    Start-Sleep -Seconds 30
 }

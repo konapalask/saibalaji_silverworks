@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, MessageSquare, Share2, Copy, X } from 'lucide-react';
-import { Product } from '../types';
+import { Product, ProductVariant } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useWholesale } from '../context/WholesaleContext';
@@ -80,7 +80,7 @@ export const ProductDetail: React.FC = () => {
   }, [slug]);
 
   // Compute available variants (synthesize 2", 3", 4", 6" if explicit variants list is empty)
-  const availableVariants = React.useMemo(() => {
+  const availableVariants: ProductVariant[] = React.useMemo(() => {
     if (!product) return [];
     if (Array.isArray(product.variants) && product.variants.length > 0) {
       return product.variants.filter(v => v.is_active !== false);
@@ -91,10 +91,10 @@ export const ProductDetail: React.FC = () => {
     const baseMcType = product.making_charge_type || 'fixed';
 
     return [
-      { id: 'v-2', measurement: '2 inch', weight_g: baseW, making_charge: baseMC, making_charge_type: baseMcType, sku: `${product.sku}-2IN`, stock: product.stock },
-      { id: 'v-3', measurement: '3 inch', weight_g: Math.round(baseW * 1.6), making_charge: Math.round(baseMC * 1.5), making_charge_type: baseMcType, sku: `${product.sku}-3IN`, stock: product.stock },
-      { id: 'v-4', measurement: '4 inch', weight_g: Math.round(baseW * 2.5), making_charge: Math.round(baseMC * 2.2), making_charge_type: baseMcType, sku: `${product.sku}-4IN`, stock: product.stock },
-      { id: 'v-6', measurement: '6 inch', weight_g: Math.round(baseW * 4.0), making_charge: Math.round(baseMC * 3.5), making_charge_type: baseMcType, sku: `${product.sku}-6IN`, stock: product.stock }
+      { id: 'v-2', measurement: '2 inch', weight_g: baseW, making_charge: baseMC, making_charge_type: baseMcType, sku: `${product.sku}-2IN`, stock: product.stock, is_active: true },
+      { id: 'v-3', measurement: '3 inch', weight_g: Math.round(baseW * 1.6), making_charge: Math.round(baseMC * 1.5), making_charge_type: baseMcType, sku: `${product.sku}-3IN`, stock: product.stock, is_active: true },
+      { id: 'v-4', measurement: '4 inch', weight_g: Math.round(baseW * 2.5), making_charge: Math.round(baseMC * 2.2), making_charge_type: baseMcType, sku: `${product.sku}-4IN`, stock: product.stock, is_active: true },
+      { id: 'v-6', measurement: '6 inch', weight_g: Math.round(baseW * 4.0), making_charge: Math.round(baseMC * 3.5), making_charge_type: baseMcType, sku: `${product.sku}-6IN`, stock: product.stock, is_active: true }
     ];
   }, [product]);
 

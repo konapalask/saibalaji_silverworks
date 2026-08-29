@@ -7,7 +7,7 @@ const fs = require('fs');
 const http = require('http');
 
 const app = express();
-const PORT = 5173;
+const PORT = process.env.PORT || 5173;
 const distDir = path.join(__dirname, '../frontend/dist');
 
 // Reverse Proxy for Backend APIs (Port 8000)
@@ -37,18 +37,46 @@ app.use('/public', proxyToBackend);
 app.use('/docs', proxyToBackend);
 app.use('/openapi.json', proxyToBackend);
 
-// Serve Static Frontend Assets
-if (fs.existsSync(distDir)) {
-  app.use(express.static(distDir));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(distDir, 'index.html'));
-  });
-} else {
-  app.get('*', (req, res) => {
-    res.send('<h1>Building frontend... Please wait a moment.</h1>');
-  });
-}
+// Serve static assets with long cache
+app.use('/assets', express.static(path.join(distDir, 'assets'), {
+  maxAge: '1y',
+  immutable: true
+}));
+
+// Static files in root of dist (favicon, robots.txt, etc.)
+app.use(express.static(distDir, {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
+
+// SPA Fallback for all other routes - always send index.html with no-cache headers
+app.get('*', (req, res) => {
+  const indexPath = path.join(distDir, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    return res.sendFile(indexPath);
+  }
+  res.status(503).send(`
+    <!DOCTYPE html>
+    <html>
+      <head><title>Sai Balaji Silverworks - Updating</title></head>
+      <body style="font-family:sans-serif;text-align:center;padding:50px;background:#FAF9F5;">
+        <h2>Sai Balaji Silverworks Server is updating...</h2>
+        <p>Rebuilding latest production version. Please refresh in a few seconds.</p>
+        <script>setTimeout(() => window.location.reload(), 3000);</script>
+      </body>
+    </html>
+  `);
+});
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Sai Balaji 24/7 Frontend Server is listening on http://0.0.0.0:${PORT}`);
 });
+
