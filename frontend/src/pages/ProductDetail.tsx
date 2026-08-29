@@ -508,24 +508,7 @@ export const ProductDetail: React.FC = () => {
               </button>
             </div>
 
-            {/* Dynamic WhatsApp vs B2B Wholesale Button Toggle */}
-            {!isWholesaleMode ? (
-              <button 
-                onClick={handleBuyNowOnWhatsApp}
-                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-4 rounded-2xl text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
-              >
-                <MessageSquare className="w-4 h-4 fill-current" />
-                <span>BUY NOW ON WHATSAPP</span>
-              </button>
-            ) : (
-              <button 
-                onClick={() => addToWholesaleCart(product, Math.max(activeQty, product.min_wholesale_qty || 5))}
-                className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-4 rounded-2xl text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
-              >
-                <Briefcase className="w-4 h-4 text-[#C5A059]" />
-                <span>ADD TO B2B WHOLESALE REQUEST LIST</span>
-              </button>
-            )}
+
           </div>
 
         </div>

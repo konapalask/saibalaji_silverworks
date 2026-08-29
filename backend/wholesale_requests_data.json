@@ -1,1 +1,327 @@
-[]
+[
+  {
+    "id": 1,
+    "request_number": "SBS-QT-224001",
+    "user_id": 3,
+    "company_name": "joyalokas",
+    "contact_person": "Nikhil Maddali",
+    "phone": "+91 9121266269",
+    "email": "samuelnikhilmddali123@gmail.com",
+    "gstin": "",
+    "address": "5 147 SF 1 PUCHALAPALLI SUNDARAIAH STREET\nNEAR INDIAN PETROL BUNK\nRAMAVARAPPADU VTC RAMAVARAPPADU",
+    "city": "VIJAYAWADA",
+    "state": "Andhra Pradesh",
+    "pincode": "520008",
+    "items": [
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "featured_image": "/images/products/silver-bowls-1.webp",
+        "unit_price": 69403.76,
+        "requested_quantity": 1,
+        "notes": ""
+      },
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "featured_image": "/images/products/silver-bowls-1.webp",
+        "unit_price": 69403.76,
+        "requested_quantity": 25,
+        "notes": ""
+      }
+    ],
+    "status": "QUOTE_ISSUED",
+    "created_at": "2026-08-29T08:13:44.001Z"
+  },
+  {
+    "id": 2,
+    "request_number": "SBS-QT-781307",
+    "user_id": 3,
+    "company_name": "SAHNI TATA",
+    "contact_person": "Nikhil Maddali",
+    "phone": "+91 9121266269",
+    "email": "samuelnikhilmddali123@gmail.com",
+    "gstin": "",
+    "address": "5 147 SF 1 PUCHALAPALLI SUNDARAIAH STREET\nNEAR INDIAN PETROL BUNK\nRAMAVARAPPADU VTC RAMAVARAPPADU",
+    "city": "VIJAYAWADA",
+    "state": "Andhra Pradesh",
+    "pincode": "520008",
+    "items": [
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 7,
+        "notes": ""
+      }
+    ],
+    "status": "QUOTE_ISSUED",
+    "created_at": "2026-08-29T08:23:01.307Z"
+  },
+  {
+    "id": 3,
+    "request_number": "SBS-QT-424205",
+    "user_id": 3,
+    "company_name": "alankar ",
+    "contact_person": "Nikhil Maddali",
+    "phone": "+91 9121266269",
+    "email": "samuelnikhilmddali123@gmail.com",
+    "gstin": "",
+    "address": "5 147 SF 1 PUCHALAPALLI SUNDARAIAH STREET\nNEAR INDIAN PETROL BUNK\nRAMAVARAPPADU VTC RAMAVARAPPADU",
+    "city": "VIJAYAWADA",
+    "state": "Andhra Pradesh",
+    "pincode": "520008",
+    "items": [
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 5,
+        "notes": ""
+      }
+    ],
+    "status": "QUOTE_ISSUED",
+    "created_at": "2026-08-29T08:33:44.205Z"
+  },
+  {
+    "id": 4,
+    "request_number": "SBS-QT-873064",
+    "user_id": 3,
+    "company_name": "abhinav",
+    "contact_person": "Nikhil Maddali",
+    "phone": "+91 9121266269",
+    "email": "samuelnikhilmddali123@gmail.com",
+    "gstin": "",
+    "address": "5 147 SF 1 PUCHALAPALLI SUNDARAIAH STREET\nNEAR INDIAN PETROL BUNK\nRAMAVARAPPADU VTC RAMAVARAPPADU",
+    "city": "VIJAYAWADA",
+    "state": "Andhra Pradesh",
+    "pincode": "520008",
+    "items": [
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "measurement": "2 inch",
+        "size": "2 inch",
+        "weight_g": 250,
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 2,
+        "notes": ""
+      },
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "measurement": "4 inch",
+        "size": "4 inch",
+        "weight_g": 625,
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 4,
+        "notes": ""
+      },
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "measurement": "6 inch",
+        "size": "6 inch",
+        "weight_g": 1000,
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 8,
+        "notes": ""
+      }
+    ],
+    "status": "QUOTE_ISSUED",
+    "created_at": "2026-08-29T08:41:13.064Z"
+  },
+  {
+    "id": 5,
+    "request_number": "SBS-QT-038057",
+    "user_id": 3,
+    "company_name": "dede",
+    "contact_person": "Nikhil Maddali",
+    "phone": "+91 9121266269",
+    "email": "samuelnikhilmddali123@gmail.com",
+    "gstin": "",
+    "address": "5 147 SF 1 PUCHALAPALLI SUNDARAIAH STREET\nNEAR INDIAN PETROL BUNK\nRAMAVARAPPADU VTC RAMAVARAPPADU",
+    "city": "VIJAYAWADA",
+    "state": "Andhra Pradesh",
+    "pincode": "520008",
+    "items": [
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "measurement": "2 inch",
+        "size": "2 inch",
+        "weight_g": 250,
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 2,
+        "notes": ""
+      },
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "measurement": "4 inch",
+        "size": "4 inch",
+        "weight_g": 625,
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 5,
+        "notes": ""
+      },
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "measurement": "6 inch",
+        "size": "6 inch",
+        "weight_g": 1000,
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 5,
+        "notes": ""
+      }
+    ],
+    "status": "PENDING",
+    "created_at": "2026-08-29T08:43:58.057Z"
+  },
+  {
+    "id": 6,
+    "request_number": "SBS-QT-501043",
+    "user_id": 3,
+    "company_name": "jew",
+    "contact_person": "Nikhil Maddali",
+    "phone": "+91 9121266269",
+    "email": "samuelnikhilmddali123@gmail.com",
+    "gstin": "",
+    "address": "5 147 SF 1 PUCHALAPALLI SUNDARAIAH STREET\nNEAR INDIAN PETROL BUNK\nRAMAVARAPPADU VTC RAMAVARAPPADU",
+    "city": "VIJAYAWADA",
+    "state": "Andhra Pradesh",
+    "pincode": "520008",
+    "items": [
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "measurement": "2 inch",
+        "selected_measurement": "2 inch",
+        "size": "2 inch",
+        "weight_g": 250,
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 1,
+        "notes": ""
+      },
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "measurement": "3 inch",
+        "selected_measurement": "3 inch",
+        "size": "3 inch",
+        "weight_g": 400,
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 2,
+        "notes": ""
+      },
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "measurement": "6 inch",
+        "selected_measurement": "6 inch",
+        "size": "6 inch",
+        "weight_g": 1000,
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 5,
+        "notes": ""
+      }
+    ],
+    "status": "QUOTE_ISSUED",
+    "created_at": "2026-08-29T08:51:41.043Z"
+  },
+  {
+    "id": 7,
+    "request_number": "SBS-QT-772494",
+    "user_id": 3,
+    "company_name": "gem",
+    "contact_person": "Nikhil Maddali",
+    "phone": "+91 9121266269",
+    "email": "samuelnikhilmddali123@gmail.com",
+    "gstin": "",
+    "address": "5 147 SF 1 PUCHALAPALLI SUNDARAIAH STREET\nNEAR INDIAN PETROL BUNK\nRAMAVARAPPADU VTC RAMAVARAPPADU",
+    "city": "VIJAYAWADA",
+    "state": "Andhra Pradesh",
+    "pincode": "520008",
+    "items": [
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "measurement": "3 inch",
+        "selected_measurement": "3 inch",
+        "size": "3 inch",
+        "weight_g": 400,
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 2,
+        "notes": ""
+      },
+      {
+        "product_id": 2,
+        "product_name": "Royal Antique Floral Engraved Silver Bowl Set – 5 Pieces",
+        "product_sku": "SBS-DT-002",
+        "measurement": "6 inch",
+        "selected_measurement": "6 inch",
+        "size": "6 inch",
+        "weight_g": 1000,
+        "featured_image": "/public/Saibalaji products S/Antique Floral Engraved Silver Bowl Set – 5 Pieces.webp",
+        "unit_price": 68860,
+        "requested_quantity": 3,
+        "notes": ""
+      },
+      {
+        "product_id": 7,
+        "product_name": "Classic Cartoon Star Border Silver Serving Tray",
+        "product_sku": "SBS-DT-007",
+        "measurement": "2 inch",
+        "selected_measurement": "2 inch",
+        "size": "2 inch",
+        "weight_g": 350,
+        "featured_image": "/public/Saibalaji products S/Classic Cartoon Star Border Silver Serving Tray.webp",
+        "unit_price": 96404,
+        "requested_quantity": 1,
+        "notes": ""
+      },
+      {
+        "product_id": 7,
+        "product_name": "Classic Cartoon Star Border Silver Serving Tray",
+        "product_sku": "SBS-DT-007",
+        "measurement": "6 inch",
+        "selected_measurement": "6 inch",
+        "size": "6 inch",
+        "weight_g": 1400,
+        "featured_image": "/public/Saibalaji products S/Classic Cartoon Star Border Silver Serving Tray.webp",
+        "unit_price": 96404,
+        "requested_quantity": 2,
+        "notes": ""
+      }
+    ],
+    "status": "Order Accepted",
+    "created_at": "2026-08-29T08:56:12.494Z"
+  }
+]

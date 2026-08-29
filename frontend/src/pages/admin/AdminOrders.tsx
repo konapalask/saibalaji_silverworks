@@ -3,11 +3,13 @@ import { ShoppingBag, Truck, CheckCircle2, Clock } from 'lucide-react';
 import { RetailOrder, Product } from '../../types';
 import api from '../../services/api';
 import { getItemImageUrl } from '../../utils/orderImage';
+import { ImagePreviewModal } from '../../components/ImagePreviewModal';
 
 export const AdminOrders: React.FC = () => {
   const [orders, setOrders] = useState<RetailOrder[]>([]);
   const [productCatalogMap, setProductCatalogMap] = useState<Record<number, Product>>({});
   const [loading, setLoading] = useState(true);
+  const [previewImageData, setPreviewImageData] = useState<{ url: string; title?: string; sku?: string } | null>(null);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -16,7 +18,10 @@ export const AdminOrders: React.FC = () => {
         api.get('/orders'),
         api.get('/products?limit=500')
       ]);
-      setOrders(ordRes.data);
+      const sortedOrders = Array.isArray(ordRes.data)
+        ? [...ordRes.data].sort((a: any, b: any) => new Date(b.created_at || b.id).getTime() - new Date(a.created_at || a.id).getTime())
+        : [];
+      setOrders(sortedOrders);
       const catMap: Record<number, Product> = {};
       if (Array.isArray(prodRes.data)) {
         prodRes.data.forEach((p: Product) => {
@@ -82,10 +87,18 @@ export const AdminOrders: React.FC = () => {
                       {ord.items && ord.items.length > 0 ? (
                         ord.items.map((item: any, idx: number) => {
                           const img = getItemImageUrl(item, productCatalogMap);
+                          const name = item.product_name || item.name || productCatalogMap[item.product_id]?.title || 'Silver Item';
+                          const sku = item.product_sku || item.sku || productCatalogMap[item.product_id]?.sku || '';
                           return (
                             <div key={item.id || idx} className="flex items-center gap-2.5 bg-[#FAF9F5] p-2 rounded-xl border border-[#E6E1DA]">
                               {img ? (
-                                <img src={img} alt="" className="w-10 h-12 object-cover rounded-lg bg-white border border-gray-200 shrink-0" />
+                                <img 
+                                  src={img} 
+                                  alt={name} 
+                                  onClick={() => setPreviewImageData({ url: img, title: name, sku })}
+                                  title="Click to expand image"
+                                  className="w-10 h-12 object-cover rounded-lg bg-black border border-gray-200 shrink-0 cursor-pointer hover:scale-105 transition-transform" 
+                                />
                               ) : (
                                 <div className="w-10 h-12 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-[#C5A059] shrink-0">
                                   <ShoppingBag className="w-4 h-4" />
@@ -146,6 +159,14 @@ export const AdminOrders: React.FC = () => {
           </table>
         </div>
       </div>
+
+      <ImagePreviewModal
+        isOpen={Boolean(previewImageData)}
+        onClose={() => setPreviewImageData(null)}
+        imageUrl={previewImageData?.url || ''}
+        title={previewImageData?.title}
+        sku={previewImageData?.sku}
+      />
 
     </div>
   );

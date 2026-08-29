@@ -17,9 +17,13 @@ export const WholesaleProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const { cart, addToCart, removeFromCart, updateQuantity, clearCart, totalQuantity } = useCart();
 
   // Map unified cart items to WholesaleCartItem interface for backwards compatibility
-  const wholesaleItems: WholesaleCartItem[] = cart.map(item => ({
+  const wholesaleItems: any[] = cart.map(item => ({
     product: item.product,
     requested_quantity: item.quantity,
+    selected_measurement: item.selected_measurement || item.measurement,
+    measurement: item.selected_measurement || item.measurement,
+    size: item.selected_measurement || item.measurement,
+    weight_g: item.weight_g,
     notes: ''
   }));
 

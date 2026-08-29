@@ -420,15 +420,29 @@ export const AccountPage: React.FC = () => {
             </div>
           ) : (
             wholesaleRequests.map((req) => {
-              const matchedQuote = quotations.find((q) => q.wholesale_request_id === req.id);
+              const matchedQuote = quotations.find((q) => q.wholesale_request_id === req.id || String(q.wholesale_request_id) === String(req.id) || q.wholesale_request_id === req.request_number);
+              let isAccepted = req.status === 'Order Accepted' || matchedQuote?.status === 'Order Accepted';
+              try {
+                const raw = localStorage.getItem('accepted_wholesale_order_ids');
+                const set = new Set(raw ? JSON.parse(raw) : []);
+                if (set.has(String(req.id)) || set.has(String(req.request_number))) {
+                  isAccepted = true;
+                }
+              } catch (e) {}
+
               return (
                 <div key={req.id} className="bg-white rounded-2xl border border-[#E6E1DA] p-6 shadow-sm space-y-4">
                   <div className="flex flex-col sm:flex-row justify-between sm:items-center border-b border-gray-100 pb-3 gap-2">
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-[#C5A059]">{req.request_number}</span>
-                        <span className="bg-amber-100 text-amber-800 text-[10px] font-bold uppercase px-2 py-0.5 rounded-full">
-                          {req.status}
+                        <span className={`text-[10px] font-bold uppercase px-2.5 py-1 rounded-full flex items-center gap-1 ${
+                          isAccepted ? 'bg-green-100 text-green-800 border border-green-300 font-bold' :
+                          matchedQuote ? 'bg-blue-100 text-blue-800 border border-blue-300 font-bold' :
+                          'bg-amber-100 text-amber-800 border border-amber-300'
+                        }`}>
+                          {isAccepted && <Check className="w-3 h-3 text-green-600 stroke-[3]" />}
+                          {isAccepted ? 'Order Accepted' : matchedQuote ? 'Quote Issued' : (req.status || 'Pending')}
                         </span>
                       </div>
                       <span className="text-[10px] text-gray-400">Company: {req.company_name} | Date: {new Date(req.created_at).toLocaleDateString()}</span>
@@ -449,14 +463,47 @@ export const AccountPage: React.FC = () => {
                     </button>
                   </div>
 
-                  <div className="space-y-1 text-xs">
-                    <p className="font-bold text-gray-500">Requested Items:</p>
-                    {req.items.map((item) => (
-                      <div key={item.id} className="flex justify-between text-gray-700">
-                        <span>• {item.product_name}</span>
-                        <span className="font-bold">{item.requested_quantity} Pcs</span>
-                      </div>
-                    ))}
+                  <div className="space-y-2 pt-1">
+                    <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Requested Items & Quantities:</p>
+                    {req.items && req.items.map((item: any, index: number) => {
+                      const itemImg = getItemImageUrl(item, productCatalogMap);
+                      const sizeVar = item.measurement || item.selected_measurement || item.size || item.selected_variant?.measurement || productCatalogMap[item.product_id]?.dimensions;
+                      const name = item.product_name || item.name || productCatalogMap[item.product_id]?.title || 'Silver Item';
+                      const sku = item.product_sku || item.sku || productCatalogMap[item.product_id]?.sku;
+                      const unitPrice = item.unit_price || item.price || productCatalogMap[item.product_id]?.retail_price;
+
+                      return (
+                        <div key={item.id || index} className="flex items-center gap-4 p-3 bg-[#FAF9F5] rounded-2xl border border-[#E6E1DA]">
+                          {itemImg ? (
+                            <img 
+                              src={itemImg} 
+                              alt={name} 
+                              className="w-14 h-16 object-cover rounded-xl bg-black border border-[#E6E1DA] shrink-0 shadow-2xs"
+                            />
+                          ) : (
+                            <div className="w-14 h-16 bg-white border border-[#E6E1DA] rounded-xl flex items-center justify-center text-[#C5A059] shrink-0">
+                              <Briefcase className="w-6 h-6" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-serif text-sm font-bold text-[#1A1918] truncate">{name}</h4>
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-gray-500 mt-0.5">
+                              {sku && <span>SKU: {sku}</span>}
+                              {sizeVar && <span className="bg-[#1A1918] text-white px-2 py-0.5 rounded text-[10px] font-bold">Size: {sizeVar}</span>}
+                              {item.weight_g && <span>Weight: {item.weight_g}g</span>}
+                              <span>Quantity: <strong className="text-[#1A1918]">{item.requested_quantity || item.quantity || 1} Pcs</strong></span>
+                            </div>
+                          </div>
+                          {unitPrice > 0 && (
+                            <div className="text-right shrink-0">
+                              <span className="font-bold text-sm text-[#1A1918]">
+                                ₹{(unitPrice * (item.requested_quantity || item.quantity || 1)).toLocaleString()}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {matchedQuote && (

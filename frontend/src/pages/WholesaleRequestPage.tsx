@@ -46,11 +46,22 @@ export const WholesaleRequestPage: React.FC = () => {
     try {
       const payload = {
         ...formData,
-        items: wholesaleItems.map((item) => ({
-          product_id: item.product.id,
-          requested_quantity: item.requested_quantity,
-          notes: item.notes || ''
-        }))
+        items: wholesaleItems.map((item: any) => {
+          const meas = item.measurement || item.selected_measurement || item.size || item.selected_variant?.measurement || item.product.dimensions || 'Standard';
+          return {
+            product_id: item.product.id,
+            product_name: item.product.title,
+            product_sku: item.product.sku,
+            measurement: meas,
+            selected_measurement: meas,
+            size: meas,
+            weight_g: item.weight_g || item.selected_variant?.weight_g || item.product.weight_g,
+            featured_image: item.product.featured_image,
+            unit_price: item.unit_price || item.product.wholesale_price || item.product.retail_price || 0,
+            requested_quantity: item.requested_quantity || item.quantity || 1,
+            notes: item.notes || ''
+          };
+        })
       };
 
       const res = await api.post('/wholesale/requests', payload);

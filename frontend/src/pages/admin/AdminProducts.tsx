@@ -8,6 +8,7 @@ import { Product, Category, ProductVariant } from '../../types';
 import api from '../../services/api';
 import { getErrorMessage } from '../../utils/apiError';
 import { useLiveSilver } from '../../context/LiveSilverContext';
+import { ImagePreviewModal } from '../../components/ImagePreviewModal';
 
 export const AdminProducts: React.FC = () => {
   const { silverStats, refreshSilverRate, calculateDynamicPrice } = useLiveSilver();
@@ -16,6 +17,7 @@ export const AdminProducts: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [previewImageData, setPreviewImageData] = useState<{ url: string; title?: string; sku?: string } | null>(null);
 
   // Filters & Search
   const [searchQuery, setSearchQuery] = useState('');
@@ -720,8 +722,10 @@ export const AdminProducts: React.FC = () => {
                           <div className="flex items-center gap-3">
                             <img 
                               src={p.featured_image} 
-                              alt="" 
-                              className="w-14 h-14 object-cover rounded-xl bg-black border border-[#E6E1DA] shrink-0" 
+                              alt={p.title} 
+                              onClick={() => setPreviewImageData({ url: p.featured_image, title: p.title, sku: p.sku })}
+                              className="w-14 h-14 object-cover rounded-xl bg-black border border-[#E6E1DA] shrink-0 cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-xs" 
+                              title="Click to expand image"
                             />
                             <div className="min-w-0 flex-1">
                               <span className="font-serif font-bold text-xs text-[#1A1918] line-clamp-2 leading-snug block" title={p.title}>
@@ -1334,6 +1338,15 @@ export const AdminProducts: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Image Zoom Preview Modal */}
+      <ImagePreviewModal
+        isOpen={Boolean(previewImageData)}
+        onClose={() => setPreviewImageData(null)}
+        imageUrl={previewImageData?.url || ''}
+        title={previewImageData?.title}
+        sku={previewImageData?.sku}
+      />
 
     </div>
   );

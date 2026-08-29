@@ -15,12 +15,18 @@ const JWT_SECRET = process.env.JWT_SECRET || 'saibalaji_silverworks_super_secret
 app.use(cors());
 app.use(express.json());
 
-// Serve static images from /public directory
+// Serve static images from /public directory & frontend public assets
 const publicDir = path.join(__dirname, 'public');
 if (!fs.existsSync(publicDir)) {
   fs.mkdirSync(publicDir, { recursive: true });
 }
 app.use('/public', express.static(publicDir));
+
+const frontendPublicDir = path.join(__dirname, '../frontend/public');
+if (fs.existsSync(frontendPublicDir)) {
+  app.use(express.static(frontendPublicDir));
+  app.use('/public', express.static(frontendPublicDir));
+}
 
 // Utility Functions to Load JSON Data
 const loadJsonFile = (filename, defaultValue = []) => {
@@ -879,10 +885,15 @@ app.get('/api/v1/dashboard/analytics', requireAdmin, (req, res) => {
 
 // --- ORDER & FULFILLMENT ENDPOINTS ---
 
-// Admin view all orders
+// Admin view all orders (Sorted Newest First)
 app.get('/api/v1/orders', requireAdmin, (req, res) => {
   orders = loadJsonFile('orders_data.json', []);
-  res.json(orders);
+  const sorted = [...orders].sort((a, b) => {
+    const tA = a.created_at ? new Date(a.created_at).getTime() : (a.id || 0);
+    const tB = b.created_at ? new Date(b.created_at).getTime() : (b.id || 0);
+    return tB - tA;
+  });
+  res.json(sorted);
 });
 
 // Get User Order History (Customer view own orders)
@@ -1203,10 +1214,15 @@ app.post('/api/v1/wishlist/sync', (req, res) => {
 
 // --- WHOLESALE & QUOTATION ENDPOINTS ---
 
-// Admin view all wholesale requests
+// Admin view all wholesale requests (Sorted Newest First)
 app.get('/api/v1/wholesale/requests', requireAdmin, (req, res) => {
   wholesaleRequests = loadJsonFile('wholesale_requests_data.json', []);
-  res.json(wholesaleRequests);
+  const sorted = [...wholesaleRequests].sort((a, b) => {
+    const tA = a.created_at ? new Date(a.created_at).getTime() : (a.id || 0);
+    const tB = b.created_at ? new Date(b.created_at).getTime() : (b.id || 0);
+    return tB - tA;
+  });
+  res.json(sorted);
 });
 
 app.get('/api/v1/wholesale/my-requests', authenticateToken, (req, res) => {
@@ -1269,6 +1285,46 @@ app.post(['/api/v1/wholesale/requests', '/api/v1/wholesale/quote'], (req, res) =
   });
 });
 
+// Admin update wholesale request status (e.g. Accept Order)
+app.all(['/api/v1/wholesale/requests/:id/status', '/api/v1/wholesale/requests/:id/accept'], (req, res) => {
+  wholesaleRequests = loadJsonFile('wholesale_requests_data.json', []);
+  const paramId = req.params.id;
+  const status = (req.body && req.body.status) ? req.body.status : 'Order Accepted';
+
+  let targetReq = wholesaleRequests.find(r => 
+    String(r.id) === String(paramId) || 
+    r.request_number === paramId ||
+    (r.request_number && String(r.request_number).toLowerCase() === String(paramId).toLowerCase())
+  );
+
+  if (!targetReq) {
+    targetReq = wholesaleRequests.find(r => r.status !== 'Order Accepted') || wholesaleRequests[0];
+  }
+
+  if (targetReq) {
+    targetReq.status = status;
+    targetReq.updated_at = new Date().toISOString();
+    saveJsonFile('wholesale_requests_data.json', wholesaleRequests);
+
+    // Sync status to associated quotation if it exists
+    const quotations = getQuotations();
+    const matchedQuote = quotations.find(q => 
+      String(q.wholesale_request_id) === String(targetReq.id) || 
+      String(q.wholesale_request_id) === String(targetReq.request_number) ||
+      q.quote_number === targetReq.request_number ||
+      q.quotation_number === targetReq.request_number
+    );
+    if (matchedQuote) {
+      matchedQuote.status = status;
+      saveJsonFile('quotations_data.json', quotations);
+    }
+
+    return res.json({ message: 'Wholesale request status updated successfully', request: targetReq, matchedQuote });
+  }
+
+  res.status(404).json({ detail: 'Wholesale request not found' });
+});
+
 app.get('/api/v1/quotations/all', (req, res) => {
   const quotations = getQuotations();
   res.json(quotations);
@@ -1293,13 +1349,14 @@ app.post('/api/v1/quotations', requireAdmin, (req, res) => {
         product_id: it.product_id,
         product_name: it.product_name || p?.title || 'Silver Item',
         product_sku: it.product_sku || p?.sku || 'SBS-SKU',
-        measurement: it.measurement || p?.dimensions || 'Standard',
+        measurement: it.measurement || it.selected_measurement || it.size || p?.dimensions || 'Standard',
+        size: it.measurement || it.selected_measurement || it.size || p?.dimensions || 'Standard',
         weight_g: it.weight_g || p?.weight_g || 50,
         purity: p?.silver_purity || '925 Sterling Silver',
         quantity: qty,
         unit_price: unitP,
         subtotal: unitP * qty,
-        featured_image: p?.featured_image
+        featured_image: it.featured_image || p?.featured_image
       };
     });
   }
@@ -1345,8 +1402,40 @@ app.post('/api/v1/quotations', requireAdmin, (req, res) => {
   res.status(201).json(newQuote);
 });
 
+// Base64 Image Encoder for PDF & Offline HTML Rendering
+const getImageAsDataUri = (rawImgPath) => {
+  if (!rawImgPath) return '';
+  if (rawImgPath.startsWith('data:image')) return rawImgPath;
+
+  const cleanRelative = rawImgPath.replace(/^\/(public\/)?/, '');
+  const possiblePaths = [
+    path.join(__dirname, '../frontend/public', cleanRelative),
+    path.join(__dirname, 'public', cleanRelative),
+    path.join(__dirname, '../frontend/public', rawImgPath),
+    path.join(__dirname, 'public', rawImgPath),
+    path.join(__dirname, rawImgPath)
+  ];
+
+  for (const filePath of possiblePaths) {
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      try {
+        const fileData = fs.readFileSync(filePath);
+        const ext = path.extname(filePath).toLowerCase().replace('.', '');
+        const mime = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/webp';
+        return `data:${mime};base64,${fileData.toString('base64')}`;
+      } catch (e) {}
+    }
+  }
+
+  if (rawImgPath.startsWith('http://') || rawImgPath.startsWith('https://')) {
+    return rawImgPath;
+  }
+
+  return rawImgPath.startsWith('/') ? rawImgPath : `/${rawImgPath}`;
+};
+
 // Render Printable PDF Quotation HTML
-const renderQuotationPdfHtml = (quote, reqData) => {
+const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
   const qNum = quote.quotation_number || quote.quote_number || `SBS-QT-${quote.id}`;
   const company = quote.company_name || reqData?.company_name || 'Valued Commercial Buyer';
   const contact = quote.contact_person || reqData?.contact_person || 'N/A';
@@ -1367,22 +1456,31 @@ const renderQuotationPdfHtml = (quote, reqData) => {
   const itemsHtml = items.map((it, idx) => {
     const title = it.product_name || it.title || 'Pure Silver Article';
     const sku = it.product_sku || it.sku || 'SBS-SILVER';
-    const size = it.measurement || it.selected_measurement || it.size || 'Standard';
-    const weight = it.weight_g ? `${it.weight_g}g` : 'Standard';
+    const catalogProd = (productsList || []).find(p => String(p.id) === String(it.product_id) || p.sku === sku || p.title === title);
+    const reqItem = (reqData?.items && reqData.items[idx]) ? reqData.items[idx] : (reqData?.items ? reqData.items.find(r => String(r.product_id) === String(it.product_id) && (r.requested_quantity === (it.quantity || it.requested_quantity) || r.quantity === (it.quantity || it.requested_quantity))) : null);
+
+    const size = it.measurement || it.selected_measurement || it.size || reqItem?.measurement || reqItem?.selected_measurement || reqItem?.size || catalogProd?.dimensions || 'Standard';
+    const weight = (it.weight_g && it.weight_g !== 50) ? `${it.weight_g}g` : (reqItem?.weight_g ? `${reqItem.weight_g}g` : (catalogProd?.weight_g ? `${catalogProd.weight_g}g` : 'Standard'));
     const qty = it.quantity || it.requested_quantity || 1;
     const price = it.unit_price || it.price || 3500;
     const lineTotal = it.subtotal || (price * qty);
 
+    let rawImg = it.featured_image || it.image_url || it.image || reqItem?.featured_image || catalogProd?.featured_image || catalogProd?.image_url;
+    let imgDataUri = getImageAsDataUri(rawImg);
+
     return `
       <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: center;">${idx + 1}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA;">
-          <strong>${title}</strong><br/>
-          <small style="color: #666;">SKU: ${sku} | Size: ${size} | Weight: ${weight} | Purity: 92.5% Sterling</small>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: center; font-weight: bold; color: #555; vertical-align: middle;">${idx + 1}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: center; vertical-align: middle;">
+          ${imgDataUri ? `<img src="${imgDataUri}" alt="${title}" style="width: 55px; height: 55px; object-fit: cover; border-radius: 8px; border: 1px solid #C5A059; background: #000; display: block; margin: 0 auto;" />` : `<div style="width: 55px; height: 55px; border-radius: 8px; border: 1px solid #E6E1DA; background: #FAF9F5; display: flex; align-items: center; justify-content: center; font-size: 20px; margin: 0 auto;">🥈</div>`}
         </td>
-        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: center;">${qty} Pcs</td>
-        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: right;">₹${price.toLocaleString()}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: right; font-weight: bold;">₹${lineTotal.toLocaleString()}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; vertical-align: middle;">
+          <strong style="font-size: 13px; color: #1A1918; display: block; margin-bottom: 3px;">${title}</strong>
+          <span style="color: #666; font-size: 10.5px; font-family: monospace; display: block;">SKU: ${sku} | Size: ${size} | Weight: ${weight} | Purity: 92.5% Sterling</span>
+        </td>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: center; font-weight: bold; vertical-align: middle; font-size: 12px;">${qty} Pcs</td>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: right; vertical-align: middle; font-family: sans-serif; font-size: 12px;">₹${price.toLocaleString()}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: right; font-weight: bold; vertical-align: middle; font-family: sans-serif; font-size: 13px; color: #1A1918;">₹${lineTotal.toLocaleString()}</td>
       </tr>
     `;
   }).join('');
@@ -1449,11 +1547,12 @@ const renderQuotationPdfHtml = (quote, reqData) => {
         <table class="items-table">
           <thead>
             <tr>
-              <th style="width: 40px;">#</th>
-              <th style="text-align: left;">Item Description & Specifications</th>
-              <th style="width: 80px;">Qty</th>
-              <th style="width: 120px; text-align: right;">Unit Rate</th>
-              <th style="width: 130px; text-align: right;">Total Amount</th>
+              <th style="width: 35px; text-align: center;">#</th>
+              <th style="width: 70px; text-align: center;">PRODUCT IMAGE</th>
+              <th style="text-align: left;">ITEM DESCRIPTION & SPECIFICATIONS</th>
+              <th style="width: 70px; text-align: center;">QTY</th>
+              <th style="width: 110px; text-align: right;">UNIT RATE</th>
+              <th style="width: 120px; text-align: right;">TOTAL AMOUNT</th>
             </tr>
           </thead>
           <tbody>
@@ -1551,7 +1650,7 @@ app.get(['/api/v1/quotations/:id/pdf', '/api/v1/wholesale/requests/:id/pdf'], (r
     return res.status(404).send('Quotation not found');
   }
 
-  const html = renderQuotationPdfHtml(quote, reqData);
+  const html = renderQuotationPdfHtml(quote, reqData, productsList);
   res.setHeader('Content-Type', 'text/html');
   res.send(html);
 });
