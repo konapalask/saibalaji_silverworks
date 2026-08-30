@@ -76,8 +76,8 @@ export const Home: React.FC = () => {
   // Heritage Timeline Data
   const timelineEvents = [
     {
-      era: "1990s / FOUNDATION",
-      year: "EST. 1998",
+      era: "2010s / FOUNDATION",
+      year: "EST. 2019",
       title: "The Atelier Foundation",
       description: "Founded as a specialized silver casting studio in Tenali, dedicated to hand-carved temple idols and pure metallurgic formulations.",
       image: "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Pooja-Plates/DSC_7725.webp"
@@ -119,7 +119,7 @@ export const Home: React.FC = () => {
   const storyVid = videos.find(v => v.section === 'hero') || {
     id: 1,
     title: "The Heritage of Sai Balaji Silverworks",
-    description: "Discover 25+ years of South Indian silver craftsmanship, from raw 99.9% silver bullion to hallmarked masterpieces.",
+    description: "Discover 7+ years of South Indian silver craftsmanship, from raw 99.9% silver bullion to hallmarked masterpieces.",
     video_url: "https://assets.mixkit.co/videos/preview/mixkit-silversmith-crafting-metal-work-41584-large.mp4",
     thumbnail_url: "/hero_balaji_4k.webp",
     section: "hero",
@@ -151,7 +151,7 @@ export const Home: React.FC = () => {
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E5E0D8] shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-[#B9A77A] animate-pulse" />
               <span className="text-[10.5px] font-sans font-bold uppercase tracking-[0.25em] text-[#666666]">
-                EST. 1998 • TENALI, INDIA
+                EST. 2019 • TENALI, INDIA
               </span>
             </div>
 
@@ -168,7 +168,7 @@ export const Home: React.FC = () => {
 
             {/* Short Supporting Copy */}
             <p className="text-sm sm:text-base text-[#555555] font-light leading-relaxed max-w-xl mx-auto lg:mx-0">
-              Three decades of South Indian craftsmanship, metallurgical precision and 100% NABL-certified silver — shaped in Tenali.
+              7+ years of South Indian craftsmanship, metallurgical precision and 100% NABL-certified silver — shaped in Tenali.
             </p>
 
             {/* Certification Trust Line */}
@@ -282,7 +282,7 @@ export const Home: React.FC = () => {
           </div>
 
           <div className="bg-white p-8 rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] transition-all product-shadow space-y-4 text-center">
-            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">25+</span>
+            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">7+</span>
             <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">YEARS OF LEGACY</h3>
             <p className="text-xs text-[#666666] font-light leading-relaxed max-w-xs mx-auto">
               Established South Indian silver manufacturing atelier based in Tenali, Andhra Pradesh.
@@ -320,11 +320,11 @@ export const Home: React.FC = () => {
               to={`/shop/retail?category=${cat.slug}`}
               className="group bg-white rounded-2xl border border-[#E5E0D8] overflow-hidden product-card-hover flex flex-col justify-between"
             >
-              <div className="relative aspect-4/3 w-full bg-black overflow-hidden p-3 border-b border-[#F0ECE6]">
+              <div className="relative aspect-4/3 w-full bg-black overflow-hidden p-1 sm:p-2 border-b border-[#F0ECE6]">
                 <img
                   src={cat.cardImage}
                   alt={cat.name}
-                  className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-700 bg-black"
+                  className="w-full h-full object-cover rounded-xl scale-120 sm:scale-125 group-hover:scale-130 sm:group-hover:scale-135 transition-transform duration-700 bg-black"
                 />
               </div>
 
@@ -394,50 +394,6 @@ export const Home: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="px-4 py-2 bg-white rounded-full border border-[#E5E0D8] text-xs font-medium text-gray-700 shadow-xs flex items-center gap-2">
-              <Video className="w-3.5 h-3.5 text-[#B9A77A]" />
-              <span><strong>{homeFilteredVideos.length}</strong> Videos Available</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Filter Tabs & Search Bar */}
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-[#E5E0D8] shadow-xs">
-          {/* Category Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
-            {videoCategories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => {
-                  setVideoCategory(cat);
-                  setVideoDisplayCount(8);
-                }}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                  videoCategory === cat
-                    ? 'bg-[#202020] text-white shadow-xs'
-                    : 'bg-[#FAF8F5] text-gray-600 hover:bg-[#E5E0D8] hover:text-[#202020]'
-                }`}
-              >
-                {cat === 'ALL' ? `All Videos (${videos.length})` : cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Search Input */}
-          <div className="relative w-full md:w-72 shrink-0">
-            <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search title or video code..."
-              value={videoSearch}
-              onChange={(e) => {
-                setVideoSearch(e.target.value);
-                setVideoDisplayCount(8);
-              }}
-              className="w-full pl-9 pr-4 py-2 text-xs bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl focus:outline-none focus:border-[#B9A77A] transition-colors"
-            />
-          </div>
         </div>
 
         {/* Video Grid */}

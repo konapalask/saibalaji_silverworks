@@ -48,7 +48,7 @@ export const Footer: React.FC = () => {
                   SILVERWORKS
                 </span>
                 <span className="text-[8px] uppercase tracking-[0.2em] text-[#888888] font-sans">
-                  EST. 1998 • TENALI, AP
+                  EST. 2019 • TENALI, AP
                 </span>
               </div>
             </Link>

@@ -394,11 +394,11 @@ export const WholesaleCatalogue: React.FC = () => {
               }}
               className="group bg-white rounded-3xl border border-[#E5E0D8] overflow-hidden product-card-hover flex flex-col justify-between text-left cursor-pointer"
             >
-              <div className="relative aspect-4/3 w-full bg-black overflow-hidden p-2">
+              <div className="relative aspect-4/3 w-full bg-black overflow-hidden p-1 sm:p-2">
                 <img
                   src={cat.cardImage}
                   alt={cat.name}
-                  className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500 bg-black"
+                  className="w-full h-full object-cover rounded-2xl scale-120 sm:scale-125 group-hover:scale-130 sm:group-hover:scale-135 transition-transform duration-500 bg-black"
                 />
                 <span className="absolute bottom-4 left-4 bg-white/95 text-[#202020] text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border border-[#E5E0D8]">
                   {cat.subcategories.length} Subcategories

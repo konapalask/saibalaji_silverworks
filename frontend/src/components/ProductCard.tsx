@@ -33,13 +33,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
       {/* Top Product Image Container with 3:2 Aspect Ratio */}
       <Link
         to={`/shop/retail/${product.slug}`}
-        className="relative aspect-3/2 w-full bg-[#000000] overflow-hidden p-2 sm:p-3 flex items-center justify-center border-b border-[#F0ECE6] block group/img"
+        className="relative aspect-3/2 w-full bg-[#000000] overflow-hidden p-1 sm:p-1.5 flex items-center justify-center border-b border-[#F0ECE6] block group/img"
       >
         {/* Product Photography - Clean 3:2 filled studio photography */}
         <img
           src={product.featured_image}
           alt={product.title}
-          className="w-full h-full object-cover rounded-xl img-editorial drop-shadow-md group-hover/img:scale-105 transition-transform duration-500 bg-black"
+          className="w-full h-full object-cover rounded-xl img-editorial drop-shadow-md scale-115 sm:scale-120 group-hover/img:scale-125 transition-transform duration-500 bg-black"
           loading="lazy"
         />
 
