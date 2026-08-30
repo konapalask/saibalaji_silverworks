@@ -28,13 +28,19 @@ if (fs.existsSync(frontendPublicDir)) {
   app.use('/public', express.static(frontendPublicDir));
 }
 
-// Utility Functions to Load JSON Data
+// Utility Functions to Load JSON Data (Preserves existing data; auto-creates missing files safely)
 const loadJsonFile = (filename, defaultValue = []) => {
   const filePath = path.join(__dirname, filename);
   try {
     if (fs.existsSync(filePath)) {
       const data = fs.readFileSync(filePath, 'utf8');
-      return JSON.parse(data);
+      if (data && data.trim().length > 0) {
+        return JSON.parse(data);
+      }
+    } else {
+      // File genuinely does not exist on disk - create it with default empty structure
+      fs.writeFileSync(filePath, JSON.stringify(defaultValue, null, 2), 'utf8');
+      return defaultValue;
     }
   } catch (err) {
     console.error(`Error reading ${filename}:`, err);

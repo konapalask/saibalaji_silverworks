@@ -32,10 +32,18 @@ env.bak/
 venv.bak/
 .pytest_cache/
 
-# Databases
+# Databases & Runtime JSON Data Files
 *.db
 *.sqlite
 *.sqlite3
+
+# Protect all JSON data files from Git tracking (EXCEPT package.json and package-lock.json)
+*.json
+!package.json
+!package-lock.json
+!**/package.json
+!**/package-lock.json
+
 
 # IDE / Editor files
 .vscode/

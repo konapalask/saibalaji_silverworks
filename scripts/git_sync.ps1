@@ -81,8 +81,47 @@ while ($true) {
             # Identify which files changed
             $diffFiles = (& $gitExe diff --name-only $localHash $remoteHash 2>$null)
 
-            # Pull changes cleanly (matching origin/main)
+            # 1. Protect & snapshot all JSON data files before git reset (excluding package.json/package-lock.json)
+            $backupDir = "$workspace\.json_backups"
+            if (-not (Test-Path $backupDir)) {
+                New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
+            }
+            $protectedFiles = Get-ChildItem -Path $workspace -Recurse -Filter "*.json" | Where-Object {
+                $_.FullName -notlike "*node_modules*" -and $_.Name -ne "package.json" -and $_.Name -ne "package-lock.json"
+            }
+            $snapshots = @{}
+            foreach ($pFile in $protectedFiles) {
+                $relPath = $pFile.FullName.Substring($workspace.Length + 1)
+                $safeBackupName = $relPath -replace "[\\/]", "__"
+                $backupPath = Join-Path $backupDir $safeBackupName
+                Copy-Item -Path $pFile.FullName -Destination $backupPath -Force
+                $snapshots[$relPath] = Get-Content -Path $pFile.FullName -Raw
+            }
+
+            # 2. Pull changes cleanly (matching origin/main)
             & $gitExe reset --hard origin/main --quiet 2>$null
+
+            # 3. Restore any protected JSON data files if modified or removed by git reset
+            foreach ($kv in $snapshots.GetEnumerator()) {
+                $relPath = $kv.Key
+                $savedContent = $kv.Value
+                $targetPath = Join-Path $workspace $relPath
+                $safeBackupName = $relPath -replace "[\\/]", "__"
+                $backupPath = Join-Path $backupDir $safeBackupName
+
+                if (-not (Test-Path $targetPath)) {
+                    Write-SyncLog "Restoring protected JSON file deleted during git pull: $relPath" "WARN"
+                    $targetDir = Split-Path -Parent $targetPath
+                    if (-not (Test-Path $targetDir)) { New-Item -ItemType Directory -Path $targetDir -Force | Out-Null }
+                    Copy-Item -Path $backupPath -Destination $targetPath -Force
+                } else {
+                    $currentContent = Get-Content -Path $targetPath -Raw
+                    if ($currentContent -ne $savedContent) {
+                        Write-SyncLog "Restoring protected JSON file modified during git pull: $relPath" "WARN"
+                        Set-Content -Path $targetPath -Value $savedContent -NoNewline
+                    }
+                }
+            }
 
             # Check if backend dependencies changed
             if ($diffFiles -match "backend/package\.json") {
