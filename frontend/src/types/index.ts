@@ -108,6 +108,7 @@ export interface CartItem {
   quantity: number;
   variant_id?: string;
   selected_measurement?: string;
+  measurement?: string;
   selected_variant?: ProductVariant;
   weight_g?: number;
   making_charge?: number;
