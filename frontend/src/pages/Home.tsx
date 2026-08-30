@@ -314,17 +314,21 @@ export const Home: React.FC = () => {
 
         {/* Collections Grid — 4 Main Categories */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {MAIN_CATEGORIES.map((cat) => (
+          {MAIN_CATEGORIES.map((cat, index) => (
             <Link
               key={cat.id}
               to={`/shop/retail?category=${cat.slug}`}
               className="group bg-white rounded-2xl border border-[#E5E0D8] overflow-hidden product-card-hover flex flex-col justify-between"
             >
-              <div className="relative aspect-4/3 w-full bg-black overflow-hidden p-1 sm:p-2 border-b border-[#F0ECE6]">
+              <div className="relative aspect-4/3 w-full bg-black overflow-hidden p-3 border-b border-[#F0ECE6] flex items-center justify-center">
                 <img
                   src={cat.cardImage}
                   alt={cat.name}
-                  className="w-full h-full object-cover rounded-xl scale-120 sm:scale-125 group-hover:scale-130 sm:group-hover:scale-135 transition-transform duration-700 bg-black"
+                  className={`w-full h-full object-contain rounded-lg transition-transform duration-500 bg-black ${
+                    index === 3 || cat.slug === 'silver-wedding-return-gifts'
+                      ? "scale-[1.38] sm:scale-[1.42] group-hover:scale-[1.48] sm:group-hover:scale-[1.52]"
+                      : "group-hover:scale-105"
+                  }`}
                 />
               </div>
 
