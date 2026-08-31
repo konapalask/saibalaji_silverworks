@@ -33,8 +33,9 @@ const loadJsonFile = (filename, defaultValue = []) => {
   const filePath = path.join(__dirname, filename);
   try {
     if (fs.existsSync(filePath)) {
-      const data = fs.readFileSync(filePath, 'utf8');
+      let data = fs.readFileSync(filePath, 'utf8');
       if (data && data.trim().length > 0) {
+        data = data.replace(/^\uFEFF/, '');
         return JSON.parse(data);
       }
     } else {

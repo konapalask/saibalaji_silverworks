@@ -37,12 +37,17 @@ venv.bak/
 *.sqlite
 *.sqlite3
 
-# Protect all JSON data files from Git tracking (EXCEPT package.json and package-lock.json)
+# Protect all JSON data files from Git tracking (EXCEPT config and package files)
 *.json
 !package.json
 !package-lock.json
 !**/package.json
 !**/package-lock.json
+!tsconfig*.json
+!**/tsconfig*.json
+!.oxlintrc.json
+!**/vercel.json
+!vercel.json
 
 
 # IDE / Editor files
