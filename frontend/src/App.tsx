@@ -15,6 +15,8 @@ import { ScrollToTop } from './components/ScrollToTop';
 import { Home } from './pages/Home';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { TermsAndConditions } from './pages/TermsAndConditions';
 import { RetailShop } from './pages/RetailShop';
 import { ProductDetail } from './pages/ProductDetail';
 import { WholesaleCatalogue } from './pages/WholesaleCatalogue';
@@ -118,6 +120,10 @@ export const App: React.FC = () => {
                   <Route path="/" element={<StoreShell><Home /></StoreShell>} />
                   <Route path="/home" element={<StoreShell><Home /></StoreShell>} />
                   <Route path="/about" element={<StoreShell><About /></StoreShell>} />
+                  <Route path="/privacy-policy" element={<StoreShell><PrivacyPolicy /></StoreShell>} />
+                  <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
+                  <Route path="/terms-and-conditions" element={<StoreShell><TermsAndConditions /></StoreShell>} />
+                  <Route path="/terms" element={<Navigate to="/terms-and-conditions" replace />} />
                   <Route path="/contact" element={<StoreShell><Contact /></StoreShell>} />
 
                   {/* Data-Driven Category Redirects (Bypasses CategoryPage -> Goes to Retail Storefront) */}

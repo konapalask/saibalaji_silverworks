@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Play, ShieldCheck, Factory, Award, Film, ChevronDown, Video } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Play, ShieldCheck, Factory, Award, Film, ChevronDown, Video, FileText, ArrowRight, Lock } from 'lucide-react';
 import { CompanyVideo } from '../types';
 import { VideoPlayerModal } from '../components/VideoPlayerModal';
 import { initialVideosData } from '../data/videosData';
@@ -204,6 +205,63 @@ export const About: React.FC = () => {
           </div>
           <h3 className="font-serif text-xl font-bold text-[#1A1918]">Pan-India B2B Supply</h3>
           <p className="text-xs text-gray-600">Trusted wholesale partner for jewellers, corporate houses, and temples requiring reliable bulk supply.</p>
+        </div>
+      </div>
+
+      {/* Trust & Legal Governance Section */}
+      <div className="bg-white border border-[#E6E1DA] rounded-3xl p-8 sm:p-10 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E6E1DA] pb-4">
+          <div>
+            <span className="text-xs uppercase tracking-[0.3em] text-[#C5A059] font-bold block">
+              TRANSPARENCY & COMPLIANCE
+            </span>
+            <h3 className="font-serif text-2xl font-bold text-[#1A1918]">
+              Legal Policies & Corporate Standards
+            </h3>
+          </div>
+          <p className="text-xs text-gray-500 max-w-md">
+            Our operations maintain strict adherence to NABL hallmarking norms, live bullion pricing compliance, and customer privacy protocols.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-6 bg-[#FAF9F5] rounded-2xl border border-[#E6E1DA] flex flex-col justify-between space-y-4 group hover:border-[#C5A059] transition-all">
+            <div className="space-y-2">
+              <div className="w-10 h-10 rounded-xl bg-white border border-[#E6E1DA] flex items-center justify-center text-[#C5A059] group-hover:scale-105 transition-transform">
+                <Lock className="w-5 h-5" />
+              </div>
+              <h4 className="font-serif text-lg font-bold text-[#1A1918]">Privacy Policy</h4>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Learn how we protect your personal identification, order records, 256-bit SSL encrypted payments, and B2B wholesale quotation data.
+              </p>
+            </div>
+            <Link
+              to="/privacy-policy"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C5A059] hover:text-[#1A1918] transition-colors"
+            >
+              <span>Read Privacy Policy</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="p-6 bg-[#FAF9F5] rounded-2xl border border-[#E6E1DA] flex flex-col justify-between space-y-4 group hover:border-[#C5A059] transition-all">
+            <div className="space-y-2">
+              <div className="w-10 h-10 rounded-xl bg-white border border-[#E6E1DA] flex items-center justify-center text-[#C5A059] group-hover:scale-105 transition-transform">
+                <FileText className="w-5 h-5" />
+              </div>
+              <h4 className="font-serif text-lg font-bold text-[#1A1918]">Terms & Conditions</h4>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Understand live market silver rate adjustments, 925 sterling & 999 fine purity standards, unboxing video requirements, and delivery terms.
+              </p>
+            </div>
+            <Link
+              to="/terms-and-conditions"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C5A059] hover:text-[#1A1918] transition-colors"
+            >
+              <span>Read Terms & Conditions</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
       </div>
 
