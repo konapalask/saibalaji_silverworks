@@ -697,28 +697,59 @@ function floatVal(val, defaultVal = 0) {
   return isNaN(n) ? defaultVal : n;
 }
 
-// Recalculate currentPrice = basePrice + (currentSilverRate - baseSilverRate) for all 177 products
+// Recalculate dynamic product prices based on live silver rate, weight, purity and making charges
 function updateAllProductPrices(newSilverRate) {
   let productsList = getProducts();
   if (!productsList || productsList.length === 0) return;
 
   let modified = false;
   productsList = productsList.map(p => {
-    const baseP = floatVal(p.base_price !== undefined ? p.base_price : p.retail_price, 2500);
-    const baseSR = floatVal(p.base_silver_rate !== undefined ? p.base_silver_rate : 250.64, 250.64);
-    
-    // Formula: currentPrice = basePrice + (currentSilverRate - baseSilverRate)
-    const calculatedPrice = Math.max(1, Math.round((baseP + (newSilverRate - baseSR)) * 100) / 100);
+    let calculatedPrice = 0;
+    let calculatedWholesalePrice = 0;
 
-    if (p.current_price !== calculatedPrice || p.current_silver_rate !== newSilverRate || p.base_price === undefined) {
+    const netWeight = floatVal(p.net_silver_weight_g !== undefined ? p.net_silver_weight_g : p.weight_g, 0);
+    const making = floatVal(p.making_charges, 0);
+    const purity = p.silver_purity || '925';
+    const mcType = p.making_charge_type || 'fixed';
+
+    if (Array.isArray(p.variants) && p.variants.length > 0) {
+      const activeVariants = p.variants.filter(v => v.is_active !== false);
+      const sourceVariants = activeVariants.length > 0 ? activeVariants : p.variants;
+      
+      let minPrice = Infinity;
+      let minWholesale = Infinity;
+
+      sourceVariants.forEach(v => {
+        const vWeight = floatVal(v.weight_g, netWeight);
+        const vMc = floatVal(v.making_charge, making);
+        const vMcType = v.making_charge_type || mcType;
+        const res = calculateProductPrice(vWeight, vMc, vMcType, purity, newSilverRate);
+        if (res.finalPrice < minPrice) {
+          minPrice = res.finalPrice;
+          minWholesale = res.wholesalePrice;
+        }
+      });
+      calculatedPrice = minPrice !== Infinity ? minPrice : 0;
+      calculatedWholesalePrice = minWholesale !== Infinity ? minWholesale : 0;
+    } else if (netWeight > 0) {
+      const res = calculateProductPrice(netWeight, making, mcType, purity, newSilverRate);
+      calculatedPrice = res.finalPrice;
+      calculatedWholesalePrice = res.wholesalePrice;
+    } else {
+      const baseP = floatVal(p.base_price !== undefined ? p.base_price : p.retail_price, 2500);
+      const baseSR = floatVal(p.base_silver_rate !== undefined ? p.base_silver_rate : 250.64, 250.64);
+      calculatedPrice = Math.max(1, Math.round((baseP + (newSilverRate - baseSR)) * 100) / 100);
+      calculatedWholesalePrice = floatVal(p.wholesale_price, calculatedPrice);
+    }
+
+    if (p.current_price !== calculatedPrice || p.retail_price !== calculatedPrice || p.wholesale_price !== calculatedWholesalePrice || p.current_silver_rate !== newSilverRate) {
       modified = true;
       return {
         ...p,
-        base_price: baseP,
-        base_silver_rate: baseSR,
         current_silver_rate: newSilverRate,
         current_price: calculatedPrice,
         retail_price: calculatedPrice,
+        wholesale_price: calculatedWholesalePrice,
         last_silver_rate_updated_at: new Date().toISOString()
       };
     }

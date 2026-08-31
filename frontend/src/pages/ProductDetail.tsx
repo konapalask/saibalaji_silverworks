@@ -189,9 +189,7 @@ export const ProductDetail: React.FC = () => {
     setIsSubmittingWhatsApp(true);
     try {
       const orderId = generateOrderId();
-      const unitPrice = (isWholesale && product.wholesale_price) 
-        ? product.wholesale_price 
-        : product.retail_price;
+      const unitPrice = isWholesaleMode ? priceBreakdown.wholesalePrice : priceBreakdown.finalPrice;
 
       const customer = {
         name: user.full_name || user.email.split('@')[0],

@@ -4,6 +4,7 @@ import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWholesale } from '../context/WholesaleContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useLiveSilver } from '../context/LiveSilverContext';
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -17,10 +18,12 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
   const { addToCart } = useCart();
   const { addToWholesaleCart } = useWholesale();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { calculateCurrentPrice } = useLiveSilver();
 
   if (!product) return null;
 
   const isLiked = isInWishlist(product.id);
+  const displayPrice = calculateCurrentPrice(product);
 
   const handleAddToCart = () => {
     addToCart(product, qty);
@@ -74,7 +77,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
 
               <div className="mt-4 flex items-baseline gap-3">
                 <span className="font-sans text-3xl font-bold text-[#202020]">
-                  ₹{product.retail_price.toLocaleString()}
+                  ₹{displayPrice.toLocaleString()}
                 </span>
                 {product.wholesale_price && (
                   <span className="text-xs text-[#B9A77A] font-semibold">

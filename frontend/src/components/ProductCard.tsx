@@ -21,7 +21,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
   const { calculateCurrentPrice } = useLiveSilver();
 
   const isLiked = isInWishlist(product.id);
-  const displayPrice = calculateCurrentPrice(product.base_price || product.retail_price, product.base_silver_rate);
+  const displayPrice = calculateCurrentPrice(product);
 
   // Check current item quantity in cart
   const cartItem = cart.find((i) => i.product.id === product.id);

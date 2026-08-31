@@ -171,11 +171,26 @@ export const LiveSilverProvider: React.FC<{ children: ReactNode }> = ({ children
   };
 
   const calculateWholesalePrice = (product: Product): number => {
-    const baseWP = product.wholesale_price || product.retail_price;
-    const baseSR = typeof product.base_silver_rate === 'number' ? product.base_silver_rate : (product.current_silver_rate || 250.64);
-    if (!baseWP || isNaN(baseWP)) return 0;
-    const diff = silverStats.live_silver_rate - baseSR;
-    return Math.max(1, Math.round((baseWP + diff) * 100) / 100);
+    if (Array.isArray(product.variants) && product.variants.length > 0) {
+      const activeVariants = product.variants.filter(v => v.is_active !== false);
+      const sourceVariants = activeVariants.length > 0 ? activeVariants : product.variants;
+      const lowestVariant = sourceVariants.reduce((min, v) => {
+        const vPrice = calculateDynamicPrice(v.weight_g, v.making_charge, v.making_charge_type || 'fixed', product.silver_purity).wholesalePrice;
+        const minPrice = calculateDynamicPrice(min.weight_g, min.making_charge, min.making_charge_type || 'fixed', product.silver_purity).wholesalePrice;
+        return vPrice < minPrice ? v : min;
+      }, sourceVariants[0]);
+
+      return calculateDynamicPrice(lowestVariant.weight_g, lowestVariant.making_charge, lowestVariant.making_charge_type || 'fixed', product.silver_purity).wholesalePrice;
+    }
+
+    if (typeof product.weight_g === 'number' && product.weight_g > 0) {
+      return calculateDynamicPrice(product.weight_g, product.making_charges || 0, product.making_charge_type || 'fixed', product.silver_purity).wholesalePrice;
+    }
+
+    if (typeof product.wholesale_price === 'number' && product.wholesale_price > 0) {
+      return product.wholesale_price;
+    }
+    return calculateCurrentPrice(product);
   };
 
   const updateBaselineRate = async (newRate: number) => {
