@@ -243,6 +243,65 @@ export const AdminCMS: React.FC = () => {
         </div>
       )}
 
+      {/* WhatsApp Configuration Tab */}
+      {activeTab === 'whatsapp' && (
+        <div className="bg-white border border-[#E6E1DA] rounded-3xl p-8 shadow-sm space-y-6">
+          <div className="flex items-center gap-3 border-b border-[#E6E1DA] pb-4">
+            <div className="p-3 bg-green-50 text-green-600 rounded-2xl border border-green-200">
+              <MessageSquare className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-serif text-xl font-bold text-[#1A1918]">Admin WhatsApp Contact Configuration</h3>
+              <p className="text-xs text-gray-500">Configure the primary WhatsApp phone number used across the website for customer order bookings and instant inquiries.</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleSaveWhatsapp} className="space-y-5 text-xs">
+            <div>
+              <label className="block font-bold text-gray-700 uppercase tracking-wider mb-1">
+                Admin WhatsApp Number (With Country Code) *
+              </label>
+              <p className="text-[11px] text-gray-500 mb-2">
+                Enter full phone number with country code without spaces, <code>+</code>, or hyphens (e.g. <code>919492664870</code> for India +91 94926 64870).
+              </p>
+              <div className="flex gap-3 items-center">
+                <input 
+                  type="text"
+                  required
+                  placeholder="919492664870"
+                  value={whatsappNumber}
+                  onChange={(e) => setWhatsappNumber(e.target.value)}
+                  className="flex-1 bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-4 py-3 font-mono text-base font-bold text-[#1A1918]"
+                />
+                <a 
+                  href={`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-xl font-bold flex items-center gap-2 transition-colors shrink-0"
+                >
+                  <PhoneCall className="w-4 h-4" />
+                  <span>Test WhatsApp Link</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="bg-[#FAF9F5] p-4 rounded-2xl border border-[#E6E1DA] text-xs space-y-1">
+              <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">CURRENT LIVE TARGET</span>
+              <p className="font-mono text-sm text-[#1A1918] font-bold">https://wa.me/{whatsappNumber.replace(/\D/g, '')}</p>
+              <p className="text-gray-500 text-[11px]">All retail order submissions, product inquiries, and custom wholesale request notifications will open directly to this WhatsApp number.</p>
+            </div>
+
+            <button 
+              type="submit"
+              className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-4 rounded-2xl text-xs uppercase tracking-widest font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+            >
+              {savedWhatsapp ? <Check className="w-4 h-4 text-green-400" /> : <Save className="w-4 h-4 text-[#C5A059]" />}
+              <span>{savedWhatsapp ? 'WhatsApp Number Updated Live!' : 'Save & Publish WhatsApp Number'}</span>
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* Videos Manager Tab */}
       {activeTab === 'videos' && (
         <div className="space-y-4">
