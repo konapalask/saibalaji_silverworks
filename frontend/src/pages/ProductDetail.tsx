@@ -53,10 +53,10 @@ export const ProductDetail: React.FC = () => {
         } else {
           const baseW = res.data.weight_g || 25;
           const baseMC = res.data.making_charges || 300;
-          const baseDim = res.data.dimensions || '2 inch';
+          const baseDim = res.data.dimensions || `${baseW}g`;
           initialVar = {
             id: 'v-1',
-            measurement: baseDim.includes('inch') || baseDim.includes('cm') ? baseDim : '2 inch',
+            measurement: `${baseW}g`,
             weight_g: baseW,
             making_charge: baseMC,
             making_charge_type: res.data.making_charge_type || 'fixed',
@@ -456,7 +456,7 @@ export const ProductDetail: React.FC = () => {
             <div className="mt-3 grid grid-cols-3 gap-2 p-2.5 bg-white rounded-xl border border-[#E5E0D8] text-center text-xs">
               <div>
                 <ShieldCheck className="w-4 h-4 text-[#B9A77A] mx-auto mb-0.5" />
-                <span className="font-bold text-[10px] block text-[#202020]">NABL Hallmarked</span>
+                <span className="font-bold text-[10px] block text-[#202020]">100% Hallmarked</span>
                 <span className="text-[9px] text-[#666666]">100% Pure Silver</span>
               </div>
               <div>
@@ -554,7 +554,7 @@ export const ProductDetail: React.FC = () => {
               {product.making_charges !== undefined && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Making Charges:</span> <span className="font-bold text-[#1A1918]">{product.making_charges > 0 ? `₹${product.making_charges}` : 'Included'}</span></div>}
               {product.dimensions && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Dimensions:</span> <span className="font-bold text-[#1A1918]">{product.dimensions}</span></div>}
               <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">SKU Code:</span> <span className="font-mono text-[#1A1918]">{product.sku}</span></div>
-              <div className="grid grid-cols-2 py-1.5"><span className="font-semibold text-gray-500">Hallmarking:</span> <span className="font-bold text-[#C5A059]">NABL Laser Hallmarked</span></div>
+              <div className="grid grid-cols-2 py-1.5"><span className="font-semibold text-gray-500">Hallmarking:</span> <span className="font-bold text-[#C5A059]">Laser Hallmarked</span></div>
             </div>
           )}
           {activeTab === 'silver' && (

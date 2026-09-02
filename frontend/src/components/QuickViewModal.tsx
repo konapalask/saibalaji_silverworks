@@ -93,7 +93,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
               <div className="mt-4 pt-4 border-t border-[#E5E0D8] space-y-2 text-xs text-[#666666]">
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4 text-[#B9A77A]" />
-                  <span>100% NABL Spectrometry Hallmarked</span>
+                  <span>100% Spectrometry Hallmarked</span>
                 </div>
               </div>
             </div>

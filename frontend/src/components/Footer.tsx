@@ -216,7 +216,7 @@ export const Footer: React.FC = () => {
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
             <span>© 2026 Sai Balaji Silverworks Pvt Ltd. All Rights Reserved.</span>
             <span>•</span>
-            <span className="text-[#B9A77A] font-semibold">100% NABL SPECTROMETRY HALLMARKED 999 & 925</span>
+            <span className="text-[#B9A77A] font-semibold">100% SPECTROMETRY HALLMARKED 999 & 925</span>
           </div>
 
           <div className="flex items-center gap-5">

@@ -134,7 +134,7 @@ export const Home: React.FC = () => {
       <CustomCursor />
 
       {/* 01. HERO SECTION — LIGHT LUXURY WARM IVORY SHOWROOM */}
-      <section className="relative w-full min-h-[90vh] lg:min-h-[92vh] flex items-center bg-[#F8F6F1] overflow-hidden py-12 lg:py-0 border-b border-[#E5E0D8]">
+      <section className="relative w-full bg-[#F8F6F1] overflow-hidden border-b border-[#E5E0D8] flex items-center py-6 lg:py-0 lg:h-[calc(100vh-84px)] lg:min-h-[480px] lg:max-h-[640px]">
 
         {/* Subtle Indian Heritage Pattern Background */}
         <div className="absolute inset-0 bg-heritage-pattern pointer-events-none" />
@@ -143,25 +143,25 @@ export const Home: React.FC = () => {
         <div className="absolute top-10 right-10 w-96 h-96 bg-[#B9A77A]/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 left-10 w-80 h-80 bg-[#C8C8C4]/20 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 max-w-[1450px] mx-auto w-full px-6 sm:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="relative z-10 max-w-[1450px] mx-auto w-full px-6 sm:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center h-full">
 
           {/* Left Column — Clean Luxury Typography & CTAs */}
-          <div className="lg:col-span-7 space-y-7 text-center lg:text-left">
+          <div className="lg:col-span-7 space-y-6 sm:space-y-7 lg:space-y-6 text-center lg:text-left py-4">
 
             {/* Brand Eyebrow Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E5E0D8] shadow-2xs">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E5E0D8] shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-[#B9A77A] animate-pulse" />
-              <span className="text-[10.5px] font-sans font-bold uppercase tracking-[0.25em] text-[#666666]">
+              <span className="text-xs font-sans font-bold uppercase tracking-[0.25em] text-[#666666]">
                 EST. 2019 • TENALI, INDIA
               </span>
             </div>
 
             {/* Brand Title Lockup */}
-            <div className="space-y-1">
-              <span className="text-xs uppercase tracking-[0.4em] text-[#B9A77A] font-bold font-sans block">
+            <div className="space-y-1.5">
+              <span className="text-xs sm:text-sm uppercase tracking-[0.4em] text-[#B9A77A] font-bold font-sans block">
                 SAI BALAJI SILVER
               </span>
-              <h1 className="font-serif text-5xl sm:text-7xl lg:text-8xl font-light text-[#202020] leading-[1.02] tracking-tight">
+              <h1 className="font-serif text-5xl sm:text-7xl lg:text-[5rem] xl:text-8xl font-light text-[#202020] leading-[1.02] tracking-tight">
                 CRAFTED IN <br />
                 <span className="text-[#00276B] font-normal not-italic" style={{ color: '#00276B' }}>PURE SILVER.</span>
               </h1>
@@ -169,25 +169,25 @@ export const Home: React.FC = () => {
 
             {/* Short Supporting Copy */}
             <p className="text-sm sm:text-base text-[#555555] font-light leading-relaxed max-w-xl mx-auto lg:mx-0">
-              7+ years of South Indian craftsmanship, metallurgical precision and 100% NABL-certified silver — shaped in Tenali.
+              7+ years of South Indian craftsmanship, metallurgical precision and 100% certified pure silver — shaped in Tenali.
             </p>
 
             {/* Certification Trust Line */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-[11px] uppercase tracking-[0.2em] text-[#666666] font-semibold pt-1">
-              <span className="flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5 text-[#B9A77A]" /> 999 Fine Silver
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-5 text-xs uppercase tracking-[0.2em] text-[#666666] font-semibold pt-1">
+              <span className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-[#B9A77A]" /> 999 Fine Silver
               </span>
               <span className="text-[#D0C9BE]">•</span>
-              <span className="flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5 text-[#B9A77A]" /> 925 Sterling
+              <span className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-[#B9A77A]" /> 925 Sterling
               </span>
             </div>
 
             {/* Action Buttons (Primary + Secondary CTAs) */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3">
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
               <Link
                 to="/shop/retail"
-                className="w-full sm:w-auto px-8 py-4 bg-[#202020] hover:bg-[#B9A77A] text-white text-[11px] font-bold uppercase tracking-[0.22em] transition-all duration-300 rounded-xl shadow-md flex items-center justify-center gap-2 group"
+                className="w-full sm:w-auto px-8 py-4 bg-[#202020] hover:bg-[#B9A77A] text-white text-xs font-bold uppercase tracking-[0.22em] transition-all duration-300 rounded-xl shadow-md flex items-center justify-center gap-2 group"
               >
                 <span>EXPLORE COLLECTION</span>
                 <ArrowRight className="w-4 h-4 text-[#B9A77A] group-hover:text-white group-hover:translate-x-1 transition-all" />
@@ -195,7 +195,7 @@ export const Home: React.FC = () => {
 
               <Link
                 to="/category/silver-pooja-articles"
-                className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-[#F1EFEB] text-[#202020] border border-[#E5E0D8] text-[11px] font-bold uppercase tracking-[0.22em] transition-all duration-300 rounded-xl shadow-2xs flex items-center justify-center"
+                className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-[#F1EFEB] text-[#202020] border border-[#E5E0D8] text-xs font-bold uppercase tracking-[0.22em] transition-all duration-300 rounded-xl shadow-2xs flex items-center justify-center"
               >
                 <span>SHOP SILVER</span>
               </Link>
@@ -203,26 +203,41 @@ export const Home: React.FC = () => {
 
           </div>
 
-          {/* Right Column — Prominent Hero Silver Product Showcase */}
-          <div className="lg:col-span-5 relative flex justify-center items-center">
-            <div className="relative w-full max-w-[480px] aspect-4/5 rounded-3xl bg-gradient-to-b from-white to-[#F1EFEB] border border-[#E5E0D8] p-6 product-shadow flex items-center justify-center">
+          {/* Right Column — Prominent Hero Temple Arch Showcase Frame */}
+          <div className="lg:col-span-5 relative flex justify-center items-center py-2 lg:py-0">
+            
+            {/* Soft Ambient Depth Glow behind the Temple Arch */}
+            <div className="absolute inset-3 sm:inset-4 bg-[#B9A77A]/12 rounded-t-[160px] rounded-b-[36px] blur-2xl pointer-events-none" />
 
-              {/* Decorative Subtle Frame Overlay */}
-              <div className="absolute inset-3 border border-[#B9A77A]/25 rounded-2xl pointer-events-none" />
+            {/* Outer Architectural Temple Arch Showcase Frame */}
+            <div className="relative w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[340px] max-h-[420px] lg:max-h-[440px] aspect-[4/4.9] rounded-t-[130px] sm:rounded-t-[155px] rounded-b-[24px] sm:rounded-b-[30px] bg-gradient-to-b from-white via-[#FAF8F5] to-[#F2EFEA] p-2 sm:p-2.5 border border-[#E5E0D8] shadow-[0_18px_45px_-15px_rgba(32,32,32,0.12),0_8px_20px_-8px_rgba(185,167,122,0.15)] transition-transform duration-500 hover:scale-[1.01]">
+              
+              {/* Inner Double-Layer Champagne Gold Accent Line */}
+              <div className="relative w-full h-full rounded-t-[120px] sm:rounded-t-[145px] rounded-b-[20px] sm:rounded-b-[24px] border border-[#B9A77A]/35 p-1 sm:p-1.5 flex flex-col justify-between">
 
-              {/* Featured Silver Deity Hero Photography with Soft Studio Drop Shadow */}
-              <img
-                src="/homescreen.webp"
-                alt="Sai Balaji Pure Silver Lord Balaji Idol"
-                className="w-full h-full object-contain drop-shadow-2xl img-editorial"
-              />
+                {/* Inner Black Arched Photography Canvas (Encloses Black Background & Idol) */}
+                <div className="relative w-full h-full rounded-t-[112px] sm:rounded-t-[138px] rounded-b-[16px] sm:rounded-b-[20px] bg-black overflow-hidden flex items-center justify-center p-1 sm:p-2 border border-black/80 shadow-inner">
+                  
+                  {/* Subtle Inner Warm Glow on Deity */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#B9A77A]/10 via-transparent to-[#B9A77A]/5 pointer-events-none" />
 
-              {/* Floating Quality Seal Badge */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-full border border-[#E5E0D8] shadow-md flex items-center gap-2.5 text-xs text-[#202020] font-medium whitespace-nowrap">
-                <Sparkles className="w-4 h-4 text-[#B9A77A]" />
-                <span className="font-serif italic font-semibold text-sm">999 Fine Silver Deity Idol</span>
+                  {/* Featured Silver Deity Hero Photography (Zoomed in for crisp prominent idol detail) */}
+                  <img
+                    src="/homescreen.webp"
+                    alt="Sai Balaji Pure Silver Lord Balaji Idol"
+                    className="w-full h-full object-contain drop-shadow-[0_15px_35px_rgba(255,255,255,0.08)] scale-[1.28] sm:scale-[1.32] hover:scale-[1.36] transition-transform duration-700"
+                  />
+                </div>
+
+                {/* Floating Quality Seal Badge */}
+                <div className="absolute -bottom-3 sm:-bottom-3.5 left-1/2 -translate-x-1/2 z-20 bg-white/95 backdrop-blur-md px-4 sm:px-5 py-1.5 sm:py-2 rounded-full border border-[#E5E0D8] shadow-md flex items-center gap-2 text-xs text-[#202020] font-medium whitespace-nowrap">
+                  <Sparkles className="w-3.5 h-3.5 text-[#B9A77A]" />
+                  <span className="font-serif italic font-semibold text-xs sm:text-sm">999 Fine Silver Deity Idol</span>
+                </div>
+
               </div>
             </div>
+
           </div>
 
         </div>
@@ -496,7 +511,7 @@ export const Home: React.FC = () => {
             <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">
               <Award className="w-8 h-8 text-[#B9A77A] mx-auto" />
               <h3 className="font-serif text-xl text-[#202020]">100% Authentic Silver</h3>
-              <p className="text-xs text-[#666666] font-light leading-relaxed">NABL spectrometry assayed 999 fine silver and 925 sterling formulations.</p>
+              <p className="text-xs text-[#666666] font-light leading-relaxed">Laser spectrometry assayed 999 fine silver and 925 sterling formulations.</p>
             </div>
 
             <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">

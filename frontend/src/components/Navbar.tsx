@@ -212,7 +212,7 @@ export const Navbar: React.FC = () => {
 
           <div className="border-t border-[#E5E0D8] pt-6 text-center space-y-1 font-sans text-xs text-[#666666]">
             <p className="text-[#202020] font-semibold">+91 9492664870 • Tenali Atelier</p>
-            <p>100% NABL Hallmarked Silver</p>
+            <p>100% Certified Hallmarked Silver</p>
           </div>
         </div>
       )}

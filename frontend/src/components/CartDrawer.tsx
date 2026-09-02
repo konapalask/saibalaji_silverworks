@@ -244,11 +244,13 @@ export const CartDrawer: React.FC = () => {
                 const varKey = variant_id || selected_measurement || 'default';
                 return (
                   <div key={`${product.id}-${varKey}`} className="flex gap-3 p-3 bg-white rounded-2xl border border-[#E6E1DA] shadow-xs">
-                    <img 
-                      src={product.featured_image} 
-                      alt={product.title}
-                      className="w-20 h-24 object-cover rounded-xl bg-black"
-                    />
+                    <div className="w-28 sm:w-32 aspect-3/2 bg-black rounded-xl p-0.5 overflow-hidden shrink-0 border border-gray-900 flex items-center justify-center">
+                      <img 
+                        src={product.featured_image} 
+                        alt={product.title}
+                        className="w-full h-full object-contain scale-115 sm:scale-120 bg-black"
+                      />
+                    </div>
                     <div className="flex-1 flex flex-col justify-between">
                       <div>
                         <div className="flex justify-between items-start">
@@ -263,7 +265,7 @@ export const CartDrawer: React.FC = () => {
                         <div className="flex items-center gap-1.5 mt-0.5">
                           {selected_measurement && (
                             <span className="text-[10px] font-bold bg-[#1A1918] text-white px-2 py-0.5 rounded-full">
-                              Size: {selected_measurement}
+                              Weight: {selected_measurement.includes('inch') ? `${weight_g || product.weight_g}g` : selected_measurement}
                             </span>
                           )}
                           <span className="text-[10px] text-gray-500 font-mono">SKU: {product.sku} | {weight_g || product.weight_g}g</span>

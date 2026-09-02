@@ -209,10 +209,10 @@ export const AdminProducts: React.FC = () => {
       const sku = prod.sku || 'SKU';
       const stock = prod.stock !== undefined ? prod.stock : 10;
       varList = [
-        { id: `v-${prod.id}-1`, measurement: '2 inch', weight_g: Math.round(baseW * 10) / 10, making_charge: Math.round(baseMC), making_charge_type: mcType, sku: `${sku}-2IN`, stock, is_active: true },
-        { id: `v-${prod.id}-2`, measurement: '3 inch', weight_g: Math.round(baseW * 1.6 * 10) / 10, making_charge: Math.round(baseMC * 1.5), making_charge_type: mcType, sku: `${sku}-3IN`, stock: Math.max(1, Math.round(stock * 0.8)), is_active: true },
-        { id: `v-${prod.id}-3`, measurement: '4 inch', weight_g: Math.round(baseW * 2.5 * 10) / 10, making_charge: Math.round(baseMC * 2.0), making_charge_type: mcType, sku: `${sku}-4IN`, stock: Math.max(1, Math.round(stock * 0.6)), is_active: true },
-        { id: `v-${prod.id}-4`, measurement: '6 inch', weight_g: Math.round(baseW * 4.0 * 10) / 10, making_charge: Math.round(baseMC * 3.0), making_charge_type: mcType, sku: `${sku}-6IN`, stock: Math.max(1, Math.round(stock * 0.4)), is_active: true }
+        { id: `v-${prod.id}-1`, measurement: `${Math.round(baseW * 10) / 10}g`, weight_g: Math.round(baseW * 10) / 10, making_charge: Math.round(baseMC), making_charge_type: mcType, sku: `${sku}-250G`, stock, is_active: true },
+        { id: `v-${prod.id}-2`, measurement: `${Math.round(baseW * 1.6 * 10) / 10}g`, weight_g: Math.round(baseW * 1.6 * 10) / 10, making_charge: Math.round(baseMC * 1.5), making_charge_type: mcType, sku: `${sku}-400G`, stock: Math.max(1, Math.round(stock * 0.8)), is_active: true },
+        { id: `v-${prod.id}-3`, measurement: `${Math.round(baseW * 2.5 * 10) / 10}g`, weight_g: Math.round(baseW * 2.5 * 10) / 10, making_charge: Math.round(baseMC * 2.0), making_charge_type: mcType, sku: `${sku}-625G`, stock: Math.max(1, Math.round(stock * 0.6)), is_active: true },
+        { id: `v-${prod.id}-4`, measurement: `${Math.round(baseW * 4.0 * 10) / 10}g`, weight_g: Math.round(baseW * 4.0 * 10) / 10, making_charge: Math.round(baseMC * 3.0), making_charge_type: mcType, sku: `${sku}-1000G`, stock: Math.max(1, Math.round(stock * 0.4)), is_active: true }
       ];
     }
     setVariants(varList);
