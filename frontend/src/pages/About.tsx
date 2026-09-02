@@ -236,7 +236,7 @@ export const About: React.FC = () => {
               </p>
             </div>
             <Link
-              to="/privacy-policy"
+              to="/privacy"
               className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C5A059] hover:text-[#1A1918] transition-colors"
             >
               <span>Read Privacy Policy</span>
