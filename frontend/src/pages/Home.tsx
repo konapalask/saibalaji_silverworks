@@ -6,6 +6,7 @@ import { ProductCard } from '../components/ProductCard';
 import { VideoPlayerModal } from '../components/VideoPlayerModal';
 import { QuickViewModal } from '../components/QuickViewModal';
 import { CustomCursor } from '../components/CustomCursor';
+import { CountUp } from '../components/CountUp';
 import { initialVideosData } from '../data/videosData';
 import api from '../services/api';
 import { MAIN_CATEGORIES } from '../data/categoriesData';
@@ -180,10 +181,6 @@ export const Home: React.FC = () => {
               <span className="flex items-center gap-1.5">
                 <Check className="w-3.5 h-3.5 text-[#B9A77A]" /> 925 Sterling
               </span>
-              <span className="text-[#D0C9BE]">•</span>
-              <span className="flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5 text-[#B9A77A]" /> NABL Hallmarked
-              </span>
             </div>
 
             {/* Action Buttons (Primary + Secondary CTAs) */}
@@ -266,7 +263,9 @@ export const Home: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
           <div className="bg-white p-8 rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] transition-all product-shadow space-y-4 text-center">
-            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">999</span>
+            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">
+              <CountUp end={999} duration={1.8} />
+            </span>
             <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">FINE SILVER</h3>
             <p className="text-xs text-[#666666] font-light leading-relaxed max-w-xs mx-auto">
               Pure 99.9% fine silver for temple idols, sacred pooja articles, thalis, and investment bullion.
@@ -274,7 +273,9 @@ export const Home: React.FC = () => {
           </div>
 
           <div className="bg-white p-8 rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] transition-all product-shadow space-y-4 text-center">
-            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">925</span>
+            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">
+              <CountUp end={925} duration={1.8} />
+            </span>
             <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">STERLING SILVER</h3>
             <p className="text-xs text-[#666666] font-light leading-relaxed max-w-xs mx-auto">
               Precision 92.5% sterling silver for durable dining tableware, baby gifts, and fine ornaments.
@@ -282,7 +283,9 @@ export const Home: React.FC = () => {
           </div>
 
           <div className="bg-white p-8 rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] transition-all product-shadow space-y-4 text-center">
-            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">7+</span>
+            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">
+              <CountUp end={7} suffix="+" duration={1.8} />
+            </span>
             <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">YEARS OF LEGACY</h3>
             <p className="text-xs text-[#666666] font-light leading-relaxed max-w-xs mx-auto">
               Established South Indian silver manufacturing atelier based in Tenali, Andhra Pradesh.

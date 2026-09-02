@@ -91,10 +91,10 @@ export const ProductDetail: React.FC = () => {
     const baseMcType = product.making_charge_type || 'fixed';
 
     return [
-      { id: 'v-2', measurement: '2 inch', weight_g: baseW, making_charge: baseMC, making_charge_type: baseMcType, sku: `${product.sku}-2IN`, stock: product.stock, is_active: true },
-      { id: 'v-3', measurement: '3 inch', weight_g: Math.round(baseW * 1.6), making_charge: Math.round(baseMC * 1.5), making_charge_type: baseMcType, sku: `${product.sku}-3IN`, stock: product.stock, is_active: true },
-      { id: 'v-4', measurement: '4 inch', weight_g: Math.round(baseW * 2.5), making_charge: Math.round(baseMC * 2.2), making_charge_type: baseMcType, sku: `${product.sku}-4IN`, stock: product.stock, is_active: true },
-      { id: 'v-6', measurement: '6 inch', weight_g: Math.round(baseW * 4.0), making_charge: Math.round(baseMC * 3.5), making_charge_type: baseMcType, sku: `${product.sku}-6IN`, stock: product.stock, is_active: true }
+      { id: 'v-2', measurement: `${baseW}g`, weight_g: baseW, making_charge: baseMC, making_charge_type: baseMcType, sku: `${product.sku}-250G`, stock: product.stock, is_active: true },
+      { id: 'v-3', measurement: `${Math.round(baseW * 1.6)}g`, weight_g: Math.round(baseW * 1.6), making_charge: Math.round(baseMC * 1.5), making_charge_type: baseMcType, sku: `${product.sku}-400G`, stock: product.stock, is_active: true },
+      { id: 'v-4', measurement: `${Math.round(baseW * 2.5)}g`, weight_g: Math.round(baseW * 2.5), making_charge: Math.round(baseMC * 2.2), making_charge_type: baseMcType, sku: `${product.sku}-625G`, stock: product.stock, is_active: true },
+      { id: 'v-6', measurement: `${Math.round(baseW * 4.0)}g`, weight_g: Math.round(baseW * 4.0), making_charge: Math.round(baseMC * 3.5), making_charge_type: baseMcType, sku: `${product.sku}-1000G`, stock: product.stock, is_active: true }
     ];
   }, [product]);
 
@@ -406,25 +406,25 @@ export const ProductDetail: React.FC = () => {
               </div>
             </div>
 
-            {/* MEASUREMENT / SIZE SELECTOR BUTTONS (HORIZONTAL SCROLL ON MOBILE) */}
+            {/* WEIGHT SELECTOR BUTTONS (HORIZONTAL SCROLL ON MOBILE) */}
             {availableVariants.length > 0 && (
               <div className="mt-3 space-y-1.5 bg-white p-3 rounded-2xl border border-[#E5E0D8]">
                 <div className="flex justify-between items-center">
                   <span className="text-[11px] uppercase font-bold text-[#202020] tracking-wider">
-                    Select Measurement / Size:
+                    Select Weight:
                   </span>
                   <span className="text-[11px] font-bold text-[#C5A059]">
-                    {activeVar?.measurement} ({activeVar?.weight_g}g)
+                    {activeVar?.weight_g}g
                   </span>
                 </div>
 
                 <div className="flex gap-2 pt-0.5 overflow-x-auto scrollbar-none pb-1 whitespace-nowrap max-w-full">
                   {availableVariants.map((variant) => {
-                    const isSelected = activeVar?.id === variant.id || activeVar?.measurement === variant.measurement;
+                    const isSelected = activeVar?.id === variant.id || activeVar?.weight_g === variant.weight_g || activeVar?.measurement === variant.measurement;
                     const vCalc = calculateDynamicPrice(variant.weight_g, variant.making_charge, variant.making_charge_type || 'fixed', product.silver_purity);
                     return (
                       <button
-                        key={variant.id || variant.measurement}
+                        key={variant.id || variant.measurement || variant.weight_g}
                         onClick={() => {
                           setSelectedVariant(variant);
                           if (variant.image) setActiveImage(variant.image);
@@ -435,9 +435,9 @@ export const ProductDetail: React.FC = () => {
                             : 'bg-[#FAF8F5] text-[#202020] border-[#E5E0D8] hover:border-[#C5A059]'
                         }`}
                       >
-                        <span className="font-serif text-xs">{variant.measurement}</span>
+                        <span className="font-serif text-xs">{variant.weight_g}g</span>
                         <span className={`text-[9.5px] font-mono ${isSelected ? 'text-[#C5A059]' : 'text-gray-500'}`}>
-                          ₹{vCalc.finalPrice.toLocaleString()} ({variant.weight_g}g)
+                          ₹{vCalc.finalPrice.toLocaleString()}
                         </span>
                       </button>
                     );
