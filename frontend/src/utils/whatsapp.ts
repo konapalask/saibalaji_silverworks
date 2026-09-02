@@ -1,6 +1,6 @@
-import { ADMIN_WHATSAPP_NUMBER } from '../config/whatsappConfig';
+import { getAdminWhatsAppNumber } from '../config/whatsappConfig';
 
-export const STORE_WHATSAPP_NUMBER = ADMIN_WHATSAPP_NUMBER;
+export const STORE_WHATSAPP_NUMBER = getAdminWhatsAppNumber();
 
 export const generateWhatsAppOrderMessage = (order: any) => {
   const itemsText = (order.items || [])
@@ -25,6 +25,7 @@ export const generateWhatsAppOrderMessage = (order: any) => {
 export const openWhatsAppOrderMessage = (order: any) => {
   if (!order) return;
   const encodedText = generateWhatsAppOrderMessage(order);
-  const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodedText}`;
+  const adminNum = getAdminWhatsAppNumber();
+  const whatsappUrl = `https://wa.me/${adminNum}?text=${encodedText}`;
   window.open(whatsappUrl, '_blank');
 };

@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Check, Plus, Edit, Trash2, Video, FileText, Image as ImageIcon, X } from 'lucide-react';
+import { Save, Check, Plus, Edit, Trash2, Video, FileText, Image as ImageIcon, X, MessageSquare, PhoneCall } from 'lucide-react';
 import { CompanyVideo } from '../../types';
 import api from '../../services/api';
+import { getAdminWhatsAppNumber, setAdminWhatsAppNumber } from '../../config/whatsappConfig';
 
 export const AdminCMS: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'hero' | 'videos'>('hero');
+  const [activeTab, setActiveTab] = useState<'hero' | 'videos' | 'whatsapp'>('hero');
   const [heroTitle, setHeroTitle] = useState('');
   const [heroContent, setHeroContent] = useState('');
   const [mediaUrl, setMediaUrl] = useState('');
   const [savedHero, setSavedHero] = useState(false);
+
+  const [whatsappNumber, setWhatsappNumber] = useState(getAdminWhatsAppNumber());
+  const [savedWhatsapp, setSavedWhatsapp] = useState(false);
 
   const [videos, setVideos] = useState<CompanyVideo[]>([]);
   const [isVidModalOpen, setIsVidModalOpen] = useState(false);
@@ -29,9 +33,10 @@ export const AdminCMS: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const [heroRes, vidRes] = await Promise.all([
+      const [heroRes, vidRes, settingsRes] = await Promise.all([
         api.get('/content/homepage_hero'),
-        api.get('/content/videos/all')
+        api.get('/content/videos/all'),
+        api.get('/settings')
       ]);
       if (heroRes.data) {
         setHeroTitle(heroRes.data.title || '');
@@ -39,6 +44,11 @@ export const AdminCMS: React.FC = () => {
         setMediaUrl(heroRes.data.media_url || '');
       }
       setVideos(Array.isArray(vidRes.data) ? vidRes.data : []);
+      if (settingsRes.data && settingsRes.data.whatsapp_number) {
+        const num = String(settingsRes.data.whatsapp_number).replace(/\D/g, '');
+        setWhatsappNumber(num);
+        setAdminWhatsAppNumber(num);
+      }
     } catch (err) {
       console.error('Error fetching CMS data', err);
     }
@@ -56,6 +66,24 @@ export const AdminCMS: React.FC = () => {
       setTimeout(() => setSavedHero(false), 3000);
     } catch (err) {
       alert('Failed to update Hero content');
+    }
+  };
+
+  const handleSaveWhatsapp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const cleanNumber = whatsappNumber.replace(/\D/g, '');
+      if (!cleanNumber || cleanNumber.length < 10) {
+        alert('Please enter a valid phone number with country code (e.g. 919492664870)');
+        return;
+      }
+      await api.put('/settings', { whatsapp_number: cleanNumber });
+      setAdminWhatsAppNumber(cleanNumber);
+      setWhatsappNumber(cleanNumber);
+      setSavedWhatsapp(true);
+      setTimeout(() => setSavedWhatsapp(false), 3000);
+    } catch (err) {
+      alert('Failed to update Admin WhatsApp number');
     }
   };
 
@@ -154,6 +182,16 @@ export const AdminCMS: React.FC = () => {
         >
           <Video className="w-4 h-4 text-[#C5A059]" />
           <span>Company Videos Manager ({videos.length})</span>
+        </button>
+
+        <button 
+          onClick={() => setActiveTab('whatsapp')}
+          className={`flex-1 py-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
+            activeTab === 'whatsapp' ? 'bg-[#1A1918] text-white shadow-md' : 'text-gray-600 hover:bg-[#FAF9F5]'
+          }`}
+        >
+          <MessageSquare className="w-4 h-4 text-green-500" />
+          <span>WhatsApp Support Number</span>
         </button>
       </div>
 

@@ -1,4 +1,4 @@
-import { ADMIN_WHATSAPP_NUMBER } from '../config/whatsappConfig';
+import { getAdminWhatsAppNumber } from '../config/whatsappConfig';
 
 export interface CustomerDetails {
   name: string;
@@ -237,7 +237,8 @@ export const generateFullCartWhatsAppMessage = (
  */
 export const openWhatsAppOrderUrl = (rawMessage: string): void => {
   const encodedText = encodeURIComponent(rawMessage);
-  const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodedText}`;
+  const adminNum = getAdminWhatsAppNumber();
+  const whatsappUrl = `https://wa.me/${adminNum}?text=${encodedText}`;
   window.open(whatsappUrl, '_blank');
 };
 
