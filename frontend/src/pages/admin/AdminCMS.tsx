@@ -77,13 +77,15 @@ export const AdminCMS: React.FC = () => {
         alert('Please enter a valid phone number with country code (e.g. 919492664870)');
         return;
       }
-      await api.put('/settings', { whatsapp_number: cleanNumber });
-      setAdminWhatsAppNumber(cleanNumber);
-      setWhatsappNumber(cleanNumber);
+      const res = await api.put('/settings', { whatsapp_number: cleanNumber });
+      const numToSave = (res.data && res.data.settings && res.data.settings.whatsapp_number) ? res.data.settings.whatsapp_number : cleanNumber;
+      setAdminWhatsAppNumber(numToSave);
+      setWhatsappNumber(numToSave);
       setSavedWhatsapp(true);
       setTimeout(() => setSavedWhatsapp(false), 3000);
-    } catch (err) {
-      alert('Failed to update Admin WhatsApp number');
+    } catch (err: any) {
+      console.error('Error saving WhatsApp number:', err);
+      alert('Failed to update Admin WhatsApp number: ' + (err.response?.data?.detail || err.message));
     }
   };
 

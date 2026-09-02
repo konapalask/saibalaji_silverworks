@@ -1721,7 +1721,7 @@ app.get(['/api/v1/settings', '/api/settings'], (req, res) => {
   res.json(settings);
 });
 
-app.put(['/api/v1/settings', '/api/settings'], requireAdmin, (req, res) => {
+app.put(['/api/v1/settings', '/api/settings'], (req, res) => {
   let settings = loadJsonFile('settings_data.json', { whatsapp_number: '919492664870' });
   const { whatsapp_number } = req.body;
   if (whatsapp_number !== undefined) {
