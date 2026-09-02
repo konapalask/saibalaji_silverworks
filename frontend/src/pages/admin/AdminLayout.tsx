@@ -100,13 +100,16 @@ export const AdminLayout: React.FC = () => {
             <NavLink 
               to="/admin/cms" 
               className={({ isActive }) => 
-                `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                `flex items-center justify-between px-4 py-3 rounded-xl transition-colors ${
                   isActive ? 'bg-[#C5A059] text-[#1A1918] font-bold shadow-md' : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`
               }
             >
-              <FileText className="w-4 h-4" />
-              <span>CMS & Editorial</span>
+              <div className="flex items-center gap-3">
+                <FileText className="w-4 h-4" />
+                <span>CMS & Settings</span>
+              </div>
+              <span className="text-[9px] bg-green-500 text-black px-1.5 py-0.5 rounded font-bold">WA</span>
             </NavLink>
           </nav>
         </div>
