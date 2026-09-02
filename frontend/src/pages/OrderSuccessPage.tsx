@@ -57,18 +57,7 @@ export const OrderSuccessPage: React.FC = () => {
         <p className="text-xs text-gray-500">Your retail order has been placed and confirmed successfully.</p>
       )}
 
-      {/* WhatsApp Action Button */}
-      {order && (
-        <div className="pt-2">
-          <button
-            onClick={() => openWhatsAppOrderMessage(order)}
-            className="w-full max-w-md mx-auto bg-[#25D366] hover:bg-[#128C7E] text-white py-3.5 px-6 rounded-2xl text-xs uppercase font-bold tracking-wider transition-all shadow-lg flex items-center justify-center gap-2"
-          >
-            <MessageSquare className="w-4 h-4 fill-current" />
-            <span>Send Order Summary to WhatsApp (+91 94926 64870)</span>
-          </button>
-        </div>
-      )}
+
 
       <p className="text-xs text-gray-600 max-w-md mx-auto">
         We are preparing your hallmarked silver products for insured dispatch from our Tenali unit.
