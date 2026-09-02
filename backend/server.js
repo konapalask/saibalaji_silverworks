@@ -1715,6 +1715,25 @@ app.get(['/api/v1/quotations/:id/pdf', '/api/v1/wholesale/requests/:id/pdf'], (r
 
 // --- CMS & EDITORIAL ENDPOINTS ---
 
+// General Site & WhatsApp Settings
+app.get(['/api/v1/settings', '/api/settings'], (req, res) => {
+  const settings = loadJsonFile('settings_data.json', { whatsapp_number: '919492664870' });
+  res.json(settings);
+});
+
+app.put(['/api/v1/settings', '/api/settings'], requireAdmin, (req, res) => {
+  let settings = loadJsonFile('settings_data.json', { whatsapp_number: '919492664870' });
+  const { whatsapp_number } = req.body;
+  if (whatsapp_number !== undefined) {
+    const cleanNumber = String(whatsapp_number).replace(/\D/g, '');
+    if (cleanNumber) {
+      settings.whatsapp_number = cleanNumber;
+    }
+  }
+  saveJsonFile('settings_data.json', settings);
+  res.json({ message: 'Settings updated successfully', settings });
+});
+
 app.get('/api/v1/content/homepage_hero', (req, res) => {
   res.json(homepageHero);
 });
