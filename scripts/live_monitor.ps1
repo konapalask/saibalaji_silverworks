@@ -167,6 +167,14 @@ while ($true) {
         }
 
         # --- 2. Git Fetch & Auto-Sync ---
+        $uncommitted = (& $gitExe status --porcelain 2>$null)
+        if ($uncommitted) {
+            Write-ConsoleLog "Uncommitted local changes detected - auto-syncing to GitHub..." "UPDATE"
+            & $gitExe add . 2>$null
+            & $gitExe commit -m "Auto-sync local workspace changes" --quiet 2>$null
+            & $gitExe push origin main --quiet 2>$null
+        }
+
         & $gitExe fetch origin main --quiet 2>$null
         
         $localHash = ""
