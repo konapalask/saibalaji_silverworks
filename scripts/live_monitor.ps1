@@ -92,7 +92,7 @@ function Restart-BackendServer {
         Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 1
     }
-    Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node server.js") -WindowStyle Hidden
+    Start-Process cmd.exe -ArgumentList @("/c", "title Sai Balaji Backend (8000) && set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node server.js")
     Start-Sleep -Seconds 2
 }
 
@@ -103,7 +103,7 @@ function Restart-FrontendServer {
         Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 1
     }
-    Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node serve_frontend.js") -WindowStyle Hidden
+    Start-Process cmd.exe -ArgumentList @("/c", "title Sai Balaji Frontend (5173) && set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node serve_frontend.js")
     Start-Sleep -Seconds 2
 }
 
@@ -131,7 +131,7 @@ $cfProc = Get-Process -Name "cloudflared" -ErrorAction SilentlyContinue
 if (-not $cfProc) {
     Write-ConsoleLog "Starting Cloudflare Tunnel for http://saibalaji.e3di.org/..." "BUILD"
     $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
-    Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--token", $token) -WindowStyle Hidden
+    Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--token", $token)
     Start-Sleep -Seconds 2
 } else {
     Write-ConsoleLog "Cloudflare Tunnel is running (PID: $($cfProc.Id)) [OK]" "OK"
