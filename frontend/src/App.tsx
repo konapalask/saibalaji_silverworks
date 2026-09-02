@@ -120,8 +120,9 @@ export const App: React.FC = () => {
                   <Route path="/" element={<StoreShell><Home /></StoreShell>} />
                   <Route path="/home" element={<StoreShell><Home /></StoreShell>} />
                   <Route path="/about" element={<StoreShell><About /></StoreShell>} />
-                  <Route path="/privacy" element={<StoreShell><PrivacyPolicy /></StoreShell>} />
-                  <Route path="/privacy-policy" element={<Navigate to="/privacy" replace />} />
+                  <Route path="/privacy_policy" element={<StoreShell><PrivacyPolicy /></StoreShell>} />
+                  <Route path="/privacy-policy" element={<Navigate to="/privacy_policy" replace />} />
+                  <Route path="/privacy" element={<Navigate to="/privacy_policy" replace />} />
                   <Route path="/terms-and-conditions" element={<StoreShell><TermsAndConditions /></StoreShell>} />
                   <Route path="/terms" element={<Navigate to="/terms-and-conditions" replace />} />
                   <Route path="/contact" element={<StoreShell><Contact /></StoreShell>} />

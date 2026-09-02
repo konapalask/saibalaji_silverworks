@@ -183,7 +183,7 @@ export const TermsAndConditions: React.FC = () => {
       {/* Footer link to Privacy Policy */}
       <div className="text-center pt-4 flex items-center justify-center gap-6 text-xs text-gray-600">
         <span>Looking for Privacy Policy?</span>
-        <Link to="/privacy" className="text-[#C5A059] font-bold hover:underline flex items-center gap-1">
+        <Link to="/privacy_policy" className="text-[#C5A059] font-bold hover:underline flex items-center gap-1">
           <ShieldCheck className="w-3.5 h-3.5" />
           <span>View Privacy Policy</span>
         </Link>
