@@ -159,13 +159,22 @@ export const AdminDashboard: React.FC = () => {
           </h1>
         </div>
 
-        <button 
-          onClick={fetchDashboardData}
-          className="flex items-center gap-2 bg-white border border-[#E6E1DA] px-4 py-2 rounded-xl text-xs font-semibold hover:border-[#C5A059]"
-        >
-          <RefreshCw className="w-3.5 h-3.5 text-[#C5A059]" />
-          <span>Refresh Data</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => window.location.href = '/admin/cms'}
+            className="flex items-center gap-2 bg-[#1A1918] text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-[#C5A059] transition-colors"
+          >
+            <MessageSquare className="w-3.5 h-3.5 text-green-400" />
+            <span>WhatsApp Phone Settings</span>
+          </button>
+          <button 
+            onClick={fetchDashboardData}
+            className="flex items-center gap-2 bg-white border border-[#E6E1DA] px-4 py-2 rounded-xl text-xs font-semibold hover:border-[#C5A059]"
+          >
+            <RefreshCw className="w-3.5 h-3.5 text-[#C5A059]" />
+            <span>Refresh Data</span>
+          </button>
+        </div>
       </div>
 
       {/* Metrics Cards */}
