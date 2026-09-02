@@ -1009,20 +1009,21 @@ export const AdminProducts: React.FC = () => {
 
       {/* PRODUCT ADD / EDIT MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#FAF9F5] border border-[#C5A059] rounded-3xl max-w-3xl w-full p-6 shadow-2xl relative my-8 text-xs font-sans">
-            {/* Sticky Header with Close Button */}
-            <div className="sticky top-0 bg-[#FAF9F5] z-20 pt-2 pb-3 mb-4 border-b border-[#E6E1DA] flex items-center justify-between shadow-2xs">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-hidden">
+          <div className="bg-[#FAF9F5] border border-[#C5A059] rounded-2xl max-w-3xl w-full shadow-2xl flex flex-col max-h-[90vh] text-xs font-sans relative overflow-hidden my-auto">
+            
+            {/* Pinned Header */}
+            <div className="bg-white px-5 py-3 border-b border-[#E6E1DA] flex items-center justify-between shrink-0">
               <div>
                 <span className="text-[10px] font-bold text-[#C5A059] uppercase tracking-wider block">PRODUCT INVENTORY MANAGER</span>
-                <h3 className="font-serif text-xl font-bold text-[#1A1918]">
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1A1918]">
                   {editingProduct ? `Edit Product: ${editingProduct.title}` : 'Add New Silver Product'}
                 </h3>
               </div>
               <button 
                 type="button" 
                 onClick={() => setIsModalOpen(false)} 
-                className="bg-white hover:bg-gray-100 border border-[#E6E1DA] p-2 rounded-xl text-gray-600 hover:text-black transition-colors flex items-center gap-1.5 shadow-2xs font-bold text-xs cursor-pointer"
+                className="bg-white hover:bg-gray-100 border border-[#E6E1DA] px-3 py-1.5 rounded-xl text-gray-600 hover:text-black transition-colors flex items-center gap-1.5 shadow-2xs font-bold text-xs cursor-pointer"
                 title="Close Modal & Go Back"
               >
                 <X className="w-4 h-4 text-red-600" />
@@ -1030,153 +1031,159 @@ export const AdminProducts: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Product Title *</label>
-                <input type="text" required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2" />
-              </div>
+            {/* Scrollable Form Body */}
+            <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <div className="p-4 sm:p-5 overflow-y-auto space-y-3.5 flex-1">
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">Product Title *</label>
+                  <input type="text" required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2" />
+                </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">SKU Code *</label>
-                  <input type="text" required value={formData.sku} onChange={(e) => setFormData({ ...formData, sku: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2 font-mono" />
-                </div>
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Main Category *</label>
-                  <select value={formData.category_id} onChange={(e) => setFormData({ ...formData, category_id: Number(e.target.value) })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2">
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Subcategory Name</label>
-                  <input type="text" placeholder="e.g. Kalash & Sacred Pots" value={formData.subcategory} onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2" />
-                </div>
-              </div>
-
-              {/* Weights & Purity Section */}
-              <div className="bg-white p-4 rounded-2xl border border-[#E6E1DA] space-y-3">
-                <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">WEIGHT & PURITY MEASUREMENTS</span>
-                <div className="grid grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="block font-semibold text-gray-700 mb-1">Silver Purity</label>
-                    <select value={formData.silver_purity} onChange={(e) => setFormData({ ...formData, silver_purity: e.target.value })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2">
-                      <option value="925 Sterling Silver">925 Sterling Silver</option>
-                      <option value="999 Fine Silver">999 Fine Silver</option>
-                      <option value="Silver Plated / Stainless Steel">Silver Plated / Stainless Steel</option>
+                    <label className="block font-bold text-gray-700 mb-1">SKU Code *</label>
+                    <input type="text" required value={formData.sku} onChange={(e) => setFormData({ ...formData, sku: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2 font-mono" />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-gray-700 mb-1">Main Category *</label>
+                    <select value={formData.category_id} onChange={(e) => setFormData({ ...formData, category_id: Number(e.target.value) })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2">
+                      {categories.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
                     </select>
                   </div>
                   <div>
-                    <label className="block font-semibold text-gray-700 mb-1">Net Silver Weight (g)</label>
-                    <input type="number" step="0.1" value={formData.net_silver_weight_g} onChange={(e) => setFormData({ ...formData, net_silver_weight_g: parseFloat(e.target.value), weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2 font-bold" />
+                    <label className="block font-bold text-gray-700 mb-1">Subcategory Name</label>
+                    <input type="text" placeholder="e.g. Kalash & Sacred Pots" value={formData.subcategory} onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2" />
                   </div>
-                  <div>
-                    <label className="block font-semibold text-gray-700 mb-1">Gross Weight (g)</label>
-                    <input type="number" step="0.1" value={formData.gross_weight_g} onChange={(e) => setFormData({ ...formData, gross_weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2" />
+                </div>
+
+                {/* Weights & Purity Section */}
+                <div className="bg-white p-3.5 rounded-2xl border border-[#E6E1DA] space-y-2.5">
+                  <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">WEIGHT & PURITY MEASUREMENTS</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div>
+                      <label className="block font-semibold text-gray-700 mb-1">Silver Purity</label>
+                      <select value={formData.silver_purity} onChange={(e) => setFormData({ ...formData, silver_purity: e.target.value })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5 text-xs">
+                        <option value="925 Sterling Silver">925 Sterling Silver</option>
+                        <option value="999 Fine Silver">999 Fine Silver</option>
+                        <option value="Silver Plated / Stainless Steel">Silver Plated / Stainless Steel</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-gray-700 mb-1">Net Silver Weight (g)</label>
+                      <input type="number" step="0.1" value={formData.net_silver_weight_g} onChange={(e) => setFormData({ ...formData, net_silver_weight_g: parseFloat(e.target.value), weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5 font-bold" />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-gray-700 mb-1">Gross Weight (g)</label>
+                      <input type="number" step="0.1" value={formData.gross_weight_g} onChange={(e) => setFormData({ ...formData, gross_weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5" />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-gray-700 mb-1">Dimensions / Size</label>
+                      <input type="text" placeholder="Height: 5 in, Width: 3 in" value={formData.dimensions} onChange={(e) => setFormData({ ...formData, dimensions: e.target.value })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5" />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block font-semibold text-gray-700 mb-1">Dimensions / Size</label>
-                    <input type="text" placeholder="Height: 5 in, Width: 3 in" value={formData.dimensions} onChange={(e) => setFormData({ ...formData, dimensions: e.target.value })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2" />
+                </div>
+
+                {/* Pricing & Making Charges Section */}
+                <div className="bg-white p-3.5 rounded-2xl border border-[#E6E1DA] space-y-2.5">
+                  <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">PRICING & MAKING CHARGES</span>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="block font-semibold text-gray-700 mb-1">Selling Base Price (₹)</label>
+                      <input type="number" value={formData.retail_price} onChange={(e) => setFormData({ ...formData, retail_price: parseFloat(e.target.value), wholesale_price: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold text-[#1A1918]" />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-gray-700 mb-1">Making Charges (₹)</label>
+                      <input type="number" value={formData.making_charges} onChange={(e) => setFormData({ ...formData, making_charges: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold" />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-gray-700 mb-1">Stock Units</label>
+                      <input type="number" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold" />
+                    </div>
                   </div>
+                </div>
+
+                {/* PRODUCT VARIANTS / MEASUREMENTS SECTION */}
+                <div className="bg-white p-3.5 rounded-2xl border border-[#E6E1DA] space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">PRODUCT VARIANTS / MEASUREMENTS</span>
+                      <p className="text-[10.5px] text-gray-500">Define multiple size/measurement variants (e.g. 2", 3", 4", 6") with custom weights & making charges.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleOpenAddVariant}
+                      className="bg-[#1A1918] hover:bg-[#C5A059] text-white px-3 py-1.5 rounded-xl text-[10.5px] uppercase font-bold tracking-wider flex items-center gap-1 shadow-2xs cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5 text-[#C5A059]" />
+                      <span>+ Add Variant</span>
+                    </button>
+                  </div>
+
+                  {variants.length > 0 ? (
+                    <div className="overflow-x-auto border border-[#E6E1DA] rounded-xl">
+                      <table className="w-full text-left text-[11px]">
+                        <thead className="bg-[#FAF9F5] border-b border-[#E6E1DA] font-bold text-[#1A1918]">
+                          <tr>
+                            <th className="py-2 px-3">Measurement</th>
+                            <th className="py-2 px-3">Weight (g)</th>
+                            <th className="py-2 px-3">Making Charge</th>
+                            <th className="py-2 px-3">Calculated Price</th>
+                            <th className="py-2 px-3">Stock</th>
+                            <th className="py-2 px-3">SKU</th>
+                            <th className="py-2 px-3 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100 font-sans">
+                          {variants.map((v, idx) => {
+                            const pCalc = calculateDynamicPrice(v.weight_g, v.making_charge, v.making_charge_type || 'fixed', formData.silver_purity);
+                            return (
+                              <tr key={idx} className="hover:bg-[#FAF9F5]/60">
+                                <td className="py-1.5 px-3 font-bold text-[#1A1918]">{v.measurement}</td>
+                                <td className="py-1.5 px-3 font-mono">{v.weight_g} g</td>
+                                <td className="py-1.5 px-3 font-mono">₹{v.making_charge}</td>
+                                <td className="py-1.5 px-3 font-bold text-green-700 font-mono">₹{pCalc.finalPrice.toLocaleString()}</td>
+                                <td className="py-1.5 px-3 font-mono">{v.stock} pcs</td>
+                                <td className="py-1.5 px-3 font-mono text-gray-500">{v.sku}</td>
+                                <td className="py-1.5 px-3 text-right space-x-1">
+                                  <button type="button" onClick={() => handleOpenEditVariant(idx)} className="p-1 text-gray-600 hover:text-[#C5A059]">
+                                    <Edit className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button type="button" onClick={() => handleDeleteVariant(idx)} className="p-1 text-gray-600 hover:text-red-600">
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-3 bg-[#FAF9F5] rounded-xl border border-dashed border-[#E6E1DA] text-gray-500 text-[11px]">
+                      No custom measurements/variants created. Click <strong>+ Add Variant</strong> to set size options.
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">Featured Image Path / URL</label>
+                  <input type="text" value={formData.featured_image} onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2 font-mono text-[11px]" />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">Product Description</label>
+                  <textarea rows={2} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2" />
                 </div>
               </div>
 
-              {/* Pricing & Making Charges Section */}
-              <div className="bg-white p-4 rounded-2xl border border-[#E6E1DA] space-y-3">
-                <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">PRICING & MAKING CHARGES</span>
-                <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <label className="block font-semibold text-gray-700 mb-1">Selling Base Price (₹)</label>
-                    <input type="number" value={formData.retail_price} onChange={(e) => setFormData({ ...formData, retail_price: parseFloat(e.target.value), wholesale_price: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2 font-bold text-[#1A1918]" />
-                  </div>
-                  <div>
-                    <label className="block font-semibold text-gray-700 mb-1">Making Charges (₹)</label>
-                    <input type="number" value={formData.making_charges} onChange={(e) => setFormData({ ...formData, making_charges: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2 font-bold" />
-                  </div>
-                  <div>
-                    <label className="block font-semibold text-gray-700 mb-1">Stock Units</label>
-                    <input type="number" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2 font-bold" />
-                  </div>
-                </div>
+              {/* Pinned Footer */}
+              <div className="p-3.5 bg-white border-t border-[#E6E1DA] shrink-0">
+                <button type="submit" className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-3 rounded-xl uppercase tracking-widest font-bold text-xs shadow-lg transition-colors cursor-pointer">
+                  Save Product Changes
+                </button>
               </div>
-
-              {/* PRODUCT VARIANTS / MEASUREMENTS SECTION */}
-              <div className="bg-white p-4 rounded-2xl border border-[#E6E1DA] space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">PRODUCT VARIANTS / MEASUREMENTS</span>
-                    <p className="text-[11px] text-gray-500">Define multiple size/measurement variants (e.g. 2", 3", 4", 6") with custom weights & making charges.</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleOpenAddVariant}
-                    className="bg-[#1A1918] hover:bg-[#C5A059] text-white px-3 py-1.5 rounded-xl text-[11px] uppercase font-bold tracking-wider flex items-center gap-1 shadow-2xs"
-                  >
-                    <Plus className="w-3.5 h-3.5 text-[#C5A059]" />
-                    <span>+ Add Variant</span>
-                  </button>
-                </div>
-
-                {variants.length > 0 ? (
-                  <div className="overflow-x-auto border border-[#E6E1DA] rounded-xl">
-                    <table className="w-full text-left text-[11px]">
-                      <thead className="bg-[#FAF9F5] border-b border-[#E6E1DA] font-bold text-[#1A1918]">
-                        <tr>
-                          <th className="py-2.5 px-3">Measurement</th>
-                          <th className="py-2.5 px-3">Weight (g)</th>
-                          <th className="py-2.5 px-3">Making Charge</th>
-                          <th className="py-2.5 px-3">Calculated Price</th>
-                          <th className="py-2.5 px-3">Stock</th>
-                          <th className="py-2.5 px-3">SKU</th>
-                          <th className="py-2.5 px-3 text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100 font-sans">
-                        {variants.map((v, idx) => {
-                          const pCalc = calculateDynamicPrice(v.weight_g, v.making_charge, v.making_charge_type || 'fixed', formData.silver_purity);
-                          return (
-                            <tr key={idx} className="hover:bg-[#FAF9F5]/60">
-                              <td className="py-2 px-3 font-bold text-[#1A1918]">{v.measurement}</td>
-                              <td className="py-2 px-3 font-mono">{v.weight_g} g</td>
-                              <td className="py-2 px-3 font-mono">₹{v.making_charge}</td>
-                              <td className="py-2 px-3 font-bold text-green-700 font-mono">₹{pCalc.finalPrice.toLocaleString()}</td>
-                              <td className="py-2 px-3 font-mono">{v.stock} pcs</td>
-                              <td className="py-2 px-3 font-mono text-gray-500">{v.sku}</td>
-                              <td className="py-2 px-3 text-right space-x-1">
-                                <button type="button" onClick={() => handleOpenEditVariant(idx)} className="p-1 text-gray-600 hover:text-[#C5A059]">
-                                  <Edit className="w-3.5 h-3.5" />
-                                </button>
-                                <button type="button" onClick={() => handleDeleteVariant(idx)} className="p-1 text-gray-600 hover:text-red-600">
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div className="text-center py-4 bg-[#FAF9F5] rounded-xl border border-dashed border-[#E6E1DA] text-gray-500 text-xs">
-                    No custom measurements/variants created. Click <strong>+ Add Variant</strong> to set size options.
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Featured Image Path / URL</label>
-                <input type="text" value={formData.featured_image} onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2 font-mono text-[11px]" />
-              </div>
-
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Product Description</label>
-                <textarea rows={2} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2" />
-              </div>
-
-              <button type="submit" className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-3 rounded-xl uppercase tracking-widest font-bold text-xs shadow-lg transition-colors cursor-pointer">
-                Save Product Changes
-              </button>
             </form>
           </div>
         </div>
@@ -1184,152 +1191,156 @@ export const AdminProducts: React.FC = () => {
 
       {/* VARIANT ADD / EDIT MODAL */}
       {isVariantModalOpen && (
-        <div className="fixed inset-0 z-60 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#FAF9F5] border border-[#C5A059] rounded-3xl max-w-lg w-full p-6 shadow-2xl relative text-xs font-sans">
-            <button onClick={() => setIsVariantModalOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-black">
-              <X className="w-5 h-5" />
-            </button>
+        <div className="fixed inset-0 z-60 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-hidden">
+          <div className="bg-[#FAF9F5] border border-[#C5A059] rounded-2xl max-w-lg w-full shadow-2xl flex flex-col max-h-[90vh] text-xs font-sans relative overflow-hidden my-auto">
+            
+            <div className="bg-white px-5 py-3 border-b border-[#E6E1DA] flex items-center justify-between shrink-0">
+              <h4 className="font-serif text-lg font-bold text-[#1A1918]">
+                {editingVariantIndex !== null ? 'Edit Variant / Size' : 'Add New Variant / Size'}
+              </h4>
+              <button onClick={() => setIsVariantModalOpen(false)} className="text-gray-500 hover:text-black p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-            <h4 className="font-serif text-xl font-bold mb-4 text-[#1A1918]">
-              {editingVariantIndex !== null ? 'Edit Variant / Size' : 'Add New Variant / Size'}
-            </h4>
-
-            <form onSubmit={handleSaveVariant} className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Measurement / Size *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. 2 inch, 3 inch, 250g"
-                    value={variantForm.measurement}
-                    onChange={(e) => setVariantForm({ ...variantForm, measurement: e.target.value })}
-                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-2"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Variant SKU *</label>
-                  <input
-                    type="text"
-                    required
-                    value={variantForm.sku}
-                    onChange={(e) => setVariantForm({ ...variantForm, sku: e.target.value })}
-                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-2 font-mono"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Weight (g) *</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    required
-                    min="0.1"
-                    value={variantForm.weight_g}
-                    onChange={(e) => setVariantForm({ ...variantForm, weight_g: parseFloat(e.target.value) || 0 })}
-                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-2 font-bold font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Making Charge *</label>
-                  <input
-                    type="number"
-                    required
-                    min="0"
-                    value={variantForm.making_charge}
-                    onChange={(e) => setVariantForm({ ...variantForm, making_charge: parseFloat(e.target.value) || 0 })}
-                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-2 font-bold font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Charge Type</label>
-                  <select
-                    value={variantForm.making_charge_type}
-                    onChange={(e) => setVariantForm({ ...variantForm, making_charge_type: e.target.value as any })}
-                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-2.5 py-2 font-medium"
-                  >
-                    <option value="fixed">Fixed (₹)</option>
-                    <option value="per_gram">Per Gram (₹/g)</option>
-                    <option value="percentage">Percentage (%)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Stock Units *</label>
-                  <input
-                    type="number"
-                    required
-                    min="0"
-                    value={variantForm.stock}
-                    onChange={(e) => setVariantForm({ ...variantForm, stock: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-2 font-bold font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Variant Image (Optional)</label>
-                  <input
-                    type="text"
-                    placeholder="/public/Saibalaji products S/..."
-                    value={variantForm.image}
-                    onChange={(e) => setVariantForm({ ...variantForm, image: e.target.value })}
-                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-2 font-mono text-[11px]"
-                  />
-                </div>
-              </div>
-
-              {/* LIVE PRICE PREVIEW CARD */}
-              <div className="bg-[#1A1918] text-white p-3.5 rounded-2xl border border-[#C5A059]/40 space-y-2">
-                <div className="flex justify-between items-center border-b border-white/10 pb-1.5">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#C5A059]">
-                    DYNAMIC PRICE PREVIEW (LIVE)
-                  </span>
-                  <span className="text-[10px] font-mono text-gray-300">
-                    Silver Rate: ₹{silverStats.live_silver_rate}/g
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-xs">
+            <form onSubmit={handleSaveVariant} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <div className="p-4 sm:p-5 overflow-y-auto space-y-3 flex-1">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <span className="text-gray-400 block text-[10px]">Weight</span>
-                    <span className="font-bold text-white font-mono">{variantPreview.weight} g</span>
+                    <label className="block font-bold text-gray-700 mb-1">Measurement / Size *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. 2 inch, 3 inch, 250g"
+                      value={variantForm.measurement}
+                      onChange={(e) => setVariantForm({ ...variantForm, measurement: e.target.value })}
+                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5"
+                    />
                   </div>
 
                   <div>
-                    <span className="text-gray-400 block text-[10px]">Silver Value</span>
-                    <span className="font-bold text-white font-mono">₹{variantPreview.silverValue.toLocaleString()}</span>
+                    <label className="block font-bold text-gray-700 mb-1">Variant SKU *</label>
+                    <input
+                      type="text"
+                      required
+                      value={variantForm.sku}
+                      onChange={(e) => setVariantForm({ ...variantForm, sku: e.target.value })}
+                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block font-bold text-gray-700 mb-1">Weight (g) *</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      required
+                      min="0.1"
+                      value={variantForm.weight_g}
+                      onChange={(e) => setVariantForm({ ...variantForm, weight_g: parseFloat(e.target.value) || 0 })}
+                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold font-mono"
+                    />
                   </div>
 
                   <div>
-                    <span className="text-gray-400 block text-[10px]">Making Charges</span>
-                    <span className="font-bold text-white font-mono">₹{variantPreview.makingCharge.toLocaleString()}</span>
+                    <label className="block font-bold text-gray-700 mb-1">Making Charge *</label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      value={variantForm.making_charge}
+                      onChange={(e) => setVariantForm({ ...variantForm, making_charge: parseFloat(e.target.value) || 0 })}
+                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold font-mono"
+                    />
                   </div>
 
                   <div>
-                    <span className="text-gray-400 block text-[10px]">Current Selling Price</span>
-                    <span className="font-bold text-[#C5A059] font-mono text-sm">₹{variantPreview.finalPrice.toLocaleString()}</span>
+                    <label className="block font-bold text-gray-700 mb-1">Charge Type</label>
+                    <select
+                      value={variantForm.making_charge_type}
+                      onChange={(e) => setVariantForm({ ...variantForm, making_charge_type: e.target.value as any })}
+                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-2 py-1.5 font-medium"
+                    >
+                      <option value="fixed">Fixed (₹)</option>
+                      <option value="per_gram">Per Gram (₹/g)</option>
+                      <option value="percentage">Percentage (%)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-gray-700 mb-1">Stock Units *</label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      value={variantForm.stock}
+                      onChange={(e) => setVariantForm({ ...variantForm, stock: parseInt(e.target.value) || 0 })}
+                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-gray-700 mb-1">Variant Image (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="/public/Saibalaji products S/..."
+                      value={variantForm.image}
+                      onChange={(e) => setVariantForm({ ...variantForm, image: e.target.value })}
+                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-mono text-[11px]"
+                    />
+                  </div>
+                </div>
+
+                {/* LIVE PRICE PREVIEW CARD */}
+                <div className="bg-[#1A1918] text-white p-3 rounded-2xl border border-[#C5A059]/40 space-y-1.5">
+                  <div className="flex justify-between items-center border-b border-white/10 pb-1">
+                    <span className="text-[9.5px] uppercase font-bold tracking-widest text-[#C5A059]">
+                      DYNAMIC PRICE PREVIEW (LIVE)
+                    </span>
+                    <span className="text-[9.5px] font-mono text-gray-300">
+                      Silver Rate: ₹{silverStats.live_silver_rate}/g
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span className="text-gray-400 block text-[9.5px]">Weight</span>
+                      <span className="font-bold text-white font-mono">{variantPreview.weight} g</span>
+                    </div>
+
+                    <div>
+                      <span className="text-gray-400 block text-[9.5px]">Silver Value</span>
+                      <span className="font-bold text-white font-mono">₹{variantPreview.silverValue.toLocaleString()}</span>
+                    </div>
+
+                    <div>
+                      <span className="text-gray-400 block text-[9.5px]">Making Charges</span>
+                      <span className="font-bold text-white font-mono">₹{variantPreview.makingCharge.toLocaleString()}</span>
+                    </div>
+
+                    <div>
+                      <span className="text-gray-400 block text-[9.5px]">Current Selling Price</span>
+                      <span className="font-bold text-[#C5A059] font-mono text-xs">₹{variantPreview.finalPrice.toLocaleString()}</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-2">
+              <div className="p-3.5 bg-white border-t border-[#E6E1DA] flex gap-2 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsVariantModalOpen(false)}
-                  className="w-1/2 py-2 border border-[#E6E1DA] rounded-xl font-bold uppercase text-[11px]"
+                  className="w-1/2 py-2 border border-[#E6E1DA] rounded-xl font-bold uppercase text-[11px] hover:bg-gray-50 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="w-1/2 py-2 bg-[#1A1918] hover:bg-[#C5A059] text-white rounded-xl font-bold uppercase text-[11px] shadow-md"
+                  className="w-1/2 py-2 bg-[#1A1918] hover:bg-[#C5A059] text-white rounded-xl font-bold uppercase text-[11px] shadow-md cursor-pointer"
                 >
                   Save Variant
                 </button>
