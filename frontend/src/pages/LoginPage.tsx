@@ -143,7 +143,7 @@ export const LoginPage: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="customer@gmail.com or admin@saibalajisilverworks.com"
+                placeholder="Enter your email"
                 className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl pl-10 pr-4 py-3 text-xs focus:outline-none focus:border-[#B9A77A]"
               />
             </div>
@@ -158,7 +158,7 @@ export const LoginPage: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Enter your password"
                 className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl pl-10 pr-10 py-3 text-xs focus:outline-none focus:border-[#B9A77A]"
               />
               <button
@@ -175,7 +175,7 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-xs flex items-center justify-center gap-2"
+            className="w-full bg-[#202020] hover:bg-[#B9A77A] text-[#ffffff] py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-xs flex items-center justify-center gap-2"
           >
             <span>{loading ? 'Authenticating...' : 'Sign In to Account'}</span>
             <ArrowRight className="w-4 h-4" />
@@ -187,12 +187,6 @@ export const LoginPage: React.FC = () => {
           <Link to={`/account/register?redirect=${encodeURIComponent(targetRedirect)}`} className="text-[#B9A77A] font-bold hover:underline">
             Register Here
           </Link>
-        </div>
-        
-        <div className="p-3 bg-[#FAF9F5] rounded-xl text-[10px] text-gray-500 text-center space-y-1">
-          <p className="font-bold text-gray-700">Demo Quick Login Credentials:</p>
-          <p>Admin: admin@saibalajisilverworks.com / admin123</p>
-          <p>Customer: customer@gmail.com / customer123</p>
         </div>
 
       </div>

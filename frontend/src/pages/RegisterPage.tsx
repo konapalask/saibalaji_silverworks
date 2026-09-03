@@ -178,7 +178,7 @@ export const RegisterPage: React.FC = () => {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="••••••••"
+                  placeholder="Enter your password"
                   className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl pl-4 pr-10 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
                 />
                 <button
