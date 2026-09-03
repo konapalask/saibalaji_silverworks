@@ -15,17 +15,29 @@ const JWT_SECRET = process.env.JWT_SECRET || 'saibalaji_silverworks_super_secret
 app.use(cors());
 app.use(express.json());
 
-// Serve static images from /public directory & frontend public assets
+// Serve static images & video files from /public directory with caching & Range support
 const publicDir = path.join(__dirname, 'public');
 if (!fs.existsSync(publicDir)) {
   fs.mkdirSync(publicDir, { recursive: true });
 }
-app.use('/public', express.static(publicDir));
+app.use('/public', express.static(publicDir, {
+  maxAge: '30d',
+  immutable: true,
+  acceptRanges: true,
+  setHeaders: (res, filePath) => {
+    if (/\.(mp4|MP4|webp|jpg|jpeg|png|svg|avif)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
+    }
+  }
+}));
 
 const frontendPublicDir = path.join(__dirname, '../frontend/public');
 if (fs.existsSync(frontendPublicDir)) {
   app.use(express.static(frontendPublicDir));
-  app.use('/public', express.static(frontendPublicDir));
+  app.use('/public', express.static(frontendPublicDir, {
+    maxAge: '30d',
+    immutable: true
+  }));
 }
 
 // Utility Functions to Load JSON Data (Preserves existing data; auto-creates missing files safely)

@@ -32,8 +32,32 @@ const proxyToBackend = (req, res) => {
   req.pipe(proxyReq, { end: true });
 };
 
+// High-Performance Direct Static Asset Streaming (Avoids double-hop proxying)
+const publicDir = path.join(__dirname, 'public');
+const frontendPublicDir = path.join(__dirname, '../frontend/public');
+
+if (fs.existsSync(publicDir)) {
+  app.use('/public', express.static(publicDir, {
+    maxAge: '30d',
+    immutable: true,
+    acceptRanges: true,
+    setHeaders: (res, filePath) => {
+      if (/\.(mp4|MP4|webp|jpg|jpeg|png|svg|avif)$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
+      }
+    }
+  }));
+}
+
+if (fs.existsSync(frontendPublicDir)) {
+  app.use('/public', express.static(frontendPublicDir, {
+    maxAge: '30d',
+    immutable: true
+  }));
+}
+
 app.use('/api', proxyToBackend);
-app.use('/public', proxyToBackend);
+app.use('/public', proxyToBackend); // Fallback to backend for any dynamic public uploads
 app.use('/docs', proxyToBackend);
 app.use('/openapi.json', proxyToBackend);
 

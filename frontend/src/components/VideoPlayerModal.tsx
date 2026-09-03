@@ -227,6 +227,12 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     ? "w-full h-full object-contain bg-black cursor-pointer"
     : "w-full h-full object-cover cursor-pointer";
 
+  const posterUrl = videoUrl.includes('/public/videos/')
+    ? videoUrl.replace('/public/videos/', '/public/video_thumbnails/').replace(/\.(mp4|MP4)$/i, '.webp')
+    : undefined;
+
+  const [isBuffering, setIsBuffering] = useState(false);
+
   return (
     <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fadeIn">
       <div 
@@ -250,17 +256,29 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
           </button>
         </div>
 
-        {/* Video Element */}
+        {/* Video Element with Instant Poster */}
         <video 
           ref={videoRef}
           src={videoUrl}
+          poster={posterUrl}
+          preload="auto"
           onTimeUpdate={handleTimeUpdate}
+          onWaiting={() => setIsBuffering(true)}
+          onPlaying={() => { setIsBuffering(false); setIsPlaying(true); }}
+          onCanPlay={() => setIsBuffering(false)}
           onClick={togglePlay}
           className={videoClasses}
           playsInline
           autoPlay
           muted
         />
+
+        {/* Buffering Indicator */}
+        {isBuffering && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 bg-black/20">
+            <div className="w-12 h-12 border-3 border-[#C5A059]/30 border-t-[#C5A059] rounded-full animate-spin" />
+          </div>
+        )}
 
         {/* Controls Overlay */}
         <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 space-y-3">
