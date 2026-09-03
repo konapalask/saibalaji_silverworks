@@ -18,7 +18,7 @@ export const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isPreviewActive, setIsPreviewActive] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 

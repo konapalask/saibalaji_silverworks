@@ -73,3 +73,6 @@ logs/
 backend/public/videos/
 *.mp4
 *.MP4
+
+# Backups
+.json_backups/
