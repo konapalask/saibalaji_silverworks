@@ -27,11 +27,12 @@ if ($frontendPort) {
 
 # 2. Check Cloudflare Tunnel
 Write-Host "`n[2/5] Checking Cloudflare Tunnel..." -ForegroundColor Yellow
-$cfProc = Get-Process cloudflared -ErrorAction SilentlyContinue
+$token = "eyJhIjoiMDU4NzM5ZmEzOGM4MzNjMTI4NDYxNmJiYjg4Yjk1MGMiLCJ0IjoiYjNiOGIyOWQtYWExZC00NTEwLTgzODYtMmVkYzYzYWY0MThiIiwicyI6Ik9HTTRZMk5qTnpRdE56UXlNQzAwTTJZd0xXRTNOMk10TXpSa1lXWXpZamsyTW1KbSJ9"
+$cfProc = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq "cloudflared.exe" -and $_.CommandLine -like "*$token*" }
 if ($cfProc) {
-    Write-Host "  [OK] Cloudflared process active (PID: $($cfProc.Id))" -ForegroundColor Green
+    Write-Host "  [OK] Cloudflared process active (PID: $($cfProc.ProcessId))" -ForegroundColor Green
 } else {
-    Write-Host "  [WARN] Cloudflared process not running" -ForegroundColor Yellow
+    Write-Host "  [WARN] Cloudflared process for Sai Balaji not running" -ForegroundColor Yellow
 }
 
 # 3. Check Background / Live Daemons
@@ -73,18 +74,12 @@ try {
 
 # 5. Check Windows Startup Entries
 Write-Host "`n[5/5] Checking Windows Autostart Registration..." -ForegroundColor Yellow
-$startupBat = [Environment]::GetFolderPath('Startup') + '\Start_SaiBalaji_LiveConsole.bat'
-if (Test-Path $startupBat) {
-    Write-Host "  [OK] Visible Startup folder launcher exists: $startupBat" -ForegroundColor Green
+$startupFolder = [Environment]::GetFolderPath('Startup')
+$startupVbs = "$startupFolder\start_saibalaji_on_boot.vbs"
+if (Test-Path $startupVbs) {
+    Write-Host "  [OK] Startup folder launcher active: $startupVbs" -ForegroundColor Green
 } else {
     Write-Host "  [WARN] Startup folder launcher missing. Run scripts\setup_autostart.bat" -ForegroundColor Yellow
-}
-
-$regVal = (Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -ErrorAction SilentlyContinue).SaiBalajiServer
-if ($regVal) {
-    Write-Host "  [OK] Registry Run Key configured: $regVal" -ForegroundColor Green
-} else {
-    Write-Host "  [WARN] Registry Run Key missing" -ForegroundColor Yellow
 }
 
 # 6. Test HTTP Endpoints
@@ -101,6 +96,13 @@ try {
     Write-Host "  [OK] Frontend Server responded with HTTP $($resFrontend.StatusCode)" -ForegroundColor Green
 } catch {
     Write-Host "  [FAIL] Frontend Server error: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+try {
+    $resLive = Invoke-WebRequest -Uri "https://saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 8
+    Write-Host "  [OK] Cloudflare Live (https://saibalajisilverworkspvtltd.com) responded with HTTP $($resLive.StatusCode)" -ForegroundColor Green
+} catch {
+    Write-Host "  [FAIL] Cloudflare Live error: $($_.Exception.Message)" -ForegroundColor Red
 }
 
 Write-Host "`n==========================================================" -ForegroundColor Cyan

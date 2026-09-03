@@ -59,7 +59,7 @@ Write-Host "         SAI BALAJI SILVERWORKS - 24/7 LIVE SERVER & GIT SYNC CONSOL
 Write-Host "================================================================================" -ForegroundColor Cyan
 Write-Host "  Backend API:      http://localhost:8000/docs" -ForegroundColor White
 Write-Host "  Frontend Server:  http://localhost:5173" -ForegroundColor White
-Write-Host "  Cloudflare Live:  http://saibalaji.e3di.org/" -ForegroundColor Green
+Write-Host "  Cloudflare Live:  https://saibalajisilverworkspvtltd.com" -ForegroundColor Green
 Write-Host "  Git Auto-Sync:    Active (Checking origin/main every 30 seconds)" -ForegroundColor Cyan
 Write-Host "  Keep-Awake:       Active (Sleep & Hibernate Disabled)" -ForegroundColor Cyan
 Write-Host "================================================================================" -ForegroundColor Cyan
@@ -83,6 +83,13 @@ function Write-ConsoleLog {
     Write-Host "[$ts] " -NoNewline -ForegroundColor Gray
     Write-Host "[$Level] " -NoNewline -ForegroundColor $color
     Write-Host $Message -ForegroundColor $color
+}
+
+function Get-SaiBalajiCloudflared {
+    $procs = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object {
+        $_.Name -eq "cloudflared.exe" -and $_.CommandLine -like "*$token*"
+    }
+    return $procs
 }
 
 function Restart-BackendServer {
@@ -127,14 +134,20 @@ if (-not $frontendActive) {
 }
 
 # 3. Cloudflare Tunnel
-$cfProc = Get-Process -Name "cloudflared" -ErrorAction SilentlyContinue
+$cfProc = Get-SaiBalajiCloudflared
 if (-not $cfProc) {
-    Write-ConsoleLog "Starting Cloudflare Tunnel for http://saibalaji.e3di.org/..." "BUILD"
+    Write-ConsoleLog "Starting Cloudflare Tunnel for https://saibalajisilverworkspvtltd.com..." "BUILD"
     $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
-    Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--token", $token)
+    Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "--no-autoupdate", "--metrics", "127.0.0.1:20245", "run", "--token", $token) -WindowStyle Hidden
     Start-Sleep -Seconds 2
+    $cfProc = Get-SaiBalajiCloudflared
+    if ($cfProc) {
+        Write-ConsoleLog "Cloudflare Tunnel is running (PID: $($cfProc.ProcessId)) [OK]" "OK"
+    } else {
+        Write-ConsoleLog "Cloudflare Tunnel starting in background..." "INFO"
+    }
 } else {
-    Write-ConsoleLog "Cloudflare Tunnel is running (PID: $($cfProc.Id)) [OK]" "OK"
+    Write-ConsoleLog "Cloudflare Tunnel is running (PID: $($cfProc.ProcessId)) [OK]" "OK"
 }
 
 Write-ConsoleLog "All services online! Starting Git Fetch & Health Watchdog..." "SUCCESS"
@@ -158,11 +171,11 @@ while ($true) {
             Restart-FrontendServer
         }
 
-        $cProc = Get-Process -Name "cloudflared" -ErrorAction SilentlyContinue
+        $cProc = Get-SaiBalajiCloudflared
         if (-not $cProc) {
             Write-ConsoleLog "Cloudflare tunnel down! Restarting cloudflared..." "WARN"
             $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
-            Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--token", $token) -WindowStyle Hidden
+            Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "--no-autoupdate", "--metrics", "127.0.0.1:20245", "run", "--token", $token) -WindowStyle Hidden
             Start-Sleep -Seconds 2
         }
 
