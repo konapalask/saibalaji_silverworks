@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Play, ShieldCheck, Factory, Award, Film, ChevronDown, Video, FileText, ArrowRight, Lock } from 'lucide-react';
 import { CompanyVideo } from '../types';
 import { VideoPlayerModal } from '../components/VideoPlayerModal';
+import { LazyVideoCard } from '../components/LazyVideoCard';
 import { initialVideosData } from '../data/videosData';
 import api from '../services/api';
 
@@ -93,6 +94,8 @@ export const About: React.FC = () => {
       >
         <video
           src={storyVid.video_url}
+          poster={storyVid.thumbnail_url}
+          preload="metadata"
           className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700 pointer-events-none"
           muted
           loop
@@ -150,6 +153,8 @@ export const About: React.FC = () => {
         >
           <video
             src={mfgVid.video_url}
+            poster={mfgVid.thumbnail_url}
+            preload="metadata"
             className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform pointer-events-none"
             muted
             loop
@@ -301,56 +306,13 @@ export const About: React.FC = () => {
         {visibleVideos.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {visibleVideos.map((video) => (
-              <div
+              <LazyVideoCard
                 key={video.id}
-                onClick={() => openVideo(video)}
-                className="group relative bg-white rounded-2xl overflow-hidden border border-[#E6E1DA] hover:border-[#C5A059] shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between"
-              >
-                {/* Thumbnail Container */}
-                <div className="relative aspect-16/10 bg-black overflow-hidden">
-                  <video
-                    src={video.video_url}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
-                    muted
-                    loop
-                    playsInline
-                    onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.pause();
-                      e.currentTarget.currentTime = 0;
-                    }}
-                  />
-
-                  {/* Category & Badge overlay */}
-                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                    <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md text-[#B9A77A] text-[10px] font-bold uppercase tracking-wider rounded-lg border border-white/10">
-                      {video.category || 'Craftsmanship'}
-                    </span>
-                    {video.filename && (
-                      <span className="px-2 py-0.5 bg-white/20 backdrop-blur-md text-white text-[10px] font-mono rounded">
-                        #{video.filename.replace('.MP4', '')}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Play Button Overlay */}
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 flex items-center justify-center transition-colors">
-                    <div className="w-12 h-12 rounded-full bg-white/90 text-[#1A1918] group-hover:bg-[#C5A059] group-hover:text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-all">
-                      <Play className="w-5 h-5 fill-current ml-0.5" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Info Container */}
-                <div className="p-4 space-y-2 bg-white">
-                  <h4 className="font-serif text-sm font-bold text-[#1A1918] line-clamp-1 group-hover:text-[#C5A059] transition-colors">
-                    {video.title}
-                  </h4>
-                  <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">
-                    {video.description}
-                  </p>
-                </div>
-              </div>
+                video={video}
+                onOpen={openVideo}
+                aspectRatio="aspect-16/10"
+                layout="card"
+              />
             ))}
           </div>
         ) : (
