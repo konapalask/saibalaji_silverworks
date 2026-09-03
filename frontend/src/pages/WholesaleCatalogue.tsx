@@ -4,6 +4,7 @@ import { Briefcase, ArrowRight, Sparkles, ShoppingBag, Play, Video, Search, X } 
 import { ProductCard } from '../components/ProductCard';
 import { QuickViewModal } from '../components/QuickViewModal';
 import { VideoPlayerModal } from '../components/VideoPlayerModal';
+import { LazyVideoCard } from '../components/LazyVideoCard';
 import { Product, CompanyVideo } from '../types';
 import api from '../services/api';
 import { MAIN_CATEGORIES } from '../data/categoriesData';
@@ -452,39 +453,13 @@ export const WholesaleCatalogue: React.FC = () => {
 
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {factoryVideos.map((vid) => (
-            <div
+            <LazyVideoCard
               key={vid.id}
-              onClick={() => openVideo(vid)}
-              className="group relative bg-black rounded-2xl overflow-hidden aspect-16/10 border border-[#E5E0D8] shadow-sm hover:shadow-xl cursor-pointer transition-all duration-300 flex flex-col justify-between p-3"
-            >
-              <video
-                src={vid.video_url}
-                className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500 pointer-events-none"
-                muted
-                loop
-                playsInline
-                autoPlay
-              />
-              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors" />
-
-              <div className="relative z-10 flex justify-between items-start">
-                <span className="px-2 py-0.5 bg-black/60 text-[#B9A77A] text-[9px] font-bold uppercase tracking-wider rounded">
-                  {vid.category}
-                </span>
-                <span className="px-1.5 py-0.5 bg-white/20 text-white text-[9px] font-mono rounded">
-                  MUTED
-                </span>
-              </div>
-
-              <div className="relative z-10 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-white/90 text-[#1A1918] group-hover:bg-[#B9A77A] group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
-                  <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
-                </div>
-                <h4 className="font-serif text-xs font-bold text-white line-clamp-1">
-                  {vid.title}
-                </h4>
-              </div>
-            </div>
+              video={vid}
+              onOpen={openVideo}
+              aspectRatio="aspect-16/10"
+              layout="card"
+            />
           ))}
         </div>
       </div>

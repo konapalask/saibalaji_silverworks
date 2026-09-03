@@ -4,6 +4,7 @@ import { Play, ArrowRight, ShieldCheck, Award, Sparkles, Briefcase, ChevronDown,
 import { Product, CompanyVideo } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { VideoPlayerModal } from '../components/VideoPlayerModal';
+import { LazyVideoCard } from '../components/LazyVideoCard';
 import { QuickViewModal } from '../components/QuickViewModal';
 import { CustomCursor } from '../components/CustomCursor';
 import { CountUp } from '../components/CountUp';
@@ -422,44 +423,13 @@ export const Home: React.FC = () => {
         {homeFilteredVideos.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {homeFilteredVideos.slice(0, videoDisplayCount).map((vid) => (
-              <div
+              <LazyVideoCard
                 key={vid.id}
-                onClick={() => openVideo(vid)}
-                className="group relative bg-black rounded-2xl overflow-hidden aspect-9/14 border border-[#E5E0D8] shadow-md hover:shadow-2xl cursor-pointer transition-all duration-300 flex flex-col justify-between p-4"
-              >
-                <video
-                  src={vid.video_url}
-                  className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500 pointer-events-none"
-                  muted
-                  loop
-                  playsInline
-                  autoPlay
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/40" />
-
-                <div className="relative z-10 flex justify-between items-start">
-                  <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md text-[#B9A77A] text-[10px] font-bold uppercase tracking-wider rounded-lg border border-white/10">
-                    {vid.category || 'Craftsmanship'}
-                  </span>
-                  {vid.filename && (
-                    <span className="px-2 py-0.5 bg-white/20 backdrop-blur-md text-white text-[10px] font-mono rounded">
-                      #{vid.filename.replace('.MP4', '')}
-                    </span>
-                  )}
-                </div>
-
-                <div className="relative z-10 space-y-2">
-                  <div className="w-10 h-10 rounded-full bg-white/90 text-[#1A1918] group-hover:bg-[#B9A77A] group-hover:text-white flex items-center justify-center transition-all shadow-lg">
-                    <Play className="w-4 h-4 fill-current ml-0.5" />
-                  </div>
-                  <h4 className="font-serif text-sm font-bold text-white line-clamp-1">
-                    {vid.title}
-                  </h4>
-                  <p className="text-[10px] text-gray-300 line-clamp-2 leading-relaxed">
-                    {vid.description}
-                  </p>
-                </div>
-              </div>
+                video={vid}
+                onOpen={openVideo}
+                aspectRatio="aspect-9/14"
+                layout="reel"
+              />
             ))}
           </div>
         ) : (
