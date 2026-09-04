@@ -116,10 +116,10 @@ function Restart-FrontendServer {
 
 function Build-Frontend {
     Write-ConsoleLog "Rebuilding frontend UI production bundle..." "BUILD"
-    $buildOutput = cmd.exe /c "cd /d `"$workspace\frontend`" && npm run build" 2>&1
+    $buildOutput = cmd.exe /c "cd /d `"$workspace\frontend`" && npx --yes vite build" 2>&1
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path "$workspace\frontend\dist\index.html")) {
-        Write-ConsoleLog "npm run build encountered warnings/errors. Running fallback vite build..." "WARN"
-        cmd.exe /c "cd /d `"$workspace\frontend`" && npx vite build" 2>&1 | Out-Null
+        Write-ConsoleLog "vite build encountered issues. Running fallback npm run build..." "WARN"
+        cmd.exe /c "cd /d `"$workspace\frontend`" && npm run build" 2>&1 | Out-Null
     }
     if (Test-Path "$workspace\frontend\dist\index.html") {
         Write-ConsoleLog "Frontend build completed successfully! [index.html present]" "SUCCESS"

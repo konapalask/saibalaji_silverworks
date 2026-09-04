@@ -18,16 +18,18 @@ function triggerAutoBuild() {
   isBuilding = true;
   console.log('[AUTO-BUILD] dist/index.html missing! Triggering automatic frontend build...');
   const frontendDir = path.join(__dirname, '../frontend');
-  const cmdStr = process.platform === 'win32'
-    ? `cmd.exe /c "cd /d "${frontendDir}" && npx --yes vite build"`
-    : `cd "${frontendDir}" && npx --yes vite build`;
 
-  exec(cmdStr, (err, stdout, stderr) => {
-    isBuilding = false;
+  exec('npx --yes vite build', { cwd: frontendDir }, (err, stdout, stderr) => {
     if (err) {
-      console.error('[AUTO-BUILD ERROR]:', stderr || err.message);
+      console.error('[AUTO-BUILD VITE ERROR]:', stderr || err.message);
+      exec('npm run build', { cwd: frontendDir }, (err2, stdout2, stderr2) => {
+        isBuilding = false;
+        if (err2) console.error('[AUTO-BUILD NPM ERROR]:', stderr2 || err2.message);
+        else console.log('[AUTO-BUILD SUCCESS] Frontend build completed successfully via npm run build.');
+      });
     } else {
-      console.log('[AUTO-BUILD SUCCESS] Frontend build completed successfully.');
+      isBuilding = false;
+      console.log('[AUTO-BUILD SUCCESS] Frontend build completed successfully via vite build.');
     }
   });
 }
