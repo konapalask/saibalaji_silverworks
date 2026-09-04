@@ -114,8 +114,28 @@ function Restart-FrontendServer {
     Start-Sleep -Seconds 2
 }
 
+function Build-Frontend {
+    Write-ConsoleLog "Rebuilding frontend UI production bundle..." "BUILD"
+    $buildOutput = cmd.exe /c "cd /d `"$workspace\frontend`" && npm run build" 2>&1
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path "$workspace\frontend\dist\index.html")) {
+        Write-ConsoleLog "npm run build encountered warnings/errors. Running fallback vite build..." "WARN"
+        cmd.exe /c "cd /d `"$workspace\frontend`" && npx vite build" 2>&1 | Out-Null
+    }
+    if (Test-Path "$workspace\frontend\dist\index.html") {
+        Write-ConsoleLog "Frontend build completed successfully! [index.html present]" "SUCCESS"
+    } else {
+        Write-ConsoleLog "CRITICAL: Frontend build failed to generate index.html!" "ERROR"
+    }
+}
+
 # Initial service check & launch
 Write-ConsoleLog "Initializing Sai Balaji 24/7 services..." "INFO"
+
+# 0. Ensure Frontend Build Exists
+if (-not (Test-Path "$workspace\frontend\dist\index.html")) {
+    Write-ConsoleLog "Frontend dist/index.html missing on startup! Triggering initial build..." "WARN"
+    Build-Frontend
+}
 
 # 1. Backend Service
 $backendActive = (Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue)
@@ -168,6 +188,13 @@ while ($true) {
         $fActive = (Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue)
         if (-not $fActive) {
             Write-ConsoleLog "Frontend port 5173 down! Restarting frontend server..." "WARN"
+            Restart-FrontendServer
+        }
+
+        # Check if index.html in frontend dist is missing
+        if (-not (Test-Path "$workspace\frontend\dist\index.html")) {
+            Write-ConsoleLog "Frontend build (dist/index.html) is missing! Auto-building..." "WARN"
+            Build-Frontend
             Restart-FrontendServer
         }
 
@@ -264,12 +291,7 @@ while ($true) {
                 }
 
                 # Rebuild frontend production bundle
-                Write-ConsoleLog "Rebuilding frontend UI production bundle..." "BUILD"
-                $buildOutput = cmd.exe /c "cd /d `"$workspace\frontend`" && npm run build" 2>&1
-                if ($LASTEXITCODE -ne 0) {
-                    Write-ConsoleLog "npm run build encountered warnings. Running fallback vite build..." "WARN"
-                    cmd.exe /c "cd /d `"$workspace\frontend`" && npx vite build" 2>&1 | Out-Null
-                }
+                Build-Frontend
 
                 # Restart Backend & Frontend Servers so new code and routes take effect immediately
                 Restart-BackendServer
