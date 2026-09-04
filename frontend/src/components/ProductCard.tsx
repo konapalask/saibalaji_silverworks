@@ -18,10 +18,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { cart, addToCart, updateQuantity, removeFromCart } = useCart();
   const { addToWholesaleCart } = useWholesale();
-  const { calculateCurrentPrice } = useLiveSilver();
+  const { calculateCurrentPrice, calculateWholesalePrice } = useLiveSilver();
 
   const isLiked = isInWishlist(product.id);
-  const displayPrice = calculateCurrentPrice(product);
+  const displayPrice = isWholesaleOnly ? calculateWholesalePrice(product) : calculateCurrentPrice(product);
 
   // Check current item quantity in cart
   const cartItem = cart.find((i) => i.product.id === product.id);
@@ -89,9 +89,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
             <div>
               <div className="flex items-center gap-1">
                 <span className="text-[8.5px] sm:text-[9.5px] text-[#777777] uppercase tracking-wider font-medium">
-                  {Array.isArray(product.variants) && product.variants.length > 1 ? 'From' : 'Price'}
+                  {Array.isArray(product.variants) && product.variants.length > 1 ? 'From' : (isWholesaleOnly ? 'Wholesale Price' : 'Price')}
                 </span>
-                <span className="text-[7.5px] sm:text-[8.5px] text-[#C5A059] font-bold bg-[#FAF9F5] px-1 py-0.2 rounded border border-[#C5A059]/30">Live</span>
+                {!isWholesaleOnly && (
+                  <span className="text-[7.5px] sm:text-[8.5px] text-[#C5A059] font-bold bg-[#FAF9F5] px-1 py-0.2 rounded border border-[#C5A059]/30">Live</span>
+                )}
+                {isWholesaleOnly && (
+                  <span className="text-[7.5px] sm:text-[8.5px] text-[#202020] font-bold bg-[#FAF9F5] px-1 py-0.2 rounded border border-[#E5E0D8]">B2B</span>
+                )}
               </div>
               <span className="font-sans font-bold text-sm sm:text-base text-[#202020]">
                 ₹{displayPrice.toLocaleString()}

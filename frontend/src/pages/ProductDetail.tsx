@@ -382,28 +382,36 @@ export const ProductDetail: React.FC = () => {
             <div className="mt-3 space-y-2">
               <div className="flex flex-wrap items-baseline gap-2.5">
                 <span className="font-sans text-3xl font-bold text-[#202020]">
-                  ₹{priceBreakdown.finalPrice.toLocaleString()}
+                  ₹{(isWholesaleMode ? priceBreakdown.wholesalePrice : priceBreakdown.finalPrice).toLocaleString()}
                 </span>
-                <span className="text-[10px] text-[#C5A059] font-bold bg-[#FAF9F5] px-2.5 py-0.5 rounded-full border border-[#C5A059]/30 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> Live Silver Rate
-                </span>
+                {!isWholesaleMode ? (
+                  <span className="text-[10px] text-[#C5A059] font-bold bg-[#FAF9F5] px-2.5 py-0.5 rounded-full border border-[#C5A059]/30 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" /> Live Silver Rate
+                  </span>
+                ) : (
+                  <span className="text-[10px] text-[#1A1918] font-bold bg-[#FAF9F5] px-2.5 py-0.5 rounded-full border border-[#E5E0D8] flex items-center gap-1">
+                    <Briefcase className="w-3 h-3 text-[#C5A059]" /> B2B Wholesale Quote Rate
+                  </span>
+                )}
               </div>
 
-              {/* Dynamic Formula Breakdown Pill */}
-              <div className="bg-white p-2.5 rounded-xl border border-[#E5E0D8] text-[11px] grid grid-cols-3 gap-2 text-center shadow-2xs">
-                <div>
-                  <span className="text-[9px] text-gray-500 uppercase tracking-wider block font-semibold">Net Weight</span>
-                  <span className="font-bold text-[#202020] font-mono">{priceBreakdown.weight} g</span>
+              {/* Dynamic Formula Breakdown Pill - Only shown for Retail */}
+              {!isWholesaleMode && (
+                <div className="bg-white p-2.5 rounded-xl border border-[#E5E0D8] text-[11px] grid grid-cols-3 gap-2 text-center shadow-2xs">
+                  <div>
+                    <span className="text-[9px] text-gray-500 uppercase tracking-wider block font-semibold">Net Weight</span>
+                    <span className="font-bold text-[#202020] font-mono">{priceBreakdown.weight} g</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-gray-500 uppercase tracking-wider block font-semibold">Live Rate</span>
+                    <span className="font-bold text-[#C5A059] font-mono">₹{priceBreakdown.silverRate}/g</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-gray-500 uppercase tracking-wider block font-semibold">Making Charge</span>
+                    <span className="font-bold text-[#202020] font-mono">₹{priceBreakdown.makingCharge.toLocaleString()}</span>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-[9px] text-gray-500 uppercase tracking-wider block font-semibold">Live Rate</span>
-                  <span className="font-bold text-[#C5A059] font-mono">₹{priceBreakdown.silverRate}/g</span>
-                </div>
-                <div>
-                  <span className="text-[9px] text-gray-500 uppercase tracking-wider block font-semibold">Making Charge</span>
-                  <span className="font-bold text-[#202020] font-mono">₹{priceBreakdown.makingCharge.toLocaleString()}</span>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* WEIGHT SELECTOR BUTTONS (HORIZONTAL SCROLL ON MOBILE) */}
