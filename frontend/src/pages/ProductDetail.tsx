@@ -457,9 +457,11 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                         }`}
                       >
                         <span className="font-serif text-xs">{variant.weight_g}g</span>
-                        <span className={`text-[9.5px] font-mono ${isSelected ? 'text-[#C5A059]' : 'text-gray-500'}`}>
-                          ₹{vCalc.finalPrice.toLocaleString()}
-                        </span>
+                        {!isWholesaleMode && (
+                          <span className={`text-[9.5px] font-mono ${isSelected ? 'text-[#C5A059]' : 'text-gray-500'}`}>
+                            ₹{vCalc.finalPrice.toLocaleString()}
+                          </span>
+                        )}
                       </button>
                     );
                   })}
@@ -572,7 +574,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
               <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Silver Purity:</span> <span className="font-bold text-[#1A1918]">{product.silver_purity}</span></div>
               <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Net Silver Weight:</span> <span className="font-bold text-[#1A1918]">{product.net_silver_weight_g || product.weight_g} grams</span></div>
               {product.gross_weight_g && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Gross Weight:</span> <span className="font-bold text-[#1A1918]">{product.gross_weight_g} grams</span></div>}
-              {product.making_charges !== undefined && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Making Charges:</span> <span className="font-bold text-[#1A1918]">{product.making_charges > 0 ? `₹${product.making_charges}` : 'Included'}</span></div>}
+              {!isWholesaleMode && product.making_charges !== undefined && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Making Charges:</span> <span className="font-bold text-[#1A1918]">{product.making_charges > 0 ? `₹${product.making_charges}` : 'Included'}</span></div>}
               {product.dimensions && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Dimensions:</span> <span className="font-bold text-[#1A1918]">{product.dimensions}</span></div>}
               <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">SKU Code:</span> <span className="font-mono text-[#1A1918]">{product.sku}</span></div>
               <div className="grid grid-cols-2 py-1.5"><span className="font-semibold text-gray-500">Hallmarking:</span> <span className="font-bold text-[#C5A059]">Laser Hallmarked</span></div>
