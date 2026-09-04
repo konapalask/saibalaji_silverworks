@@ -83,8 +83,15 @@ export const Footer: React.FC = () => {
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#B9A77A]" />
                 </Link>
               </li>
+              <li>
+                <a href="https://sbbullion.xyz/" target="_blank" rel="noreferrer" className="text-[#B9A77A] hover:text-white transition-colors flex items-center gap-1 group justify-center sm:justify-start font-semibold">
+                  <span>SB Bullion Live Rates 📈</span>
+                  <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#B9A77A]" />
+                </a>
+              </li>
             </ul>
           </div>
+
 
           {/* Column 2: Collections */}
           <div className="space-y-4 flex flex-col items-center sm:items-start">
@@ -170,7 +177,7 @@ export const Footer: React.FC = () => {
 
               {/* Social Media */}
               <div className="flex items-center justify-center sm:justify-start gap-4 pt-2 text-[#A0A0A0]">
-                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-[#B9A77A] transition-colors" title="Instagram">
+                <a href="https://www.instagram.com/saibalaji_silverworkspvtltd?igsi=ajl0a3hnYWw3dzhi" target="_blank" rel="noreferrer" className="hover:text-[#B9A77A] transition-colors" title="Instagram (@saibalaji_silverworkspvtltd)">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
                 </a>
                 <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-[#B9A77A] transition-colors" title="Facebook">
@@ -180,6 +187,7 @@ export const Footer: React.FC = () => {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17z" /><polygon points="10 15 15 12 10 9 10 15" /></svg>
                 </a>
               </div>
+
             </div>
           </div>
 

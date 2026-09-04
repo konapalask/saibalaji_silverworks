@@ -127,10 +127,21 @@ export const Navbar: React.FC = () => {
               CONTACT
               <span className={`absolute bottom-0 left-0 h-[2px] bg-[#00276B] transition-all duration-300 ${isActive('/contact') ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </RouterLink>
+
+            <a
+              href="https://sbbullion.xyz/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors py-1 relative group hover:text-[#202020] text-[#B9A77A] font-bold flex items-center gap-1"
+              title="Live Bullion & Metal Rates"
+            >
+              <span>SB BULLION</span>
+              <span className="absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 w-0 group-hover:w-full" />
+            </a>
           </nav>
 
-          {/* RIGHT ZONE: Utility Icons (Search, Account, Wishlist, Cart) */}
-          <div className="flex items-center gap-1 sm:gap-4 text-[#333333] shrink-0">
+          {/* RIGHT ZONE: Utility Icons (Search, Wishlist, Instagram, Account, Cart) */}
+          <div className="flex items-center gap-1 sm:gap-3 text-[#333333] shrink-0">
             <button
               onClick={() => setIsSearchOpen(true)}
               className="p-1.5 sm:p-2 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all shrink-0"
@@ -152,6 +163,21 @@ export const Navbar: React.FC = () => {
               )}
             </RouterLink>
 
+            <a
+              href="https://www.instagram.com/saibalaji_silverworkspvtltd?igsi=ajl0a3hnYWw3dzhi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1.5 sm:p-2 hover:text-[#E1306C] hover:bg-[#F1EFEB] rounded-full transition-all flex items-center justify-center shrink-0"
+              title="Instagram (@saibalaji_silverworkspvtltd)"
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+              </svg>
+            </a>
+
+
             <RouterLink
               to={user ? "/account" : "/account/login"}
               className="p-1 sm:p-1.5 hover:text-[#202020] hover:bg-[#F1EFEB] rounded-full transition-all flex items-center justify-center shrink-0"
@@ -170,6 +196,7 @@ export const Navbar: React.FC = () => {
                 </div>
               )}
             </RouterLink>
+
 
             {/* Cart Button */}
             <button
@@ -208,7 +235,17 @@ export const Navbar: React.FC = () => {
             <RouterLink to="/shop/wholesale" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">WHOLESALE</RouterLink>
             <RouterLink to="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">ABOUT</RouterLink>
             <RouterLink to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">CONTACT</RouterLink>
+            <a 
+              href="https://sbbullion.xyz/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              onClick={() => setIsMobileMenuOpen(false)} 
+              className="text-[#B9A77A] hover:text-[#202020] font-bold"
+            >
+              SB BULLION 📈
+            </a>
           </nav>
+
 
           <div className="border-t border-[#E5E0D8] pt-6 text-center space-y-1 font-sans text-xs text-[#666666]">
             <p className="text-[#202020] font-semibold">+91 9492664870 • Tenali Atelier</p>
