@@ -132,12 +132,13 @@ export const Navbar: React.FC = () => {
               href="https://sbbullion.xyz/"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-colors py-1 relative group hover:text-[#202020] text-[#B9A77A] font-bold flex items-center gap-1"
+              className="transition-colors py-1 relative group text-[#202020] font-bold hover:text-black flex items-center gap-1"
               title="Live Bullion & Metal Rates"
             >
               <span>SB BULLION</span>
-              <span className="absolute bottom-0 left-0 h-[2px] bg-[#B9A77A] transition-all duration-300 w-0 group-hover:w-full" />
+              <span className="absolute bottom-0 left-0 h-[2px] bg-[#202020] transition-all duration-300 w-0 group-hover:w-full" />
             </a>
+
           </nav>
 
           {/* RIGHT ZONE: Utility Icons (Search, Wishlist, Instagram, Account, Cart) */}
