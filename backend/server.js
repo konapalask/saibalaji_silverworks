@@ -1505,7 +1505,8 @@ const getImageAsDataUri = (rawImgPath) => {
 
 // Render Printable PDF Quotation HTML
 const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
-  const qNum = quote.quotation_number || quote.quote_number || `SBS-QT-${quote.id}`;
+  let rawQNum = quote.quotation_number || quote.quote_number || (quote.id ? `SBS-QT-${quote.id}` : 'SBS-QT-0000');
+  const qNum = rawQNum.replace(/^(SBS-QT-)+/, 'SBS-QT-');
   const company = quote.company_name || reqData?.company_name || 'Valued Commercial Buyer';
   const contact = quote.contact_person || reqData?.contact_person || 'N/A';
   const phone = quote.phone || reqData?.phone || 'N/A';
@@ -1516,11 +1517,9 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
   const validUntil = quote.valid_until || '2026-09-30';
 
   const items = quote.items || reqData?.items || [];
-  const subtotal = quote.subtotal || items.reduce((a, b) => a + (b.subtotal || (b.unit_price * b.quantity) || 0), 0);
-  const discount = quote.discount_amount || 0;
-  const tax = quote.tax_amount !== undefined ? quote.tax_amount : Math.round((subtotal - discount) * 0.03);
-  const shipping = quote.shipping_charge || 0;
-  const grandTotal = quote.grand_total || (subtotal - discount + tax + shipping);
+
+  // Wholesale Quotations and Requisitions MUST NEVER show prices
+  const isWholesaleBooking = true;
 
   const itemsHtml = items.map((it, idx) => {
     const title = it.product_name || it.title || 'Pure Silver Article';
@@ -1531,8 +1530,6 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
     const size = it.measurement || it.selected_measurement || it.size || reqItem?.measurement || reqItem?.selected_measurement || reqItem?.size || catalogProd?.dimensions || 'Standard';
     const weight = (it.weight_g && it.weight_g !== 50) ? `${it.weight_g}g` : (reqItem?.weight_g ? `${reqItem.weight_g}g` : (catalogProd?.weight_g ? `${catalogProd.weight_g}g` : 'Standard'));
     const qty = it.quantity || it.requested_quantity || 1;
-    const price = it.unit_price || it.price || 3500;
-    const lineTotal = it.subtotal || (price * qty);
 
     let rawImg = it.featured_image || it.image_url || it.image || reqItem?.featured_image || catalogProd?.featured_image || catalogProd?.image_url;
     let imgDataUri = getImageAsDataUri(rawImg);
@@ -1548,8 +1545,7 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
           <span style="color: #666; font-size: 10.5px; font-family: monospace; display: block;">SKU: ${sku} | Size: ${size} | Weight: ${weight} | Purity: 92.5% Sterling</span>
         </td>
         <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: center; font-weight: bold; vertical-align: middle; font-size: 12px;">${qty} Pcs</td>
-        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: right; vertical-align: middle; font-family: sans-serif; font-size: 12px;">₹${price.toLocaleString()}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: right; font-weight: bold; vertical-align: middle; font-family: sans-serif; font-size: 13px; color: #1A1918;">₹${lineTotal.toLocaleString()}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #E6E1DA; text-align: right; font-weight: bold; vertical-align: middle; font-size: 12px; color: #C5A059;">B2B Requisition (Quote Pending)</td>
       </tr>
     `;
   }).join('');
@@ -1571,9 +1567,7 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
         .info-table td { vertical-align: top; padding: 8px; }
         .items-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 12px; }
         .items-table th { background: #1A1918; color: #FFF; text-transform: uppercase; font-size: 10px; letter-spacing: 1px; padding: 12px 10px; }
-        .summary-box { float: right; width: 320px; font-size: 12px; margin-bottom: 25px; }
-        .summary-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #EEE; }
-        .summary-total { font-size: 16px; font-weight: bold; color: #C5A059; border-top: 2px solid #1A1918; border-bottom: none; padding-top: 10px; }
+        .summary-box { float: right; width: 340px; font-size: 12px; margin-bottom: 25px; }
         .terms { clear: both; background: #FAF9F5; border: 1px solid #E6E1DA; padding: 15px; border-radius: 8px; font-size: 11px; color: #444; }
         .terms h5 { margin: 0 0 5px 0; color: #C5A059; text-transform: uppercase; font-size: 11px; }
         .no-print { text-align: center; margin-bottom: 20px; }
@@ -1583,12 +1577,12 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
     </head>
     <body>
       <div class="no-print">
-        <button class="btn-print" onclick="window.print()">🖨️ Print Quotation / Save as PDF</button>
+        <button class="btn-print" onclick="window.print()">🖨️ Print Requisition PDF</button>
       </div>
       <div class="invoice-box">
         <div class="header">
           <h1>SAI BALAJI SILVER WORKS</h1>
-          <h4>Official Commercial B2B Quotation</h4>
+          <h4>Official B2B Wholesale Requisition</h4>
           <p>Manufacturers & Exporters of 925 Sterling Silver & 999 Fine Silverware</p>
           <p>Address: 5-147 SF-1, Puchalapalli Sundaraiah St, Near Indian Petrol Bunk, Ramavarappadu, Vijayawada - 520008 | Phone: +91 94926 64870 / +91 91212 66269</p>
         </div>
@@ -1596,7 +1590,7 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
         <table class="info-table">
           <tr>
             <td style="width: 50%;">
-              <strong style="color: #C5A059; font-size: 11px; text-transform: uppercase;">Billed To / Customer Details:</strong><br/>
+              <strong style="color: #C5A059; font-size: 11px; text-transform: uppercase;">Customer / Business Details:</strong><br/>
               <strong style="font-size: 14px;">${company}</strong><br/>
               Attn: ${contact}<br/>
               Phone: ${phone} | Email: ${email}<br/>
@@ -1604,7 +1598,7 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
               Address: ${address}
             </td>
             <td style="width: 50%; text-align: right;">
-              <strong style="color: #C5A059; font-size: 11px; text-transform: uppercase;">Quotation Reference:</strong><br/>
+              <strong style="color: #C5A059; font-size: 11px; text-transform: uppercase;">Requisition Reference:</strong><br/>
               <strong style="font-size: 16px; color: #1A1918;">${qNum}</strong><br/>
               Date Issued: <strong>${dateStr}</strong><br/>
               Valid Until: <strong>${validUntil}</strong><br/>
@@ -1620,8 +1614,7 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
               <th style="width: 70px; text-align: center;">PRODUCT IMAGE</th>
               <th style="text-align: left;">ITEM DESCRIPTION & SPECIFICATIONS</th>
               <th style="width: 70px; text-align: center;">QTY</th>
-              <th style="width: 110px; text-align: right;">UNIT RATE</th>
-              <th style="width: 120px; text-align: right;">TOTAL AMOUNT</th>
+              <th style="width: 180px; text-align: right;">REQUISITION STATUS</th>
             </tr>
           </thead>
           <tbody>
@@ -1630,22 +1623,9 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
         </table>
 
         <div class="summary-box">
-          <div class="summary-row">
-            <span>Subtotal:</span>
-            <span>₹${subtotal.toLocaleString()}</span>
-          </div>
-          ${discount > 0 ? `<div class="summary-row" style="color: green;"><span>Special Discount:</span><span>-₹${discount.toLocaleString()}</span></div>` : ''}
-          <div class="summary-row">
-            <span>GST Tax (3% Silver Rate):</span>
-            <span>₹${tax.toLocaleString()}</span>
-          </div>
-          <div class="summary-row">
-            <span>Insured Freight & Handling:</span>
-            <span>${shipping === 0 ? 'FREE' : `₹${shipping.toLocaleString()}`}</span>
-          </div>
-          <div class="summary-row summary-total">
-            <span>GRAND TOTAL:</span>
-            <span>₹${grandTotal.toLocaleString()}</span>
+          <div style="background: #FAF9F5; border: 1px solid #C5A059; padding: 14px; border-radius: 10px; text-align: center;">
+            <strong style="color: #C5A059; font-size: 12px; text-transform: uppercase; display: block; margin-bottom: 4px;">B2B Wholesale Requisition Mode</strong>
+            <p style="font-size: 11px; color: #555; margin: 0; line-height: 1.4;">Official B2B quotation with live spot silver rate & custom bulk pricing will be provided directly by Sai Balaji Silver Works Commercial Desk.</p>
           </div>
         </div>
 
@@ -1653,7 +1633,7 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
           <h5>Terms & Conditions:</h5>
           <p>• <strong>Payment Terms:</strong> ${quote.payment_terms || '50% Advance upon quotation acceptance, 50% prior to dispatch.'}</p>
           <p>• <strong>Delivery Terms:</strong> ${quote.delivery_terms || 'Dispatch via insured logistics within 5 business days.'}</p>
-          <p>• <strong>Notes:</strong> ${quote.notes || 'Official quotation issued by Sai Balaji Silver Works Commercial Desk.'}</p>
+          <p>• <strong>Notes:</strong> ${quote.notes || 'Official wholesale requisition submitted to Sai Balaji Silver Works Commercial Desk.'}</p>
           <p>• <strong>Bank Account Details:</strong> Sai Balaji Silver Works | A/C: 987654321098 | IFSC: SBIN0001234 | State Bank of India</p>
         </div>
       </div>
@@ -1661,6 +1641,7 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
     </html>
   `;
 };
+
 
 // Endpoint for viewing/downloading PDF Quotation
 app.get(['/api/v1/quotations/:id/pdf', '/api/v1/wholesale/requests/:id/pdf'], (req, res) => {

@@ -232,6 +232,69 @@ export const generateFullCartWhatsAppMessage = (
   return msg;
 };
 
+
+export interface WholesaleBookingOrder {
+  requestNumber: string;
+  companyName: string;
+  contactPerson: string;
+  phone: string;
+  email: string;
+  gstin?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  notes?: string;
+  items: Array<{
+    product_name: string;
+    product_sku: string;
+    measurement?: string;
+    weight_g?: number;
+    requested_quantity: number;
+  }>;
+  pdfUrl: string;
+}
+
+/**
+ * Generate formatted WhatsApp message for a WHOLESALE B2B BOOKING (includes PDF Link & No Prices)
+ */
+export const generateWholesaleBookingWhatsAppMessage = (
+  booking: WholesaleBookingOrder
+): string => {
+  let msg = `Hello Sai Balaji Silver Works Admin,\n\n`;
+  msg += `A new B2B WHOLESALE BOOKING has been submitted!\n\n`;
+  msg += `Requisition ID: ${booking.requestNumber}\n\n`;
+
+  msg += `BUSINESS CREDENTIALS\n`;
+  msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
+  msg += `Company / Firm: ${booking.companyName}\n`;
+  msg += `Contact Person: ${booking.contactPerson}\n`;
+  msg += `Mobile: ${booking.phone}\n`;
+  msg += `Email: ${booking.email}\n`;
+  if (booking.gstin) msg += `GSTIN: ${booking.gstin}\n`;
+  if (booking.address) msg += `Address: ${booking.address}${booking.city ? `, ${booking.city}` : ''}${booking.pincode ? ` - ${booking.pincode}` : ''}\n`;
+  if (booking.notes) msg += `Notes: ${booking.notes}\n`;
+
+  msg += `\nREQUESTED WHOLESALE ITEMS\n`;
+  msg += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
+  booking.items.forEach((item, index) => {
+    msg += `${index + 1}. ${item.product_name}\n`;
+    msg += `SKU: ${item.product_sku}\n`;
+    if (item.measurement) msg += `Size / Variant: ${item.measurement}\n`;
+    if (item.weight_g) msg += `Weight: ${item.weight_g}g\n`;
+    msg += `Qty Requested: ${item.requested_quantity} Pcs\n\n`;
+  });
+
+  msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
+  msg += `Pricing: Official B2B Quote Pending (No Prices)\n\n`;
+  msg += `📄 VIEW/DOWNLOAD PDF QUOTATION:\n`;
+  msg += `${booking.pdfUrl}\n\n`;
+  msg += `This wholesale booking has also been logged in the Admin Dashboard.\n\n`;
+  msg += `Thank you.`;
+
+  return msg;
+};
+
 /**
  * Open WhatsApp Click-to-Chat in new tab/app using standard wa.me format
  */
@@ -241,4 +304,3 @@ export const openWhatsAppOrderUrl = (rawMessage: string): void => {
   const whatsappUrl = `https://wa.me/${adminNum}?text=${encodedText}`;
   window.open(whatsappUrl, '_blank');
 };
-

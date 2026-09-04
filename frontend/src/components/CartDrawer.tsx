@@ -354,7 +354,7 @@ export const CartDrawer: React.FC = () => {
                   </button>
                 ) : (
                   <>
-                    {/* WHOLESALE ORDERS GO DIRECTLY TO ADMIN (NO WHATSAPP MSG) */}
+                    {/* WHOLESALE BOOKINGS SUBMIT TO ADMIN DB & ADMIN WHATSAPP WITH PDF LINK */}
                     <button 
                       onClick={() => {
                         if (!user) {
@@ -366,17 +366,18 @@ export const CartDrawer: React.FC = () => {
                         setIsCartOpen(false);
                         navigate('/wholesale/request');
                       }}
-                      className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 shadow-lg"
+                      className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-4 rounded-xl text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
                     >
-                      <Briefcase className="w-4 h-4 text-[#C5A059]" />
-                      <span>SUBMIT WHOLESALE BOOKING TO ADMIN</span>
+                      <MessageSquare className="w-4 h-4 fill-current" />
+                      <span>SUBMIT WHOLESALE BOOKING ON WHATSAPP</span>
                     </button>
 
                     <div className="p-2.5 bg-[#FAF9F5] rounded-xl text-[10px] text-gray-500 text-center border border-[#C5A059]/30">
-                      ℹ️ Wholesale B2B bookings are submitted directly to the Admin Desk for ReportLab PDF Quotation issuance.
+                      ℹ️ Submits request to Admin Dashboard & launches Admin WhatsApp with auto-generated B2B PDF Quotation.
                     </div>
                   </>
                 )}
+
               </div>
             </div>
           )}

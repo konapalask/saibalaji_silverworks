@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Briefcase, Trash2, Plus, Minus, Send, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Briefcase, Trash2, Plus, Minus, Send, CheckCircle2, ShieldCheck, MessageSquare, FileText } from 'lucide-react';
 import { useWholesale } from '../context/WholesaleContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { CountryPhoneInput } from '../components/CountryPhoneInput';
 import { OrderSuccessModal } from '../components/OrderSuccessModal';
 import { getErrorMessage } from '../utils/apiError';
+import { generateWholesaleBookingWhatsAppMessage, openWhatsAppOrderUrl } from '../utils/whatsappOrder';
 
 export const WholesaleRequestPage: React.FC = () => {
   const { wholesaleItems, updateWholesaleQuantity, removeFromWholesaleCart, clearWholesaleCart } = useWholesale();
@@ -65,7 +66,32 @@ export const WholesaleRequestPage: React.FC = () => {
       };
 
       const res = await api.post('/wholesale/requests', payload);
-      setSubmittedRequest(res.data);
+      const resData = res.data;
+      setSubmittedRequest(resData);
+
+      // Build PDF Quotation URL
+      const origin = window.location.origin;
+      const targetId = resData.id || resData.request_number;
+      const pdfUrl = `${origin}/api/v1/wholesale/requests/${targetId}/pdf`;
+
+      // Generate WhatsApp message with PDF link & open Admin WhatsApp
+      const whatsappMsg = generateWholesaleBookingWhatsAppMessage({
+        requestNumber: resData.request_number || `SBS-QT-${resData.id}`,
+        companyName: formData.company_name,
+        contactPerson: formData.contact_person,
+        phone: formData.phone,
+        email: formData.email,
+        gstin: formData.gstin,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        pincode: formData.pincode,
+        notes: formData.notes,
+        items: payload.items,
+        pdfUrl
+      });
+
+      openWhatsAppOrderUrl(whatsappMsg);
       clearWholesaleCart();
     } catch (err: any) {
       alert(getErrorMessage(err, 'Failed to submit wholesale request'));
@@ -75,6 +101,8 @@ export const WholesaleRequestPage: React.FC = () => {
   };
 
   if (submittedRequest) {
+    const pdfUrl = `${window.location.origin}/api/v1/wholesale/requests/${submittedRequest.id || submittedRequest.request_number}/pdf`;
+
     return (
       <div className="min-h-screen bg-[#FAF9F5] py-16 px-4 max-w-3xl mx-auto text-center space-y-6">
         <OrderSuccessModal
@@ -95,7 +123,7 @@ export const WholesaleRequestPage: React.FC = () => {
         <span className="bg-[#C5A059] text-[#1A1918] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
           WHOLESALE INQUIRY RECEIVED
         </span>
-        <h1 className="font-serif text-4xl font-bold text-[#1A1918]">Request Submitted Successfully</h1>
+        <h1 className="font-serif text-4xl font-bold text-[#1A1918]">Request Sent to Admin & WhatsApp</h1>
         <div className="bg-white border border-[#E6E1DA] rounded-2xl p-6 text-left space-y-3 shadow-sm max-w-lg mx-auto">
           <div className="flex justify-between border-b border-gray-100 pb-2">
             <span className="text-xs text-gray-500 font-semibold">Wholesale Request ID:</span>
@@ -105,15 +133,29 @@ export const WholesaleRequestPage: React.FC = () => {
             <span className="text-xs text-gray-500 font-semibold">Company:</span>
             <span className="text-xs font-bold text-[#1A1918]">{submittedRequest.company_name}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between border-b border-gray-100 pb-2">
             <span className="text-xs text-gray-500 font-semibold">Total Bulk Line Items:</span>
             <span className="text-xs font-bold text-[#1A1918]">{submittedRequest.items?.length || 0}</span>
           </div>
+          <div className="flex justify-between">
+            <span className="text-xs text-gray-500 font-semibold">Status:</span>
+            <span className="text-xs font-bold text-green-600">Logged on Admin Dashboard</span>
+          </div>
         </div>
         <p className="text-xs text-gray-600 max-w-md mx-auto">
-          Our sales manager will review your request, calculate formal bulk pricing and taxes, and generate an official PDF quotation accessible in your account.
+          Your request has been logged on the Admin Dashboard and opened on WhatsApp with the direct B2B PDF Quotation link.
         </p>
-        <div className="flex justify-center gap-4 pt-4">
+
+        <div className="flex flex-wrap justify-center gap-4 pt-4">
+          <a
+            href={pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#C5A059] hover:bg-[#b08c47] text-[#1A1918] px-6 py-3 rounded-xl text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2 shadow-md transition-all"
+          >
+            <FileText className="w-4 h-4" />
+            <span>View / Download B2B PDF Quotation</span>
+          </a>
           <Link 
             to="/account" 
             className="bg-[#1A1918] text-white px-6 py-3 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-[#C5A059]"
@@ -130,6 +172,7 @@ export const WholesaleRequestPage: React.FC = () => {
       </div>
     );
   }
+
 
   return (
     <div className="min-h-screen bg-[#FAF9F5] py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -336,11 +379,12 @@ export const WholesaleRequestPage: React.FC = () => {
                 <button 
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-4 rounded-2xl text-xs uppercase tracking-widest font-bold transition-all shadow-xl flex items-center justify-center gap-2"
+                  className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-4 rounded-2xl text-xs uppercase tracking-widest font-bold transition-all shadow-xl flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>{submitting ? 'Submitting Request...' : 'Send Request to Sai Balaji Silverworks'}</span>
+                  <MessageSquare className="w-4 h-4 fill-current" />
+                  <span>{submitting ? 'Submitting Request...' : 'SEND BOOKING TO WHATSAPP & ADMIN DASHBOARD'}</span>
                 </button>
+
               </form>
             </div>
           </div>
