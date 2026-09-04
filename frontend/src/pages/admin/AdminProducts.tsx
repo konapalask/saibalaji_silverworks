@@ -246,7 +246,8 @@ export const AdminProducts: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = { ...formData, variants };
+      const autoSku = formData.sku || `SBS-DT-${Date.now().toString().slice(-6)}`;
+      const payload = { ...formData, sku: autoSku, variants };
       if (editingProduct) {
         await api.put(`/products/${editingProduct.id}`, payload);
       } else {
@@ -390,15 +391,19 @@ export const AdminProducts: React.FC = () => {
       alert('Weight must be greater than 0.');
       return;
     }
+    const autoSku = variantForm.sku || `${formData.sku || 'VAR'}-${Date.now().toString().slice(-4)}`;
+    const finalVar = { ...variantForm, sku: autoSku };
+
     const updated = [...variants];
     if (editingVariantIndex !== null) {
-      updated[editingVariantIndex] = { ...variantForm };
+      updated[editingVariantIndex] = finalVar;
     } else {
-      updated.push({ ...variantForm });
+      updated.push(finalVar);
     }
     setVariants(updated);
     setIsVariantModalOpen(false);
   };
+
 
   const handleDeleteVariant = (index: number) => {
     if (!confirm('Remove this size/measurement variant?')) return;
@@ -1039,11 +1044,7 @@ export const AdminProducts: React.FC = () => {
                   <input type="text" required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2" />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label className="block font-bold text-gray-700 mb-1">SKU Code *</label>
-                    <input type="text" required value={formData.sku} onChange={(e) => setFormData({ ...formData, sku: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2 font-mono" />
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block font-bold text-gray-700 mb-1">Main Category *</label>
                     <select value={formData.category_id} onChange={(e) => setFormData({ ...formData, category_id: Number(e.target.value) })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2">
@@ -1057,6 +1058,7 @@ export const AdminProducts: React.FC = () => {
                     <input type="text" placeholder="e.g. Kalash & Sacred Pots" value={formData.subcategory} onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2" />
                   </div>
                 </div>
+
 
                 {/* Weights & Purity Section */}
                 <div className="bg-white p-3.5 rounded-2xl border border-[#E6E1DA] space-y-2.5">
@@ -1131,7 +1133,6 @@ export const AdminProducts: React.FC = () => {
                             <th className="py-2 px-3">Making Charge</th>
                             <th className="py-2 px-3">Calculated Price</th>
                             <th className="py-2 px-3">Stock</th>
-                            <th className="py-2 px-3">SKU</th>
                             <th className="py-2 px-3 text-right">Actions</th>
                           </tr>
                         </thead>
@@ -1145,7 +1146,6 @@ export const AdminProducts: React.FC = () => {
                                 <td className="py-1.5 px-3 font-mono">₹{v.making_charge}</td>
                                 <td className="py-1.5 px-3 font-bold text-green-700 font-mono">₹{pCalc.finalPrice.toLocaleString()}</td>
                                 <td className="py-1.5 px-3 font-mono">{v.stock} pcs</td>
-                                <td className="py-1.5 px-3 font-mono text-gray-500">{v.sku}</td>
                                 <td className="py-1.5 px-3 text-right space-x-1">
                                   <button type="button" onClick={() => handleOpenEditVariant(idx)} className="p-1 text-gray-600 hover:text-[#C5A059]">
                                     <Edit className="w-3.5 h-3.5" />
@@ -1205,29 +1205,16 @@ export const AdminProducts: React.FC = () => {
 
             <form onSubmit={handleSaveVariant} className="flex flex-col flex-1 min-h-0 overflow-hidden">
               <div className="p-4 sm:p-5 overflow-y-auto space-y-3 flex-1">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block font-bold text-gray-700 mb-1">Measurement / Size *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. 2 inch, 3 inch, 250g"
-                      value={variantForm.measurement}
-                      onChange={(e) => setVariantForm({ ...variantForm, measurement: e.target.value })}
-                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-gray-700 mb-1">Variant SKU *</label>
-                    <input
-                      type="text"
-                      required
-                      value={variantForm.sku}
-                      onChange={(e) => setVariantForm({ ...variantForm, sku: e.target.value })}
-                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-mono"
-                    />
-                  </div>
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">Measurement / Size *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 2 inch, 3 inch, 250g"
+                    value={variantForm.measurement}
+                    onChange={(e) => setVariantForm({ ...variantForm, measurement: e.target.value })}
+                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5"
+                  />
                 </div>
 
                 <div className="grid grid-cols-3 gap-3">
@@ -1265,10 +1252,10 @@ export const AdminProducts: React.FC = () => {
                     >
                       <option value="fixed">Fixed (₹)</option>
                       <option value="per_gram">Per Gram (₹/g)</option>
-                      <option value="percentage">Percentage (%)</option>
                     </select>
                   </div>
                 </div>
+
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
