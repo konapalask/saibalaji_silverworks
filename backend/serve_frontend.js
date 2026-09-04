@@ -5,10 +5,37 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
+const { exec } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 5173;
 const distDir = path.join(__dirname, '../frontend/dist');
+
+let isBuilding = false;
+
+function triggerAutoBuild() {
+  if (isBuilding) return;
+  isBuilding = true;
+  console.log('[AUTO-BUILD] dist/index.html missing! Triggering automatic frontend build...');
+  const frontendDir = path.join(__dirname, '../frontend');
+  const cmdStr = process.platform === 'win32'
+    ? `cmd.exe /c "cd /d "${frontendDir}" && npx --yes vite build"`
+    : `cd "${frontendDir}" && npx --yes vite build`;
+
+  exec(cmdStr, (err, stdout, stderr) => {
+    isBuilding = false;
+    if (err) {
+      console.error('[AUTO-BUILD ERROR]:', stderr || err.message);
+    } else {
+      console.log('[AUTO-BUILD SUCCESS] Frontend build completed successfully.');
+    }
+  });
+}
+
+// Trigger auto-build on server startup if index.html is missing
+if (!fs.existsSync(path.join(distDir, 'index.html'))) {
+  triggerAutoBuild();
+}
 
 // Reverse Proxy for Backend APIs (Port 8000)
 const proxyToBackend = (req, res) => {
@@ -87,6 +114,7 @@ app.get('*', (req, res) => {
     res.setHeader('Expires', '0');
     return res.sendFile(indexPath);
   }
+  triggerAutoBuild();
   res.status(503).send(`
     <!DOCTYPE html>
     <html>
