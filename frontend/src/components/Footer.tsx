@@ -6,12 +6,6 @@ export const Footer: React.FC = () => {
   return (
     <footer className="relative bg-[#17191C] text-[#F1F1EE] pt-20 pb-12 overflow-hidden border-t border-white/10 font-sans">
 
-      {/* Ultra-Faint Full-Width Brand Wordmark Background */}
-      <div className="absolute inset-x-0 bottom-12 text-center pointer-events-none select-none overflow-hidden opacity-[0.03] z-0">
-        <span className="font-serif text-[14vw] font-bold tracking-[0.2em] text-white uppercase block leading-none">
-          SILVERWORKS
-        </span>
-      </div>
 
       <div className="relative z-10 max-w-[1450px] mx-auto px-6 sm:px-12 lg:px-16 space-y-16">
 
