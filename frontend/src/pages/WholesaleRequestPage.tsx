@@ -183,9 +183,8 @@ export const WholesaleRequestPage: React.FC = () => {
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                      <p className="text-[10px] text-gray-400">SKU: {product.sku} | Purity: {product.silver_purity}</p>
                       <p className="text-xs font-semibold text-[#C5A059] mt-1">
-                        Base Rate: ₹{product.wholesale_price ? product.wholesale_price.toLocaleString() : product.retail_price.toLocaleString()}
+                        Pricing: Official B2B Quote on Request
                       </p>
                     </div>
 

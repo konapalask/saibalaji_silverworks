@@ -148,6 +148,7 @@ export const App: React.FC = () => {
                   <Route path="/shop/retail" element={<StoreShell><RetailShop /></StoreShell>} />
                   <Route path="/shop/retail/:slug" element={<StoreShell><ProductDetail /></StoreShell>} />
                   <Route path="/shop/wholesale" element={<StoreShell><WholesaleCatalogue /></StoreShell>} />
+                  <Route path="/shop/wholesale/:slug" element={<StoreShell><ProductDetail isWholesalePage={true} /></StoreShell>} />
 
                   {/* Mandatory Purchasing & Checkout Routes (REQUIRES LOGIN) */}
                   <Route path="/checkout" element={<ProtectedRoute><StoreShell><CheckoutPage /></StoreShell></ProtectedRoute>} />

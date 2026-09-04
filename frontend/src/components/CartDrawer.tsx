@@ -274,20 +274,7 @@ export const CartDrawer: React.FC = () => {
                         {/* Pricing Tag */}
                         <div className="mt-1">
                           {isWholesale ? (
-                            hasWholesalePrice ? (
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-[#C5A059]">₹{effectivePrice.toLocaleString()} / unit</span>
-                                <span className="text-[9px] bg-[#C5A059]/15 text-[#C5A059] font-bold px-1.5 py-0.5 rounded">Wholesale</span>
-                              </div>
-                            ) : (
-                              <div className="space-y-0.5">
-                                <span className="text-xs font-bold text-[#1A1918]">₹{effectivePrice.toLocaleString()} / unit</span>
-                                <div className="text-[9px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 flex items-center gap-1">
-                                  <AlertCircle className="w-3 h-3 text-amber-600 shrink-0" />
-                                  <span>Wholesale rate unavailable (Retail applied)</span>
-                                </div>
-                              </div>
-                            )
+                            <span className="text-xs font-bold text-[#C5A059]">B2B Wholesale Requisition</span>
                           ) : (
                             <span className="text-xs font-bold text-[#1A1918]">₹{effectivePrice.toLocaleString()} / unit</span>
                           )}
@@ -303,7 +290,7 @@ export const CartDrawer: React.FC = () => {
                           >
                             <Minus className="w-3.5 h-3.5" />
                           </button>
-                          <span className="px-3 text-xs font-bold">{quantity}</span>
+                          <span className="px-3 text-xs font-bold">{quantity} Pcs</span>
                           <button 
                             onClick={() => updateQuantity(product.id, quantity + 1, varKey)}
                             className="p-1 text-gray-600 hover:text-black transition-colors"
@@ -312,9 +299,11 @@ export const CartDrawer: React.FC = () => {
                           </button>
                         </div>
 
-                        <span className="text-xs font-bold text-[#1A1918]">
-                          ₹{itemSubtotal.toLocaleString()}
-                        </span>
+                        {!isWholesale && (
+                          <span className="text-xs font-bold text-[#1A1918]">
+                            ₹{itemSubtotal.toLocaleString()}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -326,24 +315,31 @@ export const CartDrawer: React.FC = () => {
           {/* Footer Calculations */}
           {effectiveCartItems.length > 0 && (
             <div className="p-5 bg-white border-t border-[#E6E1DA] space-y-3">
-              <div className="space-y-1.5 text-xs">
-                <div className="flex justify-between text-gray-600">
-                  <span>Subtotal ({totalQuantity} items)</span>
-                  <span className="font-semibold">₹{subtotal.toLocaleString()}</span>
+              {!isWholesale ? (
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Subtotal ({totalQuantity} items)</span>
+                    <span className="font-semibold">₹{subtotal.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>GST (3% Silver Tax)</span>
+                    <span className="font-semibold">₹{tax.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Shipping Fee</span>
+                    <span className="text-green-600 font-bold">FREE</span>
+                  </div>
+                  <div className="flex justify-between text-base font-bold text-[#1A1918] pt-2 border-t border-gray-200">
+                    <span>Grand Total</span>
+                    <span className="text-[#C5A059]">₹{grandTotal.toLocaleString()}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>GST (3% Silver Tax)</span>
-                  <span className="font-semibold">₹{tax.toLocaleString()}</span>
+              ) : (
+                <div className="p-3 bg-[#FAF9F5] rounded-xl border border-[#C5A059]/30 text-center space-y-1">
+                  <p className="text-xs font-bold text-[#1A1918]">B2B Wholesale Requisition List ({totalQuantity} Items)</p>
+                  <p className="text-[10px] text-gray-500">Official B2B PDF Quotation will be issued by Admin upon submission.</p>
                 </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Shipping Fee</span>
-                  <span className="text-green-600 font-bold">FREE</span>
-                </div>
-                <div className="flex justify-between text-base font-bold text-[#1A1918] pt-2 border-t border-gray-200">
-                  <span>Grand Total</span>
-                  <span className="text-[#C5A059]">₹{grandTotal.toLocaleString()}</span>
-                </div>
-              </div>
+              )}
 
               <div className="space-y-2">
                 {/* RETAIL vs WHOLESALE ACTION BUTTONS */}

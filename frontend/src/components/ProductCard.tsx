@@ -32,7 +32,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
 
       {/* Top Product Image Container with 3:2 Aspect Ratio */}
       <Link
-        to={`/shop/retail/${product.slug}`}
+        to={isWholesaleOnly ? `/shop/wholesale/${product.slug}` : `/shop/retail/${product.slug}`}
         className="relative aspect-3/2 w-full bg-[#000000] overflow-hidden p-1 sm:p-1.5 flex items-center justify-center border-b border-[#F0ECE6] block group/img"
       >
         {/* Product Photography - Clean 3:2 filled studio photography */}
@@ -73,7 +73,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
           <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#B9A77A] tracking-widest mb-0.5 sm:mb-1 truncate">
             {product.category?.name || 'Sterling Silver'}
           </div>
-          <Link to={`/shop/retail/${product.slug}`} className="block">
+          <Link to={isWholesaleOnly ? `/shop/wholesale/${product.slug}` : `/shop/retail/${product.slug}`} className="block">
             <h3 className="font-serif text-xs sm:text-base font-semibold text-[#202020] group-hover:text-[#B9A77A] transition-colors line-clamp-1">
               {product.title}
             </h3>
@@ -85,31 +85,36 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
 
         {/* Price & Action Section */}
         <div className="mt-2.5 sm:mt-4 pt-2.5 sm:pt-3 border-t border-[#F0ECE6] space-y-2.5 sm:space-y-3">
-          <div className="flex items-center justify-between gap-1">
-            <div>
-              <div className="flex items-center gap-1">
-                <span className="text-[8.5px] sm:text-[9.5px] text-[#777777] uppercase tracking-wider font-medium">
-                  {Array.isArray(product.variants) && product.variants.length > 1 ? 'From' : (isWholesaleOnly ? 'Wholesale Price' : 'Price')}
+          {isWholesaleOnly ? (
+            <div className="flex items-center justify-between gap-1">
+              <div>
+                <span className="text-[8.5px] sm:text-[9.5px] text-[#B9A77A] uppercase tracking-wider font-bold block">
+                  PRICING
                 </span>
-                {!isWholesaleOnly && (
-                  <span className="text-[7.5px] sm:text-[8.5px] text-[#C5A059] font-bold bg-[#FAF9F5] px-1 py-0.2 rounded border border-[#C5A059]/30">Live</span>
-                )}
-                {isWholesaleOnly && (
-                  <span className="text-[7.5px] sm:text-[8.5px] text-[#202020] font-bold bg-[#FAF9F5] px-1 py-0.2 rounded border border-[#E5E0D8]">B2B</span>
-                )}
+                <span className="font-sans font-bold text-xs sm:text-sm text-[#202020]">
+                  Quote on Request
+                </span>
               </div>
-              <span className="font-sans font-bold text-sm sm:text-base text-[#202020]">
-                ₹{displayPrice.toLocaleString()}
-              </span>
-            </div>
-
-            {isWholesaleOnly && (
               <div className="text-right">
                 <span className="text-[8.5px] sm:text-[9.5px] text-[#B9A77A] uppercase tracking-wider font-bold block">MOQ</span>
                 <span className="text-[10px] sm:text-xs font-bold text-[#202020]">{product.min_wholesale_qty || 5} Pcs</span>
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between gap-1">
+              <div>
+                <div className="flex items-center gap-1">
+                  <span className="text-[8.5px] sm:text-[9.5px] text-[#777777] uppercase tracking-wider font-medium">
+                    {Array.isArray(product.variants) && product.variants.length > 1 ? 'From' : 'Price'}
+                  </span>
+                  <span className="text-[7.5px] sm:text-[8.5px] text-[#C5A059] font-bold bg-[#FAF9F5] px-1 py-0.2 rounded border border-[#C5A059]/30">Live</span>
+                </div>
+                <span className="font-sans font-bold text-sm sm:text-base text-[#202020]">
+                  ₹{displayPrice.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          )}
 
           {(product.stock <= 0 || product.in_stock === false) ? (
             <button
@@ -120,8 +125,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
             </button>
           ) : (
             <Link
-              to={`/shop/retail/${product.slug}`}
-              className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs text-center"
+              to={isWholesaleOnly ? `/shop/wholesale/${product.slug}` : `/shop/retail/${product.slug}`}
+              className="w-full bg-[#202020] hover:bg-[#B9A77A] text-[#FAF9F5] py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs text-center"
             >
               <span>VIEW DETAILS</span>
             </Link>
