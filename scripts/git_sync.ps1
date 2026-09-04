@@ -137,10 +137,10 @@ while ($true) {
 
             # Rebuild frontend UI production bundle
             Write-SyncLog "Rebuilding frontend UI production bundle..." "BUILD"
-            $buildRes = cmd.exe /c "cd /d `"$workspace\frontend`" && npm run build" 2>&1
-            if ($LASTEXITCODE -ne 0) {
-                Write-SyncLog "npm run build warned - executing fallback vite build..." "WARN"
-                cmd.exe /c "cd /d `"$workspace\frontend`" && npx vite build" 2>&1 | Out-Null
+            $buildRes = cmd.exe /c "cd /d `"$workspace\frontend`" && npx --yes vite build" 2>&1
+            if ($LASTEXITCODE -ne 0 -or -not (Test-Path "$workspace\frontend\dist\index.html")) {
+                Write-SyncLog "vite build warned - executing fallback npm run build..." "WARN"
+                cmd.exe /c "cd /d `"$workspace\frontend`" && npm run build" 2>&1 | Out-Null
             }
 
             # Restart backend and frontend servers

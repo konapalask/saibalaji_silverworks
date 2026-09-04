@@ -60,8 +60,12 @@ while ($true) {
 
         # 4. Frontend Watchdog (Port 5173)
         $frontendActive = (Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue)
-        if (-not $frontendActive) {
-            Write-DaemonLog "Frontend on port 5173 not active. Spawning node serve_frontend.js..." "WARN"
+        if (-not $frontendActive -or -not (Test-Path "$workspace\frontend\dist\index.html")) {
+            if (-not (Test-Path "$workspace\frontend\dist\index.html")) {
+                Write-DaemonLog "Frontend dist/index.html missing. Building UI..." "WARN"
+                cmd.exe /c "cd /d `"$workspace\frontend`" && npx --yes vite build" 2>&1 | Out-Null
+            }
+            Write-DaemonLog "Frontend on port 5173 restarting/spawning..." "WARN"
             Start-Process cmd.exe -ArgumentList @("/c", "set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node serve_frontend.js") -WindowStyle Hidden
             Start-Sleep -Seconds 2
         }
