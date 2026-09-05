@@ -69,21 +69,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
 
       {/* Product Details Content */}
       <div className="p-2.5 sm:p-4 flex-1 flex flex-col justify-between bg-white">
-        <div>
-          <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#B9A77A] tracking-widest mb-0.5 sm:mb-1 truncate">
-            {product.category?.name || 'Sterling Silver'}
+        <div className="space-y-1.5 sm:space-y-2">
+          <div>
+            <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#B9A77A] tracking-widest mb-0.5 sm:mb-1 truncate">
+              {product.category?.name || 'Sterling Silver'}
+            </div>
+            <Link to={isWholesaleOnly ? `/shop/wholesale/${product.slug}` : `/shop/retail/${product.slug}`} className="block">
+              <h3 className="font-serif text-xs sm:text-base font-semibold text-[#202020] group-hover:text-[#B9A77A] transition-colors line-clamp-1">
+                {product.title}
+              </h3>
+            </Link>
           </div>
-          <Link to={isWholesaleOnly ? `/shop/wholesale/${product.slug}` : `/shop/retail/${product.slug}`} className="block">
-            <h3 className="font-serif text-xs sm:text-base font-semibold text-[#202020] group-hover:text-[#B9A77A] transition-colors line-clamp-1">
-              {product.title}
-            </h3>
-          </Link>
-        </div>
 
-        {/* Price & Action Section */}
-        <div className="mt-2.5 sm:mt-4 pt-2.5 sm:pt-3 border-t border-[#F0ECE6] space-y-2.5 sm:space-y-3">
+          {/* Rate / Price Section - positioned directly below product name without gap */}
           {isWholesaleOnly ? (
-            <div className="flex items-center justify-between gap-1">
+            <div className="flex items-center justify-between gap-1 pt-0.5">
               <div>
                 <span className="text-[8.5px] sm:text-[9.5px] text-[#B9A77A] uppercase tracking-wider font-bold block">
                   PRICING
@@ -98,7 +98,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-between gap-1">
+            <div className="flex items-center justify-between gap-1 pt-0.5">
               <div>
                 <div className="flex items-center gap-1">
                   <span className="text-[8.5px] sm:text-[9.5px] text-[#777777] uppercase tracking-wider font-medium">
@@ -112,7 +112,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
               </div>
             </div>
           )}
+        </div>
 
+        {/* Action Button pinned cleanly to bottom */}
+        <div className="mt-3 pt-2.5 border-t border-[#F0ECE6]">
           {(product.stock <= 0 || product.in_stock === false) ? (
             <button
               disabled
@@ -123,13 +126,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
           ) : (
             <Link
               to={isWholesaleOnly ? `/shop/wholesale/${product.slug}` : `/shop/retail/${product.slug}`}
-              className="w-full bg-[#202020] hover:bg-[#B9A77A] text-[#FAF9F5] py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs text-center"
+              className="w-full bg-[#202020] hover:bg-[#B9A77A] text-[#FAF9F5] py-2 sm:py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-xs text-center"
             >
               <span>VIEW DETAILS</span>
             </Link>
           )}
         </div>
-
       </div>
     </div>
   );
