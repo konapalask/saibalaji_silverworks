@@ -73,7 +73,6 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
               </div>
 
               <h2 className="font-serif text-2xl font-bold text-[#202020]">{product.title}</h2>
-              <p className="text-xs text-[#777777] mt-1">SKU: {product.sku}</p>
 
               <div className="mt-4 flex items-baseline gap-3">
                 {product.product_type === 'WHOLESALE' ? (

@@ -78,9 +78,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
               {product.title}
             </h3>
           </Link>
-          <p className="text-[10px] sm:text-[11px] text-[#777777] line-clamp-1 mt-0.5">
-            SKU: {product.sku}
-          </p>
         </div>
 
         {/* Price & Action Section */}

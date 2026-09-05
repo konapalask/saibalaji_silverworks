@@ -268,7 +268,9 @@ export const CartDrawer: React.FC = () => {
                               Weight: {selected_measurement.includes('inch') ? `${weight_g || product.weight_g}g` : selected_measurement}
                             </span>
                           )}
-                          <span className="text-[10px] text-gray-500 font-mono">SKU: {product.sku} | {weight_g || product.weight_g}g</span>
+                          {(weight_g || product.weight_g) && (
+                            <span className="text-[10px] text-gray-500 font-mono">{weight_g || product.weight_g}g</span>
+                          )}
                         </div>
 
                         {/* Pricing Tag */}
