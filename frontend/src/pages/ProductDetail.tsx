@@ -96,9 +96,9 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
 
     return [
       { id: 'v-2', measurement: `${baseW}g`, weight_g: baseW, making_charge: baseMC, making_charge_type: baseMcType, sku: `${product.sku}-250G`, stock: product.stock, is_active: true },
-      { id: 'v-3', measurement: `${Math.round(baseW * 1.6)}g`, weight_g: Math.round(baseW * 1.6), making_charge: Math.round(baseMC * 1.5), making_charge_type: baseMcType, sku: `${product.sku}-400G`, stock: product.stock, is_active: true },
-      { id: 'v-4', measurement: `${Math.round(baseW * 2.5)}g`, weight_g: Math.round(baseW * 2.5), making_charge: Math.round(baseMC * 2.2), making_charge_type: baseMcType, sku: `${product.sku}-625G`, stock: product.stock, is_active: true },
-      { id: 'v-6', measurement: `${Math.round(baseW * 4.0)}g`, weight_g: Math.round(baseW * 4.0), making_charge: Math.round(baseMC * 3.5), making_charge_type: baseMcType, sku: `${product.sku}-1000G`, stock: product.stock, is_active: true }
+      { id: 'v-3', measurement: `${Math.round(baseW * 1.6)}g`, weight_g: Math.round(baseW * 1.6), making_charge: Math.round(baseMC * 1.5 * 100) / 100, making_charge_type: baseMcType, sku: `${product.sku}-400G`, stock: product.stock, is_active: true },
+      { id: 'v-4', measurement: `${Math.round(baseW * 2.5)}g`, weight_g: Math.round(baseW * 2.5), making_charge: Math.round(baseMC * 2.2 * 100) / 100, making_charge_type: baseMcType, sku: `${product.sku}-625G`, stock: product.stock, is_active: true },
+      { id: 'v-6', measurement: `${Math.round(baseW * 4.0)}g`, weight_g: Math.round(baseW * 4.0), making_charge: Math.round(baseMC * 3.5 * 100) / 100, making_charge_type: baseMcType, sku: `${product.sku}-1000G`, stock: product.stock, is_active: true }
     ];
   }, [product]);
 

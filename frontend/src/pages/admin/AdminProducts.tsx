@@ -209,10 +209,10 @@ export const AdminProducts: React.FC = () => {
       const sku = prod.sku || 'SKU';
       const stock = prod.stock !== undefined ? prod.stock : 10;
       varList = [
-        { id: `v-${prod.id}-1`, measurement: `${Math.round(baseW * 10) / 10}g`, weight_g: Math.round(baseW * 10) / 10, making_charge: Math.round(baseMC), making_charge_type: mcType, sku: `${sku}-250G`, stock, is_active: true },
-        { id: `v-${prod.id}-2`, measurement: `${Math.round(baseW * 1.6 * 10) / 10}g`, weight_g: Math.round(baseW * 1.6 * 10) / 10, making_charge: Math.round(baseMC * 1.5), making_charge_type: mcType, sku: `${sku}-400G`, stock: Math.max(1, Math.round(stock * 0.8)), is_active: true },
-        { id: `v-${prod.id}-3`, measurement: `${Math.round(baseW * 2.5 * 10) / 10}g`, weight_g: Math.round(baseW * 2.5 * 10) / 10, making_charge: Math.round(baseMC * 2.0), making_charge_type: mcType, sku: `${sku}-625G`, stock: Math.max(1, Math.round(stock * 0.6)), is_active: true },
-        { id: `v-${prod.id}-4`, measurement: `${Math.round(baseW * 4.0 * 10) / 10}g`, weight_g: Math.round(baseW * 4.0 * 10) / 10, making_charge: Math.round(baseMC * 3.0), making_charge_type: mcType, sku: `${sku}-1000G`, stock: Math.max(1, Math.round(stock * 0.4)), is_active: true }
+        { id: `v-${prod.id}-1`, measurement: `${Math.round(baseW * 10) / 10}g`, weight_g: Math.round(baseW * 10) / 10, making_charge: Math.round(baseMC * 100) / 100, making_charge_type: mcType, sku: `${sku}-250G`, stock, is_active: true },
+        { id: `v-${prod.id}-2`, measurement: `${Math.round(baseW * 1.6 * 10) / 10}g`, weight_g: Math.round(baseW * 1.6 * 10) / 10, making_charge: Math.round(baseMC * 1.5 * 100) / 100, making_charge_type: mcType, sku: `${sku}-400G`, stock: Math.max(1, Math.round(stock * 0.8)), is_active: true },
+        { id: `v-${prod.id}-3`, measurement: `${Math.round(baseW * 2.5 * 10) / 10}g`, weight_g: Math.round(baseW * 2.5 * 10) / 10, making_charge: Math.round(baseMC * 2.0 * 100) / 100, making_charge_type: mcType, sku: `${sku}-625G`, stock: Math.max(1, Math.round(stock * 0.6)), is_active: true },
+        { id: `v-${prod.id}-4`, measurement: `${Math.round(baseW * 4.0 * 10) / 10}g`, weight_g: Math.round(baseW * 4.0 * 10) / 10, making_charge: Math.round(baseMC * 3.0 * 100) / 100, making_charge_type: mcType, sku: `${sku}-1000G`, stock: Math.max(1, Math.round(stock * 0.4)), is_active: true }
       ];
     }
     setVariants(varList);
@@ -1074,11 +1074,11 @@ export const AdminProducts: React.FC = () => {
                     </div>
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Net Silver Weight (g)</label>
-                      <input type="number" step="0.1" value={formData.net_silver_weight_g} onChange={(e) => setFormData({ ...formData, net_silver_weight_g: parseFloat(e.target.value), weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5 font-bold" />
+                      <input type="number" step="any" value={formData.net_silver_weight_g} onChange={(e) => setFormData({ ...formData, net_silver_weight_g: parseFloat(e.target.value), weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5 font-bold" />
                     </div>
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Gross Weight (g)</label>
-                      <input type="number" step="0.1" value={formData.gross_weight_g} onChange={(e) => setFormData({ ...formData, gross_weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5" />
+                      <input type="number" step="any" value={formData.gross_weight_g} onChange={(e) => setFormData({ ...formData, gross_weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5" />
                     </div>
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Dimensions / Size</label>
@@ -1093,11 +1093,11 @@ export const AdminProducts: React.FC = () => {
                   <div className="grid grid-cols-3 gap-3">
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Selling Base Price (₹)</label>
-                      <input type="number" value={formData.retail_price} onChange={(e) => setFormData({ ...formData, retail_price: parseFloat(e.target.value), wholesale_price: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold text-[#1A1918]" />
+                      <input type="number" step="any" value={formData.retail_price} onChange={(e) => setFormData({ ...formData, retail_price: parseFloat(e.target.value), wholesale_price: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold text-[#1A1918]" />
                     </div>
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Making Charges (₹)</label>
-                      <input type="number" value={formData.making_charges} onChange={(e) => setFormData({ ...formData, making_charges: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold" />
+                      <input type="number" step="any" value={formData.making_charges} onChange={(e) => setFormData({ ...formData, making_charges: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold" />
                     </div>
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Stock Units</label>
@@ -1222,9 +1222,9 @@ export const AdminProducts: React.FC = () => {
                     <label className="block font-bold text-gray-700 mb-1">Weight (g) *</label>
                     <input
                       type="number"
-                      step="0.1"
+                      step="any"
                       required
-                      min="0.1"
+                      min="0.01"
                       value={variantForm.weight_g}
                       onChange={(e) => setVariantForm({ ...variantForm, weight_g: parseFloat(e.target.value) || 0 })}
                       className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold font-mono"
@@ -1235,6 +1235,7 @@ export const AdminProducts: React.FC = () => {
                     <label className="block font-bold text-gray-700 mb-1">Making Charge *</label>
                     <input
                       type="number"
+                      step="any"
                       required
                       min="0"
                       value={variantForm.making_charge}
