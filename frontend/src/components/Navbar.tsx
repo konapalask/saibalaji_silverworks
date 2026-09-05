@@ -129,7 +129,7 @@ export const Navbar: React.FC = () => {
             </RouterLink>
 
             <a
-              href="https://sbbullion.xyz/"
+              href="https://sbbullion.xyz/Liverates.html"
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors py-1 relative group hover:text-[#202020]"
@@ -238,7 +238,7 @@ export const Navbar: React.FC = () => {
             <RouterLink to="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">ABOUT</RouterLink>
             <RouterLink to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[#B9A77A]">CONTACT</RouterLink>
             <a 
-              href="https://sbbullion.xyz/" 
+              href="https://sbbullion.xyz/Liverates.html" 
               target="_blank" 
               rel="noopener noreferrer" 
               onClick={() => setIsMobileMenuOpen(false)} 

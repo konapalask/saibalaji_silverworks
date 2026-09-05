@@ -84,7 +84,7 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <a href="https://sbbullion.xyz/" target="_blank" rel="noreferrer" className="text-[#B9A77A] hover:text-white transition-colors flex items-center gap-1 group justify-center sm:justify-start font-semibold">
+                <a href="https://sbbullion.xyz/Liverates.html" target="_blank" rel="noreferrer" className="text-[#B9A77A] hover:text-white transition-colors flex items-center gap-1 group justify-center sm:justify-start font-semibold">
                   <span>SB Bullion Live Rates 📈</span>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#B9A77A]" />
                 </a>
