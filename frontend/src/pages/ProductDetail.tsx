@@ -372,11 +372,16 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
         {/* Right Side Info & Actions */}
         <div className="lg:col-span-6 flex flex-col justify-between space-y-4">
           <div>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex flex-wrap items-center gap-2 mb-2">
               <span className="bg-[#202020] text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-[#B9A77A]" />
                 {product.silver_purity}
               </span>
+              {isOutOfStock && (
+                <span className="bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-xs">
+                  OUT OF STOCK
+                </span>
+              )}
               {(product.net_silver_weight_g || product.weight_g > 0) && (
                 <span className="bg-white text-[#202020] border border-[#E5E0D8] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
                   Net: {product.net_silver_weight_g || product.weight_g}g
@@ -458,6 +463,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                   {availableVariants.map((variant) => {
                     const isSelected = activeVar?.id === variant.id || activeVar?.weight_g === variant.weight_g || activeVar?.measurement === variant.measurement;
                     const vCalc = calculateDynamicPrice(variant.weight_g, variant.making_charge, variant.making_charge_type || 'fixed', product.silver_purity);
+                    const isVOutOfStock = isProductOutOfStock || (variant.stock !== undefined && variant.stock <= 0);
                     return (
                       <button
                         key={variant.id || variant.measurement || variant.weight_g}
@@ -475,6 +481,11 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                         {!isWholesaleMode && (
                           <span className={`text-[9.5px] font-mono ${isSelected ? 'text-[#C5A059]' : 'text-gray-500'}`}>
                             ₹{vCalc.finalPrice.toLocaleString()}
+                          </span>
+                        )}
+                        {isVOutOfStock && (
+                          <span className="text-[7.5px] text-red-500 font-bold uppercase tracking-wider">
+                            Out of Stock
                           </span>
                         )}
                       </button>
@@ -512,39 +523,52 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
 
           {/* Buying Actions — Full Width on Mobile */}
           <div className="space-y-3 pt-6 border-t border-[#E5E0D8]">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              
-              {/* Stepper appears ONLY when variant is added to cart */}
-              {isItemInCart && (
-                <div className="flex items-center justify-between border border-[#E6E1DA] rounded-2xl bg-white px-4 py-3 sm:w-auto shadow-2xs">
-                  <button 
-                    onClick={() => updateQuantity(product.id, currentCartQty - 1, activeVarId)}
-                    className="text-[#1A1918] hover:text-[#C5A059] font-bold px-2 text-base transition-colors cursor-pointer"
-                    title="Decrease Quantity"
-                  >
-                    -
-                  </button>
-                  <span className="font-bold text-sm px-4 font-mono text-[#1A1918]">{currentCartQty}</span>
-                  <button 
-                    onClick={() => updateQuantity(product.id, currentCartQty + 1, activeVarId)}
-                    className="text-[#1A1918] hover:text-[#C5A059] font-bold px-2 text-base transition-colors cursor-pointer"
-                    title="Increase Quantity"
-                  >
-                    +
-                  </button>
-                </div>
-              )}
+            {isOutOfStock ? (
+              <div className="w-full space-y-2">
+                <button 
+                  disabled
+                  className="w-full bg-gray-100 text-gray-400 py-4 sm:py-3.5 rounded-2xl text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2 cursor-not-allowed border border-gray-200 shadow-none select-none"
+                >
+                  <AlertCircle className="w-4 h-4 text-gray-400" />
+                  <span>OUT OF STOCK</span>
+                </button>
+                <p className="text-[11px] text-gray-500 text-center font-medium">
+                  This product is currently out of stock and cannot be booked or added to cart.
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                
+                {/* Stepper appears ONLY when variant is added to cart */}
+                {isItemInCart && (
+                  <div className="flex items-center justify-between border border-[#E6E1DA] rounded-2xl bg-white px-4 py-3 sm:w-auto shadow-2xs">
+                    <button 
+                      onClick={() => updateQuantity(product.id, currentCartQty - 1, activeVarId)}
+                      className="text-[#1A1918] hover:text-[#C5A059] font-bold px-2 text-base transition-colors cursor-pointer"
+                      title="Decrease Quantity"
+                    >
+                      -
+                    </button>
+                    <span className="font-bold text-sm px-4 font-mono text-[#1A1918]">{currentCartQty}</span>
+                    <button 
+                      onClick={() => updateQuantity(product.id, currentCartQty + 1, activeVarId)}
+                      className="text-[#1A1918] hover:text-[#C5A059] font-bold px-2 text-base transition-colors cursor-pointer"
+                      title="Increase Quantity"
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
 
-              <button 
-                onClick={handleAddToCart}
-                className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-4 sm:py-3.5 rounded-2xl text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
-              >
-                {added || isItemInCart ? <Check className="w-4 h-4 text-green-400" /> : <ShoppingBag className="w-4 h-4 text-[#C5A059]" />}
-                <span>{isItemInCart ? 'IN SHOPPING BAG (VIEW BAG)' : 'ADD TO SHOPPING BAG'}</span>
-              </button>
-            </div>
-
-
+                <button 
+                  onClick={handleAddToCart}
+                  className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-4 sm:py-3.5 rounded-2xl text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                >
+                  {added || isItemInCart ? <Check className="w-4 h-4 text-green-400" /> : <ShoppingBag className="w-4 h-4 text-[#C5A059]" />}
+                  <span>{isItemInCart ? 'IN SHOPPING BAG (VIEW BAG)' : 'ADD TO SHOPPING BAG'}</span>
+                </button>
+              </div>
+            )}
           </div>
 
         </div>
