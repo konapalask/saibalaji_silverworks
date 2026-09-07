@@ -24,14 +24,17 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
 
   const isLiked = isInWishlist(product.id);
   const displayPrice = calculateCurrentPrice(product);
+  const isOutOfStock = (product.stock !== undefined && product.stock <= 0) || product.in_stock === false;
 
   const handleAddToCart = () => {
+    if (isOutOfStock) return;
     addToCart(product, qty);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
   const handleAddWholesale = () => {
+    if (isOutOfStock) return;
     addToWholesaleCart(product, Math.max(qty, product.min_wholesale_qty));
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -52,23 +55,35 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
           
           {/* Image Container — Uncropped Display */}
           <div className="bg-black p-6 flex items-center justify-center border-r border-[#E5E0D8]">
-            <div className="w-full aspect-3/2 overflow-hidden bg-black p-2 flex items-center justify-center rounded-2xl border border-gray-800">
+            <div className="w-full aspect-3/2 overflow-hidden bg-black p-2 flex items-center justify-center rounded-2xl border border-gray-800 relative">
               <img 
                 src={product.featured_image} 
-                alt={product.title}
+                alt={product.title} 
                 className="w-full h-full object-cover rounded-xl drop-shadow-md bg-black"
               />
+              {isOutOfStock && (
+                <div className="absolute top-2.5 left-2.5 z-10">
+                  <span className="bg-red-600 text-white text-[9px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-md">
+                    OUT OF STOCK
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Details */}
           <div className="p-8 flex flex-col justify-between space-y-6">
             <div>
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
                 <span className="bg-[#202020] text-white text-[10px] font-bold tracking-widest uppercase px-2.5 py-0.5 rounded-full flex items-center gap-1">
                   <Sparkles className="w-3 h-3 text-[#B9A77A]" />
                   {product.silver_purity}
                 </span>
+                {isOutOfStock && (
+                  <span className="bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-xs">
+                    OUT OF STOCK
+                  </span>
+                )}
                 <span className="text-[11px] text-[#666666] font-semibold">Weight: {product.weight_g}g</span>
               </div>
 
@@ -101,13 +116,22 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
             {/* Actions */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center gap-3">
-                <button 
-                  onClick={handleAddToCart}
-                  className="flex-1 bg-[#202020] hover:bg-[#B9A77A] text-white py-3.5 px-4 rounded-xl text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 shadow-xs"
-                >
-                  <ShoppingBag className="w-4 h-4 text-[#B9A77A]" />
-                  <span>{added ? 'Added to Cart!' : 'ADD TO CART'}</span>
-                </button>
+                {isOutOfStock ? (
+                  <button 
+                    disabled
+                    className="flex-1 bg-gray-100 text-gray-400 py-3.5 px-4 rounded-xl text-xs uppercase tracking-widest font-bold cursor-not-allowed border border-gray-200 flex items-center justify-center gap-2 select-none"
+                  >
+                    <span>OUT OF STOCK</span>
+                  </button>
+                ) : (
+                  <button 
+                    onClick={handleAddToCart}
+                    className="flex-1 bg-[#202020] hover:bg-[#B9A77A] text-white py-3.5 px-4 rounded-xl text-xs uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 shadow-xs"
+                  >
+                    <ShoppingBag className="w-4 h-4 text-[#B9A77A]" />
+                    <span>{added ? 'Added to Cart!' : 'ADD TO CART'}</span>
+                  </button>
+                )}
 
                 <button 
                   onClick={() => toggleWishlist(product.id)}
