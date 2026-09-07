@@ -356,7 +356,9 @@ export const CartDrawer: React.FC = () => {
                   <p className="text-xs font-bold text-[#1A1918]">B2B Wholesale Requisition List ({totalQuantity} Items)</p>
                   <p className="text-[10px] text-gray-500">Official B2B PDF Quotation will be issued by Admin upon submission.</p>
                 </div>
-                  <div className="space-y-2">
+              )}
+
+              <div className="space-y-2">
                 {hasOutOfStockItems ? (
                   <div className="p-3 bg-red-50 rounded-xl border border-red-200 text-center space-y-1">
                     <p className="text-xs font-bold text-red-600 flex items-center justify-center gap-1.5">
@@ -401,7 +403,7 @@ export const CartDrawer: React.FC = () => {
                     </div>
                   </>
                 )}
-              </div>              </div>
+              </div>
             </div>
           )}
 
