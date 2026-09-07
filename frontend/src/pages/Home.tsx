@@ -135,7 +135,7 @@ export const Home: React.FC = () => {
       <CustomCursor />
 
       {/* 01. HERO SECTION — LIGHT LUXURY WARM IVORY SHOWROOM */}
-      <section className="relative w-full bg-[#F8F6F1] overflow-hidden border-b border-[#E5E0D8] flex items-center py-6 lg:py-0 lg:h-[calc(100vh-84px)] lg:min-h-[480px] lg:max-h-[640px]">
+      <section className="relative w-full bg-[#F8F6F1] border-b border-[#E5E0D8] flex items-center py-10 sm:py-14 lg:py-16 min-h-[calc(100vh-84px)]">
 
         {/* Subtle Indian Heritage Pattern Background */}
         <div className="absolute inset-0 bg-heritage-pattern pointer-events-none" />
@@ -153,24 +153,24 @@ export const Home: React.FC = () => {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E5E0D8] shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-[#B9A77A] animate-pulse" />
               <span className="text-xs font-sans font-bold uppercase tracking-[0.25em] text-[#666666]">
-                EST. 2019 • TENALI, INDIA
+                EST. 2019 · TENALI, ANDHRA PRADESH
               </span>
             </div>
 
             {/* Brand Title Lockup */}
             <div className="space-y-1.5">
               <span className="text-xs sm:text-sm uppercase tracking-[0.4em] text-[#B9A77A] font-bold font-sans block">
-                SAI BALAJI SILVER
+                SAI BALAJI SILVER WORKS PVT. LTD.
               </span>
               <h1 className="font-serif text-5xl sm:text-7xl lg:text-[5rem] xl:text-8xl font-light text-[#202020] leading-[1.02] tracking-tight">
-                CRAFTED IN <br />
-                <span className="text-[#00276B] font-normal not-italic" style={{ color: '#00276B' }}>PURE SILVER.</span>
+                Crafting Silver. <br />
+                <span className="text-[#00276B] font-normal not-italic" style={{ color: '#00276B' }}>Creating Trust.</span>
               </h1>
             </div>
 
             {/* Short Supporting Copy */}
             <p className="text-sm sm:text-base text-[#555555] font-light leading-relaxed max-w-xl mx-auto lg:mx-0">
-              7+ years of South Indian craftsmanship, metallurgical precision and 100% certified pure silver — shaped in Tenali.
+              Sai Balaji Silver Works Pvt. Ltd. is a professionally managed silver manufacturing company specializing in premium silver articles for wholesale and business customers across India.
             </p>
 
             {/* Certification Trust Line */}
@@ -190,15 +190,15 @@ export const Home: React.FC = () => {
                 to="/shop/retail"
                 className="w-full sm:w-auto px-8 py-4 bg-[#202020] hover:bg-[#B9A77A] text-white text-xs font-bold uppercase tracking-[0.22em] transition-all duration-300 rounded-xl shadow-md flex items-center justify-center gap-2 group"
               >
-                <span>EXPLORE COLLECTION</span>
+                <span>EXPLORE PRODUCTS</span>
                 <ArrowRight className="w-4 h-4 text-[#B9A77A] group-hover:text-white group-hover:translate-x-1 transition-all" />
               </Link>
 
               <Link
-                to="/category/silver-pooja-articles"
+                to="/shop/wholesale"
                 className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-[#F1EFEB] text-[#202020] border border-[#E5E0D8] text-xs font-bold uppercase tracking-[0.22em] transition-all duration-300 rounded-xl shadow-2xs flex items-center justify-center"
               >
-                <span>SHOP SILVER</span>
+                <span>WHOLESALE ENQUIRY</span>
               </Link>
             </div>
 
@@ -245,18 +245,20 @@ export const Home: React.FC = () => {
 
       </section>
 
-      {/* 02. BRAND STORY SECTION (WARM IVORY EDITORIAL) */}
+      {/* 02. INTRODUCTION SECTION */}
       <section className="bg-white py-24 sm:py-32 px-6 lg:px-12 border-b border-[#E5E0D8]">
         <div className="max-w-5xl mx-auto text-center space-y-7">
           <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
             THE HOUSE OF SAI BALAJI
           </span>
           <h2 className="font-serif text-4xl sm:text-6xl font-light text-[#202020] leading-tight">
-            Mastering the art of silver <br className="hidden sm:inline" />
-            through generations of purity.
+            Manufacturing Excellence in Silver.
           </h2>
           <p className="max-w-3xl mx-auto text-sm sm:text-base text-[#555555] font-light leading-relaxed">
-            From Tenali to patrons across India, Sai Balaji Silverworks brings together generations of craftsmanship, purity and precision. Operating from our specialized manufacturing atelier, we bridge classical deity sculpting with NABL-certificated 999 fine & 925 sterling silver formulations.
+            Established in 2019, Sai Balaji Silver Works combines traditional craftsmanship with modern manufacturing technology to produce high-quality silver articles with precision, consistency, and dependable service.
+          </p>
+          <p className="max-w-3xl mx-auto text-sm text-[#666666] font-light leading-relaxed">
+            Based in Autonagar, Tenali, Andhra Pradesh, we manufacture 200+ varieties of silver products for wholesalers, retailers, jewellery businesses, gift businesses, wedding businesses, and institutional customers across India.
           </p>
 
           <div className="pt-6 flex justify-center">
@@ -265,125 +267,120 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 03. SILVER PURITY SECTION (ELEGANT LIGHT SPECIFICATION CARDS) */}
+      {/* 03. STATISTICS SECTION */}
       <section className="py-24 px-6 lg:px-12 max-w-7xl mx-auto">
-        <div className="text-center space-y-3 mb-16">
-          <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
-            GUARANTEED METALLURGICAL EXCELLENCE
-          </span>
-          <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
-            Silver Purity & Certification
-          </h2>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
           <div className="bg-white p-8 rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] transition-all product-shadow space-y-4 text-center">
             <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">
-              <CountUp end={999} duration={1.8} />
+              <CountUp end={2019} duration={1.8} useGrouping={false} />
             </span>
-            <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">FINE SILVER</h3>
-            <p className="text-xs text-[#666666] font-light leading-relaxed max-w-xs mx-auto">
-              Pure 99.9% fine silver for temple idols, sacred pooja articles, thalis, and investment bullion.
-            </p>
+            <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">ESTABLISHED</h3>
           </div>
 
           <div className="bg-white p-8 rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] transition-all product-shadow space-y-4 text-center">
             <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">
-              <CountUp end={925} duration={1.8} />
+              <CountUp end={200} suffix="+" duration={1.8} />
             </span>
-            <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">STERLING SILVER</h3>
-            <p className="text-xs text-[#666666] font-light leading-relaxed max-w-xs mx-auto">
-              Precision 92.5% sterling silver for durable dining tableware, baby gifts, and fine ornaments.
-            </p>
+            <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">PRODUCT VARIETIES</h3>
           </div>
 
-          <div className="bg-white p-8 rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] transition-all product-shadow space-y-4 text-center">
-            <span className="font-serif text-6xl sm:text-7xl font-light text-[#202020] block">
-              <CountUp end={7} suffix="+" duration={1.8} />
+          <div className="bg-white p-8 rounded-2xl border border-[#E5E0D8] hover:border-[#B9A77A] transition-all product-shadow space-y-4 text-center flex flex-col justify-center">
+            <span className="font-serif text-4xl sm:text-5xl font-light text-[#202020] block uppercase py-2">
+              PAN INDIA
             </span>
-            <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">YEARS OF LEGACY</h3>
-            <p className="text-xs text-[#666666] font-light leading-relaxed max-w-xs mx-auto">
-              Established South Indian silver manufacturing atelier based in Tenali, Andhra Pradesh.
-            </p>
+            <h3 className="font-sans text-xs uppercase tracking-[0.25em] font-bold text-[#B9A77A]">B2B SERVICE</h3>
           </div>
 
         </div>
       </section>
 
-      {/* 04. PRODUCT COLLECTIONS GRID (E-COMMERCE HERO GRID) */}
+      {/* 04. PRODUCT CATEGORY SECTION */}
       <section className="py-24 px-6 lg:px-12 max-w-7xl mx-auto space-y-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#E5E0D8] pb-8">
           <div className="space-y-2">
             <span className="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#B9A77A] block">
-              EXPLORE BY CATEGORY
+              EXPLORE OUR CATEGORIES
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
-              Silver Collections
+              Silver Products for Every Occasion.
             </h2>
+            <p className="text-sm text-[#555555] font-light max-w-2xl">
+              From traditional silverware to customized products, our extensive portfolio is designed to meet diverse business and customer requirements.
+            </p>
           </div>
           <Link
             to="/shop/retail"
-            className="text-xs font-bold uppercase tracking-[0.2em] text-[#202020] hover:text-[#B9A77A] flex items-center gap-2 transition-colors"
+            className="text-xs font-bold uppercase tracking-[0.2em] text-[#202020] hover:text-[#B9A77A] flex items-center gap-2 transition-colors shrink-0"
           >
-            <span>VIEW CATEGORIES</span>
+            <span>VIEW ALL CATEGORIES</span>
             <ArrowRight className="w-4 h-4 text-[#B9A77A]" />
           </Link>
         </div>
 
         {/* Collections Grid — 4 Main Categories */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {MAIN_CATEGORIES.map((cat, index) => (
-            <Link
-              key={cat.id}
-              to={`/shop/retail?category=${cat.slug}`}
-              className="group bg-white rounded-2xl border border-[#E5E0D8] overflow-hidden product-card-hover flex flex-col justify-between"
-            >
-              <div className="relative aspect-4/3 w-full bg-black overflow-hidden p-3 border-b border-[#F0ECE6] flex items-center justify-center">
-                <img
-                  src={cat.cardImage}
-                  alt={cat.name}
-                  className={`w-full h-full object-contain rounded-lg transition-transform duration-500 bg-black ${
-                    index === 3 || cat.slug === 'silver-wedding-return-gifts'
-                      ? "scale-[1.38] sm:scale-[1.42] group-hover:scale-[1.48] sm:group-hover:scale-[1.52]"
-                      : "group-hover:scale-105"
-                  }`}
-                />
-              </div>
+          {MAIN_CATEGORIES.map((cat, index) => {
+            const categoryTitles = [
+              "Silver Pooja Articles",
+              "Silver Dinner Sets & Tableware",
+              "Silver God & Religious Articles",
+              "Silver Wedding & Traditional Articles"
+            ];
+            const categoryTitle = categoryTitles[index] || cat.name;
 
-              <div className="p-6 space-y-3">
-                <span className="text-[10px] uppercase font-bold tracking-widest text-[#B9A77A]">
-                  {cat.subcategories.length} Subcategories
-                </span>
-                <h3 className="font-serif text-2xl text-[#202020] group-hover:text-[#B9A77A] transition-colors font-normal">
-                  {cat.name}
-                </h3>
-                <p className="text-xs text-[#666666] font-light line-clamp-2 leading-relaxed">
-                  {cat.shortDescription}
-                </p>
-                <div className="pt-2 flex items-center text-xs font-bold uppercase tracking-wider text-[#202020] group-hover:text-[#B9A77A]">
-                  <span>EXPLORE COLLECTION →</span>
+            return (
+              <Link
+                key={cat.id}
+                to={`/shop/retail?category=${cat.slug}`}
+                className="group bg-white rounded-2xl border border-[#E5E0D8] overflow-hidden product-card-hover flex flex-col justify-between"
+              >
+                <div className="relative aspect-4/3 w-full bg-black overflow-hidden p-3 border-b border-[#F0ECE6] flex items-center justify-center">
+                  <img
+                    src={cat.cardImage}
+                    alt={categoryTitle}
+                    className={`w-full h-full object-contain rounded-lg transition-transform duration-500 bg-black ${
+                      index === 3 || cat.slug === 'silver-wedding-return-gifts'
+                        ? "scale-[1.38] sm:scale-[1.42] group-hover:scale-[1.48] sm:group-hover:scale-[1.52]"
+                        : "group-hover:scale-105"
+                    }`}
+                  />
                 </div>
-              </div>
-            </Link>
-          ))}
+
+                <div className="p-6 space-y-3">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#B9A77A]">
+                    {cat.subcategories.length} Subcategories
+                  </span>
+                  <h3 className="font-serif text-2xl text-[#202020] group-hover:text-[#B9A77A] transition-colors font-normal">
+                    {categoryTitle}
+                  </h3>
+                  <p className="text-xs text-[#666666] font-light line-clamp-2 leading-relaxed">
+                    {cat.shortDescription}
+                  </p>
+                  <div className="pt-2 flex items-center text-xs font-bold uppercase tracking-wider text-[#202020] group-hover:text-[#B9A77A]">
+                    <span>EXPLORE COLLECTION →</span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
 
 
-      {/* 07. B2B / WHOLESALE SECTION (LIGHT CHAMPAGNE PORTAL CARD) */}
+      {/* 05. WHOLESALE SECTION */}
       <section className="py-24 bg-[#F3EFE6] border-y border-[#E5E0D8] px-6 lg:px-12">
         <div className="max-w-5xl mx-auto text-center space-y-6">
           <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
-            INDIVIDUAL • CUSTOM • WHOLESALE
+            INDIVIDUAL · CUSTOM · WHOLESALE
           </span>
           <h2 className="font-serif text-4xl sm:text-6xl font-light text-[#202020]">
-            From individual bespoke pieces to <br className="hidden sm:inline" />
-            large-scale B2B wholesale requirements.
+            From Individual Bespoke Pieces to <br className="hidden sm:inline" />
+            Large-Scale B2B Wholesale Requirements.
           </h2>
           <p className="max-w-2xl mx-auto text-sm text-[#555555] font-light leading-relaxed">
-            Supplying leading South Indian jewellery showrooms, temples, and corporate institutions with customized silver minting, 999 bullion bars, and bulk retail stock with ReportLab PDF quotation support.
+            Whether you require customized silver products, bulk quantities, or a dependable manufacturing partner, Sai Balaji Silver Works provides flexible solutions tailored to your business requirements.
           </p>
           <div className="pt-2">
             <Link
@@ -397,24 +394,32 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 08. VIDEO ATELIER SECTION (COMPLETE 171-VIDEO GALLERY & REELS) */}
+      {/* 06. EXISTING CRAFTSMANSHIP / VIDEO SECTION */}
       <section className="py-24 px-6 lg:px-12 max-w-7xl mx-auto space-y-10" id="home-video-gallery">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#E5E0D8] pb-6">
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex items-center gap-2">
               <span className="p-1.5 bg-[#B9A77A]/10 text-[#B9A77A] rounded-lg">
                 <Film className="w-4 h-4" />
               </span>
               <span className="text-xs font-sans font-bold uppercase tracking-[0.3em] text-[#B9A77A]">
-                LIVE FACTORY & STUDIO REELS
+                OUR MANUFACTURING CAPABILITIES
               </span>
             </div>
             <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
-              Craftsmanship Video Atelier
+              From Design to Finished Product.
             </h2>
-            <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
-              Browse all 171 unscripted, silent video clips from our Tenali silver manufacturing plant.
+            <p className="text-xs sm:text-sm text-[#666666] leading-relaxed max-w-3xl font-light">
+              We combine traditional silver craftsmanship with modern manufacturing technology to achieve precision, consistency, productivity, and superior finishing across our product range.
             </p>
+            <div className="pt-2 text-[11px] font-bold tracking-[0.15em] text-[#B9A77A] uppercase flex flex-wrap gap-2 items-center">
+              <span>DESIGN</span> <span>→</span>
+              <span>DEVELOPMENT</span> <span>→</span>
+              <span>MANUFACTURING</span> <span>→</span>
+              <span>FINISHING</span> <span>→</span>
+              <span>QUALITY INSPECTION</span> <span>→</span>
+              <span>FINAL DISPATCH</span>
+            </div>
           </div>
 
         </div>
@@ -465,58 +470,70 @@ export const Home: React.FC = () => {
         )}
       </section>
 
-      {/* 09. WHY SAI BALAJI & E-COMMERCE TRUST SIGNALS */}
+      {/* 07. WHY SAI BALAJI SILVER WORKS */}
       <section className="py-24 bg-white border-t border-[#E5E0D8] px-6 lg:px-12">
         <div className="max-w-7xl mx-auto space-y-16">
           <div className="text-center space-y-3">
             <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
-              UNCOMPROMISING STANDARDS
+              WHY SAI BALAJI SILVER WORKS
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#202020]">
-              Why Sai Balaji Silverworks
+              A Manufacturing Partner You Can Trust.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">
               <Award className="w-8 h-8 text-[#B9A77A] mx-auto" />
-              <h3 className="font-serif text-xl text-[#202020]">100% Authentic Silver</h3>
-              <p className="text-xs text-[#666666] font-light leading-relaxed">Laser spectrometry assayed 999 fine silver and 925 sterling formulations.</p>
+              <h3 className="font-serif text-base font-bold text-[#202020] uppercase tracking-wide">200+ PRODUCT VARIETIES</h3>
+              <p className="text-xs text-[#666666] font-light leading-relaxed">A diverse product portfolio designed for different business requirements.</p>
+            </div>
+
+            <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">
+              <Layers className="w-8 h-8 text-[#B9A77A] mx-auto" />
+              <h3 className="font-serif text-base font-bold text-[#202020] uppercase tracking-wide">MODERN MANUFACTURING</h3>
+              <p className="text-xs text-[#666666] font-light leading-relaxed">Advanced machinery and technology combined with experienced craftsmanship.</p>
             </div>
 
             <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">
               <ShieldCheck className="w-8 h-8 text-[#B9A77A] mx-auto" />
-              <h3 className="font-serif text-xl text-[#202020]">Master Craftsmanship</h3>
-              <p className="text-xs text-[#666666] font-light leading-relaxed">Ancestral South Indian temple idol sculpting & Nakshi relief carving.</p>
+              <h3 className="font-serif text-base font-bold text-[#202020] uppercase tracking-wide">PRECISION & CONSISTENCY</h3>
+              <p className="text-xs text-[#666666] font-light leading-relaxed">A systematic manufacturing approach focused on accurate and consistent output.</p>
             </div>
 
             <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">
               <Sparkles className="w-8 h-8 text-[#B9A77A] mx-auto" />
-              <h3 className="font-serif text-xl text-[#202020]">Anti-Tarnish Coating</h3>
-              <p className="text-xs text-[#666666] font-light leading-relaxed">Nano protective barrier preserves mirror-bright specular shine for years.</p>
+              <h3 className="font-serif text-base font-bold text-[#202020] uppercase tracking-wide">CUSTOMIZATION</h3>
+              <p className="text-xs text-[#666666] font-light leading-relaxed">Products can be developed according to specific design and business requirements.</p>
+            </div>
+
+            <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">
+              <Briefcase className="w-8 h-8 text-[#B9A77A] mx-auto" />
+              <h3 className="font-serif text-base font-bold text-[#202020] uppercase tracking-wide">WHOLESALE FOCUS</h3>
+              <p className="text-xs text-[#666666] font-light leading-relaxed">Dedicated to wholesalers, retailers, jewellery businesses, and bulk buyers.</p>
             </div>
 
             <div className="p-6 bg-[#F8F6F1] rounded-2xl border border-[#E5E0D8] space-y-3 text-center">
               <Truck className="w-8 h-8 text-[#B9A77A] mx-auto" />
-              <h3 className="font-serif text-xl text-[#202020]">Insured Safe Shipping</h3>
-              <p className="text-xs text-[#666666] font-light leading-relaxed">Tamper-evident luxury packaging and insured dispatch across India.</p>
+              <h3 className="font-serif text-base font-bold text-[#202020] uppercase tracking-wide">RELIABLE SERVICE</h3>
+              <p className="text-xs text-[#666666] font-light leading-relaxed">Transparent communication, professional service, and dependable business relationships.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 10. GRAND CTA SECTION */}
+      {/* 08. FINAL CTA SECTION */}
       <section className="py-32 bg-[#F8F6F1] border-t border-[#E5E0D8] text-center px-6">
         <div className="max-w-4xl mx-auto space-y-8">
           <span className="text-xs font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
-            CRAFTED TO LAST • CREATED IN SILVER
+            YOUR VISION · OUR CRAFTSMANSHIP
           </span>
           <h2 className="font-serif text-5xl sm:text-7xl font-light text-[#202020] tracking-tight">
-            Discover Pure Silver <br />
-            <span className="text-silver-shimmer italic font-normal">Crafted for Generations.</span>
+            Your Vision. Our Craftsmanship. <br />
+            <span className="text-silver-shimmer italic font-normal">One Trusted Partnership.</span>
           </h2>
           <p className="max-w-xl mx-auto text-xs sm:text-sm text-[#666666] font-light leading-relaxed">
-            Browse our hallmarked deity idols, dining tableware, pooja thalis, and custom minting options.
+            Looking for a reliable silver manufacturing partner? Explore our extensive range of silver products or connect with our team for wholesale enquiries, bulk orders, customized requirements, and business partnerships.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -524,7 +541,7 @@ export const Home: React.FC = () => {
               to="/shop/retail"
               className="px-9 py-4 bg-[#202020] hover:bg-[#B9A77A] text-white text-[11px] font-bold uppercase tracking-[0.22em] transition-all flex items-center gap-2 rounded-xl shadow-md"
             >
-              <span>EXPLORE COLLECTIONS</span>
+              <span>EXPLORE PRODUCTS</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
@@ -532,7 +549,7 @@ export const Home: React.FC = () => {
               to="/contact"
               className="px-9 py-4 bg-white hover:bg-[#F1EFEB] text-[#202020] border border-[#E5E0D8] text-[11px] font-bold uppercase tracking-[0.22em] transition-all rounded-xl shadow-2xs"
             >
-              <span>CONTACT US →</span>
+              <span>CONTACT US</span>
             </Link>
           </div>
         </div>

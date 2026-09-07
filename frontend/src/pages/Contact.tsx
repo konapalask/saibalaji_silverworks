@@ -1,13 +1,45 @@
-import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, MessageSquare } from 'lucide-react';
 import { CountryPhoneInput } from '../components/CountryPhoneInput';
+import { getAdminWhatsAppNumber, syncAdminWhatsAppNumber } from '../config/whatsappConfig';
+import { openWhatsAppOrderUrl } from '../utils/whatsappOrder';
 
 export const Contact: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
+  const [adminPhone, setAdminPhone] = useState(getAdminWhatsAppNumber());
+  const [lastMsg, setLastMsg] = useState('');
+
+  useEffect(() => {
+    syncAdminWhatsAppNumber().then(num => {
+      if (num) setAdminPhone(num);
+    });
+  }, []);
+
+  const formattedPhone = adminPhone
+    ? (adminPhone.startsWith('91')
+        ? `+91 ${adminPhone.slice(2, 7)} ${adminPhone.slice(7)}`
+        : `+${adminPhone}`)
+    : '+91 94926 64870';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    let msg = `Hello Sai Balaji Silver Works Admin,\n\n`;
+    msg += `I am submitting an inquiry from your website:\n\n`;
+    msg += `CUSTOMER DETAILS\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
+    msg += `Name: ${formData.name}\n`;
+    msg += `Email: ${formData.email}\n`;
+    if (formData.phone) msg += `Mobile / WhatsApp: ${formData.phone}\n`;
+    if (formData.subject) msg += `Subject: ${formData.subject}\n`;
+    msg += `\nINQUIRY MESSAGE\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
+    msg += `${formData.message}\n\n`;
+    msg += `Please get back to me with details. Thank you!`;
+
+    setLastMsg(msg);
+    openWhatsAppOrderUrl(msg);
     setSubmitted(true);
   };
 
@@ -41,10 +73,10 @@ export const Contact: React.FC = () => {
                 <MapPin className="w-5 h-5 text-[#B9A77A] shrink-0 mt-0.5" />
                 <p className="leading-relaxed">Main Silver Market, Autonagar, Tenali, Andhra Pradesh - 522201</p>
               </div>
-              <div className="flex items-center gap-3">
+              <a href={`https://wa.me/${adminPhone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-[#B9A77A] transition-colors" title="Chat on WhatsApp">
                 <Phone className="w-5 h-5 text-[#B9A77A] shrink-0" />
-                <p>+91 9492664870</p>
-              </div>
+                <p>{formattedPhone}</p>
+              </a>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-[#B9A77A] shrink-0" />
                 <p>wholesale@saibalajisilverworks.com</p>
@@ -64,11 +96,27 @@ export const Contact: React.FC = () => {
         {/* Contact Form */}
         <div className="lg:col-span-7 bg-white rounded-3xl p-8 border border-[#E6E1DA] shadow-sm">
           {submitted ? (
-            <div className="text-center py-16 space-y-4">
-              <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-              <h3 className="font-serif text-2xl font-bold">Inquiry Sent Successfully</h3>
-              <p className="text-xs text-gray-500 max-w-sm mx-auto">Thank you for reaching out. Our representative will contact you within 24 hours.</p>
-              <button onClick={() => setSubmitted(false)} className="px-6 py-2.5 bg-[#1A1918] text-white rounded-xl text-xs uppercase">Send Another Message</button>
+            <div className="text-center py-16 space-y-5">
+              <CheckCircle2 className="w-14 h-14 text-green-500 mx-auto" />
+              <h3 className="font-serif text-2xl font-bold text-[#1A1918]">Inquiry Sent to Admin WhatsApp</h3>
+              <p className="text-xs sm:text-sm text-gray-600 max-w-md mx-auto leading-relaxed">
+                Your details have been compiled and sent to our Admin WhatsApp number (<strong>{formattedPhone}</strong>). If WhatsApp did not open automatically, click the button below.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
+                <button
+                  onClick={() => openWhatsAppOrderUrl(lastMsg)}
+                  className="px-6 py-3 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-xl text-xs uppercase tracking-wider font-bold flex items-center justify-center gap-2 shadow-md transition-all"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span>Open Admin WhatsApp Chat</span>
+                </button>
+                <button
+                  onClick={() => setSubmitted(false)}
+                  className="px-6 py-3 bg-[#1A1918] hover:bg-[#B9A77A] text-white rounded-xl text-xs uppercase tracking-wider font-bold transition-all"
+                >
+                  Send Another Inquiry
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -102,9 +150,9 @@ export const Contact: React.FC = () => {
                 <label className="block text-xs font-bold uppercase text-gray-600 mb-1">Message *</label>
                 <textarea required rows={4} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-4 py-2.5 text-xs" />
               </div>
-              <button type="submit" className="w-full bg-[#1A1918] hover:bg-[#C5A059] text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2">
+              <button type="submit" className="w-full bg-[#1A1918] hover:bg-[#25D366] text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2 transition-all">
                 <Send className="w-4 h-4" />
-                <span>Submit Message</span>
+                <span>Submit & Chat on Admin WhatsApp</span>
               </button>
             </form>
           )}

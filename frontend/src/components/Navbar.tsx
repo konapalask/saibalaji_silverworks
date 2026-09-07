@@ -4,6 +4,7 @@ import { Search, Heart, User as UserIcon, ShoppingBag, Menu, X } from 'lucide-re
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { getAdminWhatsAppNumber, syncAdminWhatsAppNumber } from '../config/whatsappConfig';
 
 export const Navbar: React.FC = () => {
   const { user } = useAuth();
@@ -16,6 +17,19 @@ export const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [adminPhone, setAdminPhone] = useState(getAdminWhatsAppNumber());
+
+  useEffect(() => {
+    syncAdminWhatsAppNumber().then(num => {
+      if (num) setAdminPhone(num);
+    });
+  }, []);
+
+  const formattedPhone = adminPhone
+    ? (adminPhone.startsWith('91')
+        ? `+91 ${adminPhone.slice(2, 7)} ${adminPhone.slice(7)}`
+        : `+${adminPhone}`)
+    : '+91 94926 64870';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -250,7 +264,9 @@ export const Navbar: React.FC = () => {
 
 
           <div className="border-t border-[#E5E0D8] pt-6 text-center space-y-1 font-sans text-xs text-[#666666]">
-            <p className="text-[#202020] font-semibold">+91 9492664870 • Tenali Atelier</p>
+            <a href={`https://wa.me/${adminPhone}`} target="_blank" rel="noopener noreferrer" className="text-[#202020] font-semibold hover:text-[#B9A77A] transition-colors block">
+              {formattedPhone} • Tenali Atelier
+            </a>
             <p>100% Certified Hallmarked Silver</p>
           </div>
         </div>

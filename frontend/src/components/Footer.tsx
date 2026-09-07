@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Mail, Phone, MapPin, Globe } from 'lucide-react';
+import { getAdminWhatsAppNumber, syncAdminWhatsAppNumber } from '../config/whatsappConfig';
 
 export const Footer: React.FC = () => {
+  const [adminPhone, setAdminPhone] = useState(getAdminWhatsAppNumber());
+
+  useEffect(() => {
+    syncAdminWhatsAppNumber().then(num => {
+      if (num) setAdminPhone(num);
+    });
+  }, []);
+
+  const formattedPhone = adminPhone
+    ? (adminPhone.startsWith('91')
+        ? `+91 ${adminPhone.slice(2, 7)} ${adminPhone.slice(7)}`
+        : `+${adminPhone}`)
+    : '+91 94926 64870';
   return (
     <footer className="relative bg-[#17191C] text-[#F1F1EE] pt-20 pb-12 overflow-hidden border-t border-white/10 font-sans">
 
@@ -14,13 +28,13 @@ export const Footer: React.FC = () => {
 
           <div className="lg:col-span-8 space-y-4 flex flex-col items-center sm:items-start">
             <span className="text-[10px] font-sans font-bold uppercase tracking-[0.35em] text-[#B9A77A] block">
-              THE HOUSE OF SAI BALAJI
+              SAI BALAJI SILVER WORKS PVT. LTD.
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#F1F1EE] leading-[1.1] tracking-tight">
-              A LEGACY SHAPED IN PURE SILVER.
+              CRAFTING SILVER. CREATING TRUST.
             </h2>
             <p className="max-w-2xl text-xs sm:text-sm text-[#A0A0A0] font-light leading-relaxed">
-              From our atelier in Tenali to homes and businesses across India, Sai Balaji Silverworks shapes pure silver with precision, heritage, and NABL hallmarking standards.
+              Sai Balaji Silver Works Pvt. Ltd. is a silver manufacturing company based in Autonagar, Tenali, Andhra Pradesh, specializing in premium silver articles for wholesale and business customers across India.
             </p>
           </div>
 
@@ -30,7 +44,7 @@ export const Footer: React.FC = () => {
               <div className="bg-white p-1.5 rounded-xl shadow-xs border border-white/20">
                 <img
                   src="/logo.webp"
-                  alt="Sai Balaji Silverworks Logo"
+                  alt="Sai Balaji Silver Works Logo"
                   className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
@@ -38,11 +52,11 @@ export const Footer: React.FC = () => {
                 <span className="font-serif text-xl font-normal tracking-[0.16em] text-white leading-tight">
                   SAI BALAJI
                 </span>
-                <span className="text-[9px] uppercase tracking-[0.3em] text-[#B9A77A] font-semibold font-sans mt-0.5">
-                  SILVERWORKS
+                <span className="text-[9px] uppercase tracking-[0.25em] text-[#B9A77A] font-semibold font-sans mt-0.5">
+                  SILVER WORKS PVT. LTD.
                 </span>
-                <span className="text-[8px] uppercase tracking-[0.2em] text-[#888888] font-sans">
-                  EST. 2019 • TENALI, AP
+                <span className="text-[8px] uppercase tracking-[0.12em] text-[#888888] font-sans">
+                  Manufacturers of All Kinds of Silver Articles
                 </span>
               </div>
             </Link>
@@ -164,12 +178,18 @@ export const Footer: React.FC = () => {
             <div className="space-y-2.5 text-[#A0A0A0] font-light text-xs sm:text-sm flex flex-col items-center sm:items-start">
               <p className="flex items-start justify-center sm:justify-start gap-2 text-center sm:text-left">
                 <MapPin className="w-4 h-4 text-[#B9A77A] shrink-0 mt-0.5" />
-                <span>Main Silver Market, Autonagar, Tenali, AP - 522201</span>
+                <span>Autonagar, Tenali, Andhra Pradesh, India</span>
               </p>
-              <p className="flex items-center justify-center sm:justify-start gap-2">
+              <a
+                href={`https://wa.me/${adminPhone}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center sm:justify-start gap-2 hover:text-[#B9A77A] transition-colors"
+                title="Chat with Admin on WhatsApp"
+              >
                 <Phone className="w-4 h-4 text-[#B9A77A] shrink-0" />
-                <span>+91 9492664870</span>
-              </p>
+                <span>{formattedPhone}</span>
+              </a>
               <p className="flex items-center justify-center sm:justify-start gap-2">
                 <Mail className="w-4 h-4 text-[#B9A77A] shrink-0" />
                 <span>hello@saibalajisilverworks.com</span>
