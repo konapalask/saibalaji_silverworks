@@ -130,7 +130,7 @@ app.get('*', (req, res) => {
   `);
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Sai Balaji 24/7 Frontend Server is listening on http://0.0.0.0:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Sai Balaji 24/7 Frontend Server is listening on port ${PORT} (dual-stack IPv4/IPv6)`);
 });
 
