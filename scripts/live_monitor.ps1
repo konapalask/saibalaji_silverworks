@@ -204,6 +204,20 @@ while ($true) {
             $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
             Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "--no-autoupdate", "--metrics", "127.0.0.1:20245", "run", "--token", $token) -WindowStyle Hidden
             Start-Sleep -Seconds 2
+        } elseif ($cycleCount % 2 -eq 0 -and $fActive) {
+            # Active edge probe: verify Cloudflare isn't returning 502 with a stale tunnel connection
+            try {
+                $null = Invoke-WebRequest -Uri "https://saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+            } catch {
+                if ($_.Exception.Message -like "*502*" -or $_.Exception.Message -like "*Bad Gateway*") {
+                    Write-ConsoleLog "Cloudflare Edge returned 502 Bad Gateway! Refreshing stale tunnel..." "WARN"
+                    Stop-Process -Id $cProc.ProcessId -Force -ErrorAction SilentlyContinue
+                    Start-Sleep -Seconds 1
+                    $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
+                    Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "--no-autoupdate", "--metrics", "127.0.0.1:20245", "run", "--token", $token) -WindowStyle Hidden
+                    Start-Sleep -Seconds 2
+                }
+            }
         }
 
         # --- 2. Git Fetch & Auto-Sync ---
