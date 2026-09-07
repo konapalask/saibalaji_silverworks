@@ -163,8 +163,8 @@ export const Home: React.FC = () => {
                 SAI BALAJI SILVER WORKS PVT. LTD.
               </span>
               <h1 className="font-serif text-5xl sm:text-7xl lg:text-[5rem] xl:text-8xl font-light text-[#202020] leading-[1.02] tracking-tight">
-                Crafting Silver. <br />
-                <span className="text-[#00276B] font-normal not-italic" style={{ color: '#00276B' }}>Creating Trust.</span>
+                Crafting SILVER. <br />
+                <span className="text-[#00276B] font-normal not-italic" style={{ color: '#00276B' }}>Creating TRUST.</span>
               </h1>
             </div>
 
