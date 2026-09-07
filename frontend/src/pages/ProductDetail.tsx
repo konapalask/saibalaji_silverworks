@@ -143,7 +143,13 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
   const activeQty = isItemInCart ? currentCartQty : qty;
   const isWholesaleMode = isWholesalePage || isWholesale || product?.product_type === 'WHOLESALE';
 
+  // Stock Availability Calculation
+  const isProductOutOfStock = (product.stock !== undefined && product.stock <= 0) || product.in_stock === false;
+  const isVariantOutOfStock = Boolean(activeVar && activeVar.stock !== undefined && activeVar.stock <= 0);
+  const isOutOfStock = isProductOutOfStock || isVariantOutOfStock;
+
   const handleAddToCart = () => {
+    if (isOutOfStock) return;
     if (isItemInCart) {
       setIsCartOpen(true);
     } else {
@@ -154,6 +160,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
   };
 
   const handleBuyNow = () => {
+    if (isOutOfStock) return;
     addToCart(product, qty, activeVar);
     navigate('/checkout');
   };
@@ -182,7 +189,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
   };
 
   const handleBuyNowOnWhatsApp = async () => {
-    if (!product) return;
+    if (!product || isOutOfStock) return;
 
     if (!user) {
       sessionStorage.setItem('sbs_open_cart_after_login', 'true');
@@ -298,6 +305,14 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
               alt={product.title} 
               className="w-full h-full object-cover rounded-2xl drop-shadow-xl transition-all duration-500 bg-black"
             />
+            {/* Out of Stock Overlay Badge */}
+            {isOutOfStock && (
+              <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 z-10">
+                <span className="bg-red-600 text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">
+                  OUT OF STOCK
+                </span>
+              </div>
+            )}
             {/* Top Right Floating Actions Overlay: Wishlist (top) & Share (down the like button) */}
             <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 flex flex-col gap-2 sm:gap-2.5 z-10">
               {/* Like / Wishlist Button */}
