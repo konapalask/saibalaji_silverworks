@@ -1,9 +1,12 @@
 @echo off
 title Sai Balaji Silverworks - Live Server & Git Sync Console
-cls
-:loop
 cd /d "%~dp0"
+cls
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\live_monitor.ps1"
-timeout /t 3 /nobreak >nul 2>&1
-goto loop
+if %ERRORLEVEL% neq 0 (
+    echo.
+    echo [ERROR] Live Monitor exited with code %ERRORLEVEL%.
+    echo Press any key to restart or close this window...
+    pause >nul
+)
 

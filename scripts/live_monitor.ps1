@@ -8,15 +8,17 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $workspace = (Resolve-Path "$scriptDir\..").Path
 Set-Location $workspace
 
-# Single instance lock: prevent duplicate consoles from running
+# Single instance lock: stop any existing console/daemon and take over
 $currentPid = $PID
 $existing = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { 
     $_.ProcessId -ne $currentPid -and $_.CommandLine -like "*live_monitor.ps1*" 
 }
 if ($existing) {
-    Write-Host "Sai Balaji Live Console is already active in another window." -ForegroundColor Yellow
-    Start-Sleep -Seconds 3
-    exit
+    Write-Host "Found existing console or background monitor. Taking over..." -ForegroundColor Yellow
+    foreach ($p in $existing) {
+        try { Stop-Process -Id $p.ProcessId -Force -ErrorAction SilentlyContinue } catch {}
+    }
+    Start-Sleep -Seconds 1
 }
 
 # Stop legacy hidden daemons if any are still lingering
@@ -99,7 +101,7 @@ function Restart-BackendServer {
         Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 1
     }
-    Start-Process cmd.exe -ArgumentList @("/c", "title Sai Balaji Backend (8000) && set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node server.js")
+    Start-Process cmd.exe -ArgumentList @("/c", "title Sai Balaji Backend (8000) && set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node server.js") -WindowStyle Hidden
     Start-Sleep -Seconds 2
 }
 
@@ -110,7 +112,7 @@ function Restart-FrontendServer {
         Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 1
     }
-    Start-Process cmd.exe -ArgumentList @("/c", "title Sai Balaji Frontend (5173) && set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node serve_frontend.js")
+    Start-Process cmd.exe -ArgumentList @("/c", "title Sai Balaji Frontend (5173) && set PATH=$nodePath;%PATH% && cd /d `"$workspace\backend`" && node serve_frontend.js") -WindowStyle Hidden
     Start-Sleep -Seconds 2
 }
 
@@ -159,7 +161,7 @@ if (-not $cfProc) {
     Write-ConsoleLog "Starting Cloudflare Tunnel for https://saibalajisilverworkspvtltd.com..." "BUILD"
     $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
     Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "--no-autoupdate", "--metrics", "127.0.0.1:20245", "--loglevel", "debug", "--logfile", "$workspace\logs\cloudflared.log", "run", "--token", $token) -WindowStyle Hidden
-    Start-Sleep -Seconds 2
+    Start-Sleep -Seconds 3
     $cfProc = Get-SaiBalajiCloudflared
     if ($cfProc) {
         Write-ConsoleLog "Cloudflare Tunnel is running (PID: $($cfProc.ProcessId)) [OK]" "OK"
@@ -170,10 +172,34 @@ if (-not $cfProc) {
     Write-ConsoleLog "Cloudflare Tunnel is running (PID: $($cfProc.ProcessId)) [OK]" "OK"
 }
 
+# 4. Verify Live Connectivity Before Declaring Ready
+Write-ConsoleLog "Verifying public Cloudflare connection (https://saibalajisilverworkspvtltd.com)..." "FETCH"
+$isLive = $false
+for ($attempt = 1; $attempt -le 10; $attempt++) {
+    try {
+        $check = Invoke-WebRequest -Uri "https://saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+        if ($check.StatusCode -eq 200) {
+            $isLive = $true
+            break
+        }
+    } catch {
+        Start-Sleep -Seconds 2
+    }
+}
+
+if ($isLive) {
+    Write-Host "================================================================================" -ForegroundColor Green
+    Write-ConsoleLog "WEBSITE IS 100% LIVE: https://saibalajisilverworkspvtltd.com [200 OK]" "SUCCESS"
+    Write-Host "================================================================================" -ForegroundColor Green
+} else {
+    Write-ConsoleLog "Public DNS / Edge routing in progress. Website will be live in moments." "WARN"
+}
+
 Write-ConsoleLog "All services online! Starting Git Fetch & Health Watchdog..." "SUCCESS"
 Write-Host "--------------------------------------------------------------------------------" -ForegroundColor DarkGray
 
 $cycleCount = 0
+$consecutive502 = 0
 
 while ($true) {
     $cycleCount++
@@ -207,15 +233,23 @@ while ($true) {
         } elseif ($cycleCount % 2 -eq 0 -and $fActive) {
             # Active edge probe: verify Cloudflare isn't returning 502 with a stale tunnel connection
             try {
-                $null = Invoke-WebRequest -Uri "https://saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+                $probe = Invoke-WebRequest -Uri "https://saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+                if ($probe.StatusCode -eq 200) {
+                    $consecutive502 = 0
+                }
             } catch {
                 if ($_.Exception.Message -like "*502*" -or $_.Exception.Message -like "*Bad Gateway*") {
-                    Write-ConsoleLog "Cloudflare Edge returned 502 Bad Gateway! Refreshing stale tunnel..." "WARN"
-                    Stop-Process -Id $cProc.ProcessId -Force -ErrorAction SilentlyContinue
-                    Start-Sleep -Seconds 1
-                    $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
-                    Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "--no-autoupdate", "--metrics", "127.0.0.1:20245", "--loglevel", "debug", "--logfile", "$workspace\logs\cloudflared.log", "run", "--token", $token) -WindowStyle Hidden
-                    Start-Sleep -Seconds 2
+                    $consecutive502++
+                    Write-ConsoleLog "Edge warning: 502 Bad Gateway detected ($consecutive502/3)..." "WARN"
+                    if ($consecutive502 -ge 3) {
+                        Write-ConsoleLog "Cloudflare Edge returning 502 repeatedly! Refreshing tunnel connection..." "WARN"
+                        $consecutive502 = 0
+                        Stop-Process -Id $cProc.ProcessId -Force -ErrorAction SilentlyContinue
+                        Start-Sleep -Seconds 1
+                        $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
+                        Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "--no-autoupdate", "--metrics", "127.0.0.1:20245", "--loglevel", "debug", "--logfile", "$workspace\logs\cloudflared.log", "run", "--token", $token) -WindowStyle Hidden
+                        Start-Sleep -Seconds 2
+                    }
                 }
             }
         }
