@@ -10,6 +10,7 @@ import { generateOrderId, generateSingleProductWhatsAppMessage, openWhatsAppOrde
 import { useLiveSilver } from '../context/LiveSilverContext';
 import { OrderSuccessModal } from '../components/OrderSuccessModal';
 import api from '../services/api';
+import { isVariantOutOfStock, isProductFullyOutOfStock, getFirstInStockVariant } from '../utils/stock';
 
 interface ProductDetailProps {
   isWholesalePage?: boolean;
@@ -50,10 +51,10 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
         setProduct(res.data);
         setActiveImage(res.data.featured_image);
 
-        // Compute or select initial variant
+        // Compute or select initial variant (prefer first in-stock variant)
         let initialVar = null;
         if (Array.isArray(res.data.variants) && res.data.variants.length > 0) {
-          initialVar = res.data.variants[0];
+          initialVar = getFirstInStockVariant(res.data.variants);
         } else {
           const baseW = res.data.weight_g || 25;
           const baseMC = res.data.making_charges || 300;
@@ -102,7 +103,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
     ];
   }, [product]);
 
-  const activeVar = selectedVariant || availableVariants[0] || { weight_g: product?.weight_g || 25, making_charge: product?.making_charges || 300, making_charge_type: 'fixed', measurement: product?.dimensions || 'Standard' };
+  const activeVar = selectedVariant || getFirstInStockVariant(availableVariants) || { weight_g: product?.weight_g || 25, making_charge: product?.making_charges || 300, making_charge_type: 'fixed', measurement: product?.dimensions || 'Standard' };
 
   // Sync quantity state per active size variant with cart
   useEffect(() => {
@@ -144,9 +145,9 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
   const isWholesaleMode = isWholesalePage || isWholesale || product?.product_type === 'WHOLESALE';
 
   // Stock Availability Calculation
-  const isProductOutOfStock = (product.stock !== undefined && product.stock <= 0) || product.in_stock === false;
-  const isVariantOutOfStock = Boolean(activeVar && activeVar.stock !== undefined && activeVar.stock <= 0);
-  const isOutOfStock = isProductOutOfStock || isVariantOutOfStock;
+  const isProductOutOfStock = isProductFullyOutOfStock(product);
+  const isVariantOutOfStockActive = isVariantOutOfStock(activeVar);
+  const isOutOfStock = product.in_stock === false || isVariantOutOfStockActive;
 
   const handleAddToCart = () => {
     if (isOutOfStock) return;
@@ -463,7 +464,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                   {availableVariants.map((variant) => {
                     const isSelected = activeVar?.id === variant.id || activeVar?.weight_g === variant.weight_g || activeVar?.measurement === variant.measurement;
                     const vCalc = calculateDynamicPrice(variant.weight_g, variant.making_charge, variant.making_charge_type || 'fixed', product.silver_purity);
-                    const isVOutOfStock = isProductOutOfStock || (variant.stock !== undefined && variant.stock <= 0);
+                    const isVOutOfStock = product.in_stock === false || isVariantOutOfStock(variant);
                     return (
                       <button
                         key={variant.id || variant.measurement || variant.weight_g}

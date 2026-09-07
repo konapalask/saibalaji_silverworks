@@ -8,6 +8,7 @@ import { Breadcrumb, BreadcrumbItem } from '../components/Breadcrumb';
 import { MAIN_CATEGORIES, getCategoryBySlug, MainCategory } from '../data/categoriesData';
 import { useWholesale } from '../context/WholesaleContext';
 import { useCart } from '../context/CartContext';
+import { isProductFullyOutOfStock } from '../utils/stock';
 import { ArrowRight, Briefcase, ShoppingBag } from 'lucide-react';
 import api from '../services/api';
 
@@ -131,8 +132,8 @@ export const CategoryPage: React.FC = () => {
       if (selectedWeightRange === '100-plus' && weight <= 100) return false;
 
       // 5. Availability
-      if (availability === 'in-stock' && product.stock <= 0) return false;
-      if (availability === 'out-stock' && product.stock > 0) return false;
+      if (availability === 'in-stock' && isProductFullyOutOfStock(product)) return false;
+      if (availability === 'out-stock' && !isProductFullyOutOfStock(product)) return false;
 
       return true;
     });

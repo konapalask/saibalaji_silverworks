@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useWholesale } from '../context/WholesaleContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useLiveSilver } from '../context/LiveSilverContext';
+import { isProductFullyOutOfStock } from '../utils/stock';
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -24,7 +25,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
 
   const isLiked = isInWishlist(product.id);
   const displayPrice = calculateCurrentPrice(product);
-  const isOutOfStock = (product.stock !== undefined && product.stock <= 0) || product.in_stock === false;
+  const isOutOfStock = isProductFullyOutOfStock(product);
 
   const handleAddToCart = () => {
     if (isOutOfStock) return;

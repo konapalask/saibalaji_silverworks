@@ -340,6 +340,46 @@ export const AdminProducts: React.FC = () => {
     }
   };
 
+  // Toggle individual variant stock (In Stock vs Out of Stock) instantly
+  const handleToggleVariantStock = async (prod: Product, variantIndex: number) => {
+    let currentVars = Array.isArray(prod.variants) && prod.variants.length > 0
+      ? [...prod.variants]
+      : [];
+
+    if (currentVars.length === 0) return;
+
+    const targetVar = currentVars[variantIndex];
+    const isCurrentlyInStock = (targetVar.stock !== undefined ? targetVar.stock : 10) > 0 && targetVar.is_active !== false;
+
+    const newStock = isCurrentlyInStock ? 0 : 10;
+    const newIsActive = !isCurrentlyInStock;
+
+    currentVars[variantIndex] = {
+      ...targetVar,
+      stock: newStock,
+      is_active: newIsActive
+    };
+
+    try {
+      await api.put(`/products/${prod.id}`, { variants: currentVars });
+      fetchProducts();
+    } catch (err) {
+      alert('Failed to update variant stock status');
+    }
+  };
+
+  const handleToggleFormVariantStock = (idx: number) => {
+    const updated = [...variants];
+    const target = updated[idx];
+    const inStock = (target.stock !== undefined ? target.stock : 10) > 0 && target.is_active !== false;
+    updated[idx] = {
+      ...target,
+      stock: inStock ? 0 : 10,
+      is_active: !inStock
+    };
+    setVariants(updated);
+  };
+
   // Expand / Collapse Variant Row
   const toggleExpandVariant = (productId: number) => {
     setExpandedProductIds(prev => 
@@ -923,12 +963,14 @@ export const AdminProducts: React.FC = () => {
                                         <th className="py-2 px-3">Making Charge</th>
                                         <th className="py-2 px-3">Calculated Price</th>
                                         <th className="py-2 px-3">SKU</th>
-                                        <th className="py-2 px-3 text-center">Stock</th>
+                                        <th className="py-2 px-3 text-center">Stock Status</th>
+                                        <th className="py-2 px-3 text-right">Quick Stock Toggle</th>
                                       </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100 font-sans">
                                       {p.variants!.map((v, vIdx) => {
                                         const vCalc = calculateDynamicPrice(v.weight_g, v.making_charge, v.making_charge_type || 'fixed', p.silver_purity);
+                                        const isVInStock = (v.stock !== undefined ? v.stock : 10) > 0 && v.is_active !== false;
                                         return (
                                           <tr key={vIdx} className="hover:bg-gray-50">
                                             <td className="py-2 px-3 font-bold text-[#1A1918]">{v.measurement}</td>
@@ -938,9 +980,22 @@ export const AdminProducts: React.FC = () => {
                                             <td className="py-2 px-3 font-bold text-green-700 font-mono">₹{vCalc.finalPrice.toLocaleString()}</td>
                                             <td className="py-2 px-3 font-mono text-gray-500">{v.sku}</td>
                                             <td className="py-2 px-3 text-center font-bold">
-                                              <span className={`px-2 py-0.5 rounded-full text-[10px] ${v.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                                {v.stock} pcs
+                                              <span className={`px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wider ${isVInStock ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'}`}>
+                                                {isVInStock ? `${v.stock} pcs (In Stock)` : 'Out of Stock'}
                                               </span>
+                                            </td>
+                                            <td className="py-2 px-3 text-right">
+                                              <button
+                                                onClick={() => handleToggleVariantStock(p, vIdx)}
+                                                className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer shadow-2xs border ${
+                                                  isVInStock
+                                                    ? 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border-red-200'
+                                                    : 'bg-green-50 text-green-700 hover:bg-green-600 hover:text-white border-green-200'
+                                                }`}
+                                                title={isVInStock ? "Mark this weight variant as Out of Stock" : "Mark this weight variant as In Stock"}
+                                              >
+                                                {isVInStock ? 'Mark Out of Stock' : 'Mark In Stock'}
+                                              </button>
                                             </td>
                                           </tr>
                                         );
@@ -1137,13 +1192,25 @@ export const AdminProducts: React.FC = () => {
                         <tbody className="divide-y divide-gray-100 font-sans">
                           {variants.map((v, idx) => {
                             const pCalc = calculateDynamicPrice(v.weight_g, v.making_charge, v.making_charge_type || 'fixed', formData.silver_purity);
+                            const isVInStock = (v.stock !== undefined ? v.stock : 10) > 0 && v.is_active !== false;
                             return (
                               <tr key={idx} className="hover:bg-[#FAF9F5]/60">
                                 <td className="py-1.5 px-3 font-bold text-[#1A1918]">{v.measurement}</td>
                                 <td className="py-1.5 px-3 font-mono">{v.weight_g} g</td>
                                 <td className="py-1.5 px-3 font-mono">₹{v.making_charge}</td>
                                 <td className="py-1.5 px-3 font-bold text-green-700 font-mono">₹{pCalc.finalPrice.toLocaleString()}</td>
-                                <td className="py-1.5 px-3 font-mono">{v.stock} pcs</td>
+                                <td className="py-1.5 px-3 font-mono">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleToggleFormVariantStock(idx)}
+                                    className={`px-2 py-0.5 rounded-full text-[9.5px] uppercase font-bold tracking-wider cursor-pointer border ${
+                                      isVInStock ? 'bg-green-100 text-green-800 border-green-200 hover:bg-red-100 hover:text-red-800' : 'bg-red-100 text-red-800 border-red-200 hover:bg-green-100 hover:text-green-800'
+                                    }`}
+                                    title={isVInStock ? "Click to set Out of Stock" : "Click to set In Stock"}
+                                  >
+                                    {isVInStock ? `${v.stock} pcs` : 'Out of Stock'}
+                                  </button>
+                                </td>
                                 <td className="py-1.5 px-3 text-right space-x-1">
                                   <button type="button" onClick={() => handleOpenEditVariant(idx)} className="p-1 text-gray-600 hover:text-[#C5A059]">
                                     <Edit className="w-3.5 h-3.5" />
@@ -1258,27 +1325,55 @@ export const AdminProducts: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
+                    <label className="block font-bold text-gray-700 mb-1">Stock Availability</label>
+                    <div className="flex items-center gap-1 bg-[#FAF9F5] border border-[#E6E1DA] p-1 rounded-xl">
+                      <button
+                        type="button"
+                        onClick={() => setVariantForm({ ...variantForm, stock: variantForm.stock > 0 ? variantForm.stock : 10, is_active: true })}
+                        className={`flex-1 py-1 px-2 rounded-lg text-[10.5px] uppercase font-bold tracking-wider transition-all ${
+                          (variantForm.stock !== undefined ? variantForm.stock : 10) > 0 && variantForm.is_active !== false
+                            ? 'bg-green-700 text-white shadow-2xs'
+                            : 'bg-transparent text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        In Stock
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setVariantForm({ ...variantForm, stock: 0, is_active: false })}
+                        className={`flex-1 py-1 px-2 rounded-lg text-[10.5px] uppercase font-bold tracking-wider transition-all ${
+                          variantForm.stock <= 0 || variantForm.is_active === false
+                            ? 'bg-red-700 text-white shadow-2xs'
+                            : 'bg-transparent text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        Out of Stock
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
                     <label className="block font-bold text-gray-700 mb-1">Stock Units *</label>
                     <input
                       type="number"
                       required
                       min="0"
                       value={variantForm.stock}
-                      onChange={(e) => setVariantForm({ ...variantForm, stock: parseInt(e.target.value) || 0 })}
+                      onChange={(e) => setVariantForm({ ...variantForm, stock: parseInt(e.target.value) || 0, is_active: (parseInt(e.target.value) || 0) > 0 })}
                       className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold font-mono"
                     />
                   </div>
+                </div>
 
-                  <div>
-                    <label className="block font-bold text-gray-700 mb-1">Variant Image (Optional)</label>
-                    <input
-                      type="text"
-                      placeholder="/public/Saibalaji products S/..."
-                      value={variantForm.image}
-                      onChange={(e) => setVariantForm({ ...variantForm, image: e.target.value })}
-                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-mono text-[11px]"
-                    />
-                  </div>
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">Variant Image (Optional)</label>
+                  <input
+                    type="text"
+                    placeholder="/public/Saibalaji products S/..."
+                    value={variantForm.image}
+                    onChange={(e) => setVariantForm({ ...variantForm, image: e.target.value })}
+                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-mono text-[11px]"
+                  />
                 </div>
 
                 {/* LIVE PRICE PREVIEW CARD */}

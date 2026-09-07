@@ -3,6 +3,7 @@ import { Product, CartItem } from '../types';
 import { WHOLESALE_MOQ } from '../config/cartConfig';
 import { useAuth } from './AuthContext';
 import { useLiveSilver } from './LiveSilverContext';
+import { isCartItemOutOfStock } from '../utils/stock';
 
 export type CartType = 'RETAIL' | 'WHOLESALE';
 
@@ -143,9 +144,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Actions
   const addToCart = (product: Product, quantity: number = 1, selectedVariant?: any) => {
     // Disallow adding out of stock products or variants
-    const isProductOutOfStock = (product.stock !== undefined && product.stock <= 0) || product.in_stock === false;
-    const isVarOutOfStock = Boolean(selectedVariant && selectedVariant.stock !== undefined && selectedVariant.stock <= 0);
-    if (isProductOutOfStock || isVarOutOfStock) {
+    if (isCartItemOutOfStock(product, selectedVariant)) {
       return;
     }
 
@@ -194,8 +193,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const itemVarId = i.variant_id || i.selected_measurement || 'default';
         const isTarget = variantId ? (i.product.id === productId && itemVarId === variantId) : (i.product.id === productId);
         if (isTarget) {
-          const isItemOutOfStock = (i.product.stock !== undefined && i.product.stock <= 0) || i.product.in_stock === false;
-          if (isItemOutOfStock && quantity > i.quantity) {
+          if (isCartItemOutOfStock(i.product, i.selected_variant) && quantity > i.quantity) {
             return i;
           }
           return { ...i, quantity };

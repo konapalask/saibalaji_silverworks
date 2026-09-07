@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext';
 import { useWholesale } from '../context/WholesaleContext';
 
 import { useLiveSilver } from '../context/LiveSilverContext';
+import { isProductFullyOutOfStock } from '../utils/stock';
 
 interface ProductCardProps {
   product: Product;
@@ -22,6 +23,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
 
   const isLiked = isInWishlist(product.id);
   const displayPrice = isWholesaleOnly ? calculateWholesalePrice(product) : calculateCurrentPrice(product);
+  const isOutOfStock = isProductFullyOutOfStock(product);
 
   // Check current item quantity in cart
   const cartItem = cart.find((i) => i.product.id === product.id);
@@ -44,7 +46,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
         />
 
         {/* Out of Stock Overlay Badge */}
-        {(product.stock <= 0 || product.in_stock === false) && (
+        {isOutOfStock && (
           <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
             <span className="bg-red-600 text-white text-[8px] sm:text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-md">
               OUT OF STOCK
@@ -116,7 +118,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
 
         {/* Action Button pinned cleanly to bottom */}
         <div className="mt-3 pt-2.5 border-t border-[#F0ECE6]">
-          {(product.stock <= 0 || product.in_stock === false) ? (
+          {isOutOfStock ? (
             <button
               disabled
               className="w-full bg-gray-100 text-gray-400 py-2 sm:py-2.5 px-2 rounded-xl text-[10px] sm:text-xs font-bold uppercase tracking-wider cursor-not-allowed flex items-center justify-center gap-2 border border-gray-200"

@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { generateOrderId, generateFullCartWhatsAppMessage, openWhatsAppOrderUrl } from '../utils/whatsappOrder';
 import { OrderSuccessModal } from './OrderSuccessModal';
+import { isCartItemOutOfStock } from '../utils/stock';
 
 export const CartDrawer: React.FC = () => {
   const { user } = useAuth();
@@ -55,7 +56,7 @@ export const CartDrawer: React.FC = () => {
   const progressPercent = Math.min(100, Math.round((totalQuantity / WHOLESALE_MOQ) * 100));
 
   const hasOutOfStockItems = effectiveCartItems.some(
-    item => (item.product.stock !== undefined && item.product.stock <= 0) || item.product.in_stock === false
+    item => isCartItemOutOfStock(item.product, item.selected_variant)
   );
 
   const handleOrderCartOnWhatsApp = async () => {
@@ -249,9 +250,9 @@ export const CartDrawer: React.FC = () => {
                 </button>
               </div>
             ) : (
-              effectiveCartItems.map(({ product, quantity, effectivePrice, hasWholesalePrice, itemSubtotal, selected_measurement, variant_id, weight_g }) => {
+              effectiveCartItems.map(({ product, quantity, effectivePrice, hasWholesalePrice, itemSubtotal, selected_measurement, variant_id, weight_g, selected_variant }) => {
                 const varKey = variant_id || selected_measurement || 'default';
-                const isItemOutOfStock = (product.stock !== undefined && product.stock <= 0) || product.in_stock === false;
+                const isItemOutOfStock = isCartItemOutOfStock(product, selected_variant);
                 return (
                   <div key={`${product.id}-${varKey}`} className="flex gap-3 p-3 bg-white rounded-2xl border border-[#E6E1DA] shadow-xs">
                     <div className="w-28 sm:w-32 aspect-3/2 bg-black rounded-xl p-0.5 overflow-hidden shrink-0 border border-gray-900 flex items-center justify-center">
