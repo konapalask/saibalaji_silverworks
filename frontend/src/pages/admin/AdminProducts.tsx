@@ -696,7 +696,6 @@ export const AdminProducts: React.FC = () => {
                   </button>
                 </th>
                 <th className="py-3 px-4 min-w-[220px]">Product Details</th>
-                <th className="py-3 px-3">SKU</th>
                 <th className="py-3 px-3">Weight (Net/Gross)</th>
                 <th className="py-3 px-3">Silver Value</th>
                 <th className="py-3 px-3">Making Charge</th>
@@ -710,14 +709,14 @@ export const AdminProducts: React.FC = () => {
             <tbody className="divide-y divide-gray-100 font-sans">
               {loading ? (
                 <tr>
-                  <td colSpan={10} className="py-12 text-center text-gray-400">
+                  <td colSpan={9} className="py-12 text-center text-gray-400">
                     <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#C5A059] mb-2"></div>
                     <p>Loading inventory items...</p>
                   </td>
                 </tr>
               ) : paginatedProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="py-12 text-center text-gray-500">
+                  <td colSpan={9} className="py-12 text-center text-gray-500">
                     No products match your search or filter criteria.
                   </td>
                 </tr>
@@ -776,19 +775,10 @@ export const AdminProducts: React.FC = () => {
                               </span>
                               <span className="text-[10px] text-[#C5A059] font-medium block truncate mt-0.5">
                                 {p.category_name || p.category?.name || 'Silver Collection'}
+                                {p.subcategory ? ` • ${p.subcategory}` : ''}
                               </span>
                             </div>
                           </div>
-                        </td>
-
-                        {/* SKU & Subcategory */}
-                        <td className="py-3 px-3 font-mono text-[11px]">
-                          <div className="font-bold text-[#1A1918]">{p.sku}</div>
-                          {p.subcategory && (
-                            <span className="text-[9px] bg-gray-100 px-1.5 py-0.2 rounded font-sans text-gray-600 block mt-0.5 truncate max-w-[100px]">
-                              {p.subcategory}
-                            </span>
-                          )}
                         </td>
 
                         {/* Weight (Net / Gross) */}
@@ -934,7 +924,7 @@ export const AdminProducts: React.FC = () => {
                       {/* EXPANDABLE INLINE VARIANTS SUB-TABLE ROW */}
                       {isExpanded && (
                         <tr className="bg-[#FAF9F5] border-b border-[#E6E1DA]">
-                          <td colSpan={11} className="p-4">
+                          <td colSpan={9} className="p-4">
                             <div className="bg-white rounded-xl border border-[#E6E1DA] p-4 space-y-3 shadow-inner">
                               <div className="flex items-center justify-between border-b border-[#E6E1DA] pb-2">
                                 <div className="flex items-center gap-2">
@@ -962,7 +952,6 @@ export const AdminProducts: React.FC = () => {
                                         <th className="py-2 px-3">Gross Weight</th>
                                         <th className="py-2 px-3">Making Charge</th>
                                         <th className="py-2 px-3">Calculated Price</th>
-                                        <th className="py-2 px-3">SKU</th>
                                         <th className="py-2 px-3 text-center">Stock Status</th>
                                         <th className="py-2 px-3 text-right">Quick Stock Toggle</th>
                                       </tr>
@@ -978,7 +967,6 @@ export const AdminProducts: React.FC = () => {
                                             <td className="py-2 px-3 font-mono">{v.weight_g} g</td>
                                             <td className="py-2 px-3 font-mono">₹{v.making_charge}</td>
                                             <td className="py-2 px-3 font-bold text-green-700 font-mono">₹{vCalc.finalPrice.toLocaleString()}</td>
-                                            <td className="py-2 px-3 font-mono text-gray-500">{v.sku}</td>
                                             <td className="py-2 px-3 text-center font-bold">
                                               <span className={`px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wider ${isVInStock ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'}`}>
                                                 {isVInStock ? `${v.stock} pcs (In Stock)` : 'Out of Stock'}

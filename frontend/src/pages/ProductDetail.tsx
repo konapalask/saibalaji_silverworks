@@ -130,6 +130,10 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
 
   const priceBreakdown = calculateDynamicPrice(activeVar.weight_g, activeVar.making_charge, activeVar.making_charge_type || 'fixed', product.silver_purity);
 
+  const baseNetWeight = product.net_silver_weight_g || product.weight_g || 1;
+  const activeNetWeight = activeVar?.weight_g || baseNetWeight;
+  const activeGrossWeight = product.gross_weight_g ? Math.round((activeNetWeight * (product.gross_weight_g / baseNetWeight)) * 10) / 10 : activeNetWeight;
+
   const isLiked = isInWishlist(product.id);
 
   // Cart item matching active variant
@@ -383,14 +387,14 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                   OUT OF STOCK
                 </span>
               )}
-              {(product.net_silver_weight_g || product.weight_g > 0) && (
+              {activeNetWeight > 0 && (
                 <span className="bg-white text-[#202020] border border-[#E5E0D8] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-                  Net: {product.net_silver_weight_g || product.weight_g}g
+                  Net: {activeNetWeight}g
                 </span>
               )}
-              {product.gross_weight_g && product.gross_weight_g !== (product.net_silver_weight_g || product.weight_g) && (
+              {activeGrossWeight > 0 && activeGrossWeight !== activeNetWeight && (
                 <span className="bg-[#FAF9F5] text-gray-600 border border-[#E5E0D8] text-[11px] font-medium px-2.5 py-0.5 rounded-full">
-                  Gross: {product.gross_weight_g}g
+                  Gross: {activeGrossWeight}g
                 </span>
               )}
               {product.dimensions && (
@@ -401,7 +405,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
             </div>
 
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#202020]">{product.title}</h1>
-            <p className="text-[11px] text-[#777777] mt-0.5">SKU: {activeVar?.sku || product.sku} {product.subcategory ? `| ${product.subcategory}` : ''}</p>
+            {product.subcategory && <p className="text-[11px] text-[#777777] mt-0.5">{product.subcategory}</p>}
 
             {/* DYNAMIC PRICE DISPLAY */}
             <div className="mt-3 space-y-2">
@@ -612,11 +616,12 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
           {activeTab === 'specs' && (
             <div className="space-y-2 max-w-lg">
               <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Silver Purity:</span> <span className="font-bold text-[#1A1918]">{product.silver_purity}</span></div>
-              <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Net Silver Weight:</span> <span className="font-bold text-[#1A1918]">{product.net_silver_weight_g || product.weight_g} grams</span></div>
-              {product.gross_weight_g && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Gross Weight:</span> <span className="font-bold text-[#1A1918]">{product.gross_weight_g} grams</span></div>}
-              {!isWholesaleMode && product.making_charges !== undefined && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Making Charges:</span> <span className="font-bold text-[#1A1918]">{product.making_charges > 0 ? `₹${product.making_charges}` : 'Included'}</span></div>}
+              <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Net Silver Weight:</span> <span className="font-bold text-[#1A1918]">{activeNetWeight} grams</span></div>
+              {activeGrossWeight > 0 && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Gross Weight:</span> <span className="font-bold text-[#1A1918]">{activeGrossWeight} grams</span></div>}
+              {!isWholesaleMode && (
+                <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Making Charges:</span> <span className="font-bold text-[#1A1918]">{priceBreakdown.makingCharge > 0 ? `₹${priceBreakdown.makingCharge.toLocaleString()}` : 'Included'}</span></div>
+              )}
               {product.dimensions && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Dimensions:</span> <span className="font-bold text-[#1A1918]">{product.dimensions}</span></div>}
-              <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">SKU Code:</span> <span className="font-mono text-[#1A1918]">{product.sku}</span></div>
               <div className="grid grid-cols-2 py-1.5"><span className="font-semibold text-gray-500">Hallmarking:</span> <span className="font-bold text-[#C5A059]">Laser Hallmarked</span></div>
             </div>
           )}
