@@ -17,7 +17,7 @@ interface LiveSilverContextType {
   silverStats: SilverRateStats;
   calculateCurrentPrice: (target: Product | number, baseSilverRate?: number) => number;
   calculateWholesalePrice: (product: Product) => number;
-  calculateDynamicPrice: (weightGrams: number, makingCharge: number, makingChargeType?: 'fixed' | 'per_gram' | 'percentage', purity?: string, wholesaleMakingCharge?: number) => PriceBreakdown;
+  calculateDynamicPrice: (weightGrams: number, makingCharge: number, makingChargeType?: 'fixed' | 'per_gram' | 'percentage', purity?: string, wholesaleMakingCharge?: number, customRate?: number) => PriceBreakdown;
   refreshSilverRate: () => Promise<void>;
   updateBaselineRate: (newRate: number) => Promise<void>;
 }
@@ -89,7 +89,8 @@ export const LiveSilverProvider: React.FC<{ children: ReactNode }> = ({ children
     makingCharge: number,
     makingChargeType: 'fixed' | 'per_gram' | 'percentage' = 'fixed',
     purity: string = '925',
-    wholesaleMakingCharge?: number
+    wholesaleMakingCharge?: number,
+    customRate?: number
   ): PriceBreakdown => {
     const weight = parseFloat(String(weightGrams)) || 0;
     const mc = parseFloat(String(makingCharge)) || 0;
@@ -97,7 +98,9 @@ export const LiveSilverProvider: React.FC<{ children: ReactNode }> = ({ children
       ? parseFloat(String(wholesaleMakingCharge))
       : Math.round(mc * 0.75 * 100) / 100; // Default wholesale making charge is 25% lower than retail making charge
 
-    const rate = silverStats.live_silver_rate || 250.64;
+    const rate = (typeof customRate === 'number' && customRate > 0)
+      ? customRate
+      : (silverStats.live_silver_rate || 250.64);
 
     const silverValue = Math.round(weight * rate * 100) / 100;
     let calculatedMC = mc;
