@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, MessageSquare, Share2, Copy, X } from 'lucide-react';
+import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, MessageSquare, Share2, Copy, X, AlertCircle } from 'lucide-react';
 import { Product, ProductVariant } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -65,7 +65,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
             making_charge: baseMC,
             making_charge_type: res.data.making_charge_type || 'fixed',
             sku: res.data.sku,
-            stock: res.data.stock || 10,
+            stock: res.data.stock !== undefined ? res.data.stock : 10,
             is_active: true
           };
         }
