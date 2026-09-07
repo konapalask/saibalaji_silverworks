@@ -54,7 +54,16 @@ export const CartDrawer: React.FC = () => {
 
   const progressPercent = Math.min(100, Math.round((totalQuantity / WHOLESALE_MOQ) * 100));
 
+  const hasOutOfStockItems = effectiveCartItems.some(
+    item => (item.product.stock !== undefined && item.product.stock <= 0) || item.product.in_stock === false
+  );
+
   const handleOrderCartOnWhatsApp = async () => {
+    if (hasOutOfStockItems) {
+      alert("Some items in your cart are currently out of stock. Please remove them before placing your order.");
+      return;
+    }
+
     // 1. Mandatory login check
     if (!user) {
       sessionStorage.setItem('sbs_open_cart_after_login', 'true');

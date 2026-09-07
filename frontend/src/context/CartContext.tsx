@@ -142,6 +142,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Actions
   const addToCart = (product: Product, quantity: number = 1, selectedVariant?: any) => {
+    // Disallow adding out of stock products or variants
+    const isProductOutOfStock = (product.stock !== undefined && product.stock <= 0) || product.in_stock === false;
+    const isVarOutOfStock = Boolean(selectedVariant && selectedVariant.stock !== undefined && selectedVariant.stock <= 0);
+    if (isProductOutOfStock || isVarOutOfStock) {
+      return;
+    }
+
     setCart((prev) => {
       const varId = selectedVariant?.id || selectedVariant?.measurement || 'default';
       const isMatch = (i: CartItem) => {
@@ -185,10 +192,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCart((prev) =>
       prev.map((i) => {
         const itemVarId = i.variant_id || i.selected_measurement || 'default';
-        if (variantId) {
-          return (i.product.id === productId && itemVarId === variantId) ? { ...i, quantity } : i;
+        const isTarget = variantId ? (i.product.id === productId && itemVarId === variantId) : (i.product.id === productId);
+        if (isTarget) {
+          const isItemOutOfStock = (i.product.stock !== undefined && i.product.stock <= 0) || i.product.in_stock === false;
+          if (isItemOutOfStock && quantity > i.quantity) {
+            return i;
+          }
+          return { ...i, quantity };
         }
-        return i.product.id === productId ? { ...i, quantity } : i;
+        return i;
       })
     );
   };
