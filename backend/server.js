@@ -505,15 +505,7 @@ function calculateProductPrice(weight_g, making_charge, making_charge_type = 'fi
 
   const rate = parseFloat(live_silver_rate) || 250.64;
   
-  let purityFactor = 1.0;
-  const purityStr = String(silver_purity).toLowerCase();
-  if (purityStr.includes('925') || purityStr.includes('sterling')) {
-    purityFactor = 0.925;
-  } else if (purityStr.includes('999') || purityStr.includes('fine')) {
-    purityFactor = 1.0;
-  }
-
-  const silverValue = Math.round(weight * purityFactor * rate * 100) / 100;
+  const silverValue = Math.round(weight * rate * 100) / 100;
   
   let calculatedMC = mc;
   let calculatedWMC = wmc;

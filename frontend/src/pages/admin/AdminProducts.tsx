@@ -686,13 +686,11 @@ export const AdminProducts: React.FC = () => {
                   const isSelected = selectedProductIds.includes(p.id);
                   const isExpanded = expandedProductIds.includes(p.id);
                   
-                  // Product purity & calculations
-                  const purityFactor = (p.silver_purity || '').toLowerCase().includes('999') ? 1.0 : 0.925;
                   const netWeight = p.net_silver_weight_g || p.weight_g || 25;
                   const grossWeight = p.gross_weight_g || netWeight;
                   const silverRate = silverStats.live_silver_rate || 250.64;
                   
-                  const silverValue = Math.round(netWeight * purityFactor * silverRate);
+                  const silverValue = Math.round(netWeight * silverRate * 100) / 100;
                   const making = p.making_charges || 0;
 
                   // Price breakdown
@@ -1302,17 +1300,17 @@ export const AdminProducts: React.FC = () => {
 
                     <div>
                       <span className="text-gray-400 block text-[9.5px]">Silver Value</span>
-                      <span className="font-bold text-white font-mono">₹{variantPreview.silverValue.toLocaleString()}</span>
+                      <span className="font-bold text-white font-mono">₹{variantPreview.silverValue.toLocaleString(undefined, { minimumFractionDigits: variantPreview.silverValue % 1 !== 0 ? 2 : 0, maximumFractionDigits: 2 })}</span>
                     </div>
 
                     <div>
                       <span className="text-gray-400 block text-[9.5px]">Making Charges</span>
-                      <span className="font-bold text-white font-mono">₹{variantPreview.makingCharge.toLocaleString()}</span>
+                      <span className="font-bold text-white font-mono">₹{variantPreview.makingCharge.toLocaleString(undefined, { minimumFractionDigits: variantPreview.makingCharge % 1 !== 0 ? 2 : 0, maximumFractionDigits: 2 })}</span>
                     </div>
 
                     <div>
                       <span className="text-gray-400 block text-[9.5px]">Current Selling Price</span>
-                      <span className="font-bold text-[#C5A059] font-mono text-xs">₹{variantPreview.finalPrice.toLocaleString()}</span>
+                      <span className="font-bold text-[#C5A059] font-mono text-xs">₹{variantPreview.finalPrice.toLocaleString(undefined, { minimumFractionDigits: variantPreview.finalPrice % 1 !== 0 ? 2 : 0, maximumFractionDigits: 2 })}</span>
                     </div>
                   </div>
                 </div>
