@@ -251,6 +251,7 @@ export const CartDrawer: React.FC = () => {
             ) : (
               effectiveCartItems.map(({ product, quantity, effectivePrice, hasWholesalePrice, itemSubtotal, selected_measurement, variant_id, weight_g }) => {
                 const varKey = variant_id || selected_measurement || 'default';
+                const isItemOutOfStock = (product.stock !== undefined && product.stock <= 0) || product.in_stock === false;
                 return (
                   <div key={`${product.id}-${varKey}`} className="flex gap-3 p-3 bg-white rounded-2xl border border-[#E6E1DA] shadow-xs">
                     <div className="w-28 sm:w-32 aspect-3/2 bg-black rounded-xl p-0.5 overflow-hidden shrink-0 border border-gray-900 flex items-center justify-center">
@@ -271,7 +272,7 @@ export const CartDrawer: React.FC = () => {
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
-                        <div className="flex items-center gap-1.5 mt-0.5">
+                        <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                           {selected_measurement && (
                             <span className="text-[10px] font-bold bg-[#1A1918] text-white px-2 py-0.5 rounded-full">
                               Weight: {selected_measurement.includes('inch') ? `${weight_g || product.weight_g}g` : selected_measurement}
@@ -279,6 +280,11 @@ export const CartDrawer: React.FC = () => {
                           )}
                           {(weight_g || product.weight_g) && (
                             <span className="text-[10px] text-gray-500 font-mono">{weight_g || product.weight_g}g</span>
+                          )}
+                          {isItemOutOfStock && (
+                            <span className="text-[9px] font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full uppercase">
+                              Out of Stock
+                            </span>
                           )}
                         </div>
 
@@ -350,11 +356,18 @@ export const CartDrawer: React.FC = () => {
                   <p className="text-xs font-bold text-[#1A1918]">B2B Wholesale Requisition List ({totalQuantity} Items)</p>
                   <p className="text-[10px] text-gray-500">Official B2B PDF Quotation will be issued by Admin upon submission.</p>
                 </div>
-              )}
-
-              <div className="space-y-2">
-                {/* RETAIL vs WHOLESALE ACTION BUTTONS */}
-                {!isWholesale ? (
+                  <div className="space-y-2">
+                {hasOutOfStockItems ? (
+                  <div className="p-3 bg-red-50 rounded-xl border border-red-200 text-center space-y-1">
+                    <p className="text-xs font-bold text-red-600 flex items-center justify-center gap-1.5">
+                      <AlertCircle className="w-4 h-4" />
+                      <span>Out of Stock Item(s) in Cart</span>
+                    </p>
+                    <p className="text-[10px] text-red-500">
+                      Please remove out-of-stock items (using the trash icon) to proceed with your order.
+                    </p>
+                  </div>
+                ) : !isWholesale ? (
                   /* WHATSAPP IS ONLY FOR RETAIL ORDERS */
                   <button 
                     onClick={handleOrderCartOnWhatsApp}
@@ -388,8 +401,7 @@ export const CartDrawer: React.FC = () => {
                     </div>
                   </>
                 )}
-
-              </div>
+              </div>              </div>
             </div>
           )}
 
