@@ -1,3 +1,3 @@
 ; Cloudflare Zone Import File for saibalajisilverworkspvtltd.com
-saibalajisilverworkspvtltd.com. 1 IN CNAME b3b8b29d-aa1d-4510-8386-2edc63af418b.cfargotunnel.com.
-www.saibalajisilverworkspvtltd.com. 1 IN CNAME b3b8b29d-aa1d-4510-8386-2edc63af418b.cfargotunnel.com.
+saibalajisilverworkspvtltd.com. 1 IN CNAME a0624677-dc0f-4e30-8134-af6d02b0bcb9.cfargotunnel.com.
+www.saibalajisilverworkspvtltd.com. 1 IN CNAME a0624677-dc0f-4e30-8134-af6d02b0bcb9.cfargotunnel.com.

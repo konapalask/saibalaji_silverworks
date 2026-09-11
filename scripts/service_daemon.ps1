@@ -32,7 +32,7 @@ powercfg /change hibernate-timeout-ac 0 2>$null
 powercfg /change disk-timeout-ac 0 2>$null
 
 # Cloudflare Tunnel Token
-$token = "eyJhIjoiMDU4NzM5ZmEzOGM4MzNjMTI4NDYxNmJiYjg4Yjk1MGMiLCJ0IjoiYjNiOGIyOWQtYWExZC00NTEwLTgzODYtMmVkYzYzYWY0MThiIiwicyI6Ik9HTTRZMk5qTnpRdE56UXlNQzAwTTJZd0xXRTNOMk10TXpSa1lXWXpZamsyTW1KbSJ9"
+$token = "eyJhIjoiMDU4NzM5ZmEzOGM4MzNjMTI4NDYxNmJiYjg4Yjk1MGMiLCJ0IjoiYTA2MjQ2NzctZGMwZi00ZTMwLTgxMzQtYWY2ZDAyYjBiY2I5IiwicyI6IlpqZGpNMlE0WVRrdE9HTmhNQzAwTWpWbUxUZ3pObVF0TjJWbVpUbGpabVkyTkRVeCJ9"
 
 while ($true) {
     try {

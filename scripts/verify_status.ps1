@@ -27,7 +27,7 @@ if ($frontendPort) {
 
 # 2. Check Cloudflare Tunnel
 Write-Host "`n[2/5] Checking Cloudflare Tunnel..." -ForegroundColor Yellow
-$token = "eyJhIjoiMDU4NzM5ZmEzOGM4MzNjMTI4NDYxNmJiYjg4Yjk1MGMiLCJ0IjoiYjNiOGIyOWQtYWExZC00NTEwLTgzODYtMmVkYzYzYWY0MThiIiwicyI6Ik9HTTRZMk5qTnpRdE56UXlNQzAwTTJZd0xXRTNOMk10TXpSa1lXWXpZamsyTW1KbSJ9"
+$token = "eyJhIjoiMDU4NzM5ZmEzOGM4MzNjMTI4NDYxNmJiYjg4Yjk1MGMiLCJ0IjoiYTA2MjQ2NzctZGMwZi00ZTMwLTgxMzQtYWY2ZDAyYjBiY2I5IiwicyI6IlpqZGpNMlE0WVRrdE9HTmhNQzAwTWpWbUxUZ3pObVF0TjJWbVpUbGpabVkyTkRVeCJ9"
 $cfProc = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq "cloudflared.exe" -and $_.CommandLine -like "*$token*" }
 if ($cfProc) {
     Write-Host "  [OK] Cloudflared process active (PID: $($cfProc.ProcessId))" -ForegroundColor Green

@@ -49,7 +49,7 @@ if (Test-Path "$workspace\bin\git\cmd\git.exe") {
 }
 
 # Cloudflare Tunnel Token
-$token = "eyJhIjoiMDU4NzM5ZmEzOGM4MzNjMTI4NDYxNmJiYjg4Yjk1MGMiLCJ0IjoiYjNiOGIyOWQtYWExZC00NTEwLTgzODYtMmVkYzYzYWY0MThiIiwicyI6Ik9HTTRZMk5qTnpRdE56UXlNQzAwTTJZd0xXRTNOMk10TXpSa1lXWXpZamsyTW1KbSJ9"
+$token = "eyJhIjoiMDU4NzM5ZmEzOGM4MzNjMTI4NDYxNmJiYjg4Yjk1MGMiLCJ0IjoiYTA2MjQ2NzctZGMwZi00ZTMwLTgxMzQtYWY2ZDAyYjBiY2I5IiwicyI6IlpqZGpNMlE0WVRrdE9HTmhNQzAwTWpWbUxUZ3pObVF0TjJWbVpUbGpabVkyTkRVeCJ9"
 
 # Prevent Sleep / Hibernate on AC power
 powercfg /change standby-timeout-ac 0 2>$null
