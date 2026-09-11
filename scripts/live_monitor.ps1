@@ -38,6 +38,16 @@ foreach ($d in $oldDaemons) {
     try { Stop-Process -Id $d.ProcessId -Force -ErrorAction SilentlyContinue } catch {}
 }
 
+# Stop any old cloudflared processes from this workspace using outdated tokens
+$oldCf = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object {
+    $_.Name -eq "cloudflared.exe" -and 
+    ($_.CommandLine -like "*saibalaji_silverworks*" -or $_.CommandLine -like "*$workspace*") -and 
+    $_.CommandLine -notlike "*$token*"
+}
+foreach ($oc in $oldCf) {
+    try { Stop-Process -Id $oc.ProcessId -Force -ErrorAction SilentlyContinue } catch {}
+}
+
 # Ensure standard Node.js, Git, and NPM paths in environment
 $nodePath = "C:\Program Files\nodejs;C:\Program Files (x86)\nodejs;$workspace\bin\git\cmd;$env:LOCALAPPDATA\Programs\nodejs;$env:APPDATA\npm"
 $env:PATH = "$nodePath;$env:PATH"
@@ -180,23 +190,34 @@ if (-not $cfProc) {
 }
 
 # 4. Verify Live Connectivity Before Declaring Ready
-Write-ConsoleLog "Verifying public Cloudflare connection (https://saibalajisilverworkspvtltd.com)..." "FETCH"
+Write-ConsoleLog "Verifying public Cloudflare connection (https://www.saibalajisilverworkspvtltd.com)..." "FETCH"
 $isLive = $false
+$liveUrl = "https://www.saibalajisilverworkspvtltd.com"
 for ($attempt = 1; $attempt -le 10; $attempt++) {
     try {
-        $check = Invoke-WebRequest -Uri "https://saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+        $check = Invoke-WebRequest -Uri "https://www.saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
         if ($check.StatusCode -eq 200) {
             $isLive = $true
+            $liveUrl = "https://www.saibalajisilverworkspvtltd.com"
             break
         }
     } catch {
+        try {
+            $check2 = Invoke-WebRequest -Uri "https://saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+            if ($check2.StatusCode -eq 200) {
+                $isLive = $true
+                $liveUrl = "https://saibalajisilverworkspvtltd.com"
+                break
+            }
+        } catch {}
         Start-Sleep -Seconds 2
     }
 }
 
 if ($isLive) {
     Write-Host "================================================================================" -ForegroundColor Green
-    Write-ConsoleLog "WEBSITE IS 100% LIVE: https://saibalajisilverworkspvtltd.com [200 OK]" "SUCCESS"
+    Write-ConsoleLog "WEBSITE IS 100% LIVE: $liveUrl [200 OK]" "SUCCESS"
+    Write-ConsoleLog "ADMIN PANEL: $liveUrl/admin [200 OK]" "SUCCESS"
     Write-Host "================================================================================" -ForegroundColor Green
 } else {
     Write-ConsoleLog "Public DNS / Edge routing in progress. Website will be live in moments." "WARN"

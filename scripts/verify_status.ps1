@@ -99,8 +99,14 @@ try {
 }
 
 try {
-    $resLive = Invoke-WebRequest -Uri "https://saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 8
-    Write-Host "  [OK] Cloudflare Live (https://saibalajisilverworkspvtltd.com) responded with HTTP $($resLive.StatusCode)" -ForegroundColor Green
+    $resLive = $null
+    try {
+        $resLive = Invoke-WebRequest -Uri "https://www.saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 8
+        Write-Host "  [OK] Cloudflare Live (https://www.saibalajisilverworkspvtltd.com) responded with HTTP $($resLive.StatusCode)" -ForegroundColor Green
+    } catch {
+        $resLive = Invoke-WebRequest -Uri "https://saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 8
+        Write-Host "  [OK] Cloudflare Live (https://saibalajisilverworkspvtltd.com) responded with HTTP $($resLive.StatusCode)" -ForegroundColor Green
+    }
 } catch {
     Write-Host "  [FAIL] Cloudflare Live error: $($_.Exception.Message)" -ForegroundColor Red
 }
