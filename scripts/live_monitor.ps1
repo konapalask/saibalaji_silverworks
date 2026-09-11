@@ -240,7 +240,7 @@ while ($true) {
         } elseif ($cycleCount % 2 -eq 0 -and $fActive) {
             # Active edge probe: verify Cloudflare isn't returning 502 with a stale tunnel connection
             try {
-                $probe = Invoke-WebRequest -Uri "https://saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+                $probe = Invoke-WebRequest -Uri "https://www.saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
                 if ($probe.StatusCode -eq 200) {
                     $consecutive502 = 0
                 }
