@@ -1,0 +1,54 @@
+================================================================================
+CLOUDFLARE DNS RECORDS FOR SAI BALAJI SILVERWORKS
+================================================================================
+
+--------------------------------------------------------------------------------
+OPTION 1: MAIN DOMAIN (saibalajisilverworkspvtltd.com)
+Used by: start.bat & live_monitor.ps1
+Tunnel ID: b3b8b29d-aa1d-4510-8386-2edc63af418b
+--------------------------------------------------------------------------------
+
+Record 1:
+  Type:         CNAME
+  Name:         @   (or saibalajisilverworkspvtltd.com)
+  Target:       b3b8b29d-aa1d-4510-8386-2edc63af418b.cfargotunnel.com
+  Proxy status: Proxied (Orange Cloud ON)
+  TTL:          Auto
+
+Record 2:
+  Type:         CNAME
+  Name:         www
+  Target:       b3b8b29d-aa1d-4510-8386-2edc63af418b.cfargotunnel.com
+  Proxy status: Proxied (Orange Cloud ON)
+  TTL:          Auto
+
+IMPORTANT:
+- Remove/delete any old A or AAAA records pointing to IP addresses for @ or saibalajisilverworkspvtltd.com.
+- In Cloudflare Zero Trust -> Networks -> Tunnels -> Public Hostnames:
+    Hostname: saibalajisilverworkspvtltd.com
+    Service:  HTTP://localhost:5173
+
+--------------------------------------------------------------------------------
+OPTION 2: SUBDOMAIN ON e3di.org (saibalaji.e3di.org)
+Used by: launch_tunnel.py
+Tunnel ID: 771baac6-f36f-4338-937f-865c5d4f7a2d
+--------------------------------------------------------------------------------
+
+Record 1:
+  Type:         CNAME
+  Name:         saibalaji
+  Target:       771baac6-f36f-4338-937f-865c5d4f7a2d.cfargotunnel.com
+  Proxy status: Proxied (Orange Cloud ON)
+  TTL:          Auto
+
+In Cloudflare Zero Trust -> Networks -> Tunnels -> Public Hostnames:
+  Hostname: saibalaji.e3di.org
+  Service:  HTTP://localhost:5173
+
+--------------------------------------------------------------------------------
+BIND ZONE FORMAT (FOR CLOUDFLARE "IMPORT DNS RECORDS"):
+--------------------------------------------------------------------------------
+saibalajisilverworkspvtltd.com. 1 IN CNAME b3b8b29d-aa1d-4510-8386-2edc63af418b.cfargotunnel.com.
+www.saibalajisilverworkspvtltd.com. 1 IN CNAME b3b8b29d-aa1d-4510-8386-2edc63af418b.cfargotunnel.com.
+saibalaji.e3di.org. 1 IN CNAME 771baac6-f36f-4338-937f-865c5d4f7a2d.cfargotunnel.com.
+================================================================================
