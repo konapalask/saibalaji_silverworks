@@ -2,7 +2,7 @@
 # Keeps Backend (8000), Frontend (5173), Cloudflare Tunnel, and Git Sync running with live visible output.
 # Automatically pulls new commits from GitHub, rebuilds frontend, and hot-reloads all servers immediately!
 
-$host.UI.RawUI.WindowTitle = "Sai Balaji Silverworks - Live Server & Git Sync Console"
+try { $host.UI.RawUI.WindowTitle = "Sai Balaji Silverworks - Live Server & Git Sync Console" } catch {}
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $workspace = (Resolve-Path "$scriptDir\..").Path
@@ -10,8 +10,14 @@ Set-Location $workspace
 
 # Single instance lock: stop any existing console/daemon and take over
 $currentPid = $PID
+$parentPid = 0
+try { $parentPid = (Get-CimInstance Win32_Process -Filter "ProcessId = $currentPid" -ErrorAction SilentlyContinue).ParentProcessId } catch {}
+
 $existing = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { 
-    $_.ProcessId -ne $currentPid -and $_.CommandLine -like "*live_monitor.ps1*" 
+    $_.ProcessId -ne $currentPid -and 
+    $_.ProcessId -ne $parentPid -and 
+    $_.ParentProcessId -ne $currentPid -and 
+    $_.CommandLine -like "*live_monitor.ps1*" 
 }
 if ($existing) {
     Write-Host "Found existing console or background monitor. Taking over..." -ForegroundColor Yellow
@@ -35,6 +41,7 @@ foreach ($d in $oldDaemons) {
 # Ensure standard Node.js, Git, and NPM paths in environment
 $nodePath = "C:\Program Files\nodejs;C:\Program Files (x86)\nodejs;$workspace\bin\git\cmd;$env:LOCALAPPDATA\Programs\nodejs;$env:APPDATA\npm"
 $env:PATH = "$nodePath;$env:PATH"
+$env:TUNNEL_TRANSPORT_PROTOCOL = "http2"
 
 $gitExe = "git.exe"
 if (Test-Path "$workspace\bin\git\cmd\git.exe") {
