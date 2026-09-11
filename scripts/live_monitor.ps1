@@ -167,7 +167,7 @@ $cfProc = Get-SaiBalajiCloudflared
 if (-not $cfProc) {
     Write-ConsoleLog "Starting Cloudflare Tunnel for https://saibalajisilverworkspvtltd.com..." "BUILD"
     $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
-    Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "--no-autoupdate", "--metrics", "127.0.0.1:20245", "--loglevel", "debug", "--logfile", "$workspace\logs\cloudflared.log", "run", "--token", $token) -WindowStyle Hidden
+    Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--token", $token) -WindowStyle Hidden
     Start-Sleep -Seconds 3
     $cfProc = Get-SaiBalajiCloudflared
     if ($cfProc) {
@@ -235,7 +235,7 @@ while ($true) {
         if (-not $cProc) {
             Write-ConsoleLog "Cloudflare tunnel down! Restarting cloudflared..." "WARN"
             $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
-            Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "--no-autoupdate", "--metrics", "127.0.0.1:20245", "--loglevel", "debug", "--logfile", "$workspace\logs\cloudflared.log", "run", "--token", $token) -WindowStyle Hidden
+            Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--token", $token) -WindowStyle Hidden
             Start-Sleep -Seconds 2
         } elseif ($cycleCount % 2 -eq 0 -and $fActive) {
             # Active edge probe: verify Cloudflare isn't returning 502 with a stale tunnel connection
@@ -254,7 +254,7 @@ while ($true) {
                         Stop-Process -Id $cProc.ProcessId -Force -ErrorAction SilentlyContinue
                         Start-Sleep -Seconds 1
                         $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
-                        Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "--no-autoupdate", "--metrics", "127.0.0.1:20245", "--loglevel", "debug", "--logfile", "$workspace\logs\cloudflared.log", "run", "--token", $token) -WindowStyle Hidden
+                        Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--token", $token) -WindowStyle Hidden
                         Start-Sleep -Seconds 2
                     }
                 }
