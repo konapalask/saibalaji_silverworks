@@ -266,6 +266,7 @@ app.post('/api/v1/auth/mobile/code', (req, res) => {
   }
 
   const { user } = result;
+  console.log(`[MobileAuth:Code] Firebase UID: ${user.firebase_uid || 'none'} | Firebase Email: ${user.email} | Backend User ID: ${user.id} | Name: ${user.full_name}`);
 
   // Cryptographically random 256-bit token
   const code = crypto.randomBytes(32).toString('hex');
@@ -305,6 +306,8 @@ const handleCodeExchange = (req, res) => {
   mobileAuthCodes.delete(code);
 
   const { user } = entry;
+  console.log(`[MobileAuth:Exchange] Backend User ID: ${user.id} | Email: ${user.email} | Name: ${user.full_name}`);
+
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
   const { password_hash, ...userResponse } = user;
   res.json({ access_token: token, token_type: 'bearer', user: userResponse });
