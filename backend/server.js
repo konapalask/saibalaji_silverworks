@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const https = require('https');
 const http = require('http');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -152,10 +153,10 @@ app.post('/api/v1/auth/register', (req, res) => {
   res.status(201).json({ access_token: token, token_type: 'bearer', user: userResponse });
 });
 
-// Google Login / Register
-app.post('/api/v1/auth/google', (req, res) => {
-  users = getUsers();
-  const { idToken, firebase_uid, email, full_name, photo_url } = req.body;
+// Shared Helper: Find or Create Google User (Reused across Web & Mobile clients for 100% account parity)
+function findOrCreateGoogleUser(data = {}) {
+  const users = getUsers();
+  const { idToken, firebase_uid, email, full_name, photo_url } = data;
 
   let verifiedEmail = email;
   let verifiedUid = firebase_uid;
@@ -177,7 +178,7 @@ app.post('/api/v1/auth/google', (req, res) => {
   }
 
   if (!verifiedEmail) {
-    return res.status(400).json({ detail: 'Authenticated Google email is required' });
+    return { error: 'Authenticated Google email is required', status: 400 };
   }
 
   verifiedEmail = verifiedEmail.toLowerCase();
@@ -228,10 +229,89 @@ app.post('/api/v1/auth/google', (req, res) => {
     saveJsonFile('users.json', users);
   }
 
+  return { user };
+}
+
+// In-Memory Storage for Mobile Single-Use Authorization Codes (2-Minute Expiry)
+const mobileAuthCodes = new Map();
+
+function purgeExpiredMobileCodes() {
+  const now = Date.now();
+  for (const [code, entry] of mobileAuthCodes.entries()) {
+    if (now > entry.expiresAt) {
+      mobileAuthCodes.delete(code);
+    }
+  }
+}
+setInterval(purgeExpiredMobileCodes, 60 * 1000).unref();
+
+// Google Login / Register (Existing Website & Direct Native Mobile Client)
+app.post('/api/v1/auth/google', (req, res) => {
+  const result = findOrCreateGoogleUser(req.body);
+  if (result.error) {
+    return res.status(result.status || 400).json({ detail: result.error });
+  }
+
+  const { user } = result;
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
   const { password_hash, ...userResponse } = user;
   res.json({ access_token: token, token_type: 'bearer', user: userResponse });
 });
+
+// Android Auth Bridge: Generate Short-Lived Single-Use Authorization Code
+app.post('/api/v1/auth/mobile/code', (req, res) => {
+  const result = findOrCreateGoogleUser(req.body);
+  if (result.error) {
+    return res.status(result.status || 400).json({ detail: result.error });
+  }
+
+  const { user } = result;
+
+  // Cryptographically random 256-bit token
+  const code = crypto.randomBytes(32).toString('hex');
+  const ttlMs = 2 * 60 * 1000; // 2 minutes
+  const expiresAt = Date.now() + ttlMs;
+
+  mobileAuthCodes.set(code, {
+    user,
+    expiresAt,
+    used: false
+  });
+
+  res.json({ code });
+});
+
+// Android Auth Bridge: Exchange Single-Use Code for Session JWT
+const handleCodeExchange = (req, res) => {
+  const { code } = req.body;
+  if (!code || typeof code !== 'string') {
+    return res.status(400).json({ detail: 'Authorization code is required' });
+  }
+
+  purgeExpiredMobileCodes();
+
+  const entry = mobileAuthCodes.get(code);
+  if (!entry) {
+    return res.status(400).json({ detail: 'Invalid or expired authorization code' });
+  }
+
+  if (entry.used || Date.now() > entry.expiresAt) {
+    mobileAuthCodes.delete(code);
+    return res.status(400).json({ detail: 'Authorization code has expired or already been used' });
+  }
+
+  // Strictly invalidate and delete immediately upon first exchange
+  entry.used = true;
+  mobileAuthCodes.delete(code);
+
+  const { user } = entry;
+  const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+  const { password_hash, ...userResponse } = user;
+  res.json({ access_token: token, token_type: 'bearer', user: userResponse });
+};
+
+app.post('/api/v1/auth/exchange-code', handleCodeExchange);
+app.post('/api/v1/auth/mobile/exchange', handleCodeExchange);
 
 // Login User
 app.post('/api/v1/auth/login', (req, res) => {
