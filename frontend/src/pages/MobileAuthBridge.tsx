@@ -4,11 +4,12 @@ import {
   getRedirectResult, 
   signInWithRedirect, 
   GoogleAuthProvider, 
+  onAuthStateChanged,
   User as FirebaseUser 
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import api from '../services/api';
-import { Loader2, CheckCircle, AlertCircle, ExternalLink } from 'lucide-react';
+import { Loader2, CheckCircle, AlertCircle, ExternalLink, Terminal, ChevronDown, ChevronUp } from 'lucide-react';
 
 export const MobileAuthBridge: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -18,19 +19,28 @@ export const MobileAuthBridge: React.FC = () => {
   const [status, setStatus] = useState<'initializing' | 'signing_in' | 'exchanging' | 'success' | 'cancelled' | 'error'>('initializing');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [deepLinkTarget, setDeepLinkTarget] = useState<string>('');
+  const [logs, setLogs] = useState<string[]>([]);
+  const [showLogs, setShowLogs] = useState<boolean>(false);
   const hasInitiatedRef = useRef(false);
 
-  // Exchange the verified Google user from the redirect result for a backend one-time code
+  // Safe developer logger (Never logs ID tokens, JWTs, or sensitive credentials)
+  const addLog = (msg: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    const entry = `[${timestamp}] ${msg}`;
+    console.log('[MobileAuthBridge]', msg);
+    setLogs((prev) => [...prev.slice(-25), entry]);
+  };
+
+  // Exchange verified Firebase user for backend one-time authorization code
   const completeMobileAuth = async (fbUser: FirebaseUser) => {
     setStatus('exchanging');
+    addLog(`Initiating backend code exchange for user: ${fbUser.email || 'no-email'} (UID: ${fbUser.uid})`);
     try {
-      // Obtain verified Firebase ID token from the user selected in Google account chooser
       const idToken = await fbUser.getIdToken();
       const email = fbUser.email || '';
       const name = fbUser.displayName || (email ? email.split('@')[0] : 'User');
       const photo = fbUser.photoURL || undefined;
 
-      // Request secure single-use one-time code from Sai Balaji backend
       const res = await api.post('/auth/mobile/code', {
         idToken,
         firebase_uid: fbUser.uid,
@@ -44,7 +54,8 @@ export const MobileAuthBridge: React.FC = () => {
         throw new Error('No authorization code returned by Sai Balaji backend.');
       }
 
-      // Build deep link callback with the single-use code
+      addLog('Authorization code received from backend. Redirecting to Android deep link.');
+
       const delimiter = redirectUri.includes('?') ? '&' : '?';
       const targetUrl = `${redirectUri}${delimiter}code=${encodeURIComponent(code)}`;
       setDeepLinkTarget(targetUrl);
@@ -53,8 +64,9 @@ export const MobileAuthBridge: React.FC = () => {
       // Dispatch redirect to Android application immediately
       window.location.href = targetUrl;
     } catch (err: any) {
-      console.error('Mobile Auth Bridge Exchange Error:', err);
-      setErrorMessage(err.response?.data?.detail || err.message || 'Failed to authenticate with Sai Balaji backend.');
+      const errMsg = err.response?.data?.detail || err.message || 'Failed to authenticate with Sai Balaji backend.';
+      addLog(`Backend exchange error: ${errMsg}`);
+      setErrorMessage(errMsg);
       setStatus('error');
     }
   };
@@ -62,28 +74,18 @@ export const MobileAuthBridge: React.FC = () => {
   const triggerGoogleRedirect = async () => {
     setStatus('signing_in');
     setErrorMessage('');
+    addLog('signInWithRedirect started with prompt: select_account');
     try {
-      // Explicitly create GoogleAuthProvider with prompt: 'select_account'
-      // This forces Google to show the account chooser modal instead of silently picking an existing browser session
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({
         prompt: 'select_account'
       });
 
-      // Clear any prior lingering Firebase session in this tab so the selected account becomes the primary identity
-      if (auth.currentUser) {
-        try {
-          await auth.signOut();
-        } catch (signOutErr) {
-          console.warn('Sign-out prior session notice:', signOutErr);
-        }
-      }
-
       sessionStorage.setItem('sbs_mobile_redirect_initiated', 'true');
       await signInWithRedirect(auth, provider);
     } catch (redirectErr: any) {
       sessionStorage.removeItem('sbs_mobile_redirect_initiated');
-      console.error('signInWithRedirect error:', redirectErr);
+      addLog(`signInWithRedirect error: ${redirectErr.message || redirectErr}`);
       setStatus('error');
       setErrorMessage(redirectErr.message || 'Unable to open Google account chooser.');
     }
@@ -96,34 +98,75 @@ export const MobileAuthBridge: React.FC = () => {
     let isMounted = true;
 
     const runAuthFlow = async () => {
+      addLog('MobileAuthBridge mounted. Checking redirect state...');
+      const wasRedirectInitiated = sessionStorage.getItem('sbs_mobile_redirect_initiated') === 'true';
+      addLog(`Redirect returned status (was initiated): ${wasRedirectInitiated}`);
+
       try {
-        // Step 1: Check if returning from Google OAuth Redirect
+        // Step 1: Check getRedirectResult(auth)
+        addLog('Calling getRedirectResult(auth)...');
         const redirectResult = await getRedirectResult(auth);
         if (!isMounted) return;
 
+        addLog(`getRedirectResult result exists: ${Boolean(redirectResult)}`);
+        addLog(`result.user exists: ${Boolean(redirectResult?.user)}`);
+
         if (redirectResult && redirectResult.user) {
-          // User has actively chosen an account in Google's chooser and redirected back
+          addLog(`Firebase UID/email returned from redirectResult: ${redirectResult.user.email} (UID: ${redirectResult.user.uid})`);
           sessionStorage.removeItem('sbs_mobile_redirect_initiated');
           await completeMobileAuth(redirectResult.user);
           return;
         }
 
-        // Step 2: Check if redirect was already attempted and returned without a credential (e.g. user cancelled)
-        const wasRedirectInitiated = sessionStorage.getItem('sbs_mobile_redirect_initiated') === 'true';
+        // Step 2: If getRedirectResult was null, check auth.currentUser
+        addLog(`Firebase currentUser after redirect: ${auth.currentUser ? `${auth.currentUser.email} (UID: ${auth.currentUser.uid})` : 'null'}`);
+        if (wasRedirectInitiated && auth.currentUser) {
+          addLog(`Found authenticated user in auth.currentUser: ${auth.currentUser.email}`);
+          sessionStorage.removeItem('sbs_mobile_redirect_initiated');
+          await completeMobileAuth(auth.currentUser);
+          return;
+        }
+
+        // Step 3: If redirect was initiated, wait briefly for onAuthStateChanged to resolve
         if (wasRedirectInitiated) {
+          addLog('Waiting for onAuthStateChanged listener to resolve user state...');
+          const resolvedUser = await new Promise<FirebaseUser | null>((resolve) => {
+            const timeout = setTimeout(() => {
+              addLog('onAuthStateChanged wait timed out after 3.5s.');
+              resolve(null);
+            }, 3500);
+
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+              if (user) {
+                clearTimeout(timeout);
+                unsubscribe();
+                resolve(user);
+              }
+            });
+          });
+
+          if (!isMounted) return;
+
+          if (resolvedUser) {
+            addLog(`onAuthStateChanged resolved user: ${resolvedUser.email} (UID: ${resolvedUser.uid})`);
+            sessionStorage.removeItem('sbs_mobile_redirect_initiated');
+            await completeMobileAuth(resolvedUser);
+            return;
+          }
+
+          // If no user could be recovered after redirect, display prompt to tap and choose account
+          addLog('No authenticated user returned after Google redirect. Showing account selection prompt.');
           sessionStorage.removeItem('sbs_mobile_redirect_initiated');
           setStatus('cancelled');
           return;
         }
 
-        // Step 3: Fresh entry from Android app
-        // CRITICAL REQUIREMENT: Do NOT check auth.currentUser and do NOT silently auto-authenticate.
-        // We must always initiate Google's account-selection flow for the Android app.
+        // Step 4: Fresh entry from Android app - Initiate Google Account Selection
         await triggerGoogleRedirect();
       } catch (err: any) {
         if (!isMounted) return;
         sessionStorage.removeItem('sbs_mobile_redirect_initiated');
-        console.error('Initial Redirect Processing Error:', err);
+        addLog(`Redirect processing error: ${err.message || err}`);
         setStatus('error');
         setErrorMessage(err.message || 'Unable to process Google authentication.');
       }
@@ -137,8 +180,8 @@ export const MobileAuthBridge: React.FC = () => {
   }, [redirectUri]);
 
   return (
-    <div className="min-h-screen bg-[#F8F6F1] flex flex-col items-center justify-center p-6 text-[#202020] select-none">
-      <div className="w-full max-w-sm bg-white border border-[#E5E0D8] rounded-3xl p-8 shadow-sm text-center space-y-6">
+    <div className="min-h-screen bg-[#F8F6F1] flex flex-col items-center justify-center p-4 sm:p-6 text-[#202020] select-none">
+      <div className="w-full max-w-sm bg-white border border-[#E5E0D8] rounded-3xl p-6 sm:p-8 shadow-sm text-center space-y-5">
         
         {/* Brand Header */}
         <div className="space-y-1">
@@ -151,7 +194,7 @@ export const MobileAuthBridge: React.FC = () => {
         </div>
 
         {/* Dynamic Status Display */}
-        <div className="py-4 flex flex-col items-center justify-center space-y-4">
+        <div className="py-2 flex flex-col items-center justify-center space-y-4">
           {(status === 'initializing' || status === 'signing_in') && (
             <>
               <div className="relative">
@@ -240,8 +283,37 @@ export const MobileAuthBridge: React.FC = () => {
           )}
         </div>
 
+        {/* Development Diagnostic Log Drawer */}
+        <div className="border-t border-[#E5E0D8] pt-3 text-left">
+          <button
+            type="button"
+            onClick={() => setShowLogs(!showLogs)}
+            className="w-full flex items-center justify-between text-[11px] font-semibold text-gray-500 hover:text-gray-700 py-1"
+          >
+            <span className="flex items-center gap-1.5">
+              <Terminal className="w-3.5 h-3.5 text-[#B9A77A]" />
+              Diagnostic Logs ({logs.length})
+            </span>
+            {showLogs ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+
+          {showLogs && (
+            <div className="mt-2 p-2 bg-gray-900 text-gray-200 rounded-xl text-[10px] font-mono max-h-36 overflow-y-auto space-y-1 select-text">
+              {logs.length === 0 ? (
+                <p className="text-gray-500 italic">No logs recorded yet.</p>
+              ) : (
+                logs.map((log, idx) => (
+                  <div key={idx} className="leading-tight break-all">
+                    {log}
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Security Footer */}
-        <div className="pt-4 border-t border-[#E5E0D8]">
+        <div className="pt-1 border-t border-[#E5E0D8]">
           <p className="text-[10px] text-gray-400 tracking-wide uppercase">
             End-to-End Encrypted Session Bridge
           </p>
