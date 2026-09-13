@@ -3,28 +3,28 @@ import { useSearchParams } from 'react-router-dom';
 import { 
   getRedirectResult, 
   signInWithRedirect, 
-  signInWithPopup, 
+  GoogleAuthProvider, 
   User as FirebaseUser 
 } from 'firebase/auth';
-import { auth, googleProvider } from '../config/firebase';
+import { auth } from '../config/firebase';
 import api from '../services/api';
 import { Loader2, CheckCircle, AlertCircle, ExternalLink } from 'lucide-react';
 
 export const MobileAuthBridge: React.FC = () => {
   const [searchParams] = useSearchParams();
   const rawRedirectUri = searchParams.get('redirect_uri') || 'saibalaji://auth/callback';
-  // Strip trailing slashes or format parameters cleanly
   const redirectUri = rawRedirectUri.trim();
 
-  const [status, setStatus] = useState<'initializing' | 'signing_in' | 'exchanging' | 'success' | 'error'>('initializing');
+  const [status, setStatus] = useState<'initializing' | 'signing_in' | 'exchanging' | 'success' | 'cancelled' | 'error'>('initializing');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [deepLinkTarget, setDeepLinkTarget] = useState<string>('');
   const hasInitiatedRef = useRef(false);
 
-  // Helper to exchange Firebase user for backend one-time code and trigger Android deep link
+  // Exchange the verified Google user from the redirect result for a backend one-time code
   const completeMobileAuth = async (fbUser: FirebaseUser) => {
     setStatus('exchanging');
     try {
+      // Obtain verified Firebase ID token from the user selected in Google account chooser
       const idToken = await fbUser.getIdToken();
       const email = fbUser.email || '';
       const name = fbUser.displayName || (email ? email.split('@')[0] : 'User');
@@ -53,9 +53,39 @@ export const MobileAuthBridge: React.FC = () => {
       // Dispatch redirect to Android application immediately
       window.location.href = targetUrl;
     } catch (err: any) {
-      console.error('Mobile Auth Bridge Error:', err);
+      console.error('Mobile Auth Bridge Exchange Error:', err);
       setErrorMessage(err.response?.data?.detail || err.message || 'Failed to authenticate with Sai Balaji backend.');
       setStatus('error');
+    }
+  };
+
+  const triggerGoogleRedirect = async () => {
+    setStatus('signing_in');
+    setErrorMessage('');
+    try {
+      // Explicitly create GoogleAuthProvider with prompt: 'select_account'
+      // This forces Google to show the account chooser modal instead of silently picking an existing browser session
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+
+      // Clear any prior lingering Firebase session in this tab so the selected account becomes the primary identity
+      if (auth.currentUser) {
+        try {
+          await auth.signOut();
+        } catch (signOutErr) {
+          console.warn('Sign-out prior session notice:', signOutErr);
+        }
+      }
+
+      sessionStorage.setItem('sbs_mobile_redirect_initiated', 'true');
+      await signInWithRedirect(auth, provider);
+    } catch (redirectErr: any) {
+      sessionStorage.removeItem('sbs_mobile_redirect_initiated');
+      console.error('signInWithRedirect error:', redirectErr);
+      setStatus('error');
+      setErrorMessage(redirectErr.message || 'Unable to open Google account chooser.');
     }
   };
 
@@ -72,30 +102,30 @@ export const MobileAuthBridge: React.FC = () => {
         if (!isMounted) return;
 
         if (redirectResult && redirectResult.user) {
+          // User has actively chosen an account in Google's chooser and redirected back
+          sessionStorage.removeItem('sbs_mobile_redirect_initiated');
           await completeMobileAuth(redirectResult.user);
           return;
         }
 
-        // Step 2: Check if current Firebase user is already active in this session
-        if (auth.currentUser) {
-          await completeMobileAuth(auth.currentUser);
+        // Step 2: Check if redirect was already attempted and returned without a credential (e.g. user cancelled)
+        const wasRedirectInitiated = sessionStorage.getItem('sbs_mobile_redirect_initiated') === 'true';
+        if (wasRedirectInitiated) {
+          sessionStorage.removeItem('sbs_mobile_redirect_initiated');
+          setStatus('cancelled');
           return;
         }
 
-        // Step 3: Trigger Google Account Chooser via Redirect
-        setStatus('signing_in');
-        try {
-          await signInWithRedirect(auth, googleProvider);
-        } catch (redirectErr: any) {
-          console.warn('signInWithRedirect prevented or failed, offering user prompt:', redirectErr);
-          setStatus('error');
-          setErrorMessage('Please tap below to sign in with Google.');
-        }
+        // Step 3: Fresh entry from Android app
+        // CRITICAL REQUIREMENT: Do NOT check auth.currentUser and do NOT silently auto-authenticate.
+        // We must always initiate Google's account-selection flow for the Android app.
+        await triggerGoogleRedirect();
       } catch (err: any) {
         if (!isMounted) return;
-        console.error('Initial Redirect Result Error:', err);
+        sessionStorage.removeItem('sbs_mobile_redirect_initiated');
+        console.error('Initial Redirect Processing Error:', err);
         setStatus('error');
-        setErrorMessage(err.message || 'Unable to complete Google authentication.');
+        setErrorMessage(err.message || 'Unable to process Google authentication.');
       }
     };
 
@@ -105,22 +135,6 @@ export const MobileAuthBridge: React.FC = () => {
       isMounted = false;
     };
   }, [redirectUri]);
-
-  // Fallback direct user-tap handler (supports popup if redirect is blocked by mobile webview)
-  const handleManualGoogleSignIn = async () => {
-    setStatus('signing_in');
-    setErrorMessage('');
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      if (result && result.user) {
-        await completeMobileAuth(result.user);
-      }
-    } catch (err: any) {
-      console.error('Manual popup sign-in error:', err);
-      setStatus('error');
-      setErrorMessage(err.message || 'Google sign-in was cancelled or failed.');
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[#F8F6F1] flex flex-col items-center justify-center p-6 text-[#202020] select-none">
@@ -144,7 +158,7 @@ export const MobileAuthBridge: React.FC = () => {
                 <Loader2 className="w-12 h-12 text-[#B9A77A] animate-spin" />
               </div>
               <p className="text-xs text-[#666666] font-medium animate-pulse">
-                {status === 'initializing' ? 'Connecting to Google Account Chooser...' : 'Opening Google Sign-In...'}
+                {status === 'initializing' ? 'Connecting to Google Account Chooser...' : 'Opening Google Account Chooser...'}
               </p>
             </>
           )}
@@ -154,7 +168,7 @@ export const MobileAuthBridge: React.FC = () => {
               <Loader2 className="w-12 h-12 text-[#B9A77A] animate-spin" />
               <div className="space-y-1">
                 <p className="text-xs font-bold text-[#202020]">
-                  Google Account Verified
+                  Google Account Selected
                 </p>
                 <p className="text-[11px] text-[#666666]">
                   Generating secure single-use code for Sai Balaji App...
@@ -194,27 +208,32 @@ export const MobileAuthBridge: React.FC = () => {
             </>
           )}
 
-          {status === 'error' && (
+          {(status === 'cancelled' || status === 'error') && (
             <>
               <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
                 <AlertCircle className="w-7 h-7" />
               </div>
               <div className="space-y-2">
                 <p className="text-xs font-bold text-[#202020]">
-                  Authentication Notice
+                  {status === 'cancelled' ? 'Account Selection Required' : 'Authentication Notice'}
                 </p>
-                <p className="text-xs text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100 font-medium">
-                  {errorMessage || 'Unable to complete Google authentication.'}
+                {errorMessage && (
+                  <p className="text-xs text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100 font-medium">
+                    {errorMessage}
+                  </p>
+                )}
+                <p className="text-xs text-[#666666]">
+                  Please tap below to choose your Google account.
                 </p>
               </div>
 
               <div className="pt-2 w-full">
                 <button
                   type="button"
-                  onClick={handleManualGoogleSignIn}
+                  onClick={triggerGoogleRedirect}
                   className="w-full bg-[#202020] hover:bg-[#B9A77A] text-white py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2"
                 >
-                  <span>Continue with Google</span>
+                  <span>Choose Google Account</span>
                 </button>
               </div>
             </>
@@ -232,4 +251,5 @@ export const MobileAuthBridge: React.FC = () => {
     </div>
   );
 };
+
 export default MobileAuthBridge;
