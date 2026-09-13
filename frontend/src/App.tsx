@@ -26,6 +26,7 @@ import { OrderSuccessPage } from './pages/OrderSuccessPage';
 import { AccountPage } from './pages/AccountPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { MobileAuthBridge } from './pages/MobileAuthBridge';
 
 import { AdminLayout } from './pages/admin/AdminLayout';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
@@ -115,6 +116,7 @@ export const App: React.FC = () => {
                   {/* Auth Pages */}
                   <Route path="/account/login" element={<StoreShell><LoginPage /></StoreShell>} />
                   <Route path="/account/register" element={<StoreShell><RegisterPage /></StoreShell>} />
+                  <Route path="/mobile-auth" element={<MobileAuthBridge />} />
 
                   {/* Public Browsing Routes (NO LOGIN REQUIRED) */}
                   <Route path="/" element={<StoreShell><Home /></StoreShell>} />
