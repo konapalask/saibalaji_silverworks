@@ -1659,7 +1659,7 @@ const renderQuotationPdfHtml = (quote, reqData, productsList = []) => {
           <h1>SAI BALAJI SILVER WORKS</h1>
           <h4>Official B2B Wholesale Requisition</h4>
           <p>Manufacturers & Exporters of 925 Sterling Silver & 999 Fine Silverware</p>
-          <p>Address: 5-147 SF-1, Puchalapalli Sundaraiah St, Near Indian Petrol Bunk, Ramavarappadu, Vijayawada - 520008 | Phone: +91 94926 64870 / +91 91212 66269</p>
+          <p>Address: 6th Line, Plot No - 353B, Autonagar, Tenali - 522201, A.P. | Email: saibalajisilverworkspvtltd@gmail.com | Phone: +91 94926 64870 / +91 91212 66269</p>
         </div>
 
         <table class="info-table">
