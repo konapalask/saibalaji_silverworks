@@ -42,15 +42,16 @@ export const About: React.FC = () => {
     return videoList.slice(0, displayCount);
   }, [videoList, displayCount]);
 
-  const storyVid = videoList.find(v => v.section === 'story') || videoList[0] || {
+  const storyVid = videoList.find(v => v.video_url.includes('copy_42A5BAB8') || v.filename?.includes('copy_42A5BAB8')) || videoList.find(v => v.section === 'story') || videoList[0] || {
     id: 1,
-    title: "The Story Behind the Silver",
-    description: "Discover the heritage, passion, and engineering precision that built Sai Balaji Silverworks.",
-    video_url: "/public/videos/6Z1A1790.MP4",
-    thumbnail_url: "/public/videos/6Z1A1790.MP4",
+    title: "Artisanal Silver Crafting & Manufacturing Documentary",
+    description: "Unscripted cinematic documentary of high-precision casting, master silversmith hand-finishing, and BIS hallmarking at our Tenali facility.",
+    video_url: "/public/videos/copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.mov",
+    thumbnail_url: "/public/videos/copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.mov",
     section: "story",
     sort_order: 1,
     is_active: true,
+    is_portrait: true,
     created_at: ""
   };
 
@@ -90,30 +91,45 @@ export const About: React.FC = () => {
       {/* Main Video Documentary Card */}
       <div
         onClick={() => openVideo(storyVid)}
-        className="relative rounded-3xl overflow-hidden bg-black aspect-21/9 border border-[#E5E0D8] product-shadow group cursor-pointer"
+        className="relative rounded-3xl overflow-hidden bg-black border border-[#E5E0D8] product-shadow group cursor-pointer min-h-[440px] sm:min-h-[500px] aspect-16/10 sm:aspect-21/10 flex items-center justify-center select-none"
       >
+        {/* Ambient Blurred Video Motion Background */}
         <video
           src={storyVid.video_url}
-          poster={storyVid.thumbnail_url}
-          preload="metadata"
-          className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700 pointer-events-none"
+          preload="auto"
+          className="absolute inset-0 w-full h-full object-cover opacity-35 blur-2xl scale-110 pointer-events-none"
           muted
           loop
           playsInline
           autoPlay
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-between p-8 sm:p-12 text-white">
-          <span className="bg-[#B9A77A] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full w-fit">
+
+        {/* Crisp Central Portrait Video in Native Proportion */}
+        <div className="relative z-10 w-full h-full py-4 sm:py-6 flex items-center justify-center pointer-events-none">
+          <video
+            src={storyVid.video_url}
+            preload="auto"
+            className="h-[360px] sm:h-[430px] max-h-full w-auto aspect-9/16 object-cover rounded-2xl border border-white/20 shadow-2xl group-hover:scale-103 transition-transform duration-700"
+            muted
+            loop
+            playsInline
+            autoPlay
+          />
+        </div>
+
+        {/* Gradient Overlay for Cinematic Legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/50 flex flex-col justify-between p-6 sm:p-10 text-white z-20 pointer-events-none">
+          <span className="bg-[#B9A77A] text-white text-[10px] font-bold uppercase tracking-widest px-3.5 py-1.5 rounded-full w-fit shadow-md">
             COMPANY DOCUMENTARY VIDEO
           </span>
 
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 pointer-events-auto">
             <div>
-              <h3 className="font-serif text-2xl sm:text-4xl font-bold">{storyVid.title}</h3>
-              <p className="text-xs text-gray-200 max-w-xl mt-1">{storyVid.description}</p>
+              <h3 className="font-serif text-2xl sm:text-4xl font-bold text-white drop-shadow-md">{storyVid.title}</h3>
+              <p className="text-xs sm:text-sm text-gray-200 max-w-xl mt-1.5 drop-shadow">{storyVid.description}</p>
             </div>
 
-            <div className="w-16 h-16 rounded-full bg-white text-[#202020] hover:bg-[#B9A77A] hover:text-white flex items-center justify-center shrink-0 shadow-2xl group-hover:scale-110 transition-transform">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white text-[#202020] group-hover:bg-[#B9A77A] group-hover:text-white flex items-center justify-center shrink-0 shadow-2xl group-hover:scale-110 transition-all">
               <Play className="w-6 h-6 fill-current ml-1" />
             </div>
           </div>
