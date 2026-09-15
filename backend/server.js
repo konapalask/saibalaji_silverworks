@@ -1813,6 +1813,7 @@ app.put(['/api/v1/content/homepage_hero', '/api/v1/content/admin/homepage_hero']
 });
 
 app.get(['/api/v1/content/videos', '/api/v1/content/videos/all'], (req, res) => {
+  videos = loadJsonFile('videos_data.json', []);
   res.json(videos);
 });
 
