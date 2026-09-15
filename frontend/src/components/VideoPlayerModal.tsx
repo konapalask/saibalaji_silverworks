@@ -223,12 +223,10 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     "relative bg-black rounded-3xl overflow-hidden w-full max-w-5xl aspect-video shadow-2xl border border-[#C5A059]/40 flex flex-col justify-between"
   ].filter(Boolean).join(" ");
 
-  const videoClasses = (isForcedLandscape || isFullscreen)
-    ? "w-full h-full object-contain bg-black cursor-pointer"
-    : "w-full h-full object-cover cursor-pointer";
+  const videoClasses = "w-full h-full object-contain cursor-pointer relative z-10";
 
   const posterUrl = videoUrl.includes('/public/videos/')
-    ? videoUrl.replace('/public/videos/', '/public/video_thumbnails/').replace(/\.(mp4|MP4)$/i, '.webp')
+    ? videoUrl.replace('/public/videos/', '/public/video_thumbnails/').replace(/\.(mp4|MP4|mov|MOV)$/i, '.webp')
     : undefined;
 
   const [isBuffering, setIsBuffering] = useState(false);
@@ -239,6 +237,16 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
         ref={containerRef}
         className={containerClasses}
       >
+        {/* Ambient Blurred Backdrop for Portrait & Non-16:9 Videos */}
+        <video 
+          src={videoUrl}
+          className="absolute inset-0 w-full h-full object-cover opacity-30 blur-2xl scale-110 pointer-events-none"
+          playsInline
+          autoPlay
+          muted
+          loop
+        />
+
         {/* Header bar */}
         <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/80 to-transparent p-4 sm:p-6 flex justify-between items-start text-white">
           <div>
