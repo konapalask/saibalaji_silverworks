@@ -164,11 +164,13 @@ export const TermsAndConditions: React.FC = () => {
             <div className="space-y-2">
               <p className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#C5A059] shrink-0" />
-                <span>Main Silver Market, Autonagar, Tenali, Andhra Pradesh - 522201, India</span>
+                <span>6th Line, Plot No - 353B, Autonagar, Tenali - 522201, A.P.</span>
               </p>
               <p className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[#C5A059] shrink-0" />
-                <span>legal@saibalajisilverworks.com</span>
+                <a href="mailto:saibalajisilverworkspvtltd@gmail.com" className="hover:text-[#C5A059] transition-colors">
+                  saibalajisilverworkspvtltd@gmail.com
+                </a>
               </p>
               <p className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-[#C5A059] shrink-0" />
