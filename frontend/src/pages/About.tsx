@@ -83,7 +83,7 @@ export const About: React.FC = () => {
           The Journey of Sai Balaji Silverworks
         </h1>
         <p className="text-xs sm:text-sm text-[#666666] leading-relaxed font-sans">
-          Combining ancestral metallurgic mastery with modern NABL hallmarking techniques to craft pure 925 sterling & 999 fine silver.
+          Combining ancestral metallurgic mastery with modern BIS hallmarking techniques to craft pure 925 sterling & 999 fine silver.
         </p>
       </div>
 
@@ -174,7 +174,7 @@ export const About: React.FC = () => {
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1A1918]">{mfgVid.title}</h2>
           <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-            {mfgVid.description || "Take an unscripted look at our induction furnace melting, laser engraving, anti-tarnish molecular dipping, and NABL certified spectrometer analysis."}
+            {mfgVid.description || "Take an unscripted look at our induction furnace melting, laser engraving, anti-tarnish molecular dipping, and BIS hallmarked spectrometer analysis."}
           </p>
           <button
             onClick={() => openVideo(mfgVid)}
@@ -225,7 +225,7 @@ export const About: React.FC = () => {
             </h3>
           </div>
           <p className="text-xs text-gray-500 max-w-md">
-            Our operations maintain strict adherence to NABL hallmarking norms, live bullion pricing compliance, and customer privacy protocols.
+            Our operations maintain strict adherence to BIS hallmarking norms, live bullion pricing compliance, and customer privacy protocols.
           </p>
         </div>
 
