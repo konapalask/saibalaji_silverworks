@@ -63,7 +63,7 @@ export const PrivacyPolicy: React.FC = () => {
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="font-serif text-sm font-bold text-[#1A1918]">NABL Compliant Record</h4>
+            <h4 className="font-serif text-sm font-bold text-[#1A1918]">BIS Hallmark Compliant</h4>
             <p className="text-[11px] text-gray-600">Audit logs strictly for hallmarking & compliance.</p>
           </div>
         </div>
@@ -111,7 +111,7 @@ export const PrivacyPolicy: React.FC = () => {
             <p>Your information is used exclusively for legitimate business and fulfillment purposes:</p>
             <ul className="list-disc pl-5 space-y-2 leading-relaxed">
               <li>Processing and delivering retail and bulk wholesale silver orders.</li>
-              <li>Generating official NABL spectrometry purity certificates and tax invoices.</li>
+              <li>Generating official BIS hallmark purity certificates and tax invoices.</li>
               <li>Coordinating secure, insured logistics and courier dispatch.</li>
               <li>Sending order status updates, payment confirmations, and delivery notifications.</li>
               <li>Preventing fraudulent transactions and maintaining compliance with Indian tax and bullion regulations.</li>
