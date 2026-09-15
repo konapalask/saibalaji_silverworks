@@ -88,7 +88,7 @@ export const Home: React.FC = () => {
       era: "2000s / MODERNIZATION",
       year: "2008",
       title: "Purity & Scale",
-      description: "Expanded into high-precision induction furnace casting, establishing 999 Fine Silver and 925 Sterling NABL purity standards.",
+      description: "Expanded into high-precision induction furnace casting, establishing 999 Fine Silver and 925 Sterling BIS hallmark purity standards.",
       image: "/Sai-Balaji-Silverworks-Products/01-Silver-Pooja-Articles/Silver-Deepams/silver-lamp-silver-article-by-unniyarcha-jewellery-844414_1800x1800.webp"
     },
     {
@@ -113,7 +113,7 @@ export const Home: React.FC = () => {
     { num: "02", name: "PRECISION FORMING", desc: "Hydraulic coin minting & sheet forming for dense structural durability." },
     { num: "03", name: "NAKSHI ENGRAVING", desc: "Hand-sculpted temple iconographies and intricate floral relief carving." },
     { num: "04", name: "MAGNETIC POLISHING", desc: "Multi-stage pin polishing yielding high-specular reflective mirror lustres." },
-    { num: "05", name: "NABL ASSAY CHECK", desc: "X-ray fluorescence spectrometry purity verification and hallmarking." },
+    { num: "05", name: "BIS HALLMARK CHECK", desc: "X-ray fluorescence spectrometry purity verification and BIS hallmarking." },
     { num: "06", name: "NANO FINISH", desc: "Microscopic protective anti-tarnish coating to preserve brilliant shine." }
   ];
 
