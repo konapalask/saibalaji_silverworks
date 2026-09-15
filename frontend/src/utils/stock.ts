@@ -43,11 +43,12 @@ export const getFirstInStockVariant = (variants: ProductVariant[]): ProductVaria
  * Check if a specific item (product + selected variant) is out of stock.
  */
 export const isCartItemOutOfStock = (product: Product, selectedVariant?: ProductVariant | null): boolean => {
-  if (product.in_stock === false) return true;
+  if (!product) return true;
+  if (isProductFullyOutOfStock(product)) return true;
 
   if (selectedVariant) {
     return isVariantOutOfStock(selectedVariant);
   }
 
-  return isProductFullyOutOfStock(product);
+  return false;
 };
