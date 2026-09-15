@@ -26,7 +26,7 @@ app.use('/public', express.static(publicDir, {
   immutable: true,
   acceptRanges: true,
   setHeaders: (res, filePath) => {
-    if (/\.(mp4|MP4|webp|jpg|jpeg|png|svg|avif)$/i.test(filePath)) {
+    if (/\.(mp4|MP4|mov|MOV|webp|jpg|jpeg|png|svg|avif)$/i.test(filePath)) {
       res.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
     }
   }
