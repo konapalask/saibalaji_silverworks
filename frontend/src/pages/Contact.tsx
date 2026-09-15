@@ -71,7 +71,7 @@ export const Contact: React.FC = () => {
             <div className="space-y-4 text-xs text-gray-200">
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-[#B9A77A] shrink-0 mt-0.5" />
-                <p className="leading-relaxed">Main Silver Market, Autonagar, Tenali, Andhra Pradesh - 522201</p>
+                <p className="leading-relaxed">6th Line, Plot No - 353B, Autonagar, Tenali - 522201, A.P.</p>
               </div>
               <a href={`https://wa.me/${adminPhone}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-[#B9A77A] transition-colors" title="Chat on WhatsApp">
                 <Phone className="w-5 h-5 text-[#B9A77A] shrink-0" />
@@ -79,7 +79,9 @@ export const Contact: React.FC = () => {
               </a>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-[#B9A77A] shrink-0" />
-                <p>wholesale@saibalajisilverworks.com</p>
+                <a href="mailto:saibalajisilverworkspvtltd@gmail.com" className="hover:text-[#B9A77A] transition-colors">
+                  saibalajisilverworkspvtltd@gmail.com
+                </a>
               </div>
               <div className="flex items-center gap-3">
                 <Clock className="w-5 h-5 text-[#B9A77A] shrink-0" />
