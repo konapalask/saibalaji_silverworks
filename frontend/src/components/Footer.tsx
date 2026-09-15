@@ -232,13 +232,13 @@ export const Footer: React.FC = () => {
           </Link>
         </div>
 
-        {/* 04. COPYRIGHT & NABL METADATA */}
+        {/* 04. COPYRIGHT & BIS HALLMARK METADATA */}
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-[#888888]">
 
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
             <span>© 2026 Sai Balaji Silverworks Pvt Ltd. All Rights Reserved.</span>
             <span>•</span>
-            <span className="text-[#B9A77A] font-semibold">100% SPECTROMETRY HALLMARKED 999 & 925</span>
+            <span className="text-[#B9A77A] font-semibold">100% BIS HALLMARKED 999 & 925</span>
           </div>
 
           <div className="flex items-center gap-5">
