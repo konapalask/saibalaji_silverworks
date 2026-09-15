@@ -88,7 +88,7 @@ export const TermsAndConditions: React.FC = () => {
             <span className="text-[#C5A059] text-base">02.</span> Silver Products, Purity & Pricing Dynamics
           </h2>
           <div className="space-y-3 text-xs sm:text-sm text-gray-700 leading-relaxed">
-            <p><strong>Purity Standards:</strong> All silver articles, divine idols, tableware, coins, and jewellery manufactured or sold by Sai Balaji Silverworks conform to official purity standards — either 999 Fine Silver (99.9% purity) or 925 Sterling Silver (92.5% purity) stamped with NABL spectrometry hallmarking tags.</p>
+            <p><strong>Purity Standards:</strong> All silver articles, divine idols, tableware, coins, and jewellery manufactured or sold by Sai Balaji Silverworks conform to official purity standards — either 999 Fine Silver (99.9% purity) or 925 Sterling Silver (92.5% purity) stamped with BIS hallmarking tags.</p>
             <p><strong>Daily Market Silver Fluctuations:</strong> Due to continuous movements in national and international silver bullion spot prices, retail and wholesale prices quoted on our portal are tied to live market silver rates. Confirmed orders lock in the price at the exact timestamp of checkout or quotation acceptance.</p>
             <p><strong>Weight & Craftsmanship Tolerances:</strong> Handcrafted and cast silver articles may carry minor weight variations (+/- 2%) standard in precious metal manufacturing. Invoices state the precise final hallmarked weight.</p>
           </div>
