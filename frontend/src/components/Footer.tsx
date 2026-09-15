@@ -178,7 +178,7 @@ export const Footer: React.FC = () => {
             <div className="space-y-2.5 text-[#A0A0A0] font-light text-xs sm:text-sm flex flex-col items-center sm:items-start">
               <p className="flex items-start justify-center sm:justify-start gap-2 text-center sm:text-left">
                 <MapPin className="w-4 h-4 text-[#B9A77A] shrink-0 mt-0.5" />
-                <span>Autonagar, Tenali, Andhra Pradesh, India</span>
+                <span>6th Line, Plot No - 353B, Autonagar, Tenali - 522201, A.P.</span>
               </p>
               <a
                 href={`https://wa.me/${adminPhone}`}
@@ -192,7 +192,9 @@ export const Footer: React.FC = () => {
               </a>
               <p className="flex items-center justify-center sm:justify-start gap-2">
                 <Mail className="w-4 h-4 text-[#B9A77A] shrink-0" />
-                <span>hello@saibalajisilverworks.com</span>
+                <a href="mailto:saibalajisilverworkspvtltd@gmail.com" className="hover:text-[#B9A77A] transition-colors">
+                  saibalajisilverworkspvtltd@gmail.com
+                </a>
               </p>
 
               {/* Social Media */}
