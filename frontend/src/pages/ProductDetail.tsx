@@ -151,7 +151,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
   // Stock Availability Calculation
   const isProductOutOfStock = isProductFullyOutOfStock(product);
   const isVariantOutOfStockActive = isVariantOutOfStock(activeVar);
-  const isOutOfStock = product.in_stock === false || isVariantOutOfStockActive;
+  const isOutOfStock = product.in_stock === false || isProductOutOfStock || isVariantOutOfStockActive;
 
   const handleAddToCart = () => {
     if (isOutOfStock) return;
