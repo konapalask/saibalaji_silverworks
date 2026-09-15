@@ -3,6 +3,20 @@ import { CompanyVideo } from '../types';
 export const initialVideosData: CompanyVideo[] = [
   {
     "id": 1,
+    "title": "Artisanal Silver Crafting & Manufacturing Documentary",
+    "description": "Unscripted cinematic documentary of high-precision casting, master silversmith hand-finishing, and BIS hallmarking at our Tenali facility.",
+    "video_url": "/public/videos/copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.mov",
+    "thumbnail_url": "/public/videos/copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.mov",
+    "category": "Melting & Casting Unit",
+    "section": "story",
+    "filename": "copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.mov",
+    "sort_order": 1,
+    "is_active": true,
+    "is_portrait": true,
+    "created_at": "2026-09-15T00:00:00Z"
+  },
+  {
+    "id": 2,
     "title": "Induction Furnace Silver Melting #1790",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A1790.MP4.",
     "video_url": "/public/videos/6Z1A1790.MP4",
@@ -10,12 +24,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "hero",
     "filename": "6Z1A1790.MP4",
-    "sort_order": 1,
+    "sort_order": 2,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 2,
+    "id": 3,
     "title": "Silver Kalash & Diya Polishing #1823",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A1823.MP4.",
     "video_url": "/public/videos/6Z1A1823.MP4",
@@ -23,12 +37,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A1823.MP4",
-    "sort_order": 2,
+    "sort_order": 3,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 3,
+    "id": 4,
     "title": "High Precision Laser Engraving #1842",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A1842.MP4.",
     "video_url": "/public/videos/6Z1A1842.MP4",
@@ -36,12 +50,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A1842.MP4",
-    "sort_order": 3,
+    "sort_order": 4,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 4,
+    "id": 5,
     "title": "Sterling Silver Sheet Rolling #1878",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A1878.MP4.",
     "video_url": "/public/videos/6Z1A1878.MP4",
@@ -49,12 +63,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A1878.MP4",
-    "sort_order": 4,
+    "sort_order": 5,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 5,
+    "id": 6,
     "title": "Anti-Tarnish Molecular Dipping #1903",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A1903.MP4.",
     "video_url": "/public/videos/6Z1A1903.MP4",
@@ -62,12 +76,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A1903.MP4",
-    "sort_order": 5,
+    "sort_order": 6,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 6,
+    "id": 7,
     "title": "Master Craftsman Finishing #1915",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A1915.MP4.",
     "video_url": "/public/videos/6Z1A1915.MP4",
@@ -75,12 +89,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A1915.MP4",
-    "sort_order": 6,
+    "sort_order": 7,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 7,
+    "id": 8,
     "title": "Temple Idol Nakshi Sculpture #2028",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2028.MP4.",
     "video_url": "/public/videos/6Z1A2028.MP4",
@@ -88,12 +102,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2028.MP4",
-    "sort_order": 7,
+    "sort_order": 8,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 8,
+    "id": 9,
     "title": "Pure 999 Silver Coin Minting #2042",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A2042.MP4.",
     "video_url": "/public/videos/6Z1A2042.MP4",
@@ -101,12 +115,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A2042.MP4",
-    "sort_order": 8,
+    "sort_order": 9,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 9,
+    "id": 10,
     "title": "Silverware Surface Buffing & Polish #2081",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A2081.MP4.",
     "video_url": "/public/videos/6Z1A2081.MP4",
@@ -114,12 +128,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A2081.MP4",
-    "sort_order": 9,
+    "sort_order": 10,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 10,
+    "id": 11,
     "title": "Hand Embossing & Artisan Detailing #2161",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A2161.MP4.",
     "video_url": "/public/videos/6Z1A2161.MP4",
@@ -127,12 +141,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A2161.MP4",
-    "sort_order": 10,
+    "sort_order": 11,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 11,
+    "id": 12,
     "title": "Induction Furnace Silver Melting #2226",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A2226.MP4.",
     "video_url": "/public/videos/6Z1A2226.MP4",
@@ -140,12 +154,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A2226.MP4",
-    "sort_order": 11,
+    "sort_order": 12,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 12,
+    "id": 13,
     "title": "Silver Kalash & Diya Polishing #2379",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A2379.MP4.",
     "video_url": "/public/videos/6Z1A2379.MP4",
@@ -153,12 +167,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A2379.MP4",
-    "sort_order": 12,
+    "sort_order": 13,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 13,
+    "id": 14,
     "title": "High Precision Laser Engraving #2478",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A2478.MP4.",
     "video_url": "/public/videos/6Z1A2478.MP4",
@@ -166,12 +180,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A2478.MP4",
-    "sort_order": 13,
+    "sort_order": 14,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 14,
+    "id": 15,
     "title": "Sterling Silver Sheet Rolling #2515",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A2515.MP4.",
     "video_url": "/public/videos/6Z1A2515.MP4",
@@ -179,12 +193,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A2515.MP4",
-    "sort_order": 14,
+    "sort_order": 15,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 15,
+    "id": 16,
     "title": "Anti-Tarnish Molecular Dipping #2577",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A2577.MP4.",
     "video_url": "/public/videos/6Z1A2577.MP4",
@@ -192,12 +206,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A2577.MP4",
-    "sort_order": 15,
+    "sort_order": 16,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 16,
+    "id": 17,
     "title": "Master Craftsman Finishing #2664",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A2664.MP4.",
     "video_url": "/public/videos/6Z1A2664.MP4",
@@ -205,12 +219,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A2664.MP4",
-    "sort_order": 16,
+    "sort_order": 17,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 17,
+    "id": 18,
     "title": "Temple Idol Nakshi Sculpture #2715",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2715.MP4.",
     "video_url": "/public/videos/6Z1A2715.MP4",
@@ -218,12 +232,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2715.MP4",
-    "sort_order": 17,
+    "sort_order": 18,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 18,
+    "id": 19,
     "title": "Pure 999 Silver Coin Minting #2763",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A2763.MP4.",
     "video_url": "/public/videos/6Z1A2763.MP4",
@@ -231,12 +245,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A2763.MP4",
-    "sort_order": 18,
+    "sort_order": 19,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 19,
+    "id": 20,
     "title": "Silverware Surface Buffing & Polish #1791",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A1791.MP4.",
     "video_url": "/public/videos/6Z1A1791.MP4",
@@ -244,12 +258,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A1791.MP4",
-    "sort_order": 19,
+    "sort_order": 20,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 20,
+    "id": 21,
     "title": "Hand Embossing & Artisan Detailing #1824",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A1824.MP4.",
     "video_url": "/public/videos/6Z1A1824.MP4",
@@ -257,12 +271,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A1824.MP4",
-    "sort_order": 20,
+    "sort_order": 21,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 21,
+    "id": 22,
     "title": "Induction Furnace Silver Melting #1843",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A1843.MP4.",
     "video_url": "/public/videos/6Z1A1843.MP4",
@@ -270,12 +284,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A1843.MP4",
-    "sort_order": 21,
+    "sort_order": 22,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 22,
+    "id": 23,
     "title": "Silver Kalash & Diya Polishing #1879",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A1879.MP4.",
     "video_url": "/public/videos/6Z1A1879.MP4",
@@ -283,12 +297,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A1879.MP4",
-    "sort_order": 22,
+    "sort_order": 23,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 23,
+    "id": 24,
     "title": "High Precision Laser Engraving #1906",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A1906.MP4.",
     "video_url": "/public/videos/6Z1A1906.MP4",
@@ -296,12 +310,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A1906.MP4",
-    "sort_order": 23,
+    "sort_order": 24,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 24,
+    "id": 25,
     "title": "Sterling Silver Sheet Rolling #1931",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A1931.MP4.",
     "video_url": "/public/videos/6Z1A1931.MP4",
@@ -309,12 +323,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A1931.MP4",
-    "sort_order": 24,
+    "sort_order": 25,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 25,
+    "id": 26,
     "title": "Anti-Tarnish Molecular Dipping #2029",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A2029.MP4.",
     "video_url": "/public/videos/6Z1A2029.MP4",
@@ -322,12 +336,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A2029.MP4",
-    "sort_order": 25,
+    "sort_order": 26,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 26,
+    "id": 27,
     "title": "Master Craftsman Finishing #2057",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A2057.MP4.",
     "video_url": "/public/videos/6Z1A2057.MP4",
@@ -335,12 +349,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A2057.MP4",
-    "sort_order": 26,
+    "sort_order": 27,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 27,
+    "id": 28,
     "title": "Temple Idol Nakshi Sculpture #2082",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2082.MP4.",
     "video_url": "/public/videos/6Z1A2082.MP4",
@@ -348,12 +362,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2082.MP4",
-    "sort_order": 27,
+    "sort_order": 28,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 28,
+    "id": 29,
     "title": "Pure 999 Silver Coin Minting #2162",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A2162.MP4.",
     "video_url": "/public/videos/6Z1A2162.MP4",
@@ -361,12 +375,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A2162.MP4",
-    "sort_order": 28,
+    "sort_order": 29,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 29,
+    "id": 30,
     "title": "Silverware Surface Buffing & Polish #2227",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A2227.MP4.",
     "video_url": "/public/videos/6Z1A2227.MP4",
@@ -374,12 +388,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A2227.MP4",
-    "sort_order": 29,
+    "sort_order": 30,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 30,
+    "id": 31,
     "title": "Hand Embossing & Artisan Detailing #2404",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A2404.MP4.",
     "video_url": "/public/videos/6Z1A2404.MP4",
@@ -387,12 +401,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A2404.MP4",
-    "sort_order": 30,
+    "sort_order": 31,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 31,
+    "id": 32,
     "title": "Induction Furnace Silver Melting #2483",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A2483.MP4.",
     "video_url": "/public/videos/6Z1A2483.MP4",
@@ -400,12 +414,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A2483.MP4",
-    "sort_order": 31,
+    "sort_order": 32,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 32,
+    "id": 33,
     "title": "Silver Kalash & Diya Polishing #2520",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A2520.MP4.",
     "video_url": "/public/videos/6Z1A2520.MP4",
@@ -413,12 +427,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A2520.MP4",
-    "sort_order": 32,
+    "sort_order": 33,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 33,
+    "id": 34,
     "title": "High Precision Laser Engraving #2591",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A2591.MP4.",
     "video_url": "/public/videos/6Z1A2591.MP4",
@@ -426,12 +440,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A2591.MP4",
-    "sort_order": 33,
+    "sort_order": 34,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 34,
+    "id": 35,
     "title": "Sterling Silver Sheet Rolling #2665",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A2665.MP4.",
     "video_url": "/public/videos/6Z1A2665.MP4",
@@ -439,12 +453,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A2665.MP4",
-    "sort_order": 34,
+    "sort_order": 35,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 35,
+    "id": 36,
     "title": "Anti-Tarnish Molecular Dipping #2716",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A2716.MP4.",
     "video_url": "/public/videos/6Z1A2716.MP4",
@@ -452,12 +466,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A2716.MP4",
-    "sort_order": 35,
+    "sort_order": 36,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 36,
+    "id": 37,
     "title": "Master Craftsman Finishing #1792",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A1792.MP4.",
     "video_url": "/public/videos/6Z1A1792.MP4",
@@ -465,12 +479,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A1792.MP4",
-    "sort_order": 36,
+    "sort_order": 37,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 37,
+    "id": 38,
     "title": "Temple Idol Nakshi Sculpture #1825",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A1825.MP4.",
     "video_url": "/public/videos/6Z1A1825.MP4",
@@ -478,12 +492,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A1825.MP4",
-    "sort_order": 37,
+    "sort_order": 38,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 38,
+    "id": 39,
     "title": "Pure 999 Silver Coin Minting #1848",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A1848.MP4.",
     "video_url": "/public/videos/6Z1A1848.MP4",
@@ -491,12 +505,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A1848.MP4",
-    "sort_order": 38,
+    "sort_order": 39,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 39,
+    "id": 40,
     "title": "Silverware Surface Buffing & Polish #1880",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A1880.MP4.",
     "video_url": "/public/videos/6Z1A1880.MP4",
@@ -504,12 +518,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A1880.MP4",
-    "sort_order": 39,
+    "sort_order": 40,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 40,
+    "id": 41,
     "title": "Hand Embossing & Artisan Detailing #1907",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A1907.MP4.",
     "video_url": "/public/videos/6Z1A1907.MP4",
@@ -517,12 +531,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A1907.MP4",
-    "sort_order": 40,
+    "sort_order": 41,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 41,
+    "id": 42,
     "title": "Induction Furnace Silver Melting #1932",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A1932.MP4.",
     "video_url": "/public/videos/6Z1A1932.MP4",
@@ -530,12 +544,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A1932.MP4",
-    "sort_order": 41,
+    "sort_order": 42,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 42,
+    "id": 43,
     "title": "Silver Kalash & Diya Polishing #2030",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A2030.MP4.",
     "video_url": "/public/videos/6Z1A2030.MP4",
@@ -543,12 +557,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A2030.MP4",
-    "sort_order": 42,
+    "sort_order": 43,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 43,
+    "id": 44,
     "title": "High Precision Laser Engraving #2058",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A2058.MP4.",
     "video_url": "/public/videos/6Z1A2058.MP4",
@@ -556,12 +570,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A2058.MP4",
-    "sort_order": 43,
+    "sort_order": 44,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 44,
+    "id": 45,
     "title": "Sterling Silver Sheet Rolling #2095",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A2095.MP4.",
     "video_url": "/public/videos/6Z1A2095.MP4",
@@ -569,12 +583,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A2095.MP4",
-    "sort_order": 44,
+    "sort_order": 45,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 45,
+    "id": 46,
     "title": "Anti-Tarnish Molecular Dipping #2171",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A2171.MP4.",
     "video_url": "/public/videos/6Z1A2171.MP4",
@@ -582,12 +596,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A2171.MP4",
-    "sort_order": 45,
+    "sort_order": 46,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 46,
+    "id": 47,
     "title": "Master Craftsman Finishing #2248",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A2248.MP4.",
     "video_url": "/public/videos/6Z1A2248.MP4",
@@ -595,12 +609,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A2248.MP4",
-    "sort_order": 46,
+    "sort_order": 47,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 47,
+    "id": 48,
     "title": "Temple Idol Nakshi Sculpture #2416",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2416.MP4.",
     "video_url": "/public/videos/6Z1A2416.MP4",
@@ -608,12 +622,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2416.MP4",
-    "sort_order": 47,
+    "sort_order": 48,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 48,
+    "id": 49,
     "title": "Pure 999 Silver Coin Minting #2486",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A2486.MP4.",
     "video_url": "/public/videos/6Z1A2486.MP4",
@@ -621,12 +635,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A2486.MP4",
-    "sort_order": 48,
+    "sort_order": 49,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 49,
+    "id": 50,
     "title": "Silverware Surface Buffing & Polish #2523",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A2523.MP4.",
     "video_url": "/public/videos/6Z1A2523.MP4",
@@ -634,12 +648,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A2523.MP4",
-    "sort_order": 49,
+    "sort_order": 50,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 50,
+    "id": 51,
     "title": "Hand Embossing & Artisan Detailing #2626",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A2626.MP4.",
     "video_url": "/public/videos/6Z1A2626.MP4",
@@ -647,12 +661,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A2626.MP4",
-    "sort_order": 50,
+    "sort_order": 51,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 51,
+    "id": 52,
     "title": "Induction Furnace Silver Melting #2670",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A2670.MP4.",
     "video_url": "/public/videos/6Z1A2670.MP4",
@@ -660,12 +674,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A2670.MP4",
-    "sort_order": 51,
+    "sort_order": 52,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 52,
+    "id": 53,
     "title": "Silver Kalash & Diya Polishing #2725",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A2725.MP4.",
     "video_url": "/public/videos/6Z1A2725.MP4",
@@ -673,12 +687,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A2725.MP4",
-    "sort_order": 52,
+    "sort_order": 53,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 53,
+    "id": 54,
     "title": "High Precision Laser Engraving #1810",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A1810.MP4.",
     "video_url": "/public/videos/6Z1A1810.MP4",
@@ -686,12 +700,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A1810.MP4",
-    "sort_order": 53,
+    "sort_order": 54,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 54,
+    "id": 55,
     "title": "Sterling Silver Sheet Rolling #1826",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A1826.MP4.",
     "video_url": "/public/videos/6Z1A1826.MP4",
@@ -699,12 +713,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A1826.MP4",
-    "sort_order": 54,
+    "sort_order": 55,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 55,
+    "id": 56,
     "title": "Anti-Tarnish Molecular Dipping #1849",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A1849.MP4.",
     "video_url": "/public/videos/6Z1A1849.MP4",
@@ -712,12 +726,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A1849.MP4",
-    "sort_order": 55,
+    "sort_order": 56,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 56,
+    "id": 57,
     "title": "Master Craftsman Finishing #1881",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A1881.MP4.",
     "video_url": "/public/videos/6Z1A1881.MP4",
@@ -725,12 +739,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A1881.MP4",
-    "sort_order": 56,
+    "sort_order": 57,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 57,
+    "id": 58,
     "title": "Temple Idol Nakshi Sculpture #1908",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A1908.MP4.",
     "video_url": "/public/videos/6Z1A1908.MP4",
@@ -738,12 +752,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A1908.MP4",
-    "sort_order": 57,
+    "sort_order": 58,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 58,
+    "id": 59,
     "title": "Pure 999 Silver Coin Minting #1933",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A1933.MP4.",
     "video_url": "/public/videos/6Z1A1933.MP4",
@@ -751,12 +765,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A1933.MP4",
-    "sort_order": 58,
+    "sort_order": 59,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 59,
+    "id": 60,
     "title": "Silverware Surface Buffing & Polish #2031",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A2031.MP4.",
     "video_url": "/public/videos/6Z1A2031.MP4",
@@ -764,12 +778,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A2031.MP4",
-    "sort_order": 59,
+    "sort_order": 60,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 60,
+    "id": 61,
     "title": "Hand Embossing & Artisan Detailing #2059",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A2059.MP4.",
     "video_url": "/public/videos/6Z1A2059.MP4",
@@ -777,12 +791,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A2059.MP4",
-    "sort_order": 60,
+    "sort_order": 61,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 61,
+    "id": 62,
     "title": "Induction Furnace Silver Melting #2096",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A2096.MP4.",
     "video_url": "/public/videos/6Z1A2096.MP4",
@@ -790,12 +804,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A2096.MP4",
-    "sort_order": 61,
+    "sort_order": 62,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 62,
+    "id": 63,
     "title": "Silver Kalash & Diya Polishing #2172",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A2172.MP4.",
     "video_url": "/public/videos/6Z1A2172.MP4",
@@ -803,12 +817,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A2172.MP4",
-    "sort_order": 62,
+    "sort_order": 63,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 63,
+    "id": 64,
     "title": "High Precision Laser Engraving #2256",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A2256.MP4.",
     "video_url": "/public/videos/6Z1A2256.MP4",
@@ -816,12 +830,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A2256.MP4",
-    "sort_order": 63,
+    "sort_order": 64,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 64,
+    "id": 65,
     "title": "Sterling Silver Sheet Rolling #2417",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A2417.MP4.",
     "video_url": "/public/videos/6Z1A2417.MP4",
@@ -829,12 +843,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A2417.MP4",
-    "sort_order": 64,
+    "sort_order": 65,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 65,
+    "id": 66,
     "title": "Anti-Tarnish Molecular Dipping #2489",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A2489.MP4.",
     "video_url": "/public/videos/6Z1A2489.MP4",
@@ -842,12 +856,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A2489.MP4",
-    "sort_order": 65,
+    "sort_order": 66,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 66,
+    "id": 67,
     "title": "Master Craftsman Finishing #2526",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A2526.MP4.",
     "video_url": "/public/videos/6Z1A2526.MP4",
@@ -855,12 +869,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A2526.MP4",
-    "sort_order": 66,
+    "sort_order": 67,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 67,
+    "id": 68,
     "title": "Temple Idol Nakshi Sculpture #2631",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2631.MP4.",
     "video_url": "/public/videos/6Z1A2631.MP4",
@@ -868,12 +882,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2631.MP4",
-    "sort_order": 67,
+    "sort_order": 68,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 68,
+    "id": 69,
     "title": "Pure 999 Silver Coin Minting #2692",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A2692.MP4.",
     "video_url": "/public/videos/6Z1A2692.MP4",
@@ -881,12 +895,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A2692.MP4",
-    "sort_order": 68,
+    "sort_order": 69,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 69,
+    "id": 70,
     "title": "Silverware Surface Buffing & Polish #2734",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A2734.MP4.",
     "video_url": "/public/videos/6Z1A2734.MP4",
@@ -894,12 +908,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A2734.MP4",
-    "sort_order": 69,
+    "sort_order": 70,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 70,
+    "id": 71,
     "title": "Hand Embossing & Artisan Detailing #1811",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A1811.MP4.",
     "video_url": "/public/videos/6Z1A1811.MP4",
@@ -907,12 +921,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A1811.MP4",
-    "sort_order": 70,
+    "sort_order": 71,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 71,
+    "id": 72,
     "title": "Induction Furnace Silver Melting #1829",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A1829.MP4.",
     "video_url": "/public/videos/6Z1A1829.MP4",
@@ -920,12 +934,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A1829.MP4",
-    "sort_order": 71,
+    "sort_order": 72,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 72,
+    "id": 73,
     "title": "Silver Kalash & Diya Polishing #1850",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A1850.MP4.",
     "video_url": "/public/videos/6Z1A1850.MP4",
@@ -933,12 +947,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A1850.MP4",
-    "sort_order": 72,
+    "sort_order": 73,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 73,
+    "id": 74,
     "title": "High Precision Laser Engraving #1888",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A1888.MP4.",
     "video_url": "/public/videos/6Z1A1888.MP4",
@@ -946,12 +960,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A1888.MP4",
-    "sort_order": 73,
+    "sort_order": 74,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 74,
+    "id": 75,
     "title": "Sterling Silver Sheet Rolling #1909",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A1909.MP4.",
     "video_url": "/public/videos/6Z1A1909.MP4",
@@ -959,12 +973,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A1909.MP4",
-    "sort_order": 74,
+    "sort_order": 75,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 75,
+    "id": 76,
     "title": "Anti-Tarnish Molecular Dipping #1934",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A1934.MP4.",
     "video_url": "/public/videos/6Z1A1934.MP4",
@@ -972,12 +986,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A1934.MP4",
-    "sort_order": 75,
+    "sort_order": 76,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 76,
+    "id": 77,
     "title": "Master Craftsman Finishing #2032",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A2032.MP4.",
     "video_url": "/public/videos/6Z1A2032.MP4",
@@ -985,12 +999,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A2032.MP4",
-    "sort_order": 76,
+    "sort_order": 77,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 77,
+    "id": 78,
     "title": "Temple Idol Nakshi Sculpture #2060",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2060.MP4.",
     "video_url": "/public/videos/6Z1A2060.MP4",
@@ -998,12 +1012,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2060.MP4",
-    "sort_order": 77,
+    "sort_order": 78,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 78,
+    "id": 79,
     "title": "Pure 999 Silver Coin Minting #2119",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A2119.MP4.",
     "video_url": "/public/videos/6Z1A2119.MP4",
@@ -1011,12 +1025,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A2119.MP4",
-    "sort_order": 78,
+    "sort_order": 79,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 79,
+    "id": 80,
     "title": "Silverware Surface Buffing & Polish #2187",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A2187.MP4.",
     "video_url": "/public/videos/6Z1A2187.MP4",
@@ -1024,12 +1038,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A2187.MP4",
-    "sort_order": 79,
+    "sort_order": 80,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 80,
+    "id": 81,
     "title": "Hand Embossing & Artisan Detailing #2263",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A2263.MP4.",
     "video_url": "/public/videos/6Z1A2263.MP4",
@@ -1037,12 +1051,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A2263.MP4",
-    "sort_order": 80,
+    "sort_order": 81,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 81,
+    "id": 82,
     "title": "Induction Furnace Silver Melting #2422",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A2422.MP4.",
     "video_url": "/public/videos/6Z1A2422.MP4",
@@ -1050,12 +1064,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A2422.MP4",
-    "sort_order": 81,
+    "sort_order": 82,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 82,
+    "id": 83,
     "title": "Silver Kalash & Diya Polishing #2492",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A2492.MP4.",
     "video_url": "/public/videos/6Z1A2492.MP4",
@@ -1063,12 +1077,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A2492.MP4",
-    "sort_order": 82,
+    "sort_order": 83,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 83,
+    "id": 84,
     "title": "High Precision Laser Engraving #2529",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A2529.MP4.",
     "video_url": "/public/videos/6Z1A2529.MP4",
@@ -1076,12 +1090,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A2529.MP4",
-    "sort_order": 83,
+    "sort_order": 84,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 84,
+    "id": 85,
     "title": "Sterling Silver Sheet Rolling #2632",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A2632.MP4.",
     "video_url": "/public/videos/6Z1A2632.MP4",
@@ -1089,12 +1103,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A2632.MP4",
-    "sort_order": 84,
+    "sort_order": 85,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 85,
+    "id": 86,
     "title": "Anti-Tarnish Molecular Dipping #2693",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A2693.MP4.",
     "video_url": "/public/videos/6Z1A2693.MP4",
@@ -1102,12 +1116,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A2693.MP4",
-    "sort_order": 85,
+    "sort_order": 86,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 86,
+    "id": 87,
     "title": "Master Craftsman Finishing #2735",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A2735.MP4.",
     "video_url": "/public/videos/6Z1A2735.MP4",
@@ -1115,12 +1129,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A2735.MP4",
-    "sort_order": 86,
+    "sort_order": 87,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 87,
+    "id": 88,
     "title": "Temple Idol Nakshi Sculpture #1812",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A1812.MP4.",
     "video_url": "/public/videos/6Z1A1812.MP4",
@@ -1128,12 +1142,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A1812.MP4",
-    "sort_order": 87,
+    "sort_order": 88,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 88,
+    "id": 89,
     "title": "Pure 999 Silver Coin Minting #1830",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A1830.MP4.",
     "video_url": "/public/videos/6Z1A1830.MP4",
@@ -1141,12 +1155,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A1830.MP4",
-    "sort_order": 88,
+    "sort_order": 89,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 89,
+    "id": 90,
     "title": "Silverware Surface Buffing & Polish #1863",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A1863.MP4.",
     "video_url": "/public/videos/6Z1A1863.MP4",
@@ -1154,12 +1168,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A1863.MP4",
-    "sort_order": 89,
+    "sort_order": 90,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 90,
+    "id": 91,
     "title": "Hand Embossing & Artisan Detailing #1889",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A1889.MP4.",
     "video_url": "/public/videos/6Z1A1889.MP4",
@@ -1167,12 +1181,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A1889.MP4",
-    "sort_order": 90,
+    "sort_order": 91,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 91,
+    "id": 92,
     "title": "Induction Furnace Silver Melting #1910",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A1910.MP4.",
     "video_url": "/public/videos/6Z1A1910.MP4",
@@ -1180,12 +1194,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A1910.MP4",
-    "sort_order": 91,
+    "sort_order": 92,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 92,
+    "id": 93,
     "title": "Silver Kalash & Diya Polishing #1935",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A1935.MP4.",
     "video_url": "/public/videos/6Z1A1935.MP4",
@@ -1193,12 +1207,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A1935.MP4",
-    "sort_order": 92,
+    "sort_order": 93,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 93,
+    "id": 94,
     "title": "High Precision Laser Engraving #2037",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A2037.MP4.",
     "video_url": "/public/videos/6Z1A2037.MP4",
@@ -1206,12 +1220,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A2037.MP4",
-    "sort_order": 93,
+    "sort_order": 94,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 94,
+    "id": 95,
     "title": "Sterling Silver Sheet Rolling #2061",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A2061.MP4.",
     "video_url": "/public/videos/6Z1A2061.MP4",
@@ -1219,12 +1233,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A2061.MP4",
-    "sort_order": 94,
+    "sort_order": 95,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 95,
+    "id": 96,
     "title": "Anti-Tarnish Molecular Dipping #2138",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A2138.MP4.",
     "video_url": "/public/videos/6Z1A2138.MP4",
@@ -1232,12 +1246,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A2138.MP4",
-    "sort_order": 95,
+    "sort_order": 96,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 96,
+    "id": 97,
     "title": "Master Craftsman Finishing #2188",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A2188.MP4.",
     "video_url": "/public/videos/6Z1A2188.MP4",
@@ -1245,12 +1259,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A2188.MP4",
-    "sort_order": 96,
+    "sort_order": 97,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 97,
+    "id": 98,
     "title": "Temple Idol Nakshi Sculpture #2264",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2264.MP4.",
     "video_url": "/public/videos/6Z1A2264.MP4",
@@ -1258,12 +1272,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2264.MP4",
-    "sort_order": 97,
+    "sort_order": 98,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 98,
+    "id": 99,
     "title": "Pure 999 Silver Coin Minting #2433",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A2433.MP4.",
     "video_url": "/public/videos/6Z1A2433.MP4",
@@ -1271,12 +1285,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A2433.MP4",
-    "sort_order": 98,
+    "sort_order": 99,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 99,
+    "id": 100,
     "title": "Silverware Surface Buffing & Polish #2495",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A2495.MP4.",
     "video_url": "/public/videos/6Z1A2495.MP4",
@@ -1284,12 +1298,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A2495.MP4",
-    "sort_order": 99,
+    "sort_order": 100,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 100,
+    "id": 101,
     "title": "Hand Embossing & Artisan Detailing #2540",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A2540.MP4.",
     "video_url": "/public/videos/6Z1A2540.MP4",
@@ -1297,12 +1311,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A2540.MP4",
-    "sort_order": 100,
+    "sort_order": 101,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 101,
+    "id": 102,
     "title": "Induction Furnace Silver Melting #2637",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A2637.MP4.",
     "video_url": "/public/videos/6Z1A2637.MP4",
@@ -1310,12 +1324,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A2637.MP4",
-    "sort_order": 101,
+    "sort_order": 102,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 102,
+    "id": 103,
     "title": "Silver Kalash & Diya Polishing #2694",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A2694.MP4.",
     "video_url": "/public/videos/6Z1A2694.MP4",
@@ -1323,12 +1337,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A2694.MP4",
-    "sort_order": 102,
+    "sort_order": 103,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 103,
+    "id": 104,
     "title": "High Precision Laser Engraving #2740",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A2740.MP4.",
     "video_url": "/public/videos/6Z1A2740.MP4",
@@ -1336,12 +1350,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A2740.MP4",
-    "sort_order": 103,
+    "sort_order": 104,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 104,
+    "id": 105,
     "title": "Sterling Silver Sheet Rolling #1813",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A1813.MP4.",
     "video_url": "/public/videos/6Z1A1813.MP4",
@@ -1349,12 +1363,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A1813.MP4",
-    "sort_order": 104,
+    "sort_order": 105,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 105,
+    "id": 106,
     "title": "Anti-Tarnish Molecular Dipping #1835",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A1835.MP4.",
     "video_url": "/public/videos/6Z1A1835.MP4",
@@ -1362,12 +1376,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A1835.MP4",
-    "sort_order": 105,
+    "sort_order": 106,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 106,
+    "id": 107,
     "title": "Master Craftsman Finishing #1864",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A1864.MP4.",
     "video_url": "/public/videos/6Z1A1864.MP4",
@@ -1375,12 +1389,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A1864.MP4",
-    "sort_order": 106,
+    "sort_order": 107,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 107,
+    "id": 108,
     "title": "Temple Idol Nakshi Sculpture #1890",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A1890.MP4.",
     "video_url": "/public/videos/6Z1A1890.MP4",
@@ -1388,12 +1402,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A1890.MP4",
-    "sort_order": 107,
+    "sort_order": 108,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 108,
+    "id": 109,
     "title": "Pure 999 Silver Coin Minting #1911",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A1911.MP4.",
     "video_url": "/public/videos/6Z1A1911.MP4",
@@ -1401,12 +1415,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A1911.MP4",
-    "sort_order": 108,
+    "sort_order": 109,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 109,
+    "id": 110,
     "title": "Silverware Surface Buffing & Polish #1940",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A1940.MP4.",
     "video_url": "/public/videos/6Z1A1940.MP4",
@@ -1414,12 +1428,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A1940.MP4",
-    "sort_order": 109,
+    "sort_order": 110,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 110,
+    "id": 111,
     "title": "Hand Embossing & Artisan Detailing #2038",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A2038.MP4.",
     "video_url": "/public/videos/6Z1A2038.MP4",
@@ -1427,12 +1441,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A2038.MP4",
-    "sort_order": 110,
+    "sort_order": 111,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 111,
+    "id": 112,
     "title": "Induction Furnace Silver Melting #2062",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A2062.MP4.",
     "video_url": "/public/videos/6Z1A2062.MP4",
@@ -1440,12 +1454,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A2062.MP4",
-    "sort_order": 111,
+    "sort_order": 112,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 112,
+    "id": 113,
     "title": "Silver Kalash & Diya Polishing #2139",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A2139.MP4.",
     "video_url": "/public/videos/6Z1A2139.MP4",
@@ -1453,12 +1467,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A2139.MP4",
-    "sort_order": 112,
+    "sort_order": 113,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 113,
+    "id": 114,
     "title": "High Precision Laser Engraving #2189",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A2189.MP4.",
     "video_url": "/public/videos/6Z1A2189.MP4",
@@ -1466,12 +1480,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A2189.MP4",
-    "sort_order": 113,
+    "sort_order": 114,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 114,
+    "id": 115,
     "title": "Sterling Silver Sheet Rolling #2362",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A2362.MP4.",
     "video_url": "/public/videos/6Z1A2362.MP4",
@@ -1479,12 +1493,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A2362.MP4",
-    "sort_order": 114,
+    "sort_order": 115,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 115,
+    "id": 116,
     "title": "Anti-Tarnish Molecular Dipping #2453",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A2453.MP4.",
     "video_url": "/public/videos/6Z1A2453.MP4",
@@ -1492,12 +1506,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A2453.MP4",
-    "sort_order": 115,
+    "sort_order": 116,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 116,
+    "id": 117,
     "title": "Master Craftsman Finishing #2498",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A2498.MP4.",
     "video_url": "/public/videos/6Z1A2498.MP4",
@@ -1505,12 +1519,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A2498.MP4",
-    "sort_order": 116,
+    "sort_order": 117,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 117,
+    "id": 118,
     "title": "Temple Idol Nakshi Sculpture #2541",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2541.MP4.",
     "video_url": "/public/videos/6Z1A2541.MP4",
@@ -1518,12 +1532,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2541.MP4",
-    "sort_order": 117,
+    "sort_order": 118,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 118,
+    "id": 119,
     "title": "Pure 999 Silver Coin Minting #2638",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A2638.MP4.",
     "video_url": "/public/videos/6Z1A2638.MP4",
@@ -1531,12 +1545,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A2638.MP4",
-    "sort_order": 118,
+    "sort_order": 119,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 119,
+    "id": 120,
     "title": "Silverware Surface Buffing & Polish #2695",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A2695.MP4.",
     "video_url": "/public/videos/6Z1A2695.MP4",
@@ -1544,12 +1558,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A2695.MP4",
-    "sort_order": 119,
+    "sort_order": 120,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 120,
+    "id": 121,
     "title": "Hand Embossing & Artisan Detailing #2741",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A2741.MP4.",
     "video_url": "/public/videos/6Z1A2741.MP4",
@@ -1557,12 +1571,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A2741.MP4",
-    "sort_order": 120,
+    "sort_order": 121,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 121,
+    "id": 122,
     "title": "Induction Furnace Silver Melting #1818",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A1818.MP4.",
     "video_url": "/public/videos/6Z1A1818.MP4",
@@ -1570,12 +1584,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A1818.MP4",
-    "sort_order": 121,
+    "sort_order": 122,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 122,
+    "id": 123,
     "title": "Silver Kalash & Diya Polishing #1836",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A1836.MP4.",
     "video_url": "/public/videos/6Z1A1836.MP4",
@@ -1583,12 +1597,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A1836.MP4",
-    "sort_order": 122,
+    "sort_order": 123,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 123,
+    "id": 124,
     "title": "High Precision Laser Engraving #1865",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A1865.MP4.",
     "video_url": "/public/videos/6Z1A1865.MP4",
@@ -1596,12 +1610,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A1865.MP4",
-    "sort_order": 123,
+    "sort_order": 124,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 124,
+    "id": 125,
     "title": "Sterling Silver Sheet Rolling #1892",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A1892.MP4.",
     "video_url": "/public/videos/6Z1A1892.MP4",
@@ -1609,12 +1623,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A1892.MP4",
-    "sort_order": 124,
+    "sort_order": 125,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 125,
+    "id": 126,
     "title": "Anti-Tarnish Molecular Dipping #1912",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A1912.MP4.",
     "video_url": "/public/videos/6Z1A1912.MP4",
@@ -1622,12 +1636,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A1912.MP4",
-    "sort_order": 125,
+    "sort_order": 126,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 126,
+    "id": 127,
     "title": "Master Craftsman Finishing #1941",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A1941.MP4.",
     "video_url": "/public/videos/6Z1A1941.MP4",
@@ -1635,12 +1649,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A1941.MP4",
-    "sort_order": 126,
+    "sort_order": 127,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 127,
+    "id": 128,
     "title": "Temple Idol Nakshi Sculpture #2039",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2039.MP4.",
     "video_url": "/public/videos/6Z1A2039.MP4",
@@ -1648,12 +1662,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2039.MP4",
-    "sort_order": 127,
+    "sort_order": 128,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 128,
+    "id": 129,
     "title": "Pure 999 Silver Coin Minting #2078",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A2078.MP4.",
     "video_url": "/public/videos/6Z1A2078.MP4",
@@ -1661,12 +1675,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A2078.MP4",
-    "sort_order": 128,
+    "sort_order": 129,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 129,
+    "id": 130,
     "title": "Silverware Surface Buffing & Polish #2140",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A2140.MP4.",
     "video_url": "/public/videos/6Z1A2140.MP4",
@@ -1674,12 +1688,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A2140.MP4",
-    "sort_order": 129,
+    "sort_order": 130,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 130,
+    "id": 131,
     "title": "Hand Embossing & Artisan Detailing #2190",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A2190.MP4.",
     "video_url": "/public/videos/6Z1A2190.MP4",
@@ -1687,12 +1701,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A2190.MP4",
-    "sort_order": 130,
+    "sort_order": 131,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 131,
+    "id": 132,
     "title": "Induction Furnace Silver Melting #2363",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A2363.MP4.",
     "video_url": "/public/videos/6Z1A2363.MP4",
@@ -1700,12 +1714,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A2363.MP4",
-    "sort_order": 131,
+    "sort_order": 132,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 132,
+    "id": 133,
     "title": "Silver Kalash & Diya Polishing #2454",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A2454.MP4.",
     "video_url": "/public/videos/6Z1A2454.MP4",
@@ -1713,12 +1727,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A2454.MP4",
-    "sort_order": 132,
+    "sort_order": 133,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 133,
+    "id": 134,
     "title": "High Precision Laser Engraving #2503",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A2503.MP4.",
     "video_url": "/public/videos/6Z1A2503.MP4",
@@ -1726,12 +1740,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A2503.MP4",
-    "sort_order": 133,
+    "sort_order": 134,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 134,
+    "id": 135,
     "title": "Sterling Silver Sheet Rolling #2549",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A2549.MP4.",
     "video_url": "/public/videos/6Z1A2549.MP4",
@@ -1739,12 +1753,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A2549.MP4",
-    "sort_order": 134,
+    "sort_order": 135,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 135,
+    "id": 136,
     "title": "Anti-Tarnish Molecular Dipping #2643",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A2643.MP4.",
     "video_url": "/public/videos/6Z1A2643.MP4",
@@ -1752,12 +1766,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A2643.MP4",
-    "sort_order": 135,
+    "sort_order": 136,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 136,
+    "id": 137,
     "title": "Master Craftsman Finishing #2704",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A2704.MP4.",
     "video_url": "/public/videos/6Z1A2704.MP4",
@@ -1765,12 +1779,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A2704.MP4",
-    "sort_order": 136,
+    "sort_order": 137,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 137,
+    "id": 138,
     "title": "Temple Idol Nakshi Sculpture #2747",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2747.MP4.",
     "video_url": "/public/videos/6Z1A2747.MP4",
@@ -1778,12 +1792,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2747.MP4",
-    "sort_order": 137,
+    "sort_order": 138,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 138,
+    "id": 139,
     "title": "Pure 999 Silver Coin Minting #1819",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A1819.MP4.",
     "video_url": "/public/videos/6Z1A1819.MP4",
@@ -1791,12 +1805,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A1819.MP4",
-    "sort_order": 138,
+    "sort_order": 139,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 139,
+    "id": 140,
     "title": "Silverware Surface Buffing & Polish #1837",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A1837.MP4.",
     "video_url": "/public/videos/6Z1A1837.MP4",
@@ -1804,12 +1818,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A1837.MP4",
-    "sort_order": 139,
+    "sort_order": 140,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 140,
+    "id": 141,
     "title": "Hand Embossing & Artisan Detailing #1871",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A1871.MP4.",
     "video_url": "/public/videos/6Z1A1871.MP4",
@@ -1817,12 +1831,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A1871.MP4",
-    "sort_order": 140,
+    "sort_order": 141,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 141,
+    "id": 142,
     "title": "Induction Furnace Silver Melting #1896",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A1896.MP4.",
     "video_url": "/public/videos/6Z1A1896.MP4",
@@ -1830,12 +1844,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A1896.MP4",
-    "sort_order": 141,
+    "sort_order": 142,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 142,
+    "id": 143,
     "title": "Silver Kalash & Diya Polishing #1913",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A1913.MP4.",
     "video_url": "/public/videos/6Z1A1913.MP4",
@@ -1843,12 +1857,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A1913.MP4",
-    "sort_order": 142,
+    "sort_order": 143,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 143,
+    "id": 144,
     "title": "High Precision Laser Engraving #1958",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A1958.MP4.",
     "video_url": "/public/videos/6Z1A1958.MP4",
@@ -1856,12 +1870,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A1958.MP4",
-    "sort_order": 143,
+    "sort_order": 144,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 144,
+    "id": 145,
     "title": "Sterling Silver Sheet Rolling #2040",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A2040.MP4.",
     "video_url": "/public/videos/6Z1A2040.MP4",
@@ -1869,12 +1883,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A2040.MP4",
-    "sort_order": 144,
+    "sort_order": 145,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 145,
+    "id": 146,
     "title": "Anti-Tarnish Molecular Dipping #2079",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A2079.MP4.",
     "video_url": "/public/videos/6Z1A2079.MP4",
@@ -1882,12 +1896,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A2079.MP4",
-    "sort_order": 145,
+    "sort_order": 146,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 146,
+    "id": 147,
     "title": "Master Craftsman Finishing #2151",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A2151.MP4.",
     "video_url": "/public/videos/6Z1A2151.MP4",
@@ -1895,12 +1909,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A2151.MP4",
-    "sort_order": 146,
+    "sort_order": 147,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 147,
+    "id": 148,
     "title": "Temple Idol Nakshi Sculpture #2213",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2213.MP4.",
     "video_url": "/public/videos/6Z1A2213.MP4",
@@ -1908,12 +1922,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2213.MP4",
-    "sort_order": 147,
+    "sort_order": 148,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 148,
+    "id": 149,
     "title": "Pure 999 Silver Coin Minting #2364",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A2364.MP4.",
     "video_url": "/public/videos/6Z1A2364.MP4",
@@ -1921,12 +1935,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A2364.MP4",
-    "sort_order": 148,
+    "sort_order": 149,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 149,
+    "id": 150,
     "title": "Silverware Surface Buffing & Polish #2470",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A2470.MP4.",
     "video_url": "/public/videos/6Z1A2470.MP4",
@@ -1934,12 +1948,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A2470.MP4",
-    "sort_order": 149,
+    "sort_order": 150,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 150,
+    "id": 151,
     "title": "Hand Embossing & Artisan Detailing #2508",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A2508.MP4.",
     "video_url": "/public/videos/6Z1A2508.MP4",
@@ -1947,12 +1961,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A2508.MP4",
-    "sort_order": 150,
+    "sort_order": 151,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 151,
+    "id": 152,
     "title": "Induction Furnace Silver Melting #2554",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A2554.MP4.",
     "video_url": "/public/videos/6Z1A2554.MP4",
@@ -1960,12 +1974,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A2554.MP4",
-    "sort_order": 151,
+    "sort_order": 152,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 152,
+    "id": 153,
     "title": "Silver Kalash & Diya Polishing #2646",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A2646.MP4.",
     "video_url": "/public/videos/6Z1A2646.MP4",
@@ -1973,12 +1987,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A2646.MP4",
-    "sort_order": 152,
+    "sort_order": 153,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 153,
+    "id": 154,
     "title": "High Precision Laser Engraving #2705",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A2705.MP4.",
     "video_url": "/public/videos/6Z1A2705.MP4",
@@ -1986,12 +2000,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A2705.MP4",
-    "sort_order": 153,
+    "sort_order": 154,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 154,
+    "id": 155,
     "title": "Sterling Silver Sheet Rolling #2752",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A2752.MP4.",
     "video_url": "/public/videos/6Z1A2752.MP4",
@@ -1999,12 +2013,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A2752.MP4",
-    "sort_order": 154,
+    "sort_order": 155,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 155,
+    "id": 156,
     "title": "Anti-Tarnish Molecular Dipping #1822",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A1822.MP4.",
     "video_url": "/public/videos/6Z1A1822.MP4",
@@ -2012,12 +2026,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A1822.MP4",
-    "sort_order": 155,
+    "sort_order": 156,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 156,
+    "id": 157,
     "title": "Master Craftsman Finishing #1841",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A1841.MP4.",
     "video_url": "/public/videos/6Z1A1841.MP4",
@@ -2025,12 +2039,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A1841.MP4",
-    "sort_order": 156,
+    "sort_order": 157,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 157,
+    "id": 158,
     "title": "Temple Idol Nakshi Sculpture #1872",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A1872.MP4.",
     "video_url": "/public/videos/6Z1A1872.MP4",
@@ -2038,12 +2052,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A1872.MP4",
-    "sort_order": 157,
+    "sort_order": 158,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 158,
+    "id": 159,
     "title": "Pure 999 Silver Coin Minting #1897",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A1897.MP4.",
     "video_url": "/public/videos/6Z1A1897.MP4",
@@ -2051,12 +2065,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A1897.MP4",
-    "sort_order": 158,
+    "sort_order": 159,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 159,
+    "id": 160,
     "title": "Silverware Surface Buffing & Polish #1914",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A1914.MP4.",
     "video_url": "/public/videos/6Z1A1914.MP4",
@@ -2064,12 +2078,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A1914.MP4",
-    "sort_order": 159,
+    "sort_order": 160,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 160,
+    "id": 161,
     "title": "Hand Embossing & Artisan Detailing #1959",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A1959.MP4.",
     "video_url": "/public/videos/6Z1A1959.MP4",
@@ -2077,12 +2091,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A1959.MP4",
-    "sort_order": 160,
+    "sort_order": 161,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 161,
+    "id": 162,
     "title": "Induction Furnace Silver Melting #2041",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A2041.MP4.",
     "video_url": "/public/videos/6Z1A2041.MP4",
@@ -2090,12 +2104,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A2041.MP4",
-    "sort_order": 161,
+    "sort_order": 162,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 162,
+    "id": 163,
     "title": "Silver Kalash & Diya Polishing #2080",
     "description": "Unscripted footage of silver kalash & diya polishing at our Tenali silver manufacturing facility. File code: 6Z1A2080.MP4.",
     "video_url": "/public/videos/6Z1A2080.MP4",
@@ -2103,12 +2117,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "manufacturing",
     "filename": "6Z1A2080.MP4",
-    "sort_order": 162,
+    "sort_order": 163,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 163,
+    "id": 164,
     "title": "High Precision Laser Engraving #2152",
     "description": "Unscripted footage of high precision laser engraving at our Tenali silver manufacturing facility. File code: 6Z1A2152.MP4.",
     "video_url": "/public/videos/6Z1A2152.MP4",
@@ -2116,12 +2130,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "story",
     "filename": "6Z1A2152.MP4",
-    "sort_order": 163,
+    "sort_order": 164,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 164,
+    "id": 165,
     "title": "Sterling Silver Sheet Rolling #2214",
     "description": "Unscripted footage of sterling silver sheet rolling at our Tenali silver manufacturing facility. File code: 6Z1A2214.MP4.",
     "video_url": "/public/videos/6Z1A2214.MP4",
@@ -2129,12 +2143,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "manufacturing",
     "filename": "6Z1A2214.MP4",
-    "sort_order": 164,
+    "sort_order": 165,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 165,
+    "id": 166,
     "title": "Anti-Tarnish Molecular Dipping #2365",
     "description": "Unscripted footage of anti-tarnish molecular dipping at our Tenali silver manufacturing facility. File code: 6Z1A2365.MP4.",
     "video_url": "/public/videos/6Z1A2365.MP4",
@@ -2142,12 +2156,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "story",
     "filename": "6Z1A2365.MP4",
-    "sort_order": 165,
+    "sort_order": 166,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 166,
+    "id": 167,
     "title": "Master Craftsman Finishing #2473",
     "description": "Unscripted footage of master craftsman finishing at our Tenali silver manufacturing facility. File code: 6Z1A2473.MP4.",
     "video_url": "/public/videos/6Z1A2473.MP4",
@@ -2155,12 +2169,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "manufacturing",
     "filename": "6Z1A2473.MP4",
-    "sort_order": 166,
+    "sort_order": 167,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 167,
+    "id": 168,
     "title": "Temple Idol Nakshi Sculpture #2511",
     "description": "Unscripted footage of temple idol nakshi sculpture at our Tenali silver manufacturing facility. File code: 6Z1A2511.MP4.",
     "video_url": "/public/videos/6Z1A2511.MP4",
@@ -2168,12 +2182,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Silver Idols & Mandir Items",
     "section": "story",
     "filename": "6Z1A2511.MP4",
-    "sort_order": 167,
+    "sort_order": 168,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 168,
+    "id": 169,
     "title": "Pure 999 Silver Coin Minting #2555",
     "description": "Unscripted footage of pure 999 silver coin minting at our Tenali silver manufacturing facility. File code: 6Z1A2555.MP4.",
     "video_url": "/public/videos/6Z1A2555.MP4",
@@ -2181,12 +2195,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Dining & Pooja Tableware",
     "section": "manufacturing",
     "filename": "6Z1A2555.MP4",
-    "sort_order": 168,
+    "sort_order": 169,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 169,
+    "id": 170,
     "title": "Silverware Surface Buffing & Polish #2659",
     "description": "Unscripted footage of silverware surface buffing & polish at our Tenali silver manufacturing facility. File code: 6Z1A2659.MP4.",
     "video_url": "/public/videos/6Z1A2659.MP4",
@@ -2194,12 +2208,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Spectrometer & Quality Testing",
     "section": "story",
     "filename": "6Z1A2659.MP4",
-    "sort_order": 169,
+    "sort_order": 170,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 170,
+    "id": 171,
     "title": "Hand Embossing & Artisan Detailing #2708",
     "description": "Unscripted footage of hand embossing & artisan detailing at our Tenali silver manufacturing facility. File code: 6Z1A2708.MP4.",
     "video_url": "/public/videos/6Z1A2708.MP4",
@@ -2207,12 +2221,12 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Artisan Craftsmanship",
     "section": "manufacturing",
     "filename": "6Z1A2708.MP4",
-    "sort_order": 170,
+    "sort_order": 171,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   },
   {
-    "id": 171,
+    "id": 172,
     "title": "Induction Furnace Silver Melting #2756",
     "description": "Unscripted footage of induction furnace silver melting at our Tenali silver manufacturing facility. File code: 6Z1A2756.MP4.",
     "video_url": "/public/videos/6Z1A2756.MP4",
@@ -2220,10 +2234,8 @@ export const initialVideosData: CompanyVideo[] = [
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "6Z1A2756.MP4",
-    "sort_order": 171,
+    "sort_order": 172,
     "is_active": true,
     "created_at": "2026-08-24T00:00:00Z"
   }
 ];
-
-export default initialVideosData;
