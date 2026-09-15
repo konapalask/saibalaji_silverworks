@@ -141,7 +141,7 @@ export const RetailShop: React.FC = () => {
           Fine Silver Collection
         </h1>
         <p className="text-xs sm:text-sm text-[#666666] font-sans">
-          Browse our certified NABL-hallmarked 999 pure and 925 sterling silver collections.
+          Browse our certified BIS-hallmarked 999 pure and 925 sterling silver collections.
         </p>
       </div>
 
