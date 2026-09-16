@@ -91,25 +91,36 @@ export const About: React.FC = () => {
       {/* Main Video Documentary Card */}
       <div
         onClick={() => openVideo(storyVid)}
-        className="relative rounded-3xl overflow-hidden bg-black border border-[#E5E0D8] product-shadow group cursor-pointer min-h-[440px] sm:min-h-[500px] aspect-16/10 sm:aspect-21/10 flex items-center justify-center select-none"
+        className="relative rounded-3xl overflow-hidden bg-black border border-[#E5E0D8] product-shadow group cursor-pointer aspect-[9/13] sm:aspect-21/10 sm:min-h-[500px] flex items-center justify-center select-none"
       >
-        {/* Ambient Blurred Video Motion Background */}
+        {/* Mobile View: Full-bleed Portrait Video that fills the entire card */}
         <video
           src={storyVid.video_url}
           preload="auto"
-          className="absolute inset-0 w-full h-full object-cover opacity-35 blur-2xl scale-110 pointer-events-none"
+          className="sm:hidden absolute inset-0 w-full h-full object-cover pointer-events-none"
           muted
           loop
           playsInline
           autoPlay
         />
 
-        {/* Crisp Central Portrait Video in Native Proportion */}
-        <div className="relative z-10 w-full h-full py-4 sm:py-6 flex items-center justify-center pointer-events-none">
+        {/* Desktop View: Ambient Blurred Motion Background */}
+        <video
+          src={storyVid.video_url}
+          preload="auto"
+          className="hidden sm:block absolute inset-0 w-full h-full object-cover opacity-35 blur-2xl scale-110 pointer-events-none"
+          muted
+          loop
+          playsInline
+          autoPlay
+        />
+
+        {/* Desktop View: Crisp Central Portrait Video */}
+        <div className="hidden sm:flex relative z-10 w-full h-full py-6 items-center justify-center pointer-events-none">
           <video
             src={storyVid.video_url}
             preload="auto"
-            className="h-[360px] sm:h-[430px] max-h-full w-auto aspect-9/16 object-cover rounded-2xl border border-white/20 shadow-2xl group-hover:scale-103 transition-transform duration-700"
+            className="h-[430px] max-h-full w-auto aspect-9/16 object-cover rounded-2xl border border-white/20 shadow-2xl group-hover:scale-103 transition-transform duration-700"
             muted
             loop
             playsInline
@@ -117,19 +128,40 @@ export const About: React.FC = () => {
           />
         </div>
 
-        {/* Gradient Overlay for Cinematic Legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/50 flex flex-col justify-between p-6 sm:p-10 text-white z-20 pointer-events-none">
-          <span className="bg-[#B9A77A] text-white text-[10px] font-bold uppercase tracking-widest px-3.5 py-1.5 rounded-full w-fit shadow-md">
-            COMPANY DOCUMENTARY VIDEO
-          </span>
+        {/* Central Play Button on Mobile */}
+        <div className="sm:hidden absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+          <div className="w-16 h-16 rounded-full bg-white/95 text-[#1A1918] shadow-2xl backdrop-blur-md flex items-center justify-center group-hover:scale-110 transition-all border border-white/40">
+            <Play className="w-7 h-7 fill-current ml-1 text-[#1A1918]" />
+          </div>
+        </div>
 
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 pointer-events-auto">
+        {/* Gradient Overlay for Text & Badges */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/60 flex flex-col justify-between p-5 sm:p-10 text-white z-20 pointer-events-none">
+          <div className="flex items-center justify-between pointer-events-auto">
+            <span className="bg-[#B9A77A] text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-md">
+              COMPANY DOCUMENTARY VIDEO
+            </span>
+            <span className="bg-black/60 backdrop-blur-md text-white/90 text-[10px] font-medium px-2.5 py-1 rounded-full border border-white/20">
+              Tenali Atelier
+            </span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 pointer-events-auto">
             <div>
-              <h3 className="font-serif text-2xl sm:text-4xl font-bold text-white drop-shadow-md">{storyVid.title}</h3>
-              <p className="text-xs sm:text-sm text-gray-200 max-w-xl mt-1.5 drop-shadow">{storyVid.description}</p>
+              <h3 className="font-serif text-lg sm:text-3xl font-bold text-white drop-shadow-md leading-tight">
+                {storyVid.title}
+              </h3>
+              <p className="text-xs text-gray-200 line-clamp-2 sm:line-clamp-none max-w-xl mt-1 drop-shadow font-sans">
+                {storyVid.description}
+              </p>
+              <div className="sm:hidden mt-2 flex items-center gap-1.5 text-[11px] text-[#B9A77A] font-semibold tracking-wide">
+                <span>Tap to play with audio</span>
+                <span className="text-xs">→</span>
+              </div>
             </div>
 
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white text-[#202020] group-hover:bg-[#B9A77A] group-hover:text-white flex items-center justify-center shrink-0 shadow-2xl group-hover:scale-110 transition-all">
+            {/* Desktop Play Button */}
+            <div className="hidden sm:flex w-16 h-16 rounded-full bg-white text-[#202020] group-hover:bg-[#B9A77A] group-hover:text-white items-center justify-center shrink-0 shadow-2xl group-hover:scale-110 transition-all">
               <Play className="w-6 h-6 fill-current ml-1" />
             </div>
           </div>

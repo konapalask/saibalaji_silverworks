@@ -216,11 +216,15 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     onClose();
   };
 
+  const isPortraitVideo = videoUrl.includes('.mov') || videoUrl.includes('copy_42A5BAB8');
+
   const containerClasses = [
     "video-player",
     "mobile-video-fullscreen",
     isForcedLandscape ? "mobile-landscape-forced" : "",
-    "relative bg-black rounded-3xl overflow-hidden w-full max-w-5xl aspect-video shadow-2xl border border-[#C5A059]/40 flex flex-col justify-between"
+    isPortraitVideo 
+      ? "relative bg-black rounded-3xl overflow-hidden w-full max-w-sm sm:max-w-4xl h-[78vh] sm:h-auto sm:aspect-video shadow-2xl border border-[#C5A059]/40 flex flex-col justify-between"
+      : "relative bg-black rounded-3xl overflow-hidden w-full max-w-5xl aspect-video shadow-2xl border border-[#C5A059]/40 flex flex-col justify-between"
   ].filter(Boolean).join(" ");
 
   const videoClasses = "w-full h-full object-contain cursor-pointer relative z-10";
