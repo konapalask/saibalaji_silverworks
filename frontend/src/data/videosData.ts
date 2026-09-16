@@ -6,7 +6,7 @@ export const initialVideosData: CompanyVideo[] = [
     "title": "Artisanal Silver Crafting & Manufacturing Documentary",
     "description": "Unscripted cinematic documentary of high-precision casting, master silversmith hand-finishing, and BIS hallmarking at our Tenali facility.",
     "video_url": "/public/videos/copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.mov",
-    "thumbnail_url": "/public/videos/copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.mov",
+    "thumbnail_url": "/public/video_thumbnails/copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.webp",
     "category": "Melting & Casting Unit",
     "section": "story",
     "filename": "copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.mov",
