@@ -556,10 +556,13 @@ export const Home: React.FC = () => {
       </section>
 
       {/* Video Modal */}
-      {activeVideo && (
+      {isVideoModalOpen && activeVideo && (
         <VideoPlayerModal
           isOpen={isVideoModalOpen}
-          onClose={() => setIsVideoModalOpen(false)}
+          onClose={() => {
+            setIsVideoModalOpen(false);
+            setActiveVideo(null);
+          }}
           videoUrl={activeVideo.video_url}
           title={activeVideo.title}
           description={activeVideo.description}

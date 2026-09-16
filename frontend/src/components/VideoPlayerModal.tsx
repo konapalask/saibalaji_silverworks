@@ -18,13 +18,16 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isClosingRef = useRef(false);
 
+  // All hooks MUST be declared at the top unconditionally
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isForcedLandscape, setIsForcedLandscape] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(false);
 
   const isMobileDevice = () => {
     if (typeof window === 'undefined') return false;
@@ -33,16 +36,71 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     return isMobileUA || isSmallTouch;
   };
 
+  // Play / Autoplay handling
   useEffect(() => {
     if (isOpen && videoRef.current) {
       videoRef.current.muted = true;
       setIsMuted(true);
-      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+      videoRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
     }
   }, [isOpen, videoUrl]);
 
+  // Lock body scroll when modal is active
   useEffect(() => {
-    const handleFullscreenAndOrientation = () => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
+
+  // ESC key and Browser / Android Back Button navigation support
+  useEffect(() => {
+    if (!isOpen) return;
+
+    isClosingRef.current = false;
+
+    // Push history state so browser / Android Back button closes modal cleanly
+    try {
+      window.history.pushState({ videoModalOpen: true }, '');
+    } catch (e) {}
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    const handlePopState = () => {
+      isClosingRef.current = true;
+      handleClose();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('popstate', handlePopState);
+
+      // Revert dummy history state if closed via button / backdrop
+      if (!isClosingRef.current && window.history.state?.videoModalOpen) {
+        try {
+          window.history.back();
+        } catch (e) {}
+      }
+    };
+  }, [isOpen]);
+
+  // Fullscreen change events and orientation cleanup
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleFullscreenChange = () => {
       const fsElement =
         document.fullscreenElement ||
         (document as any).webkitFullscreenElement ||
@@ -55,49 +113,43 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
           (fsElement === containerRef.current || containerRef.current.contains(fsElement))
       );
 
-      const activeFs = isFullscreen || isFs;
-      setIsFullscreen(activeFs);
+      setIsFullscreen(isFs);
 
-      if (activeFs && isMobileDevice()) {
-        if (window.innerHeight > window.innerWidth) {
-          setIsForcedLandscape(true);
-        } else {
-          setIsForcedLandscape(false);
-        }
-      } else {
+      if (!isFs) {
         setIsForcedLandscape(false);
-        if (!activeFs && isMobileDevice()) {
-          if (screen.orientation && typeof screen.orientation.unlock === 'function') {
-            try {
-              screen.orientation.unlock();
-            } catch (e) {
-              // Ignore unlock error
-            }
-          }
+        if (isMobileDevice() && screen.orientation && typeof screen.orientation.unlock === 'function') {
+          try {
+            screen.orientation.unlock();
+          } catch (e) {}
         }
       }
     };
 
-    handleFullscreenAndOrientation();
-
-    document.addEventListener('fullscreenchange', handleFullscreenAndOrientation);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenAndOrientation);
-    document.addEventListener('mozfullscreenchange', handleFullscreenAndOrientation);
-    document.addEventListener('MSFullscreenChange', handleFullscreenAndOrientation);
-    window.addEventListener('resize', handleFullscreenAndOrientation);
-    window.addEventListener('orientationchange', handleFullscreenAndOrientation);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
     return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenAndOrientation);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenAndOrientation);
-      document.removeEventListener('mozfullscreenchange', handleFullscreenAndOrientation);
-      document.removeEventListener('MSFullscreenChange', handleFullscreenAndOrientation);
-      window.removeEventListener('resize', handleFullscreenAndOrientation);
-      window.removeEventListener('orientationchange', handleFullscreenAndOrientation);
-    };
-  }, [isFullscreen]);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
 
-  if (!isOpen) return null;
+      // Clean up fullscreen and orientation upon unmount
+      if (document.fullscreenElement) {
+        document.exitFullscreen?.().catch(() => {});
+      }
+      if (screen?.orientation && typeof screen.orientation.unlock === 'function') {
+        try {
+          screen.orientation.unlock();
+        } catch (e) {}
+      }
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
+    };
+  }, [isOpen]);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -211,10 +263,16 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
         } catch (e) {}
       }
     }
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
     setIsFullscreen(false);
     setIsForcedLandscape(false);
     onClose();
   };
+
+  // Guard ONLY at the very end after all hooks have unconditionally run
+  if (!isOpen) return null;
 
   const isPortraitVideo = videoUrl.includes('.mov') || videoUrl.includes('copy_42A5BAB8');
 
@@ -233,13 +291,15 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     ? videoUrl.replace('/public/videos/', '/public/video_thumbnails/').replace(/\.(mp4|MP4|mov|MOV)$/i, '.webp')
     : undefined;
 
-  const [isBuffering, setIsBuffering] = useState(false);
-
   return (
-    <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fadeIn">
+    <div 
+      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fadeIn"
+      onClick={handleClose}
+    >
       <div 
         ref={containerRef}
         className={containerClasses}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Ambient Blurred Backdrop for Portrait & Non-16:9 Videos */}
         <video 
@@ -262,6 +322,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
 
           <button 
             onClick={handleClose}
+            aria-label="Close video player"
             className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#C5A059] hover:text-[#1A1918] text-white flex items-center justify-center transition-all border border-white/20 cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -309,6 +370,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
             <div className="flex items-center gap-4">
               <button 
                 onClick={togglePlay}
+                aria-label={isPlaying ? "Pause video" : "Play video"}
                 className="w-10 h-10 rounded-full bg-[#C5A059] text-[#1A1918] flex items-center justify-center hover:scale-105 transition-transform cursor-pointer"
               >
                 {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
@@ -316,6 +378,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
 
               <button 
                 onClick={toggleMute}
+                aria-label={isMuted ? "Unmute audio" : "Mute audio"}
                 className="text-white hover:text-[#C5A059] transition-colors cursor-pointer"
               >
                 {isMuted ? <VolumeX className="w-5 h-5 text-red-400" /> : <Volume2 className="w-5 h-5" />}
@@ -339,6 +402,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
 
               <button 
                 onClick={toggleFullscreen}
+                aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
                 className="text-white hover:text-[#C5A059] transition-colors p-1 cursor-pointer"
               >
                 {(isFullscreen || isForcedLandscape) ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
