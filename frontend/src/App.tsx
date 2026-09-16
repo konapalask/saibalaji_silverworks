@@ -11,6 +11,7 @@ import { Footer } from './components/Footer';
 import { CartDrawer } from './components/CartDrawer';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { ScrollToTop } from './components/ScrollToTop';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 import { Home } from './pages/Home';
 import { About } from './pages/About';
@@ -101,69 +102,69 @@ export const App: React.FC = () => {
               <WholesaleProvider>
               
               <div className="min-h-screen flex flex-col justify-between bg-[#F8F6F1] text-[#202020]">
-                
-                <Routes>
-                  {/* Admin Routes */}
-                  <Route path="/admin" element={<AdminLayout />}>
-                    <Route index element={<AdminDashboard />} />
-                    <Route path="products" element={<AdminProducts />} />
-                    <Route path="wholesale" element={<AdminWholesale />} />
-                    <Route path="orders" element={<AdminOrders />} />
-                    <Route path="users" element={<AdminUsers />} />
-                    <Route path="cms" element={<AdminCMS />} />
-                  </Route>
+                <ErrorBoundary>
+                  <Routes>
+                    {/* Admin Routes */}
+                    <Route path="/admin" element={<AdminLayout />}>
+                      <Route index element={<AdminDashboard />} />
+                      <Route path="products" element={<AdminProducts />} />
+                      <Route path="wholesale" element={<AdminWholesale />} />
+                      <Route path="orders" element={<AdminOrders />} />
+                      <Route path="users" element={<AdminUsers />} />
+                      <Route path="cms" element={<AdminCMS />} />
+                    </Route>
 
-                  {/* Auth Pages */}
-                  <Route path="/account/login" element={<StoreShell><LoginPage /></StoreShell>} />
-                  <Route path="/account/register" element={<StoreShell><RegisterPage /></StoreShell>} />
-                  <Route path="/mobile-auth" element={<MobileAuthBridge />} />
+                    {/* Auth Pages */}
+                    <Route path="/account/login" element={<StoreShell><LoginPage /></StoreShell>} />
+                    <Route path="/account/register" element={<StoreShell><RegisterPage /></StoreShell>} />
+                    <Route path="/mobile-auth" element={<MobileAuthBridge />} />
 
-                  {/* Public Browsing Routes (NO LOGIN REQUIRED) */}
-                  <Route path="/" element={<StoreShell><Home /></StoreShell>} />
-                  <Route path="/home" element={<StoreShell><Home /></StoreShell>} />
-                  <Route path="/about" element={<StoreShell><About /></StoreShell>} />
-                  <Route path="/privacy_policy" element={<StoreShell><PrivacyPolicy /></StoreShell>} />
-                  <Route path="/privacy-policy" element={<Navigate to="/privacy_policy" replace />} />
-                  <Route path="/privacy" element={<Navigate to="/privacy_policy" replace />} />
-                  <Route path="/terms-and-conditions" element={<StoreShell><TermsAndConditions /></StoreShell>} />
-                  <Route path="/terms" element={<Navigate to="/terms-and-conditions" replace />} />
-                  <Route path="/contact" element={<StoreShell><Contact /></StoreShell>} />
+                    {/* Public Browsing Routes (NO LOGIN REQUIRED) */}
+                    <Route path="/" element={<StoreShell><Home /></StoreShell>} />
+                    <Route path="/home" element={<StoreShell><Home /></StoreShell>} />
+                    <Route path="/about" element={<StoreShell><About /></StoreShell>} />
+                    <Route path="/privacy_policy" element={<StoreShell><PrivacyPolicy /></StoreShell>} />
+                    <Route path="/privacy-policy" element={<Navigate to="/privacy_policy" replace />} />
+                    <Route path="/privacy" element={<Navigate to="/privacy_policy" replace />} />
+                    <Route path="/terms-and-conditions" element={<StoreShell><TermsAndConditions /></StoreShell>} />
+                    <Route path="/terms" element={<Navigate to="/terms-and-conditions" replace />} />
+                    <Route path="/contact" element={<StoreShell><Contact /></StoreShell>} />
 
-                  {/* Data-Driven Category Redirects (Bypasses CategoryPage -> Goes to Retail Storefront) */}
-                  <Route path="/category/:categorySlug" element={<CategoryRedirect />} />
-                  <Route path="/category/:categorySlug/:subcategorySlug" element={<CategoryRedirect />} />
+                    {/* Data-Driven Category Redirects (Bypasses CategoryPage -> Goes to Retail Storefront) */}
+                    <Route path="/category/:categorySlug" element={<CategoryRedirect />} />
+                    <Route path="/category/:categorySlug/:subcategorySlug" element={<CategoryRedirect />} />
 
-                  {/* Category Aliases */}
-                  <Route path="/silver-pooja-articles" element={<Navigate to="/shop/retail?category=silver-pooja-articles" replace />} />
-                  <Route path="/silver-pooja-articles/:subcategorySlug" element={<Navigate to="/shop/retail?category=silver-pooja-articles" replace />} />
-                  <Route path="/silver-god-temple-items" element={<Navigate to="/shop/retail?category=silver-god-temple-items" replace />} />
-                  <Route path="/silver-dining-tableware" element={<Navigate to="/shop/retail?category=silver-dining-tableware" replace />} />
-                  <Route path="/silver-baby-kids-gifts" element={<Navigate to="/shop/retail?category=silver-baby-kids-gifts" replace />} />
-                  <Route path="/silver-wedding-return-gifts" element={<Navigate to="/shop/retail?category=silver-wedding-return-gifts" replace />} />
-                  <Route path="/silver-jewellery" element={<Navigate to="/shop/retail?category=silver-jewellery" replace />} />
-                  <Route path="/silver-coins-bars" element={<Navigate to="/shop/retail?category=silver-coins-bars" replace />} />
-                  <Route path="/silver-home-decor" element={<Navigate to="/shop/retail?category=silver-home-decor" replace />} />
-                  <Route path="/silver-corporate-premium-gifts" element={<Navigate to="/shop/retail?category=silver-corporate-premium-gifts" replace />} />
-                  <Route path="/customized-silver-products" element={<Navigate to="/shop/retail?category=customized-silver-products" replace />} />
+                    {/* Category Aliases */}
+                    <Route path="/silver-pooja-articles" element={<Navigate to="/shop/retail?category=silver-pooja-articles" replace />} />
+                    <Route path="/silver-pooja-articles/:subcategorySlug" element={<Navigate to="/shop/retail?category=silver-pooja-articles" replace />} />
+                    <Route path="/silver-god-temple-items" element={<Navigate to="/shop/retail?category=silver-god-temple-items" replace />} />
+                    <Route path="/silver-dining-tableware" element={<Navigate to="/shop/retail?category=silver-dining-tableware" replace />} />
+                    <Route path="/silver-baby-kids-gifts" element={<Navigate to="/shop/retail?category=silver-baby-kids-gifts" replace />} />
+                    <Route path="/silver-wedding-return-gifts" element={<Navigate to="/shop/retail?category=silver-wedding-return-gifts" replace />} />
+                    <Route path="/silver-jewellery" element={<Navigate to="/shop/retail?category=silver-jewellery" replace />} />
+                    <Route path="/silver-coins-bars" element={<Navigate to="/shop/retail?category=silver-coins-bars" replace />} />
+                    <Route path="/silver-home-decor" element={<Navigate to="/shop/retail?category=silver-home-decor" replace />} />
+                    <Route path="/silver-corporate-premium-gifts" element={<Navigate to="/shop/retail?category=silver-corporate-premium-gifts" replace />} />
+                    <Route path="/customized-silver-products" element={<Navigate to="/shop/retail?category=customized-silver-products" replace />} />
 
-                  {/* Public Store Pages (PUBLIC) */}
-                  <Route path="/shop/retail" element={<StoreShell><RetailShop /></StoreShell>} />
-                  <Route path="/shop/retail/:slug" element={<StoreShell><ProductDetail /></StoreShell>} />
-                  <Route path="/shop/wholesale" element={<StoreShell><WholesaleCatalogue /></StoreShell>} />
-                  <Route path="/shop/wholesale/:slug" element={<StoreShell><ProductDetail isWholesalePage={true} /></StoreShell>} />
+                    {/* Public Store Pages (PUBLIC) */}
+                    <Route path="/shop/retail" element={<StoreShell><RetailShop /></StoreShell>} />
+                    <Route path="/shop/retail/:slug" element={<StoreShell><ProductDetail /></StoreShell>} />
+                    <Route path="/shop/wholesale" element={<StoreShell><WholesaleCatalogue /></StoreShell>} />
+                    <Route path="/shop/wholesale/:slug" element={<StoreShell><ProductDetail isWholesalePage={true} /></StoreShell>} />
 
-                  {/* Mandatory Purchasing & Checkout Routes (REQUIRES LOGIN) */}
-                  <Route path="/checkout" element={<ProtectedRoute><StoreShell><CheckoutPage /></StoreShell></ProtectedRoute>} />
-                  <Route path="/wholesale/request" element={<ProtectedRoute><StoreShell><WholesaleRequestPage /></StoreShell></ProtectedRoute>} />
-                  <Route path="/order-success" element={<ProtectedRoute><StoreShell><OrderSuccessPage /></StoreShell></ProtectedRoute>} />
-                  <Route path="/account" element={<ProtectedRoute><StoreShell><AccountPage /></StoreShell></ProtectedRoute>} />
-                  <Route path="/account/orders" element={<ProtectedRoute><StoreShell><AccountPage /></StoreShell></ProtectedRoute>} />
-                  <Route path="/account/wishlist" element={<ProtectedRoute><StoreShell><AccountPage /></StoreShell></ProtectedRoute>} />
+                    {/* Mandatory Purchasing & Checkout Routes (REQUIRES LOGIN) */}
+                    <Route path="/checkout" element={<ProtectedRoute><StoreShell><CheckoutPage /></StoreShell></ProtectedRoute>} />
+                    <Route path="/wholesale/request" element={<ProtectedRoute><StoreShell><WholesaleRequestPage /></StoreShell></ProtectedRoute>} />
+                    <Route path="/order-success" element={<ProtectedRoute><StoreShell><OrderSuccessPage /></StoreShell></ProtectedRoute>} />
+                    <Route path="/account" element={<ProtectedRoute><StoreShell><AccountPage /></StoreShell></ProtectedRoute>} />
+                    <Route path="/account/orders" element={<ProtectedRoute><StoreShell><AccountPage /></StoreShell></ProtectedRoute>} />
+                    <Route path="/account/wishlist" element={<ProtectedRoute><StoreShell><AccountPage /></StoreShell></ProtectedRoute>} />
 
-                  {/* Fallback */}
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-
+                    {/* Fallback */}
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </ErrorBoundary>
               </div>
               </WholesaleProvider>
             </WishlistProvider>
