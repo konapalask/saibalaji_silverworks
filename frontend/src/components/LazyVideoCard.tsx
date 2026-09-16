@@ -66,8 +66,11 @@ export const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
     };
   }, []);
 
-  const badgeCode = video.filename ? video.filename.replace(/\.(mp4|MP4)$/i, '') : '';
-  const thumbnailSrc = video.thumbnail_url || (video.filename ? `/public/video_thumbnails/${badgeCode}.webp` : '');
+  const cleanFilename = video.filename ? video.filename.replace(/\.(mp4|MP4|mov|MOV)$/i, '') : '';
+  const badgeCode = video.filename ? (video.filename.includes('copy_42A5BAB8') ? 'FEATURED' : cleanFilename) : '';
+  const thumbnailSrc = video.thumbnail_url && !video.thumbnail_url.endsWith('.mov') && !video.thumbnail_url.endsWith('.mp4')
+    ? video.thumbnail_url
+    : `/public/video_thumbnails/${cleanFilename}.webp`;
 
   if (layout === 'reel') {
     return (
@@ -78,6 +81,17 @@ export const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
         onMouseLeave={handleMouseLeave}
         className={`group relative bg-black rounded-2xl overflow-hidden ${aspectRatio} border border-[#E5E0D8] shadow-md hover:shadow-2xl cursor-pointer transition-all duration-300 flex flex-col justify-between p-4 select-none`}
       >
+        {/* Video Frame Fallback if image is loading */}
+        {video.video_url && (
+          <video
+            src={`${video.video_url}#t=1.0`}
+            preload="metadata"
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          />
+        )}
+
         {/* Poster Image */}
         {thumbnailSrc && (
           <img
@@ -148,9 +162,15 @@ export const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
     >
       {/* Thumbnail / Video Container */}
       <div className={`relative ${aspectRatio} bg-black overflow-hidden`}>
-        {/* Placeholder Shimmer when image is loading */}
-        {!isImageLoaded && (
-          <div className="absolute inset-0 bg-[#1A1918] animate-pulse" />
+        {/* Fallback Video Frame for instantaneous rendering */}
+        {video.video_url && (
+          <video
+            src={`${video.video_url}#t=1.0`}
+            preload="metadata"
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          />
         )}
 
         {/* Lightweight WebP Poster */}
@@ -161,7 +181,7 @@ export const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
             loading="lazy"
             decoding="async"
             onLoad={() => setIsImageLoaded(true)}
-            className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+            className={`absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
               isImageLoaded ? 'opacity-90' : 'opacity-0'
             }`}
           />

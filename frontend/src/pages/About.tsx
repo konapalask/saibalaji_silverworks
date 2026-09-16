@@ -47,7 +47,7 @@ export const About: React.FC = () => {
     title: "Artisanal Silver Crafting & Manufacturing Documentary",
     description: "Unscripted cinematic documentary of high-precision casting, master silversmith hand-finishing, and BIS hallmarking at our Tenali facility.",
     video_url: "/public/videos/copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.mov",
-    thumbnail_url: "/public/videos/copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.mov",
+    thumbnail_url: "/public/video_thumbnails/copy_42A5BAB8-2B8C-4514-8BDD-BEAC916B6DF0.webp",
     section: "story",
     sort_order: 1,
     is_active: true,
