@@ -15,6 +15,8 @@ export interface CountryPhoneInputProps {
   id?: string;
   name?: string;
   bgClass?: string;
+  onBlur?: () => void;
+  error?: boolean;
 }
 
 export const CountryPhoneInput: React.FC<CountryPhoneInputProps> = ({
@@ -29,7 +31,9 @@ export const CountryPhoneInput: React.FC<CountryPhoneInputProps> = ({
   defaultCountryCode = 'IN',
   id,
   name,
-  bgClass = 'bg-[#F8F6F1]'
+  bgClass = 'bg-[#F8F6F1]',
+  onBlur,
+  error = false
 }) => {
   // Find initial country from defaultCountryCode
   const initialDefault = COUNTRIES.find(c => c.code.toUpperCase() === defaultCountryCode.toUpperCase()) || DEFAULT_COUNTRY;
@@ -152,7 +156,11 @@ export const CountryPhoneInput: React.FC<CountryPhoneInputProps> = ({
   return (
     <div className={`relative w-full ${className}`} ref={dropdownRef}>
       <div 
-        className={`flex items-stretch border border-[#E5E0D8] rounded-xl transition-all duration-200 focus-within:border-[#B9A77A] focus-within:ring-2 focus-within:ring-[#B9A77A]/20 ${bgClass}`}
+        className={`flex items-stretch border rounded-xl transition-all duration-200 ${
+          error 
+            ? 'border-red-400 ring-2 ring-red-100 focus-within:border-red-500' 
+            : 'border-[#E5E0D8] focus-within:border-[#B9A77A] focus-within:ring-2 focus-within:ring-[#B9A77A]/20'
+        } ${bgClass}`}
       >
         {/* Country Selector Button */}
         <button
@@ -181,6 +189,7 @@ export const CountryPhoneInput: React.FC<CountryPhoneInputProps> = ({
           disabled={disabled}
           value={nationalNumber}
           onChange={handleInputChange}
+          onBlur={onBlur}
           placeholder={placeholder || selectedCountry.format || '98765 43210'}
           className={`w-full px-3.5 py-2.5 text-xs text-[#1A1918] placeholder-gray-400 bg-transparent focus:outline-none rounded-r-xl ${inputClassName}`}
         />
