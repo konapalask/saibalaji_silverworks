@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Eye, EyeOff, Lock, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, Lock, ArrowRight, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { AddressModal, UserAddress } from '../components/AddressModal';
 import { CountryPhoneInput } from '../components/CountryPhoneInput';
 import { getErrorMessage } from '../utils/apiError';
+import api from '../services/api';
 
 export const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +24,7 @@ export const RegisterPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; phone?: string }>({});
   const [showAddressModal, setShowAddressModal] = useState(false);
 
   const { register, loginWithGoogle } = useAuth();
@@ -30,6 +32,33 @@ export const RegisterPage: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   const targetRedirect = searchParams.get('redirect') || '/shop/retail';
+
+  // Immediate onBlur uniqueness validation
+  const checkEmailUnique = async (emailVal: string) => {
+    const clean = (emailVal || '').trim().toLowerCase();
+    if (!clean || !clean.includes('@')) return;
+    try {
+      const res = await api.post('/auth/check-unique', { email: clean });
+      if (res.data?.emailExists) {
+        setFieldErrors(prev => ({ ...prev, email: 'Email already exists.' }));
+      } else {
+        setFieldErrors(prev => ({ ...prev, email: undefined }));
+      }
+    } catch (e) {}
+  };
+
+  const checkPhoneUnique = async (phoneVal: string) => {
+    const clean = (phoneVal || '').trim();
+    if (!clean || clean.replace(/\D/g, '').length < 7) return;
+    try {
+      const res = await api.post('/auth/check-unique', { phone: clean });
+      if (res.data?.phoneExists) {
+        setFieldErrors(prev => ({ ...prev, phone: 'Phone number already exists.' }));
+      } else {
+        setFieldErrors(prev => ({ ...prev, phone: undefined }));
+      }
+    } catch (e) {}
+  };
 
   const onAuthSuccess = (loggedUser: any) => {
     if (loggedUser.role === 'ADMIN' || loggedUser.role === 'SUPER_ADMIN') {
@@ -58,11 +87,38 @@ export const RegisterPage: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // If pre-validation already flagged duplicate email or phone, prevent submission
+    if (fieldErrors.email || fieldErrors.phone) {
+      setLoading(false);
+      setError(
+        fieldErrors.email && fieldErrors.phone
+          ? 'Email already exists and phone number already exists.'
+          : fieldErrors.email || fieldErrors.phone || ''
+      );
+      return;
+    }
+
     try {
       const registeredUser = await register(formData);
       onAuthSuccess(registeredUser);
     } catch (err: any) {
-      setError(getErrorMessage(err, 'Registration failed'));
+      const respData = err?.response?.data;
+      const status = err?.response?.status;
+      const detailMsg = respData?.detail || getErrorMessage(err, 'Registration failed');
+
+      if (status === 409 || respData?.emailExists || respData?.phoneExists) {
+        const isEmailDup = respData?.emailExists || /email already exists/i.test(detailMsg);
+        const isPhoneDup = respData?.phoneExists || /phone number already exists/i.test(detailMsg);
+
+        setFieldErrors({
+          email: isEmailDup ? 'Email already exists.' : undefined,
+          phone: isPhoneDup ? 'Phone number already exists.' : undefined
+        });
+        setError(detailMsg);
+      } else {
+        setError(detailMsg);
+      }
     } finally {
       setLoading(false);
     }
@@ -152,10 +208,23 @@ export const RegisterPage: React.FC = () => {
               <CountryPhoneInput
                 required
                 value={formData.phone}
-                onChange={(fullPhone) => setFormData({ ...formData, phone: fullPhone })}
+                onChange={(fullPhone) => {
+                  setFormData({ ...formData, phone: fullPhone });
+                  if (fieldErrors.phone) {
+                    setFieldErrors(prev => ({ ...prev, phone: undefined }));
+                  }
+                }}
+                onBlur={() => checkPhoneUnique(formData.phone)}
+                error={Boolean(fieldErrors.phone)}
                 placeholder="98765 43210"
                 bgClass="bg-[#F8F6F1]"
               />
+              {fieldErrors.phone && (
+                <p className="mt-1.5 text-[11px] font-semibold text-red-600 flex items-center gap-1 animate-fadeIn">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-500" />
+                  <span>{fieldErrors.phone}</span>
+                </p>
+              )}
             </div>
           </div>
 
@@ -166,9 +235,25 @@ export const RegisterPage: React.FC = () => {
                 type="email" 
                 required
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-[#B9A77A]"
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                  if (fieldErrors.email) {
+                    setFieldErrors(prev => ({ ...prev, email: undefined }));
+                  }
+                }}
+                onBlur={() => checkEmailUnique(formData.email)}
+                className={`w-full bg-[#F8F6F1] border rounded-xl px-4 py-2.5 text-xs focus:outline-none transition-colors ${
+                  fieldErrors.email 
+                    ? 'border-red-400 ring-2 ring-red-100 focus:border-red-500' 
+                    : 'border-[#E5E0D8] focus:border-[#B9A77A]'
+                }`}
               />
+              {fieldErrors.email && (
+                <p className="mt-1.5 text-[11px] font-semibold text-red-600 flex items-center gap-1 animate-fadeIn">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-500" />
+                  <span>{fieldErrors.email}</span>
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-xs font-bold uppercase text-[#666666] mb-1">Password *</label>
