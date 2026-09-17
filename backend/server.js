@@ -110,47 +110,161 @@ const requireAdmin = (req, res, next) => {
   });
 };
 
+// --- AUTH NORMALIZATION HELPERS & CONCURRENCY LOCK ---
+
+function normalizeEmail(rawEmail) {
+  if (!rawEmail || typeof rawEmail !== 'string') return '';
+  return rawEmail.trim().toLowerCase();
+}
+
+function normalizePhone(rawPhone) {
+  if (!rawPhone || typeof rawPhone !== 'string') return '';
+  const trimmed = rawPhone.trim();
+  if (!trimmed) return '';
+
+  // Starts with '+' (explicit international format)
+  if (trimmed.startsWith('+')) {
+    const digits = trimmed.replace(/\D/g, '');
+    if (digits.startsWith('91') && digits.length === 12) {
+      return digits.slice(2);
+    }
+    if (digits.startsWith('910') && digits.length === 13) {
+      return digits.slice(3);
+    }
+    return '+' + digits;
+  }
+
+  // Without '+' prefix
+  const digits = trimmed.replace(/\D/g, '');
+  if (!digits) return '';
+
+  // India numbers with trunk prefixes or dial codes
+  if (digits.startsWith('0091') && digits.length === 14) {
+    return digits.slice(4);
+  }
+  if (digits.startsWith('91') && digits.length === 12) {
+    return digits.slice(2);
+  }
+  if (digits.startsWith('0') && digits.length === 11) {
+    return digits.slice(1);
+  }
+  if (digits.length === 10) {
+    return digits;
+  }
+
+  return digits;
+}
+
+// Mutex to strictly prevent race conditions during concurrent user registrations
+let userRegistrationMutex = Promise.resolve();
+
+function withUserRegistrationLock(fn) {
+  const next = userRegistrationMutex.then(() => fn(), () => fn());
+  userRegistrationMutex = next;
+  return next;
+}
+
 // --- AUTH API ENDPOINTS ---
 
-// Register New User
+// Check Email & Phone Availability (Immediate onBlur / Pre-validation Endpoint)
+app.post('/api/v1/auth/check-unique', (req, res) => {
+  const users = getUsers();
+  const { email, phone } = req.body || {};
+
+  const normEmail = email ? normalizeEmail(email) : '';
+  const normPhone = phone ? normalizePhone(phone) : '';
+
+  const emailExists = Boolean(normEmail && users.some(u => u.email && normalizeEmail(u.email) === normEmail));
+  const phoneExists = Boolean(normPhone && users.some(u => u.phone && normalizePhone(u.phone) === normPhone));
+
+  let detail = null;
+  if (emailExists && phoneExists) {
+    detail = 'Email already exists and phone number already exists.';
+  } else if (emailExists) {
+    detail = 'Email already exists.';
+  } else if (phoneExists) {
+    detail = 'Phone number already exists.';
+  }
+
+  res.json({
+    emailExists,
+    phoneExists,
+    detail
+  });
+});
+
+// Register New User (Strict Uniqueness Validation on Email and Phone Number)
 app.post('/api/v1/auth/register', (req, res) => {
-  users = getUsers();
-  const { email, password, full_name, phone, company_name, gstin, street_address, city, state, pincode } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ detail: 'Email and password are required' });
-  }
-  if (!full_name || !phone || !street_address || !city || !pincode) {
-    return res.status(400).json({ detail: 'Full name, phone, street address, city, and pincode are required for account creation.' });
-  }
+  withUserRegistrationLock(async () => {
+    // Re-read fresh users from disk inside concurrency lock
+    const users = getUsers();
+    const { email, password, full_name, phone, company_name, gstin, street_address, city, state, pincode } = req.body;
 
-  const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-  if (existing) {
-    return res.status(400).json({ detail: 'Email is already registered' });
-  }
+    const normEmail = normalizeEmail(email);
+    const normPhone = normalizePhone(phone);
 
-  const newUser = {
-    id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-    email: email.toLowerCase(),
-    password_hash: bcrypt.hashSync(password, 10),
-    full_name: full_name || email.split('@')[0],
-    phone: phone || '',
-    street_address: street_address || '',
-    city: city || '',
-    state: state || '',
-    pincode: pincode || '',
-    company_name: company_name || '',
-    gstin: gstin || '',
-    role: 'CUSTOMER',
-    is_active: true,
-    created_at: new Date().toISOString()
-  };
+    if (!normEmail || !password) {
+      return res.status(400).json({ detail: 'Email and password are required' });
+    }
+    if (!full_name || !normPhone || !street_address || !city || !pincode) {
+      return res.status(400).json({ detail: 'Full name, phone, street address, city, and pincode are required for account creation.' });
+    }
 
-  users.push(newUser);
-  saveJsonFile('users.json', users);
+    // Check duplicate email & phone against all existing records
+    const emailExists = users.some(u => u.email && normalizeEmail(u.email) === normEmail);
+    const phoneExists = users.some(u => u.phone && normalizePhone(u.phone) === normPhone);
 
-  const token = jwt.sign({ id: newUser.id, email: newUser.email, role: newUser.role }, JWT_SECRET, { expiresIn: '7d' });
-  const { password_hash, ...userResponse } = newUser;
-  res.status(201).json({ access_token: token, token_type: 'bearer', user: userResponse });
+    if (emailExists && phoneExists) {
+      return res.status(409).json({
+        detail: 'Email already exists and phone number already exists.',
+        emailExists: true,
+        phoneExists: true
+      });
+    }
+
+    if (emailExists) {
+      return res.status(409).json({
+        detail: 'Email already exists.',
+        emailExists: true,
+        phoneExists: false
+      });
+    }
+
+    if (phoneExists) {
+      return res.status(409).json({
+        detail: 'Phone number already exists.',
+        emailExists: false,
+        phoneExists: true
+      });
+    }
+
+    const newUser = {
+      id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+      email: normEmail,
+      password_hash: bcrypt.hashSync(password, 10),
+      full_name: full_name.trim(),
+      phone: normPhone,
+      street_address: (street_address || '').trim(),
+      city: (city || '').trim(),
+      state: (state || '').trim(),
+      pincode: (pincode || '').trim(),
+      company_name: (company_name || '').trim(),
+      gstin: (gstin || '').trim(),
+      role: 'CUSTOMER',
+      is_active: true,
+      created_at: new Date().toISOString()
+    };
+
+    users.push(newUser);
+    saveJsonFile('users.json', users);
+
+    const token = jwt.sign({ id: newUser.id, email: newUser.email, role: newUser.role }, JWT_SECRET, { expiresIn: '7d' });
+    const { password_hash, ...userResponse } = newUser;
+    return res.status(201).json({ access_token: token, token_type: 'bearer', user: userResponse });
+  }).catch((err) => {
+    console.error('Registration processing error:', err);
+    res.status(500).json({ detail: 'Internal server error during registration' });
+  });
 });
 
 // Shared Helper: Find or Create Google User (Reused across Web & Mobile clients for 100% account parity)
@@ -320,9 +434,14 @@ app.post('/api/v1/auth/mobile/exchange', handleCodeExchange);
 app.post('/api/v1/auth/login', (req, res) => {
   users = getUsers();
   const { email, username, password } = req.body;
-  const userEmail = (email || username || '').toLowerCase();
+  const userIdentifier = (email || username || '').trim();
+  const userEmail = normalizeEmail(userIdentifier);
+  const userPhone = normalizePhone(userIdentifier);
 
-  const user = users.find(u => u.email.toLowerCase() === userEmail);
+  const user = users.find(u => 
+    (u.email && normalizeEmail(u.email) === userEmail) ||
+    (userPhone && u.phone && normalizePhone(u.phone) === userPhone)
+  );
   if (!user) {
     return res.status(401).json({ detail: 'Invalid email or password' });
   }
@@ -357,7 +476,16 @@ app.put('/api/v1/auth/me', authenticateToken, (req, res) => {
   const { full_name, phone, company_name, gstin, street_address, city, state, pincode } = req.body;
 
   if (full_name !== undefined) users[userIndex].full_name = full_name;
-  if (phone !== undefined) users[userIndex].phone = phone;
+  if (phone !== undefined) {
+    const normPhone = normalizePhone(phone);
+    if (normPhone) {
+      const phoneTaken = users.some(u => u.id !== req.user.id && u.phone && normalizePhone(u.phone) === normPhone);
+      if (phoneTaken) {
+        return res.status(409).json({ detail: 'Phone number already exists.' });
+      }
+    }
+    users[userIndex].phone = normPhone;
+  }
   if (company_name !== undefined) users[userIndex].company_name = company_name;
   if (gstin !== undefined) users[userIndex].gstin = gstin;
   if (street_address !== undefined) users[userIndex].street_address = street_address;
