@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Plus, Edit, Trash2, Check, X, Sparkles, RefreshCw, 
-  Search, Filter, ChevronDown, ChevronRight, MoreVertical, 
+import {
+  Plus, Edit, Trash2, Check, X, Sparkles, RefreshCw,
+  Search, Filter, ChevronDown, ChevronRight, MoreVertical,
   Layers, Copy, AlertCircle, CheckSquare, Square, Eye, Package
 } from 'lucide-react';
 import { Product, Category, ProductVariant } from '../../types';
@@ -12,7 +12,7 @@ import { ImagePreviewModal } from '../../components/ImagePreviewModal';
 
 export const AdminProducts: React.FC = () => {
   const { silverStats, refreshSilverRate, calculateDynamicPrice } = useLiveSilver();
-  
+
   // Data States
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -25,7 +25,7 @@ export const AdminProducts: React.FC = () => {
   const [selectedPurity, setSelectedPurity] = useState<string>('ALL');
   const [selectedStockStatus, setSelectedStockStatus] = useState<string>('ALL');
   const [selectedProductStatus, setSelectedProductStatus] = useState<string>('ALL');
-  
+
   // Bulk Selection
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
@@ -130,7 +130,7 @@ export const AdminProducts: React.FC = () => {
       // Stock Status
       const inStockCount = p.stock !== undefined ? p.stock : 10;
       const isAvailable = inStockCount > 0 && p.in_stock !== false;
-      
+
       if (selectedStockStatus === 'IN_STOCK' && (!isAvailable || inStockCount <= 2)) return false;
       if (selectedStockStatus === 'LOW_STOCK' && (inStockCount > 2 || inStockCount === 0)) return false;
       if (selectedStockStatus === 'OUT_OF_STOCK' && isAvailable) return false;
@@ -314,7 +314,7 @@ export const AdminProducts: React.FC = () => {
   };
 
   const handleSelectOne = (id: number) => {
-    setSelectedProductIds(prev => 
+    setSelectedProductIds(prev =>
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
   };
@@ -382,7 +382,7 @@ export const AdminProducts: React.FC = () => {
 
   // Expand / Collapse Variant Row
   const toggleExpandVariant = (productId: number) => {
-    setExpandedProductIds(prev => 
+    setExpandedProductIds(prev =>
       prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
     );
   };
@@ -423,13 +423,16 @@ export const AdminProducts: React.FC = () => {
 
   const handleSaveVariant = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!variantForm.measurement.trim()) {
+      alert('Measurement (size) is required for variant.');
+      return;
+    }
     if (variantForm.weight_g <= 0) {
       alert('Weight must be greater than 0.');
       return;
     }
     const autoSku = variantForm.sku || `${formData.sku || 'VAR'}-${Date.now().toString().slice(-4)}`;
-    const autoMeasurement = `${variantForm.weight_g}g`;
-    const finalVar = { ...variantForm, measurement: autoMeasurement, sku: autoSku };
+    const finalVar = { ...variantForm, sku: autoSku };
 
     const updated = [...variants];
     if (editingVariantIndex !== null) {
@@ -457,7 +460,7 @@ export const AdminProducts: React.FC = () => {
 
   return (
     <div className="space-y-5 max-w-[1400px] mx-auto text-[#1A1918] font-sans pb-12">
-      
+
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#E6E1DA] shadow-2xs">
         <div>
@@ -470,7 +473,7 @@ export const AdminProducts: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={handleOpenAdd}
             className="bg-[#1A1918] hover:bg-[#C5A059] text-white px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer"
           >
@@ -512,7 +515,7 @@ export const AdminProducts: React.FC = () => {
             </span>
           </div>
 
-          <button 
+          <button
             onClick={() => refreshSilverRate()}
             className="bg-white/10 hover:bg-[#C5A059] text-white p-2.5 rounded-xl transition-colors border border-white/15 flex items-center gap-1.5 text-xs font-bold"
             title="Sync Live Silver Rate"
@@ -572,7 +575,7 @@ export const AdminProducts: React.FC = () => {
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input 
+            <input
               type="text"
               placeholder="Search products by title, SKU..."
               value={searchQuery}
@@ -647,25 +650,25 @@ export const AdminProducts: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <button 
+              <button
                 onClick={() => handleBulkStockUpdate(true)}
                 className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg font-semibold text-[11px]"
               >
                 Mark In Stock
               </button>
-              <button 
+              <button
                 onClick={() => handleBulkStockUpdate(false)}
                 className="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg font-semibold text-[11px]"
               >
                 Mark Out of Stock
               </button>
-              <button 
+              <button
                 onClick={handleBulkDelete}
                 className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-semibold text-[11px]"
               >
                 Delete Selected
               </button>
-              <button 
+              <button
                 onClick={() => setSelectedProductIds([])}
                 className="text-gray-400 hover:text-white p-1 ml-2"
                 title="Clear Selection"
@@ -721,11 +724,11 @@ export const AdminProducts: React.FC = () => {
                 paginatedProducts.map((p) => {
                   const isSelected = selectedProductIds.includes(p.id);
                   const isExpanded = expandedProductIds.includes(p.id);
-                  
+
                   const netWeight = p.net_silver_weight_g || p.weight_g || 25;
                   const grossWeight = p.gross_weight_g || netWeight;
                   const silverRate = silverStats.live_silver_rate || 250.64;
-                  
+
                   const silverValue = Math.round(netWeight * silverRate * 100) / 100;
                   const making = p.making_charges || 0;
 
@@ -759,11 +762,11 @@ export const AdminProducts: React.FC = () => {
                         {/* Product Detail (Thumbnail + Title + Category) */}
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
-                            <img 
-                              src={p.featured_image} 
-                              alt={p.title} 
+                            <img
+                              src={p.featured_image}
+                              alt={p.title}
                               onClick={() => setPreviewImageData({ url: p.featured_image, title: p.title, sku: p.sku })}
-                              className="w-14 h-14 object-cover rounded-xl bg-black border border-[#E6E1DA] shrink-0 cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-xs" 
+                              className="w-14 h-14 object-cover rounded-xl bg-black border border-[#E6E1DA] shrink-0 cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-xs"
                               title="Click to expand image"
                             />
                             <div className="min-w-0 flex-1">
@@ -809,7 +812,7 @@ export const AdminProducts: React.FC = () => {
                             ₹{calcPrice.finalPrice.toLocaleString()}
                           </div>
                           <div className="text-[9px] text-gray-400 mt-0.5">
-                            Sil ₹{(silverValue/1000).toFixed(1)}k | Mk ₹{(calcPrice.makingCharge/1000).toFixed(1)}k
+                            Sil ₹{(silverValue / 1000).toFixed(1)}k | Mk ₹{(calcPrice.makingCharge / 1000).toFixed(1)}k
                           </div>
                         </td>
 
@@ -818,11 +821,10 @@ export const AdminProducts: React.FC = () => {
                           {hasVariants ? (
                             <button
                               onClick={() => toggleExpandVariant(p.id)}
-                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors cursor-pointer border ${
-                                isExpanded 
-                                  ? 'bg-[#1A1918] text-white border-[#1A1918]' 
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors cursor-pointer border ${isExpanded
+                                  ? 'bg-[#1A1918] text-white border-[#1A1918]'
                                   : 'bg-[#FAF9F5] text-gray-800 border-[#E6E1DA] hover:border-[#C5A059]'
-                              }`}
+                                }`}
                             >
                               <Layers className="w-3 h-3 text-[#C5A059]" />
                               <span>{variantCount} Var</span>
@@ -837,13 +839,12 @@ export const AdminProducts: React.FC = () => {
                         <td className="py-3 px-3 text-center">
                           <button
                             onClick={() => handleToggleStock(p)}
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider transition-all cursor-pointer border ${
-                              isInStock
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider transition-all cursor-pointer border ${isInStock
                                 ? isLowStock
                                   ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
                                   : 'bg-green-50 text-green-800 border-green-300 hover:bg-green-100'
                                 : 'bg-red-50 text-red-800 border-red-300 hover:bg-red-100'
-                            }`}
+                              }`}
                             title="Click to quick toggle stock status"
                           >
                             <span className={`w-1.5 h-1.5 rounded-full ${isInStock ? (isLowStock ? 'bg-amber-600' : 'bg-green-600 animate-pulse') : 'bg-red-600'}`} />
@@ -856,8 +857,8 @@ export const AdminProducts: React.FC = () => {
                         {/* Actions (Edit / Options Menu) */}
                         <td className="py-3 px-4 text-right">
                           <div className="relative inline-flex items-center gap-1">
-                            <button 
-                              onClick={() => handleOpenEdit(p)} 
+                            <button
+                              onClick={() => handleOpenEdit(p)}
                               className="px-2.5 py-1 bg-white hover:bg-[#FAF9F5] text-gray-700 hover:text-[#C5A059] rounded-lg border border-[#E6E1DA] font-bold text-[11px] flex items-center gap-1 transition-colors"
                               title="Edit Product"
                             >
@@ -944,7 +945,9 @@ export const AdminProducts: React.FC = () => {
                                   <table className="w-full text-left text-[11px]">
                                     <thead className="bg-[#FAF9F5] border-b border-[#E6E1DA] font-bold text-[#1A1918]">
                                       <tr>
-                                        <th className="py-2 px-3">Weight</th>
+                                        <th className="py-2 px-3">Measurement / Size</th>
+                                        <th className="py-2 px-3">Net Weight</th>
+                                        <th className="py-2 px-3">Gross Weight</th>
                                         <th className="py-2 px-3">Making Charge</th>
                                         <th className="py-2 px-3">Calculated Price</th>
                                         <th className="py-2 px-3 text-center">Stock Status</th>
@@ -957,7 +960,9 @@ export const AdminProducts: React.FC = () => {
                                         const isVInStock = (v.stock !== undefined ? v.stock : 10) > 0 && v.is_active !== false;
                                         return (
                                           <tr key={vIdx} className="hover:bg-gray-50">
-                                            <td className="py-2 px-3 font-bold font-mono text-[#1A1918]">{v.weight_g} g</td>
+                                            <td className="py-2 px-3 font-bold text-[#1A1918]">{v.measurement}</td>
+                                            <td className="py-2 px-3 font-mono">{v.weight_g} g</td>
+                                            <td className="py-2 px-3 font-mono">{v.weight_g} g</td>
                                             <td className="py-2 px-3 font-mono">₹{v.making_charge}</td>
                                             <td className="py-2 px-3 font-bold text-green-700 font-mono">₹{vCalc.finalPrice.toLocaleString()}</td>
                                             <td className="py-2 px-3 text-center font-bold">
@@ -968,11 +973,10 @@ export const AdminProducts: React.FC = () => {
                                             <td className="py-2 px-3 text-right">
                                               <button
                                                 onClick={() => handleToggleVariantStock(p, vIdx)}
-                                                className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer shadow-2xs border ${
-                                                  isVInStock
+                                                className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer shadow-2xs border ${isVInStock
                                                     ? 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border-red-200'
                                                     : 'bg-green-50 text-green-700 hover:bg-green-600 hover:text-white border-green-200'
-                                                }`}
+                                                  }`}
                                                 title={isVInStock ? "Mark this weight variant as Out of Stock" : "Mark this weight variant as In Stock"}
                                               >
                                                 {isVInStock ? 'Mark Out of Stock' : 'Mark In Stock'}
@@ -1050,7 +1054,7 @@ export const AdminProducts: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-hidden">
           <div className="bg-[#FAF9F5] border border-[#C5A059] rounded-2xl max-w-3xl w-full shadow-2xl flex flex-col max-h-[90vh] text-xs font-sans relative overflow-hidden my-auto">
-            
+
             {/* Pinned Header */}
             <div className="bg-white px-5 py-3 border-b border-[#E6E1DA] flex items-center justify-between shrink-0">
               <div>
@@ -1059,9 +1063,9 @@ export const AdminProducts: React.FC = () => {
                   {editingProduct ? `Edit Product: ${editingProduct.title}` : 'Add New Silver Product'}
                 </h3>
               </div>
-              <button 
-                type="button" 
-                onClick={() => setIsModalOpen(false)} 
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
                 className="bg-white hover:bg-gray-100 border border-[#E6E1DA] px-3 py-1.5 rounded-xl text-gray-600 hover:text-black transition-colors flex items-center gap-1.5 shadow-2xs font-bold text-xs cursor-pointer"
                 title="Close Modal & Go Back"
               >
@@ -1096,8 +1100,8 @@ export const AdminProducts: React.FC = () => {
 
                 {/* Weights & Purity Section */}
                 <div className="bg-white p-3.5 rounded-2xl border border-[#E6E1DA] space-y-2.5">
-                  <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">WEIGHT & PURITY SPECIFICATIONS</span>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">WEIGHT & PURITY MEASUREMENTS</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Silver Purity</label>
                       <select value={formData.silver_purity} onChange={(e) => setFormData({ ...formData, silver_purity: e.target.value })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5 text-xs">
@@ -1113,6 +1117,10 @@ export const AdminProducts: React.FC = () => {
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Gross Weight (g)</label>
                       <input type="number" step="any" value={formData.gross_weight_g} onChange={(e) => setFormData({ ...formData, gross_weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5" />
+                    </div>
+                    <div>
+                      <label className="block font-semibold text-gray-700 mb-1">Dimensions / Size</label>
+                      <input type="text" placeholder="Height: 5 in, Width: 3 in" value={formData.dimensions} onChange={(e) => setFormData({ ...formData, dimensions: e.target.value })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5" />
                     </div>
                   </div>
                 </div>
@@ -1136,12 +1144,12 @@ export const AdminProducts: React.FC = () => {
                   </div>
                 </div>
 
-                {/* PRODUCT WEIGHT VARIANTS SECTION */}
+                {/* PRODUCT VARIANTS / MEASUREMENTS SECTION */}
                 <div className="bg-white p-3.5 rounded-2xl border border-[#E6E1DA] space-y-2.5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">PRODUCT WEIGHT VARIANTS</span>
-                      <p className="text-[10.5px] text-gray-500">Define multiple weight variants with custom weights & making charges.</p>
+                      <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">PRODUCT VARIANTS / MEASUREMENTS</span>
+                      <p className="text-[10.5px] text-gray-500">Define multiple size/measurement variants (e.g. 2", 3", 4", 6") with custom weights & making charges.</p>
                     </div>
                     <button
                       type="button"
@@ -1158,6 +1166,7 @@ export const AdminProducts: React.FC = () => {
                       <table className="w-full text-left text-[11px]">
                         <thead className="bg-[#FAF9F5] border-b border-[#E6E1DA] font-bold text-[#1A1918]">
                           <tr>
+                            <th className="py-2 px-3">Measurement</th>
                             <th className="py-2 px-3">Weight (g)</th>
                             <th className="py-2 px-3">Making Charge</th>
                             <th className="py-2 px-3">Calculated Price</th>
@@ -1171,16 +1180,16 @@ export const AdminProducts: React.FC = () => {
                             const isVInStock = (v.stock !== undefined ? v.stock : 10) > 0 && v.is_active !== false;
                             return (
                               <tr key={idx} className="hover:bg-[#FAF9F5]/60">
-                                <td className="py-1.5 px-3 font-bold font-mono text-[#1A1918]">{v.weight_g} g</td>
+                                <td className="py-1.5 px-3 font-bold text-[#1A1918]">{v.measurement}</td>
+                                <td className="py-1.5 px-3 font-mono">{v.weight_g} g</td>
                                 <td className="py-1.5 px-3 font-mono">₹{v.making_charge}</td>
                                 <td className="py-1.5 px-3 font-bold text-green-700 font-mono">₹{pCalc.finalPrice.toLocaleString()}</td>
                                 <td className="py-1.5 px-3 font-mono">
                                   <button
                                     type="button"
                                     onClick={() => handleToggleFormVariantStock(idx)}
-                                    className={`px-2 py-0.5 rounded-full text-[9.5px] uppercase font-bold tracking-wider cursor-pointer border ${
-                                      isVInStock ? 'bg-green-100 text-green-800 border-green-200 hover:bg-red-100 hover:text-red-800' : 'bg-red-100 text-red-800 border-red-200 hover:bg-green-100 hover:text-green-800'
-                                    }`}
+                                    className={`px-2 py-0.5 rounded-full text-[9.5px] uppercase font-bold tracking-wider cursor-pointer border ${isVInStock ? 'bg-green-100 text-green-800 border-green-200 hover:bg-red-100 hover:text-red-800' : 'bg-red-100 text-red-800 border-red-200 hover:bg-green-100 hover:text-green-800'
+                                      }`}
                                     title={isVInStock ? "Click to set Out of Stock" : "Click to set In Stock"}
                                   >
                                     {isVInStock ? `${v.stock} pcs` : 'Out of Stock'}
@@ -1202,7 +1211,7 @@ export const AdminProducts: React.FC = () => {
                     </div>
                   ) : (
                     <div className="text-center py-3 bg-[#FAF9F5] rounded-xl border border-dashed border-[#E6E1DA] text-gray-500 text-[11px]">
-                      No custom weight variants created. Click <strong>+ Add Variant</strong> to set weight options.
+                      No custom measurements/variants created. Click <strong>+ Add Variant</strong> to set size options.
                     </div>
                   )}
                 </div>
@@ -1233,10 +1242,10 @@ export const AdminProducts: React.FC = () => {
       {isVariantModalOpen && (
         <div className="fixed inset-0 z-60 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-hidden">
           <div className="bg-[#FAF9F5] border border-[#C5A059] rounded-2xl max-w-lg w-full shadow-2xl flex flex-col max-h-[90vh] text-xs font-sans relative overflow-hidden my-auto">
-            
+
             <div className="bg-white px-5 py-3 border-b border-[#E6E1DA] flex items-center justify-between shrink-0">
               <h4 className="font-serif text-lg font-bold text-[#1A1918]">
-                {editingVariantIndex !== null ? 'Edit Weight Variant' : 'Add New Weight Variant'}
+                {editingVariantIndex !== null ? 'Edit Variant / Size' : 'Add New Variant / Size'}
               </h4>
               <button onClick={() => setIsVariantModalOpen(false)} className="text-gray-500 hover:text-black p-1">
                 <X className="w-5 h-5" />
@@ -1245,6 +1254,18 @@ export const AdminProducts: React.FC = () => {
 
             <form onSubmit={handleSaveVariant} className="flex flex-col flex-1 min-h-0 overflow-hidden">
               <div className="p-4 sm:p-5 overflow-y-auto space-y-3 flex-1">
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">Measurement / Size *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 2 inch, 3 inch, 250g"
+                    value={variantForm.measurement}
+                    onChange={(e) => setVariantForm({ ...variantForm, measurement: e.target.value })}
+                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5"
+                  />
+                </div>
+
                 <div className="grid grid-cols-3 gap-3">
                   <div>
                     <label className="block font-bold text-gray-700 mb-1">Weight (g) *</label>
@@ -1293,22 +1314,20 @@ export const AdminProducts: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setVariantForm({ ...variantForm, stock: variantForm.stock > 0 ? variantForm.stock : 10, is_active: true })}
-                        className={`flex-1 py-1 px-2 rounded-lg text-[10.5px] uppercase font-bold tracking-wider transition-all ${
-                          (variantForm.stock !== undefined ? variantForm.stock : 10) > 0 && variantForm.is_active !== false
+                        className={`flex-1 py-1 px-2 rounded-lg text-[10.5px] uppercase font-bold tracking-wider transition-all ${(variantForm.stock !== undefined ? variantForm.stock : 10) > 0 && variantForm.is_active !== false
                             ? 'bg-green-700 text-white shadow-2xs'
                             : 'bg-transparent text-gray-600 hover:bg-gray-200'
-                        }`}
+                          }`}
                       >
                         In Stock
                       </button>
                       <button
                         type="button"
                         onClick={() => setVariantForm({ ...variantForm, stock: 0, is_active: false })}
-                        className={`flex-1 py-1 px-2 rounded-lg text-[10.5px] uppercase font-bold tracking-wider transition-all ${
-                          variantForm.stock <= 0 || variantForm.is_active === false
+                        className={`flex-1 py-1 px-2 rounded-lg text-[10.5px] uppercase font-bold tracking-wider transition-all ${variantForm.stock <= 0 || variantForm.is_active === false
                             ? 'bg-red-700 text-white shadow-2xs'
                             : 'bg-transparent text-gray-600 hover:bg-gray-200'
-                        }`}
+                          }`}
                       >
                         Out of Stock
                       </button>
