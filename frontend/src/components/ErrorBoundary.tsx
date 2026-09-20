@@ -54,6 +54,17 @@ export class ErrorBoundary extends Component<Props, State> {
               <p className="text-xs text-gray-600 leading-relaxed">
                 We encountered an unexpected display issue. Please reload the page to continue exploring our silver collections.
               </p>
+
+              {this.state.error && (
+                <details className="text-left bg-red-50 text-red-700 p-3 rounded-xl border border-red-200 text-xs font-mono mt-3">
+                  <summary className="cursor-pointer font-bold select-none text-[11px] text-red-800">
+                    Technical Details ({this.state.error.name})
+                  </summary>
+                  <div className="mt-2 text-[10px] whitespace-pre-wrap break-all max-h-36 overflow-y-auto">
+                    {this.state.error.message}
+                  </div>
+                </details>
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
