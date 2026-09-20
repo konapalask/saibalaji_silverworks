@@ -275,6 +275,9 @@ export const About: React.FC = () => {
         </div>
       </div>
 
+      {/* Workshop & Manufacturing Photo Gallery with <> Forward/Backward Carousel */}
+      <PhotoGalleryCarousel photos={galleryPhotos} />
+
       {/* Trust & Legal Governance Section */}
       <div className="bg-white border border-[#E6E1DA] rounded-3xl p-8 sm:p-10 shadow-xs space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E6E1DA] pb-4">
