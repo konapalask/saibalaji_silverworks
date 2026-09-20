@@ -397,11 +397,6 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                   Gross: {activeGrossWeight}g
                 </span>
               )}
-              {product.dimensions && (
-                <span className="bg-[#FAF9F5] text-[#C5A059] border border-[#C5A059]/30 text-[11px] font-medium px-2.5 py-0.5 rounded-full">
-                  {product.dimensions}
-                </span>
-              )}
             </div>
 
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#202020]">{product.title}</h1>
