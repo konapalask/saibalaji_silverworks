@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, MessageSquare, Share2, Copy, X, AlertCircle } from 'lucide-react';
+import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, MessageSquare, Share2, Copy, X, AlertCircle, ChevronLeft, ChevronRight, Sliders } from 'lucide-react';
 import { Product, ProductVariant } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -42,6 +42,71 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
   const { addToWholesaleCart } = useWholesale();
 
   const [isSubmittingWhatsApp, setIsSubmittingWhatsApp] = useState(false);
+  const variantScrollRef = useRef<HTMLDivElement>(null);
+  const [scrollProgress, setScrollProgress] = useState<number>(0);
+  const [canScrollLeft, setCanScrollLeft] = useState<boolean>(false);
+  const [canScrollRight, setCanScrollRight] = useState<boolean>(false);
+
+  // Sync scroll indicator and range slider position
+  const updateScrollIndicators = useCallback(() => {
+    const el = variantScrollRef.current;
+    if (!el) return;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 0) {
+      setScrollProgress(0);
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+    const current = el.scrollLeft;
+    setScrollProgress(Math.min(100, Math.max(0, (current / maxScroll) * 100)));
+    setCanScrollLeft(current > 5);
+    setCanScrollRight(current < maxScroll - 5);
+  }, []);
+
+  // Mouse wheel horizontal scroll on hover + scroll listener
+  useEffect(() => {
+    const el = variantScrollRef.current;
+    if (!el) return;
+    updateScrollIndicators();
+
+    el.addEventListener('scroll', updateScrollIndicators);
+    window.addEventListener('resize', updateScrollIndicators);
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY !== 0 && el.scrollWidth > el.clientWidth) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY * 1.2;
+      }
+    };
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      el.removeEventListener('scroll', updateScrollIndicators);
+      el.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('resize', updateScrollIndicators);
+    };
+  }, [availableVariants, updateScrollIndicators]);
+
+  // Handle range slider drag
+  const handleRangeSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const el = variantScrollRef.current;
+    if (!el) return;
+    const val = parseFloat(e.target.value);
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll > 0) {
+      el.scrollLeft = (val / 100) * maxScroll;
+    }
+    setScrollProgress(val);
+  };
+
+  const scrollVariants = (direction: 'left' | 'right') => {
+    const el = variantScrollRef.current;
+    if (!el) return;
+    const amount = direction === 'left' ? -220 : 220;
+    el.scrollBy({ left: amount, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -128,7 +193,12 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
     );
   }
 
-  const priceBreakdown = calculateDynamicPrice(activeVar.weight_g, activeVar.making_charge, activeVar.making_charge_type || 'fixed', product.silver_purity);
+  const activeWeight = activeVar?.weight_g || product.weight_g || 25;
+  const activeMC = activeVar?.making_charge ?? product.making_charges ?? 300;
+  const activeMCType = activeVar?.making_charge_type || product.making_charge_type || 'fixed';
+  const activePurity = product.silver_purity || '925';
+
+  const priceBreakdown = calculateDynamicPrice(activeWeight, activeMC, activeMCType, activePurity);
 
   const baseNetWeight = product.net_silver_weight_g || product.weight_g || 1;
   const activeNetWeight = activeVar?.weight_g || baseNetWeight;
@@ -405,7 +475,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                 <>
                   <div className="flex flex-wrap items-baseline gap-2.5">
                     <span className="font-sans text-3xl font-bold text-[#202020]">
-                      ₹{priceBreakdown.finalPrice.toLocaleString()}
+                      ₹{(priceBreakdown?.finalPrice || 0).toLocaleString()}
                     </span>
                     <span className="text-[10px] text-[#C5A059] font-bold bg-[#FAF9F5] px-2.5 py-0.5 rounded-full border border-[#C5A059]/30 flex items-center gap-1">
                       <Sparkles className="w-3 h-3" /> Live Silver Rate
@@ -416,15 +486,15 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                   <div className="bg-white p-2.5 rounded-xl border border-[#E5E0D8] text-[11px] grid grid-cols-3 gap-2 text-center shadow-2xs">
                     <div>
                       <span className="text-[9px] text-gray-500 uppercase tracking-wider block font-semibold">Net Weight</span>
-                      <span className="font-bold text-[#202020] font-mono">{priceBreakdown.weight} g</span>
+                      <span className="font-bold text-[#202020] font-mono">{priceBreakdown?.weight || activeNetWeight} g</span>
                     </div>
                     <div>
                       <span className="text-[9px] text-gray-500 uppercase tracking-wider block font-semibold">Live Rate</span>
-                      <span className="font-bold text-[#C5A059] font-mono">₹{priceBreakdown.silverRate}/g</span>
+                      <span className="font-bold text-[#C5A059] font-mono">₹{priceBreakdown?.silverRate || 0}/g</span>
                     </div>
                     <div>
                       <span className="text-[9px] text-gray-500 uppercase tracking-wider block font-semibold">Making Charge</span>
-                      <span className="font-bold text-[#202020] font-mono">₹{priceBreakdown.makingCharge.toLocaleString()}</span>
+                      <span className="font-bold text-[#202020] font-mono">₹{(priceBreakdown?.makingCharge || 0).toLocaleString()}</span>
                     </div>
                   </div>
                 </>
@@ -444,39 +514,82 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
               )}
             </div>
 
-            {/* WEIGHT SELECTOR BUTTONS (HORIZONTAL SCROLL ON MOBILE) */}
+            {/* WEIGHT SELECTOR SLIDER WITH LEFT/RIGHT ARROWS & INTERACTIVE RANGE TRACK */}
             {availableVariants.length > 0 && (
-              <div className="mt-3 space-y-1.5 bg-white p-3 rounded-2xl border border-[#E5E0D8]">
+              <div className="mt-3 bg-white p-3.5 rounded-2xl border border-[#E5E0D8] space-y-3 shadow-xs">
+                {/* Header with Navigation Buttons and Counter */}
                 <div className="flex justify-between items-center">
-                  <span className="text-[11px] uppercase font-bold text-[#202020] tracking-wider">
-                    Select Weight:
-                  </span>
-                  <span className="text-[11px] font-bold text-[#C5A059]">
-                    {activeVar?.weight_g}g
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] uppercase font-bold text-[#202020] tracking-wider flex items-center gap-1">
+                      <Sliders className="w-3.5 h-3.5 text-[#C5A059]" />
+                      Select Weight:
+                    </span>
+                    <span className="text-[10px] text-gray-400 font-mono">
+                      ({availableVariants.length} options)
+                    </span>
+                  </div>
+
+                  {/* Navigation Arrow Buttons */}
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => scrollVariants('left')}
+                      className={`p-1.5 rounded-full border transition-all cursor-pointer flex items-center justify-center ${
+                        canScrollLeft
+                          ? 'bg-[#1A1918] text-white border-[#1A1918] hover:bg-[#C5A059]'
+                          : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                      }`}
+                      title="Scroll Left (<)"
+                      aria-label="Previous weights"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5 stroke-[2.5]" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => scrollVariants('right')}
+                      className={`p-1.5 rounded-full border transition-all cursor-pointer flex items-center justify-center ${
+                        canScrollRight
+                          ? 'bg-[#1A1918] text-white border-[#1A1918] hover:bg-[#C5A059]'
+                          : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                      }`}
+                      title="Scroll Right (>)"
+                      aria-label="Next weights"
+                    >
+                      <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                    </button>
+                    <span className="ml-1 text-[11px] font-bold text-[#C5A059] bg-[#FAF9F5] px-2 py-0.5 rounded-full border border-[#C5A059]/30">
+                      {activeVar?.weight_g}g
+                    </span>
+                  </div>
                 </div>
 
-                <div className="flex gap-2 pt-0.5 overflow-x-auto scrollbar-none pb-1 whitespace-nowrap max-w-full">
-                  {availableVariants.map((variant) => {
+                {/* Horizontal Scroll Track with Mouse Wheel & Touch */}
+                <div
+                  ref={variantScrollRef}
+                  className="flex gap-2.5 pt-0.5 overflow-x-auto scrollbar-thin scrollbar-thumb-[#C5A059]/40 hover:scrollbar-thumb-[#C5A059] scrollbar-track-gray-100 pb-2 whitespace-nowrap max-w-full select-none"
+                >
+                  {availableVariants.map((variant, idx) => {
                     const isSelected = activeVar?.id === variant.id || activeVar?.weight_g === variant.weight_g || activeVar?.measurement === variant.measurement;
-                    const vCalc = calculateDynamicPrice(variant.weight_g, variant.making_charge, variant.making_charge_type || 'fixed', product.silver_purity);
+                    const vCalc = calculateDynamicPrice(variant?.weight_g || 0, variant?.making_charge || 0, variant?.making_charge_type || 'fixed', product.silver_purity);
                     const isVOutOfStock = product.in_stock === false || isVariantOutOfStock(variant);
+                    const vPriceDisplay = (vCalc?.finalPrice || 0).toLocaleString();
                     return (
                       <button
-                        key={variant.id || variant.measurement || variant.weight_g}
+                        key={variant.id || idx}
                         onClick={() => {
                           setSelectedVariant(variant);
                           if (variant.image) setActiveImage(variant.image);
                         }}
-                        className={`px-3 py-2 rounded-xl text-[11px] font-bold transition-all border flex flex-col items-center gap-0.5 cursor-pointer shrink-0 min-w-[95px] sm:min-w-[110px] ${isSelected
-                            ? 'bg-[#1A1918] text-white border-[#1A1918] shadow-xs'
-                            : 'bg-[#FAF8F5] text-[#202020] border-[#E5E0D8] hover:border-[#C5A059]'
-                          }`}
+                        className={`px-3.5 py-2.5 rounded-xl text-[11px] font-bold transition-all border flex flex-col items-center gap-0.5 cursor-pointer shrink-0 min-w-[95px] sm:min-w-[110px] ${
+                          isSelected
+                            ? 'bg-[#1A1918] text-white border-[#1A1918] shadow-md scale-102 ring-2 ring-[#C5A059]/50'
+                            : 'bg-[#FAF8F5] text-[#202020] border-[#E5E0D8] hover:border-[#C5A059] hover:bg-white'
+                        }`}
                       >
-                        <span className="font-serif text-xs">{variant.weight_g}g</span>
+                        <span className="font-serif text-xs font-bold">{variant.weight_g}g</span>
                         {!isWholesaleMode && (
                           <span className={`text-[9.5px] font-mono ${isSelected ? 'text-[#C5A059]' : 'text-gray-500'}`}>
-                            ₹{vCalc.finalPrice.toLocaleString()}
+                            ₹{vPriceDisplay}
                           </span>
                         )}
                         {isVOutOfStock && (
@@ -488,6 +601,27 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                     );
                   })}
                 </div>
+
+                {/* Range Slider Track Controller */}
+                {availableVariants.length > 3 && (
+                  <div className="pt-1 border-t border-gray-100 flex items-center gap-3">
+                    <span className="text-[9px] uppercase font-bold text-gray-400 shrink-0">
+                      {availableVariants[0]?.weight_g}g
+                    </span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={scrollProgress}
+                      onChange={handleRangeSliderChange}
+                      className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#C5A059] hover:accent-[#1A1918]"
+                      title="Slide left or right to browse all weights"
+                    />
+                    <span className="text-[9px] uppercase font-bold text-gray-400 shrink-0">
+                      {availableVariants[availableVariants.length - 1]?.weight_g}g
+                    </span>
+                  </div>
+                )}
               </div>
             )}
 
