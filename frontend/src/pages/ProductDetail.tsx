@@ -47,6 +47,32 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
   const [canScrollLeft, setCanScrollLeft] = useState<boolean>(false);
   const [canScrollRight, setCanScrollRight] = useState<boolean>(false);
 
+  // Compute available variants (synthesize weights if explicit variants list is empty)
+  const availableVariants: ProductVariant[] = React.useMemo(() => {
+    if (!product) return [];
+    if (Array.isArray(product.variants) && product.variants.length > 0) {
+      return product.variants.filter(v => v.is_active !== false);
+    }
+
+    const baseW = product.weight_g || 25;
+    const baseMC = product.making_charges || 300;
+    const baseMcType = product.making_charge_type || 'fixed';
+
+    return [
+      { id: 'v-2', measurement: `${baseW}g`, weight_g: baseW, making_charge: baseMC, making_charge_type: baseMcType, sku: `${product.sku}-250G`, stock: product.stock, is_active: true },
+      { id: 'v-3', measurement: `${Math.round(baseW * 1.6)}g`, weight_g: Math.round(baseW * 1.6), making_charge: Math.round(baseMC * 1.5 * 100) / 100, making_charge_type: baseMcType, sku: `${product.sku}-400G`, stock: product.stock, is_active: true },
+      { id: 'v-4', measurement: `${Math.round(baseW * 2.5)}g`, weight_g: Math.round(baseW * 2.5), making_charge: Math.round(baseMC * 2.2 * 100) / 100, making_charge_type: baseMcType, sku: `${product.sku}-625G`, stock: product.stock, is_active: true },
+      { id: 'v-6', measurement: `${Math.round(baseW * 4.0)}g`, weight_g: Math.round(baseW * 4.0), making_charge: Math.round(baseMC * 3.5 * 100) / 100, making_charge_type: baseMcType, sku: `${product.sku}-1000G`, stock: product.stock, is_active: true }
+    ];
+  }, [product]);
+
+  const activeVar = selectedVariant || getFirstInStockVariant(availableVariants) || {
+    weight_g: product?.weight_g || 25,
+    making_charge: product?.making_charges || 300,
+    making_charge_type: 'fixed',
+    measurement: product?.dimensions || 'Standard'
+  };
+
   // Sync scroll indicator and range slider position
   const updateScrollIndicators = useCallback(() => {
     const el = variantScrollRef.current;
@@ -92,13 +118,13 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
   // Handle range slider drag
   const handleRangeSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const el = variantScrollRef.current;
-    if (!el) return;
     const val = parseFloat(e.target.value);
+    setScrollProgress(val);
+    if (!el) return;
     const maxScroll = el.scrollWidth - el.clientWidth;
     if (maxScroll > 0) {
       el.scrollLeft = (val / 100) * maxScroll;
     }
-    setScrollProgress(val);
   };
 
   const scrollVariants = (direction: 'left' | 'right') => {
@@ -106,6 +132,36 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
     if (!el) return;
     const amount = direction === 'left' ? -220 : 220;
     el.scrollBy({ left: amount, behavior: 'smooth' });
+  };
+
+  // Mouse drag-to-scroll support for variant container
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+  const [isDraggingMouse, setIsDraggingMouse] = useState(false);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const el = variantScrollRef.current;
+    if (!el) return;
+    isDraggingRef.current = true;
+    setIsDraggingMouse(true);
+    startXRef.current = e.pageX - el.offsetLeft;
+    scrollLeftRef.current = el.scrollLeft;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingRef.current) return;
+    const el = variantScrollRef.current;
+    if (!el) return;
+    e.preventDefault();
+    const x = e.pageX - el.offsetLeft;
+    const walk = (x - startXRef.current) * 1.4;
+    el.scrollLeft = scrollLeftRef.current - walk;
+  };
+
+  const handleMouseUpOrLeave = () => {
+    isDraggingRef.current = false;
+    setIsDraggingMouse(false);
   };
 
   useEffect(() => {
@@ -148,27 +204,6 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
     };
     if (slug) fetchProduct();
   }, [slug]);
-
-  // Compute available variants (synthesize 2", 3", 4", 6" if explicit variants list is empty)
-  const availableVariants: ProductVariant[] = React.useMemo(() => {
-    if (!product) return [];
-    if (Array.isArray(product.variants) && product.variants.length > 0) {
-      return product.variants.filter(v => v.is_active !== false);
-    }
-
-    const baseW = product.weight_g || 25;
-    const baseMC = product.making_charges || 300;
-    const baseMcType = product.making_charge_type || 'fixed';
-
-    return [
-      { id: 'v-2', measurement: `${baseW}g`, weight_g: baseW, making_charge: baseMC, making_charge_type: baseMcType, sku: `${product.sku}-250G`, stock: product.stock, is_active: true },
-      { id: 'v-3', measurement: `${Math.round(baseW * 1.6)}g`, weight_g: Math.round(baseW * 1.6), making_charge: Math.round(baseMC * 1.5 * 100) / 100, making_charge_type: baseMcType, sku: `${product.sku}-400G`, stock: product.stock, is_active: true },
-      { id: 'v-4', measurement: `${Math.round(baseW * 2.5)}g`, weight_g: Math.round(baseW * 2.5), making_charge: Math.round(baseMC * 2.2 * 100) / 100, making_charge_type: baseMcType, sku: `${product.sku}-625G`, stock: product.stock, is_active: true },
-      { id: 'v-6', measurement: `${Math.round(baseW * 4.0)}g`, weight_g: Math.round(baseW * 4.0), making_charge: Math.round(baseMC * 3.5 * 100) / 100, making_charge_type: baseMcType, sku: `${product.sku}-1000G`, stock: product.stock, is_active: true }
-    ];
-  }, [product]);
-
-  const activeVar = selectedVariant || getFirstInStockVariant(availableVariants) || { weight_g: product?.weight_g || 25, making_charge: product?.making_charges || 300, making_charge_type: 'fixed', measurement: product?.dimensions || 'Standard' };
 
   // Sync quantity state per active size variant with cart
   useEffect(() => {
@@ -563,10 +598,16 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                   </div>
                 </div>
 
-                {/* Horizontal Scroll Track with Mouse Wheel & Touch */}
+                {/* Horizontal Scroll Track with Mouse Wheel, Touch, and Drag */}
                 <div
                   ref={variantScrollRef}
-                  className="flex gap-2.5 pt-0.5 overflow-x-auto scrollbar-thin scrollbar-thumb-[#C5A059]/40 hover:scrollbar-thumb-[#C5A059] scrollbar-track-gray-100 pb-2 whitespace-nowrap max-w-full select-none"
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUpOrLeave}
+                  onMouseLeave={handleMouseUpOrLeave}
+                  className={`flex gap-2.5 pt-0.5 overflow-x-auto scrollbar-thin scrollbar-thumb-[#C5A059]/40 hover:scrollbar-thumb-[#C5A059] scrollbar-track-gray-100 pb-2 whitespace-nowrap max-w-full select-none ${
+                    isDraggingMouse ? 'cursor-grabbing' : 'cursor-grab'
+                  }`}
                 >
                   {availableVariants.map((variant, idx) => {
                     const isSelected = activeVar?.id === variant.id || activeVar?.weight_g === variant.weight_g || activeVar?.measurement === variant.measurement;
@@ -576,9 +617,10 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                     return (
                       <button
                         key={variant.id || idx}
-                        onClick={() => {
+                        onClick={(e) => {
                           setSelectedVariant(variant);
                           if (variant.image) setActiveImage(variant.image);
+                          e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
                         }}
                         className={`px-3.5 py-2.5 rounded-xl text-[11px] font-bold transition-all border flex flex-col items-center gap-0.5 cursor-pointer shrink-0 min-w-[95px] sm:min-w-[110px] ${
                           isSelected
@@ -603,9 +645,18 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                 </div>
 
                 {/* Range Slider Track Controller */}
-                {availableVariants.length > 3 && (
-                  <div className="pt-1 border-t border-gray-100 flex items-center gap-3">
-                    <span className="text-[9px] uppercase font-bold text-gray-400 shrink-0">
+                {availableVariants.length > 1 && (
+                  <div className="pt-2 border-t border-gray-100 flex items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => scrollVariants('left')}
+                      className="p-1 text-gray-400 hover:text-[#C5A059] transition-colors cursor-pointer"
+                      title="Scroll Left"
+                      aria-label="Scroll Left"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="text-[9px] uppercase font-bold text-gray-500 shrink-0 font-mono">
                       {availableVariants[0]?.weight_g}g
                     </span>
                     <input
@@ -614,12 +665,21 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                       max="100"
                       value={scrollProgress}
                       onChange={handleRangeSliderChange}
-                      className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#C5A059] hover:accent-[#1A1918]"
-                      title="Slide left or right to browse all weights"
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-ew-resize accent-[#C5A059] hover:accent-[#1A1918] transition-all"
+                      title="Drag slider left or right to browse all weights"
                     />
-                    <span className="text-[9px] uppercase font-bold text-gray-400 shrink-0">
+                    <span className="text-[9px] uppercase font-bold text-gray-500 shrink-0 font-mono">
                       {availableVariants[availableVariants.length - 1]?.weight_g}g
                     </span>
+                    <button
+                      type="button"
+                      onClick={() => scrollVariants('right')}
+                      className="p-1 text-gray-400 hover:text-[#C5A059] transition-colors cursor-pointer"
+                      title="Scroll Right"
+                      aria-label="Scroll Right"
+                    >
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 )}
               </div>
@@ -744,7 +804,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
               <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Net Silver Weight:</span> <span className="font-bold text-[#1A1918]">{activeNetWeight} grams</span></div>
               {activeGrossWeight > 0 && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Gross Weight:</span> <span className="font-bold text-[#1A1918]">{activeGrossWeight} grams</span></div>}
               {!isWholesaleMode && (
-                <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Making Charges:</span> <span className="font-bold text-[#1A1918]">{priceBreakdown.makingCharge > 0 ? `₹${priceBreakdown.makingCharge.toLocaleString()}` : 'Included'}</span></div>
+                <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Making Charges:</span> <span className="font-bold text-[#1A1918]">{(priceBreakdown?.makingCharge || 0) > 0 ? `₹${(priceBreakdown?.makingCharge || 0).toLocaleString()}` : 'Included'}</span></div>
               )}
               {product.dimensions && <div className="grid grid-cols-2 py-1.5 border-b border-gray-100"><span className="font-semibold text-gray-500">Dimensions:</span> <span className="font-bold text-[#1A1918]">{product.dimensions}</span></div>}
               <div className="grid grid-cols-2 py-1.5"><span className="font-semibold text-gray-500">Hallmarking:</span> <span className="font-bold text-[#C5A059]">Laser Hallmarked</span></div>
