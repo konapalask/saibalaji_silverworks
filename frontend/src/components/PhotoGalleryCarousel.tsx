@@ -165,27 +165,27 @@ export const PhotoGalleryCarousel: React.FC<PhotoGalleryCarouselProps> = ({
 
       {/* Main Gallery Stage Card */}
       <div 
-        className="relative rounded-3xl overflow-hidden bg-[#0D0D0D] border border-[#E6E1DA] shadow-xl select-none group"
+        className="relative rounded-3xl overflow-hidden bg-black border border-[#E6E1DA] shadow-xl select-none group"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Ambient Blurred Background for visual immersion */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-25 filter blur-3xl scale-110 transition-all duration-700">
+        {/* Ambient Vivid Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <img
             src={currentPhoto.image_url}
             alt=""
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover filter blur-2xl scale-125 opacity-70 transition-all duration-700"
           />
         </div>
 
-        {/* Central Display Area with Fixed Elegant Height */}
-        <div className="relative z-10 w-full h-[380px] sm:h-[480px] lg:h-[540px] flex items-center justify-center p-4 sm:p-8">
+        {/* Central Display Area with Full-Bleed Image Fill */}
+        <div className="relative z-10 w-full h-[400px] sm:h-[500px] lg:h-[580px] flex items-center justify-center overflow-hidden">
           <img
             key={currentPhoto.image_url}
             src={currentPhoto.image_url}
             alt={currentPhoto.title}
-            className="max-h-full max-w-full object-contain rounded-2xl shadow-2xl transition-all duration-500 hover:scale-[1.01] cursor-pointer"
+            className="w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-102 cursor-pointer"
             onClick={() => setIsFullscreen(true)}
             title="Click to view full screen"
           />
@@ -197,7 +197,7 @@ export const PhotoGalleryCarousel: React.FC<PhotoGalleryCarouselProps> = ({
               e.stopPropagation();
               goToPrev();
             }}
-            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/60 hover:bg-[#C5A059] text-white border border-white/20 hover:border-[#C5A059] backdrop-blur-md flex items-center justify-center shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer group/btn"
+            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-black/65 hover:bg-[#C5A059] text-white border border-white/30 hover:border-[#C5A059] backdrop-blur-md flex items-center justify-center shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer group/btn"
             aria-label="Previous Photo"
             title="Previous Photo (<)"
             id="gallery-prev-btn"
@@ -211,7 +211,7 @@ export const PhotoGalleryCarousel: React.FC<PhotoGalleryCarouselProps> = ({
               e.stopPropagation();
               goToNext();
             }}
-            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/60 hover:bg-[#C5A059] text-white border border-white/20 hover:border-[#C5A059] backdrop-blur-md flex items-center justify-center shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer group/btn"
+            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-black/65 hover:bg-[#C5A059] text-white border border-white/30 hover:border-[#C5A059] backdrop-blur-md flex items-center justify-center shadow-2xl transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer group/btn"
             aria-label="Next Photo"
             title="Next Photo (>)"
             id="gallery-next-btn"
@@ -222,7 +222,7 @@ export const PhotoGalleryCarousel: React.FC<PhotoGalleryCarouselProps> = ({
           {/* Quick Expand Button */}
           <button
             onClick={() => setIsFullscreen(true)}
-            className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-black/50 hover:bg-[#C5A059] text-white/90 hover:text-white border border-white/20 backdrop-blur-md transition-all shadow-md cursor-pointer"
+            className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-black/60 hover:bg-[#C5A059] text-white border border-white/30 backdrop-blur-md transition-all shadow-md cursor-pointer hover:scale-105"
             title="Expand Fullscreen"
             aria-label="Expand image to fullscreen"
           >
