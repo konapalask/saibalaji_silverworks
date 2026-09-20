@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, MessageSquare, Share2, Copy, X, AlertCircle } from 'lucide-react';
+import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, MessageSquare, Share2, Copy, X, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product, ProductVariant } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -42,6 +42,25 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
   const { addToWholesaleCart } = useWholesale();
 
   const [isSubmittingWhatsApp, setIsSubmittingWhatsApp] = useState(false);
+  const variantScrollRef = useRef<HTMLDivElement>(null);
+
+  // Enable mouse wheel horizontal scrolling on hover over the variants container
+  useEffect(() => {
+    const el = variantScrollRef.current;
+    if (!el) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY !== 0 && el.scrollWidth > el.clientWidth) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY * 1.2;
+      }
+    };
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      el.removeEventListener('wheel', handleWheel);
+    };
+  }, [product?.variants, availableVariants]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -447,19 +466,44 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
               )}
             </div>
 
-            {/* WEIGHT SELECTOR BUTTONS (HORIZONTAL SCROLL ON MOBILE) */}
+            {/* WEIGHT SELECTOR BUTTONS (HORIZONTAL SCROLL WITH MOUSE WHEEL ON HOVER) */}
             {availableVariants.length > 0 && (
               <div className="mt-3 space-y-1.5 bg-white p-3 rounded-2xl border border-[#E5E0D8]">
                 <div className="flex justify-between items-center">
-                  <span className="text-[11px] uppercase font-bold text-[#202020] tracking-wider">
-                    Select Weight:
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] uppercase font-bold text-[#202020] tracking-wider">
+                      Select Weight:
+                    </span>
+                    <div className="hidden sm:flex items-center gap-0.5">
+                      <button
+                        type="button"
+                        onClick={() => variantScrollRef.current?.scrollBy({ left: -140, behavior: 'smooth' })}
+                        className="p-1 rounded-md hover:bg-[#FAF9F5] text-gray-500 hover:text-black border border-transparent hover:border-[#E5E0D8] transition-colors cursor-pointer"
+                        title="Scroll Left (<)"
+                        aria-label="Previous weights"
+                      >
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => variantScrollRef.current?.scrollBy({ left: 140, behavior: 'smooth' })}
+                        className="p-1 rounded-md hover:bg-[#FAF9F5] text-gray-500 hover:text-black border border-transparent hover:border-[#E5E0D8] transition-colors cursor-pointer"
+                        title="Scroll Right (>)"
+                        aria-label="Next weights"
+                      >
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
                   <span className="text-[11px] font-bold text-[#C5A059]">
                     {activeVar?.weight_g}g
                   </span>
                 </div>
 
-                <div className="flex gap-2 pt-0.5 overflow-x-auto scrollbar-none pb-1 whitespace-nowrap max-w-full">
+                <div 
+                  ref={variantScrollRef}
+                  className="flex gap-2 pt-0.5 overflow-x-auto scrollbar-thin scrollbar-thumb-[#C5A059]/40 hover:scrollbar-thumb-[#C5A059] scrollbar-track-gray-100/60 pb-2 whitespace-nowrap max-w-full"
+                >
                   {availableVariants.map((variant) => {
                     const isSelected = activeVar?.id === variant.id || activeVar?.weight_g === variant.weight_g || activeVar?.measurement === variant.measurement;
                     const vCalc = calculateDynamicPrice(variant.weight_g, variant.making_charge, variant.making_charge_type || 'fixed', product.silver_purity);
