@@ -259,3 +259,16 @@ export interface ManufacturingStep {
   details: string;
 }
 
+export interface GalleryPhoto {
+  id: number;
+  filename: string;
+  title: string;
+  category?: string;
+  description?: string;
+  image_url: string;
+  sort_order?: number;
+  is_active?: boolean;
+  tags?: string[];
+  created_at?: string;
+}
+
