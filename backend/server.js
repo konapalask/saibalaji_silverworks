@@ -85,6 +85,41 @@ let homepageHero = loadJsonFile('homepage_hero_data.json', {
   media_url: '/homescreen.webp'
 });
 let videos = loadJsonFile('videos_data.json', []);
+let gallery = loadJsonFile('gallery_data.json', []);
+
+// Dynamic Gallery Loader (merges gallery_data.json with any unindexed photos in /public/gallery)
+const getGalleryPhotos = () => {
+  let items = loadJsonFile('gallery_data.json', []);
+  const galleryDir = path.join(__dirname, 'public', 'gallery');
+  if (fs.existsSync(galleryDir)) {
+    try {
+      const files = fs.readdirSync(galleryDir);
+      const existingFilenames = new Set(items.map(it => it.filename || path.basename(it.image_url || '')));
+      files.forEach((file) => {
+        if (/\.(webp|jpg|jpeg|png|avif|gif)$/i.test(file)) {
+          if (!existingFilenames.has(file)) {
+            const cleanName = file.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+            items.push({
+              id: items.length + 1,
+              filename: file,
+              title: cleanName,
+              category: 'Workshop & Atelier',
+              description: `Authentic craftsmanship photo from Sai Balaji Silverworks manufacturing facility (${file}).`,
+              image_url: `/public/gallery/${file}`,
+              sort_order: items.length + 1,
+              is_active: true,
+              tags: ['Workshop', 'Silversmith', 'Manufacturing'],
+              created_at: new Date().toISOString()
+            });
+          }
+        }
+      });
+    } catch (e) {
+      console.error('Error scanning public/gallery:', e);
+    }
+  }
+  return items.filter(it => it.is_active !== false).sort((a, b) => (a.sort_order || 999) - (b.sort_order || 999));
+};
 
 // JWT Verification Middleware
 const authenticateToken = (req, res, next) => {
@@ -1963,6 +1998,47 @@ app.delete('/api/v1/content/videos/:id', requireAdmin, (req, res) => {
   res.json({ message: 'Video deleted' });
 });
 
+// --- WORKSHOP & ARTISAN PHOTO GALLERY API ---
+
+app.get(['/api/v1/gallery', '/api/v1/content/gallery'], (req, res) => {
+  try {
+    const photos = getGalleryPhotos();
+    res.json(photos);
+  } catch (err) {
+    console.error('Error retrieving gallery photos:', err);
+    res.status(500).json({ detail: 'Failed to retrieve gallery photos', error: err.message });
+  }
+});
+
+app.post('/api/v1/content/gallery', requireAdmin, (req, res) => {
+  try {
+    gallery = loadJsonFile('gallery_data.json', []);
+    const newPhoto = {
+      id: gallery.length > 0 ? Math.max(...gallery.map(g => g.id || 0)) + 1 : 1,
+      ...req.body,
+      is_active: req.body.is_active !== undefined ? req.body.is_active : true,
+      created_at: new Date().toISOString()
+    };
+    gallery.push(newPhoto);
+    saveJsonFile('gallery_data.json', gallery);
+    res.status(201).json(newPhoto);
+  } catch (err) {
+    res.status(500).json({ detail: 'Failed to create gallery photo', error: err.message });
+  }
+});
+
+app.delete('/api/v1/content/gallery/:id', requireAdmin, (req, res) => {
+  try {
+    const photoId = parseInt(req.params.id);
+    gallery = loadJsonFile('gallery_data.json', []);
+    gallery = gallery.filter(g => g.id !== photoId);
+    saveJsonFile('gallery_data.json', gallery);
+    res.json({ message: 'Gallery photo deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ detail: 'Failed to delete gallery photo', error: err.message });
+  }
+});
+
 
 // --- INTERACTIVE SWAGGER / API DOCS UI ---
 
@@ -2496,6 +2572,109 @@ app.get('/openapi.json', (req, res) => {
             }
           },
           responses: { "200": { description: "Product added or removed from wishlist" } }
+        }
+      },
+      "/api/v1/gallery": {
+        get: {
+          summary: "Get Workshop & Manufacturing Photo Gallery",
+          tags: ["Gallery & Media"],
+          description: "Returns all high-resolution workshop, artisan craftsmanship, and manufacturing unit photos from backend/public/gallery.",
+          responses: {
+            "200": {
+              description: "List of workshop and manufacturing gallery photos",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "integer", example: 1 },
+                        filename: { type: "string", example: "IMG-20260919-WA0003.webp" },
+                        title: { type: "string", example: "Silver Plate Flame Annealing & Thermal Conditioning" },
+                        category: { type: "string", example: "Artisan Craftsmanship" },
+                        description: { type: "string", example: "Master artisan performing precision gas-torch flame annealing on circular pure silver blanks." },
+                        image_url: { type: "string", example: "/public/gallery/IMG-20260919-WA0003.webp" },
+                        sort_order: { type: "integer", example: 1 },
+                        is_active: { type: "boolean", example: true },
+                        tags: { type: "array", items: { type: "string" }, example: ["Annealing", "Torch", "Silver Plate"] },
+                        created_at: { type: "string", example: "2026-09-19T00:00:00.000Z" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/content/gallery": {
+        get: {
+          summary: "Get Workshop Photo Gallery (Content Alias)",
+          tags: ["Gallery & Media"],
+          description: "Alias endpoint returning workshop photo gallery items for public website display.",
+          responses: {
+            "200": {
+              description: "List of gallery images",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      type: "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        post: {
+          summary: "Add New Photo to Gallery (Admin Only)",
+          tags: ["Gallery & Media"],
+          security: [{ BearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["title", "image_url"],
+                  properties: {
+                    title: { type: "string", example: "New Crafting Photo" },
+                    description: { type: "string", example: "Description of the artisan process." },
+                    image_url: { type: "string", example: "/public/gallery/custom.webp" },
+                    category: { type: "string", example: "Artisan Craftsmanship" },
+                    sort_order: { type: "integer", example: 8 },
+                    tags: { type: "array", items: { type: "string" } }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "201": { description: "Gallery photo added successfully" }
+          }
+        }
+      },
+      "/api/v1/content/gallery/{id}": {
+        delete: {
+          summary: "Delete Gallery Photo by ID (Admin Only)",
+          tags: ["Gallery & Media"],
+          security: [{ BearerAuth: [] }],
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "integer" },
+              description: "Numeric ID of the gallery photo to delete"
+            }
+          ],
+          responses: {
+            "200": { description: "Gallery photo deleted successfully" },
+            "404": { description: "Gallery photo not found" }
+          }
         }
       }
     },
