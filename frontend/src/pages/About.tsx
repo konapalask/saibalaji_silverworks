@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Play, ShieldCheck, Factory, Award, Film, ChevronDown, Video, FileText, ArrowRight, Lock } from 'lucide-react';
-import { CompanyVideo } from '../types';
+import { CompanyVideo, GalleryPhoto } from '../types';
 import { VideoPlayerModal } from '../components/VideoPlayerModal';
 import { LazyVideoCard } from '../components/LazyVideoCard';
+import { PhotoGalleryCarousel } from '../components/PhotoGalleryCarousel';
 import { initialVideosData } from '../data/videosData';
+import { initialGalleryData } from '../data/galleryData';
 import api from '../services/api';
 
 export const About: React.FC = () => {
   const [videos, setVideos] = useState<CompanyVideo[]>(initialVideosData);
   const [activeVideo, setActiveVideo] = useState<CompanyVideo | null>(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [galleryPhotos, setGalleryPhotos] = useState<GalleryPhoto[]>(initialGalleryData);
 
   // Gallery state
   const [displayCount, setDisplayCount] = useState<number>(12);
@@ -26,7 +29,18 @@ export const About: React.FC = () => {
         console.error('Error fetching story videos', err);
       }
     };
+    const fetchGallery = async () => {
+      try {
+        const res = await api.get('/gallery');
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setGalleryPhotos(res.data);
+        }
+      } catch (err) {
+        console.warn('Could not fetch remote gallery photos, using initial fallback', err);
+      }
+    };
     fetchVideos();
+    fetchGallery();
   }, []);
 
   const openVideo = (v: CompanyVideo) => {
