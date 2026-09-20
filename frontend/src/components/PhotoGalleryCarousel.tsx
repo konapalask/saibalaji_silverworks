@@ -49,15 +49,16 @@ export const PhotoGalleryCarousel: React.FC<PhotoGalleryCarouselProps> = ({
     }
   };
 
-  // Auto-scroll active thumbnail into view
+  // Auto-scroll active thumbnail inside horizontal filmstrip only (never scrolls page)
   useEffect(() => {
-    if (thumbnailScrollRef.current) {
-      const activeThumb = thumbnailScrollRef.current.children[currentIndex] as HTMLElement;
+    const container = thumbnailScrollRef.current;
+    if (container) {
+      const activeThumb = container.children[currentIndex] as HTMLElement;
       if (activeThumb) {
-        activeThumb.scrollIntoView({
-          behavior: 'smooth',
-          inline: 'center',
-          block: 'nearest'
+        const targetScrollLeft = activeThumb.offsetLeft - (container.clientWidth / 2) + (activeThumb.clientWidth / 2);
+        container.scrollTo({
+          left: Math.max(0, targetScrollLeft),
+          behavior: 'smooth'
         });
       }
     }
@@ -192,7 +193,9 @@ export const PhotoGalleryCarousel: React.FC<PhotoGalleryCarouselProps> = ({
           {/* Forward and Backward Floating Navigation Buttons (< >) */}
           {/* Previous Button (<) */}
           <button
+            type="button"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               goToPrev();
             }}
@@ -206,7 +209,9 @@ export const PhotoGalleryCarousel: React.FC<PhotoGalleryCarouselProps> = ({
 
           {/* Next Button (>) */}
           <button
+            type="button"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               goToNext();
             }}
@@ -220,7 +225,12 @@ export const PhotoGalleryCarousel: React.FC<PhotoGalleryCarouselProps> = ({
 
           {/* Quick Expand Button */}
           <button
-            onClick={() => setIsFullscreen(true)}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsFullscreen(true);
+            }}
             className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-black/50 hover:bg-[#C5A059] text-white/90 hover:text-white border border-white/20 backdrop-blur-md transition-all shadow-md cursor-pointer"
             title="Expand Fullscreen"
             aria-label="Expand image to fullscreen"
@@ -230,7 +240,7 @@ export const PhotoGalleryCarousel: React.FC<PhotoGalleryCarouselProps> = ({
         </div>
 
         {/* Bottom Metadata Bar */}
-        <div className="relative z-10 bg-gradient-to-t from-black via-black/85 to-transparent px-5 sm:px-8 py-5 text-white border-t border-white/10">
+        <div className="relative z-10 bg-gradient-to-t from-black via-black/85 to-transparent px-5 sm:px-8 py-5 text-white border-t border-white/10 min-h-[115px] flex flex-col justify-end">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <div className="space-y-1 max-w-3xl">
               <div className="flex items-center gap-2">
@@ -278,8 +288,12 @@ export const PhotoGalleryCarousel: React.FC<PhotoGalleryCarouselProps> = ({
             const isActive = index === currentIndex;
             return (
               <button
+                type="button"
                 key={photo.id || index}
-                onClick={() => goToIndex(index)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  goToIndex(index);
+                }}
                 className={`relative shrink-0 rounded-xl overflow-hidden transition-all duration-300 cursor-pointer ${isActive
                     ? 'ring-3 ring-[#C5A059] ring-offset-2 scale-105 shadow-lg'
                     : 'opacity-60 hover:opacity-100 hover:scale-102 border border-[#E6E1DA]'

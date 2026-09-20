@@ -616,11 +616,17 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                     const vPriceDisplay = (vCalc?.finalPrice || 0).toLocaleString();
                     return (
                       <button
+                        type="button"
                         key={variant.id || idx}
                         onClick={(e) => {
+                          e.preventDefault();
                           setSelectedVariant(variant);
                           if (variant.image) setActiveImage(variant.image);
-                          e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                          const container = variantScrollRef.current;
+                          if (container) {
+                            const target = e.currentTarget.offsetLeft - (container.clientWidth / 2) + (e.currentTarget.clientWidth / 2);
+                            container.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+                          }
                         }}
                         className={`px-3.5 py-2.5 rounded-xl text-[11px] font-bold transition-all border flex flex-col items-center gap-0.5 cursor-pointer shrink-0 min-w-[95px] sm:min-w-[110px] ${
                           isSelected
