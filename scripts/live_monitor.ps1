@@ -256,28 +256,29 @@ while ($true) {
         if (-not $cProc) {
             Write-ConsoleLog "Cloudflare tunnel down! Restarting cloudflared..." "WARN"
             $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
-            Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--token", $token) -WindowStyle Hidden
+            Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--protocol", "http2", "--token", $token) -WindowStyle Hidden
             Start-Sleep -Seconds 2
         } elseif ($cycleCount % 2 -eq 0 -and $fActive) {
-            # Active edge probe: verify Cloudflare isn't returning 502 with a stale tunnel connection
+            # Active edge probe: verify Cloudflare is live and healthy (catches 502 Bad Gateway, 530 Error 1033, timeouts)
             try {
-                $probe = Invoke-WebRequest -Uri "https://www.saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+                $probe = Invoke-WebRequest -Uri "https://www.saibalajisilverworkspvtltd.com" -UseBasicParsing -TimeoutSec 7 -ErrorAction Stop
                 if ($probe.StatusCode -eq 200) {
-                    $consecutive502 = 0
+                    $consecutiveErrors = 0
                 }
             } catch {
-                if ($_.Exception.Message -like "*502*" -or $_.Exception.Message -like "*Bad Gateway*") {
-                    $consecutive502++
-                    Write-ConsoleLog "Edge warning: 502 Bad Gateway detected ($consecutive502/3)..." "WARN"
-                    if ($consecutive502 -ge 3) {
-                        Write-ConsoleLog "Cloudflare Edge returning 502 repeatedly! Refreshing tunnel connection..." "WARN"
-                        $consecutive502 = 0
-                        Stop-Process -Id $cProc.ProcessId -Force -ErrorAction SilentlyContinue
-                        Start-Sleep -Seconds 1
-                        $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
-                        Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--token", $token) -WindowStyle Hidden
-                        Start-Sleep -Seconds 2
+                $consecutiveErrors++
+                $errMsg = $_.Exception.Message
+                Write-ConsoleLog "Edge warning: Public probe failed ($errMsg) ($consecutiveErrors/2)..." "WARN"
+                if ($consecutiveErrors -ge 2) {
+                    Write-ConsoleLog "Cloudflare Edge returning error (1033/530/502)! Refreshing tunnel connection..." "WARN"
+                    $consecutiveErrors = 0
+                    foreach ($cp in $cProc) {
+                        try { Stop-Process -Id $cp.ProcessId -Force -ErrorAction SilentlyContinue } catch {}
                     }
+                    Start-Sleep -Seconds 1
+                    $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
+                    Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--protocol", "http2", "--token", $token) -WindowStyle Hidden
+                    Start-Sleep -Seconds 2
                 }
             }
         }
