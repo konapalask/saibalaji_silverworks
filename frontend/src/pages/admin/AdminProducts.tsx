@@ -579,7 +579,7 @@ export const AdminProducts: React.FC = () => {
               placeholder="Search products by title, SKU..."
               value={searchQuery}
               onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-              className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl pl-10 pr-4 py-2 text-xs text-[#1A1918] focus:bg-white focus:outline-none focus:border-[#C5A059]"
+              className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 rounded-xl pl-10 pr-4 py-2 text-xs text-[#1A1918] focus:border-black focus:outline-none transition-all shadow-2xs"
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
@@ -594,7 +594,7 @@ export const AdminProducts: React.FC = () => {
             <select
               value={selectedCategory}
               onChange={(e) => { setSelectedCategory(e.target.value); setCurrentPage(1); }}
-              className="bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2 text-xs text-gray-700 font-medium focus:outline-none focus:border-[#C5A059]"
+              className="bg-white border-2 border-gray-300 hover:border-gray-400 rounded-xl px-3 py-2 text-xs text-gray-700 font-medium focus:outline-none focus:border-black transition-all shadow-2xs cursor-pointer"
             >
               <option value="ALL">All Categories</option>
               {categories.map(c => (
@@ -606,7 +606,7 @@ export const AdminProducts: React.FC = () => {
             <select
               value={selectedPurity}
               onChange={(e) => { setSelectedPurity(e.target.value); setCurrentPage(1); }}
-              className="bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2 text-xs text-gray-700 font-medium focus:outline-none focus:border-[#C5A059]"
+              className="bg-white border-2 border-gray-300 hover:border-gray-400 rounded-xl px-3 py-2 text-xs text-gray-700 font-medium focus:outline-none focus:border-black transition-all shadow-2xs cursor-pointer"
             >
               <option value="ALL">All Purity</option>
               <option value="925">925 Sterling</option>
@@ -617,7 +617,7 @@ export const AdminProducts: React.FC = () => {
             <select
               value={selectedStockStatus}
               onChange={(e) => { setSelectedStockStatus(e.target.value); setCurrentPage(1); }}
-              className="bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2 text-xs text-gray-700 font-medium focus:outline-none focus:border-[#C5A059]"
+              className="bg-white border-2 border-gray-300 hover:border-gray-400 rounded-xl px-3 py-2 text-xs text-gray-700 font-medium focus:outline-none focus:border-black transition-all shadow-2xs cursor-pointer"
             >
               <option value="ALL">All Stock Status</option>
               <option value="IN_STOCK">In Stock</option>
@@ -629,7 +629,7 @@ export const AdminProducts: React.FC = () => {
             <select
               value={selectedProductStatus}
               onChange={(e) => { setSelectedProductStatus(e.target.value); setCurrentPage(1); }}
-              className="bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-2 text-xs text-gray-700 font-medium focus:outline-none focus:border-[#C5A059]"
+              className="bg-white border-2 border-gray-300 hover:border-gray-400 rounded-xl px-3 py-2 text-xs text-gray-700 font-medium focus:outline-none focus:border-black transition-all shadow-2xs cursor-pointer"
             >
               <option value="ALL">All Status</option>
               <option value="ACTIVE">Active</option>
@@ -1074,13 +1074,24 @@ export const AdminProducts: React.FC = () => {
               <div className="p-4 sm:p-5 overflow-y-auto space-y-3.5 flex-1">
                 <div>
                   <label className="block font-bold text-gray-700 mb-1">Product Title *</label>
-                  <input type="text" required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="Enter product title..."
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3.5 py-2 text-xs text-[#1A1918] transition-all shadow-2xs font-medium"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block font-bold text-gray-700 mb-1">Main Category *</label>
-                    <select value={formData.category_id} onChange={(e) => setFormData({ ...formData, category_id: Number(e.target.value) })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2">
+                    <select
+                      value={formData.category_id}
+                      onChange={(e) => setFormData({ ...formData, category_id: Number(e.target.value) })}
+                      className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3.5 py-2 text-xs text-[#1A1918] transition-all shadow-2xs font-medium cursor-pointer"
+                    >
                       {categories.map((c) => (
                         <option key={c.id} value={c.id}>{c.name}</option>
                       ))}
@@ -1088,18 +1099,28 @@ export const AdminProducts: React.FC = () => {
                   </div>
                   <div>
                     <label className="block font-bold text-gray-700 mb-1">Subcategory Name</label>
-                    <input type="text" placeholder="e.g. Kalash & Sacred Pots" value={formData.subcategory} onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2" />
+                    <input
+                      type="text"
+                      placeholder="e.g. Kalash & Sacred Pots"
+                      value={formData.subcategory}
+                      onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                      className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3.5 py-2 text-xs text-[#1A1918] transition-all shadow-2xs font-medium"
+                    />
                   </div>
                 </div>
 
 
                 {/* Weights & Purity Section */}
-                <div className="bg-white p-3.5 rounded-2xl border border-[#E6E1DA] space-y-2.5">
+                <div className="bg-white p-3.5 rounded-2xl border-2 border-gray-200 shadow-2xs space-y-2.5">
                   <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">WEIGHT & PURITY SPECIFICATIONS</span>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Silver Purity</label>
-                      <select value={formData.silver_purity} onChange={(e) => setFormData({ ...formData, silver_purity: e.target.value })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5 text-xs">
+                      <select
+                        value={formData.silver_purity}
+                        onChange={(e) => setFormData({ ...formData, silver_purity: e.target.value })}
+                        className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3 py-2 text-xs text-[#1A1918] font-medium transition-all shadow-2xs cursor-pointer"
+                      >
                         <option value="925 Sterling Silver">925 Sterling Silver</option>
                         <option value="999 Fine Silver">999 Fine Silver</option>
                         <option value="Silver Plated / Stainless Steel">Silver Plated / Stainless Steel</option>
@@ -1107,30 +1128,79 @@ export const AdminProducts: React.FC = () => {
                     </div>
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Net Silver Weight (g)</label>
-                      <input type="number" step="any" value={formData.net_silver_weight_g} onChange={(e) => setFormData({ ...formData, net_silver_weight_g: parseFloat(e.target.value), weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5 font-bold" />
+                      <input
+                        type="number"
+                        step="any"
+                        placeholder="0.00"
+                        value={formData.net_silver_weight_g ?? ''}
+                        onChange={(e) => {
+                          const val = e.target.value === '' ? '' : parseFloat(e.target.value);
+                          setFormData({ ...formData, net_silver_weight_g: val as any, weight_g: val as any });
+                        }}
+                        className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3 py-2 text-xs font-bold text-[#1A1918] font-mono transition-all shadow-2xs"
+                      />
                     </div>
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Gross Weight (g)</label>
-                      <input type="number" step="any" value={formData.gross_weight_g} onChange={(e) => setFormData({ ...formData, gross_weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5" />
+                      <input
+                        type="number"
+                        step="any"
+                        placeholder="0.00"
+                        value={formData.gross_weight_g ?? ''}
+                        onChange={(e) => {
+                          const val = e.target.value === '' ? '' : parseFloat(e.target.value);
+                          setFormData({ ...formData, gross_weight_g: val as any });
+                        }}
+                        className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3 py-2 text-xs font-bold text-[#1A1918] font-mono transition-all shadow-2xs"
+                      />
                     </div>
                   </div>
                 </div>
 
                 {/* Pricing & Making Charges Section */}
-                <div className="bg-white p-3.5 rounded-2xl border border-[#E6E1DA] space-y-2.5">
+                <div className="bg-white p-3.5 rounded-2xl border-2 border-gray-200 shadow-2xs space-y-2.5">
                   <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">PRICING & MAKING CHARGES</span>
                   <div className="grid grid-cols-3 gap-3">
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Selling Base Price (₹)</label>
-                      <input type="number" step="any" value={formData.retail_price} onChange={(e) => setFormData({ ...formData, retail_price: parseFloat(e.target.value), wholesale_price: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold text-[#1A1918]" />
+                      <input
+                        type="number"
+                        step="any"
+                        placeholder="0.00"
+                        value={formData.retail_price ?? ''}
+                        onChange={(e) => {
+                          const val = e.target.value === '' ? '' : parseFloat(e.target.value);
+                          setFormData({ ...formData, retail_price: val as any, wholesale_price: val as any });
+                        }}
+                        className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3 py-2 font-bold font-mono text-xs text-[#1A1918] transition-all shadow-2xs"
+                      />
                     </div>
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Making Charges (₹)</label>
-                      <input type="number" step="any" value={formData.making_charges} onChange={(e) => setFormData({ ...formData, making_charges: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold" />
+                      <input
+                        type="number"
+                        step="any"
+                        placeholder="0.00"
+                        value={formData.making_charges ?? ''}
+                        onChange={(e) => {
+                          const val = e.target.value === '' ? '' : parseFloat(e.target.value);
+                          setFormData({ ...formData, making_charges: val as any });
+                        }}
+                        className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3 py-2 font-bold font-mono text-xs text-[#1A1918] transition-all shadow-2xs"
+                      />
                     </div>
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Stock Units</label>
-                      <input type="number" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold" />
+                      <input
+                        type="number"
+                        placeholder="0"
+                        value={formData.stock ?? ''}
+                        onChange={(e) => {
+                          const val = e.target.value === '' ? '' : parseInt(e.target.value);
+                          setFormData({ ...formData, stock: val as any });
+                        }}
+                        className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3 py-2 font-bold font-mono text-xs text-[#1A1918] transition-all shadow-2xs"
+                      />
                     </div>
                   </div>
                 </div>
@@ -1207,12 +1277,24 @@ export const AdminProducts: React.FC = () => {
 
                 <div>
                   <label className="block font-bold text-gray-700 mb-1">Featured Image Path / URL</label>
-                  <input type="text" value={formData.featured_image} onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2 font-mono text-[11px]" />
+                  <input
+                    type="text"
+                    placeholder="/public/Saibalaji products S/..."
+                    value={formData.featured_image}
+                    onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
+                    className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3.5 py-2 font-mono text-[11px] text-[#1A1918] transition-all shadow-2xs"
+                  />
                 </div>
 
                 <div>
                   <label className="block font-bold text-gray-700 mb-1">Product Description</label>
-                  <textarea rows={2} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3.5 py-2" />
+                  <textarea
+                    rows={2}
+                    placeholder="Enter product description..."
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3.5 py-2 text-xs text-[#1A1918] transition-all shadow-2xs"
+                  />
                 </div>
               </div>
 
@@ -1252,9 +1334,10 @@ export const AdminProducts: React.FC = () => {
                       step="any"
                       required
                       min="0.01"
-                      value={variantForm.weight_g}
+                      placeholder="0.00"
+                      value={variantForm.weight_g ?? ''}
                       onChange={(e) => setVariantForm({ ...variantForm, weight_g: parseFloat(e.target.value) || 0 })}
-                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold font-mono"
+                      className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3 py-2 font-bold font-mono text-xs text-[#1A1918] transition-all shadow-2xs"
                     />
                   </div>
 
@@ -1265,9 +1348,10 @@ export const AdminProducts: React.FC = () => {
                       step="any"
                       required
                       min="0"
-                      value={variantForm.making_charge}
+                      placeholder="0.00"
+                      value={variantForm.making_charge ?? ''}
                       onChange={(e) => setVariantForm({ ...variantForm, making_charge: parseFloat(e.target.value) || 0 })}
-                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold font-mono"
+                      className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3 py-2 font-bold font-mono text-xs text-[#1A1918] transition-all shadow-2xs"
                     />
                   </div>
 
@@ -1276,7 +1360,7 @@ export const AdminProducts: React.FC = () => {
                     <select
                       value={variantForm.making_charge_type}
                       onChange={(e) => setVariantForm({ ...variantForm, making_charge_type: e.target.value as any })}
-                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-2 py-1.5 font-medium"
+                      className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-2.5 py-2 font-medium text-xs text-[#1A1918] transition-all shadow-2xs cursor-pointer"
                     >
                       <option value="fixed">Fixed (₹)</option>
                       <option value="per_gram">Per Gram (₹/g)</option>
@@ -1288,13 +1372,13 @@ export const AdminProducts: React.FC = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block font-bold text-gray-700 mb-1">Stock Availability</label>
-                    <div className="flex items-center gap-1 bg-[#FAF9F5] border border-[#E6E1DA] p-1 rounded-xl">
+                    <div className="flex items-center gap-1 bg-white border-2 border-gray-300 p-1 rounded-xl shadow-2xs">
                       <button
                         type="button"
                         onClick={() => setVariantForm({ ...variantForm, stock: variantForm.stock > 0 ? variantForm.stock : 10, is_active: true })}
-                        className={`flex-1 py-1 px-2 rounded-lg text-[10.5px] uppercase font-bold tracking-wider transition-all ${(variantForm.stock !== undefined ? variantForm.stock : 10) > 0 && variantForm.is_active !== false
+                        className={`flex-1 py-1.5 px-2 rounded-lg text-[10.5px] uppercase font-bold tracking-wider transition-all ${(variantForm.stock !== undefined ? variantForm.stock : 10) > 0 && variantForm.is_active !== false
                             ? 'bg-green-700 text-white shadow-2xs'
-                            : 'bg-transparent text-gray-600 hover:bg-gray-200'
+                            : 'bg-transparent text-gray-600 hover:bg-gray-100'
                           }`}
                       >
                         In Stock
@@ -1302,9 +1386,9 @@ export const AdminProducts: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setVariantForm({ ...variantForm, stock: 0, is_active: false })}
-                        className={`flex-1 py-1 px-2 rounded-lg text-[10.5px] uppercase font-bold tracking-wider transition-all ${variantForm.stock <= 0 || variantForm.is_active === false
+                        className={`flex-1 py-1.5 px-2 rounded-lg text-[10.5px] uppercase font-bold tracking-wider transition-all ${variantForm.stock <= 0 || variantForm.is_active === false
                             ? 'bg-red-700 text-white shadow-2xs'
-                            : 'bg-transparent text-gray-600 hover:bg-gray-200'
+                            : 'bg-transparent text-gray-600 hover:bg-gray-100'
                           }`}
                       >
                         Out of Stock
@@ -1318,9 +1402,10 @@ export const AdminProducts: React.FC = () => {
                       type="number"
                       required
                       min="0"
-                      value={variantForm.stock}
+                      placeholder="0"
+                      value={variantForm.stock ?? ''}
                       onChange={(e) => setVariantForm({ ...variantForm, stock: parseInt(e.target.value) || 0, is_active: (parseInt(e.target.value) || 0) > 0 })}
-                      className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-bold font-mono"
+                      className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3 py-2 font-bold font-mono text-xs text-[#1A1918] transition-all shadow-2xs"
                     />
                   </div>
                 </div>
@@ -1332,7 +1417,7 @@ export const AdminProducts: React.FC = () => {
                     placeholder="/public/Saibalaji products S/..."
                     value={variantForm.image}
                     onChange={(e) => setVariantForm({ ...variantForm, image: e.target.value })}
-                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5 font-mono text-[11px]"
+                    className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3 py-2 font-mono text-[11px] text-[#1A1918] transition-all shadow-2xs"
                   />
                 </div>
 
