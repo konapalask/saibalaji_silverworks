@@ -177,7 +177,7 @@ $cfProc = Get-SaiBalajiCloudflared
 if (-not $cfProc) {
     Write-ConsoleLog "Starting Cloudflare Tunnel for https://saibalajisilverworkspvtltd.com..." "BUILD"
     $cfExePath = if (Test-Path "$workspace\cloudflared.exe") { "$workspace\cloudflared.exe" } else { "cloudflared.exe" }
-    Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--token", $token) -WindowStyle Hidden
+    Start-Process -FilePath $cfExePath -ArgumentList @("tunnel", "run", "--protocol", "http2", "--token", $token) -WindowStyle Hidden
     Start-Sleep -Seconds 3
     $cfProc = Get-SaiBalajiCloudflared
     if ($cfProc) {
@@ -227,7 +227,7 @@ Write-ConsoleLog "All services online! Starting Git Fetch & Health Watchdog..." 
 Write-Host "--------------------------------------------------------------------------------" -ForegroundColor DarkGray
 
 $cycleCount = 0
-$consecutive502 = 0
+$consecutiveErrors = 0
 
 while ($true) {
     $cycleCount++
