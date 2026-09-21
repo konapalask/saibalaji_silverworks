@@ -55,7 +55,7 @@ export const AdminProducts: React.FC = () => {
     net_silver_weight_g: 50.0,
     making_charges: 350,
     making_charge_type: 'fixed' as 'fixed' | 'per_gram' | 'percentage',
-    dimensions: 'Height: 4 inches, Diameter: 3 inches',
+    dimensions: '',
     retail_price: 4500,
     wholesale_price: 3800,
     min_wholesale_qty: 10,
@@ -185,7 +185,7 @@ export const AdminProducts: React.FC = () => {
       net_silver_weight_g: 50.0,
       making_charges: 350,
       making_charge_type: 'fixed',
-      dimensions: 'Height: 5.0 in, Width: 3.5 in',
+      dimensions: '',
       retail_price: 4500,
       wholesale_price: 3800,
       min_wholesale_qty: 10,
@@ -392,7 +392,7 @@ export const AdminProducts: React.FC = () => {
     setEditingVariantIndex(null);
     setVariantForm({
       id: `var-${Date.now()}`,
-      measurement: '',
+      measurement: '25g',
       weight_g: 25.0,
       making_charge: 300,
       making_charge_type: 'fixed',
@@ -409,7 +409,7 @@ export const AdminProducts: React.FC = () => {
     setEditingVariantIndex(index);
     setVariantForm({
       id: v.id || `var-${Date.now()}`,
-      measurement: v.measurement,
+      measurement: v.measurement || `${v.weight_g}g`,
       weight_g: v.weight_g,
       making_charge: v.making_charge,
       making_charge_type: v.making_charge_type || 'fixed',
@@ -423,16 +423,16 @@ export const AdminProducts: React.FC = () => {
 
   const handleSaveVariant = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!variantForm.measurement.trim()) {
-      alert('Measurement (size) is required for variant.');
-      return;
-    }
-    if (variantForm.weight_g <= 0) {
+    if (!variantForm.weight_g || variantForm.weight_g <= 0) {
       alert('Weight must be greater than 0.');
       return;
     }
     const autoSku = variantForm.sku || `${formData.sku || 'VAR'}-${Date.now().toString().slice(-4)}`;
-    const finalVar = { ...variantForm, sku: autoSku };
+    const finalVar = {
+      ...variantForm,
+      measurement: `${variantForm.weight_g}g`,
+      sku: autoSku
+    };
 
     const updated = [...variants];
     if (editingVariantIndex !== null) {
@@ -444,9 +444,8 @@ export const AdminProducts: React.FC = () => {
     setIsVariantModalOpen(false);
   };
 
-
   const handleDeleteVariant = (index: number) => {
-    if (!confirm('Remove this size/measurement variant?')) return;
+    if (!confirm('Remove this weight variant?')) return;
     setVariants(variants.filter((_, i) => i !== index));
   };
 
@@ -945,9 +944,7 @@ export const AdminProducts: React.FC = () => {
                                   <table className="w-full text-left text-[11px]">
                                     <thead className="bg-[#FAF9F5] border-b border-[#E6E1DA] font-bold text-[#1A1918]">
                                       <tr>
-                                        <th className="py-2 px-3">Measurement / Size</th>
-                                        <th className="py-2 px-3">Net Weight</th>
-                                        <th className="py-2 px-3">Gross Weight</th>
+                                        <th className="py-2 px-3">Weight Variant</th>
                                         <th className="py-2 px-3">Making Charge</th>
                                         <th className="py-2 px-3">Calculated Price</th>
                                         <th className="py-2 px-3 text-center">Stock Status</th>
@@ -960,10 +957,8 @@ export const AdminProducts: React.FC = () => {
                                         const isVInStock = (v.stock !== undefined ? v.stock : 10) > 0 && v.is_active !== false;
                                         return (
                                           <tr key={vIdx} className="hover:bg-gray-50">
-                                            <td className="py-2 px-3 font-bold text-[#1A1918]">{v.measurement}</td>
-                                            <td className="py-2 px-3 font-mono">{v.weight_g} g</td>
-                                            <td className="py-2 px-3 font-mono">{v.weight_g} g</td>
-                                            <td className="py-2 px-3 font-mono">₹{v.making_charge}</td>
+                                            <td className="py-2 px-3 font-bold text-[#1A1918] font-mono">{v.weight_g} g</td>
+                                            <td className="py-2 px-3 font-mono">₹{v.making_charge}{v.making_charge_type === 'per_gram' ? '/g' : ''}</td>
                                             <td className="py-2 px-3 font-bold text-green-700 font-mono">₹{vCalc.finalPrice.toLocaleString()}</td>
                                             <td className="py-2 px-3 text-center font-bold">
                                               <span className={`px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wider ${isVInStock ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'}`}>
@@ -1100,8 +1095,8 @@ export const AdminProducts: React.FC = () => {
 
                 {/* Weights & Purity Section */}
                 <div className="bg-white p-3.5 rounded-2xl border border-[#E6E1DA] space-y-2.5">
-                  <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">WEIGHT & PURITY MEASUREMENTS</span>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">WEIGHT & PURITY SPECIFICATIONS</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Silver Purity</label>
                       <select value={formData.silver_purity} onChange={(e) => setFormData({ ...formData, silver_purity: e.target.value })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5 text-xs">
@@ -1117,10 +1112,6 @@ export const AdminProducts: React.FC = () => {
                     <div>
                       <label className="block font-semibold text-gray-700 mb-1">Gross Weight (g)</label>
                       <input type="number" step="any" value={formData.gross_weight_g} onChange={(e) => setFormData({ ...formData, gross_weight_g: parseFloat(e.target.value) })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5" />
-                    </div>
-                    <div>
-                      <label className="block font-semibold text-gray-700 mb-1">Dimensions / Size</label>
-                      <input type="text" placeholder="Height: 5 in, Width: 3 in" value={formData.dimensions} onChange={(e) => setFormData({ ...formData, dimensions: e.target.value })} className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-2.5 py-1.5" />
                     </div>
                   </div>
                 </div>
@@ -1144,12 +1135,12 @@ export const AdminProducts: React.FC = () => {
                   </div>
                 </div>
 
-                {/* PRODUCT VARIANTS / MEASUREMENTS SECTION */}
+                {/* PRODUCT WEIGHT VARIANTS SECTION */}
                 <div className="bg-white p-3.5 rounded-2xl border border-[#E6E1DA] space-y-2.5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">PRODUCT VARIANTS / MEASUREMENTS</span>
-                      <p className="text-[10.5px] text-gray-500">Define multiple size/measurement variants (e.g. 2", 3", 4", 6") with custom weights & making charges.</p>
+                      <span className="font-bold text-[#C5A059] uppercase tracking-wider block text-[10px]">PRODUCT WEIGHT VARIANTS</span>
+                      <p className="text-[10.5px] text-gray-500">Define multiple weight variants with custom weights & making charges.</p>
                     </div>
                     <button
                       type="button"
@@ -1166,7 +1157,6 @@ export const AdminProducts: React.FC = () => {
                       <table className="w-full text-left text-[11px]">
                         <thead className="bg-[#FAF9F5] border-b border-[#E6E1DA] font-bold text-[#1A1918]">
                           <tr>
-                            <th className="py-2 px-3">Measurement</th>
                             <th className="py-2 px-3">Weight (g)</th>
                             <th className="py-2 px-3">Making Charge</th>
                             <th className="py-2 px-3">Calculated Price</th>
@@ -1180,9 +1170,8 @@ export const AdminProducts: React.FC = () => {
                             const isVInStock = (v.stock !== undefined ? v.stock : 10) > 0 && v.is_active !== false;
                             return (
                               <tr key={idx} className="hover:bg-[#FAF9F5]/60">
-                                <td className="py-1.5 px-3 font-bold text-[#1A1918]">{v.measurement}</td>
-                                <td className="py-1.5 px-3 font-mono">{v.weight_g} g</td>
-                                <td className="py-1.5 px-3 font-mono">₹{v.making_charge}</td>
+                                <td className="py-1.5 px-3 font-bold text-[#1A1918] font-mono">{v.weight_g} g</td>
+                                <td className="py-1.5 px-3 font-mono">₹{v.making_charge}{v.making_charge_type === 'per_gram' ? '/g' : ''}</td>
                                 <td className="py-1.5 px-3 font-bold text-green-700 font-mono">₹{pCalc.finalPrice.toLocaleString()}</td>
                                 <td className="py-1.5 px-3 font-mono">
                                   <button
@@ -1211,7 +1200,7 @@ export const AdminProducts: React.FC = () => {
                     </div>
                   ) : (
                     <div className="text-center py-3 bg-[#FAF9F5] rounded-xl border border-dashed border-[#E6E1DA] text-gray-500 text-[11px]">
-                      No custom measurements/variants created. Click <strong>+ Add Variant</strong> to set size options.
+                      No custom weight variants created. Click <strong>+ Add Variant</strong> to set weight options.
                     </div>
                   )}
                 </div>
@@ -1245,7 +1234,7 @@ export const AdminProducts: React.FC = () => {
 
             <div className="bg-white px-5 py-3 border-b border-[#E6E1DA] flex items-center justify-between shrink-0">
               <h4 className="font-serif text-lg font-bold text-[#1A1918]">
-                {editingVariantIndex !== null ? 'Edit Variant / Size' : 'Add New Variant / Size'}
+                {editingVariantIndex !== null ? 'Edit Weight Variant' : 'Add New Weight Variant'}
               </h4>
               <button onClick={() => setIsVariantModalOpen(false)} className="text-gray-500 hover:text-black p-1">
                 <X className="w-5 h-5" />
@@ -1254,17 +1243,6 @@ export const AdminProducts: React.FC = () => {
 
             <form onSubmit={handleSaveVariant} className="flex flex-col flex-1 min-h-0 overflow-hidden">
               <div className="p-4 sm:p-5 overflow-y-auto space-y-3 flex-1">
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Measurement / Size *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. 2 inch, 3 inch, 250g"
-                    value={variantForm.measurement}
-                    onChange={(e) => setVariantForm({ ...variantForm, measurement: e.target.value })}
-                    className="w-full bg-white border border-[#E6E1DA] rounded-xl px-3 py-1.5"
-                  />
-                </div>
 
                 <div className="grid grid-cols-3 gap-3">
                   <div>
