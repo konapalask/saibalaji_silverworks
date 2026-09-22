@@ -173,7 +173,7 @@ export const Footer: React.FC = () => {
           {/* Column 4: Contact & Connect */}
           <div className="space-y-4 flex flex-col items-center sm:items-start">
             <h3 className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#B9A77A] border-b border-white/10 pb-2 inline-block">
-              CONTACT ATELIER
+              CONTACT
             </h3>
             <div className="space-y-2.5 text-[#A0A0A0] font-light text-xs sm:text-sm flex flex-col items-center sm:items-start">
               <p className="flex items-start justify-center sm:justify-start gap-2 text-center sm:text-left">
