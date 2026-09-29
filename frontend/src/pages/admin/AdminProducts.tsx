@@ -1532,6 +1532,16 @@ export const AdminProducts: React.FC = () => {
         sku={previewImageData?.sku}
       />
 
+      {/* Product Video Player Modal */}
+      {previewVideoData && (
+        <VideoPlayerModal
+          isOpen={Boolean(previewVideoData)}
+          onClose={() => setPreviewVideoData(null)}
+          videoUrl={previewVideoData.url}
+          title={previewVideoData.title || 'Product Showcase Video'}
+        />
+      )}
+
     </div>
   );
 };
