@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, MessageSquare, Share2, Copy, X, AlertCircle, ChevronLeft, ChevronRight, Sliders } from 'lucide-react';
+import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, MessageSquare, Share2, Copy, X, AlertCircle, ChevronLeft, ChevronRight, Sliders, Play, Video } from 'lucide-react';
 import { Product, ProductVariant } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { generateOrderId, generateSingleProductWhatsAppMessage, openWhatsAppOrderUrl } from '../utils/whatsappOrder';
 import { useLiveSilver } from '../context/LiveSilverContext';
 import { OrderSuccessModal } from '../components/OrderSuccessModal';
+import { VideoPlayerModal } from '../components/VideoPlayerModal';
 import api from '../services/api';
 import { isVariantOutOfStock, isProductFullyOutOfStock, getFirstInStockVariant } from '../utils/stock';
 
@@ -36,6 +37,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
   const [selectedVariant, setSelectedVariant] = useState<any | null>(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [successOrderData, setSuccessOrderData] = useState<any>(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const { cart, addToCart, updateQuantity, isWholesale, cartType, setIsCartOpen } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
@@ -444,6 +446,18 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                 <Share2 className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
               </button>
             </div>
+
+            {/* Floating Video Watch Button */}
+            {product.video_url && (
+              <button
+                type="button"
+                onClick={() => setIsVideoModalOpen(true)}
+                className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-10 bg-black/85 hover:bg-[#C5A059] hover:text-black text-[#C5A059] border border-[#C5A059]/40 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-lg cursor-pointer hover:scale-105"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Watch Product Video{product.video_size_mb ? ` (${product.video_size_mb})` : ''}</span>
+              </button>
+            )}
           </div>
 
           {/* Thumbnails */}
@@ -451,12 +465,13 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
             const validGalleryImages = (product.images || []).filter(
               (img) => img && img.image_url && typeof img.image_url === 'string' && img.image_url.trim() !== '' && img.image_url !== product.featured_image
             );
-            if (validGalleryImages.length === 0) return null;
+            const hasVideo = Boolean(product.video_url);
+            if (validGalleryImages.length === 0 && !hasVideo) return null;
             return (
-              <div className="flex gap-2.5 overflow-x-auto pb-1">
+              <div className="flex gap-2.5 overflow-x-auto pb-1 items-center">
                 <button
                   onClick={() => setActiveImage(product.featured_image)}
-                  className={`w-16 h-20 rounded-xl overflow-hidden border-2 p-1 bg-black transition-all cursor-pointer ${activeImage === product.featured_image ? 'border-[#B9A77A] shadow-xs' : 'border-[#E5E0D8] opacity-70'
+                  className={`w-16 h-20 rounded-xl overflow-hidden border-2 p-1 bg-black transition-all cursor-pointer shrink-0 ${activeImage === product.featured_image ? 'border-[#B9A77A] shadow-xs' : 'border-[#E5E0D8] opacity-70'
                     }`}
                 >
                   <img src={product.featured_image} alt="" className="w-full h-full object-contain bg-black" />
@@ -465,12 +480,32 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
                   <button
                     key={img.id || img.image_url}
                     onClick={() => setActiveImage(img.image_url)}
-                    className={`w-16 h-20 rounded-xl overflow-hidden border-2 p-1 bg-black transition-all cursor-pointer ${activeImage === img.image_url ? 'border-[#B9A77A] shadow-xs' : 'border-[#E5E0D8] opacity-70'
+                    className={`w-16 h-20 rounded-xl overflow-hidden border-2 p-1 bg-black transition-all cursor-pointer shrink-0 ${activeImage === img.image_url ? 'border-[#B9A77A] shadow-xs' : 'border-[#E5E0D8] opacity-70'
                       }`}
                   >
                     <img src={img.image_url} alt="" className="w-full h-full object-contain bg-black" />
                   </button>
                 ))}
+                {hasVideo && (
+                  <button
+                    type="button"
+                    onClick={() => setIsVideoModalOpen(true)}
+                    className="w-16 h-20 rounded-xl overflow-hidden border-2 border-[#C5A059] p-1 bg-black transition-all cursor-pointer relative group shrink-0 flex flex-col items-center justify-center text-white shadow-xs"
+                    title="Watch Product Video"
+                  >
+                    <img 
+                      src={product.video_thumbnail || product.featured_image} 
+                      alt="Video" 
+                      className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" 
+                    />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
+                      <div className="w-6 h-6 rounded-full bg-[#C5A059] text-black flex items-center justify-center shadow-md">
+                        <Play className="w-3 h-3 fill-current ml-0.5" />
+                      </div>
+                      <span className="text-[8px] font-bold uppercase tracking-tighter bg-black/80 px-1 rounded text-[#C5A059]">VIDEO</span>
+                    </div>
+                  </button>
+                )}
               </div>
             );
           })()}
@@ -939,6 +974,17 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
           items={successOrderData.items}
           whatsappMessage={successOrderData.whatsappMessage}
           isWholesale={false}
+        />
+      )}
+
+      {/* Product Video Modal */}
+      {isVideoModalOpen && product.video_url && (
+        <VideoPlayerModal
+          isOpen={isVideoModalOpen}
+          onClose={() => setIsVideoModalOpen(false)}
+          videoUrl={product.video_url}
+          title={product.title}
+          description={product.description}
         />
       )}
 
