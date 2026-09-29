@@ -79,6 +79,9 @@ export interface Product {
   description?: string;
   specifications?: string;
   featured_image: string;
+  video_url?: string;
+  video_thumbnail?: string;
+  video_size_mb?: string;
   is_featured: boolean;
   is_new_arrival: boolean;
   is_active: boolean;
@@ -248,6 +251,9 @@ export interface CompanyVideo {
   section: string;
   sort_order: number;
   is_active: boolean;
+  size_mb?: string;
+  format?: string;
+  is_portrait?: boolean;
   created_at: string;
 }
 
