@@ -7,10 +7,130 @@ const bcrypt = require('bcryptjs');
 const https = require('https');
 const http = require('http');
 const crypto = require('crypto');
+const multer = require('multer');
+const { spawn } = require('child_process');
+const ffmpeg = require('ffmpeg-static');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 const JWT_SECRET = process.env.JWT_SECRET || 'saibalaji_silverworks_super_secret_jwt_key_2026';
+
+// Upload Directories for Videos and Generated Thumbnails
+const videosUploadDir = path.join(__dirname, 'public', 'videos');
+const thumbsUploadDir = path.join(__dirname, 'public', 'video_thumbnails');
+
+if (!fs.existsSync(videosUploadDir)) {
+  fs.mkdirSync(videosUploadDir, { recursive: true });
+}
+if (!fs.existsSync(thumbsUploadDir)) {
+  fs.mkdirSync(thumbsUploadDir, { recursive: true });
+}
+
+// Generate Video Thumbnail using ffmpeg-static (Extracts 1st second frame as .webp)
+function generateVideoThumbnail(videoPath, outputPath) {
+  return new Promise((resolve) => {
+    try {
+      if (!ffmpeg || !fs.existsSync(videoPath)) return resolve(false);
+
+      const args = [
+        '-y',
+        '-ss', '00:00:01',
+        '-i', videoPath,
+        '-vframes', '1',
+        '-vf', 'scale=640:-1',
+        '-quality', '80',
+        outputPath
+      ];
+
+      const proc = spawn(ffmpeg, args, { stdio: 'ignore' });
+      proc.on('close', (code) => {
+        if (code === 0 && fs.existsSync(outputPath) && fs.statSync(outputPath).size > 100) {
+          return resolve(true);
+        }
+        // Fallback for short clips (< 1 second duration)
+        const args0 = [
+          '-y',
+          '-ss', '00:00:00',
+          '-i', videoPath,
+          '-vframes', '1',
+          '-vf', 'scale=640:-1',
+          '-quality', '80',
+          outputPath
+        ];
+        const proc0 = spawn(ffmpeg, args0, { stdio: 'ignore' });
+        proc0.on('close', (code0) => {
+          resolve(code0 === 0 && fs.existsSync(outputPath) && fs.statSync(outputPath).size > 100);
+        });
+        proc0.on('error', () => resolve(false));
+      });
+      proc.on('error', (err) => {
+        console.error('ffmpeg process error:', err.message);
+        resolve(false);
+      });
+    } catch (e) {
+      console.error('Thumbnail generation error:', e);
+      resolve(false);
+    }
+  });
+}
+
+// Multer DiskStorage for Video Files (.mp4, .mov, .webm, .m4v, .mkv)
+const videoStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, videosUploadDir);
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const base = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
+    const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1e4);
+    cb(null, `${base}_${uniqueSuffix}${ext}`);
+  }
+});
+
+const videoFileFilter = (req, file, cb) => {
+  const allowedExts = ['.mp4', '.mov', '.webm', '.m4v', '.mkv', '.avi'];
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (allowedExts.includes(ext) || (file.mimetype && file.mimetype.startsWith('video/'))) {
+    cb(null, true);
+  } else {
+    cb(new Error(`Unsupported video format (${ext}). Supported formats: .mp4, .mov, .webm, .m4v, .mkv`), false);
+  }
+};
+
+const uploadVideoMiddleware = multer({
+  storage: videoStorage,
+  fileFilter: videoFileFilter,
+  limits: {
+    fileSize: 500 * 1024 * 1024 // 500 MB max video file weight
+  }
+});
+
+// Multer DiskStorage for Custom Video Thumbnail Images (.webp, .jpg, .png)
+const imageStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, thumbsUploadDir);
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const base = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
+    const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1e4);
+    cb(null, `${base}_${uniqueSuffix}${ext}`);
+  }
+});
+
+const uploadImageMiddleware = multer({
+  storage: imageStorage,
+  fileFilter: (req, file, cb) => {
+    const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.avif'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (allowed.includes(ext) || (file.mimetype && file.mimetype.startsWith('image/'))) {
+      cb(null, true);
+    } else {
+      cb(new Error(`Unsupported image format (${ext}). Supported formats: .webp, .jpg, .png, .avif`), false);
+    }
+  },
+  limits: { fileSize: 25 * 1024 * 1024 }
+});
 
 // Middleware
 app.use(cors());
@@ -819,6 +939,9 @@ const handleCreateProduct = (req, res) => {
     description: description || '',
     specifications: specifications || '',
     featured_image: featured_image || '/public/Saibalaji products S/Floral Engraved Silver Pooja Thali Set.webp',
+    video_url: req.body.video_url || '',
+    video_thumbnail: req.body.video_thumbnail || '',
+    video_size_mb: req.body.video_size_mb || '',
     is_featured: Boolean(is_featured),
     is_new_arrival: is_new_arrival !== undefined ? Boolean(is_new_arrival) : true,
     is_active: true,
@@ -879,6 +1002,9 @@ const handleUpdateProduct = (req, res) => {
     description: description !== undefined ? description : existing.description,
     specifications: specifications !== undefined ? specifications : existing.specifications,
     featured_image: featured_image !== undefined ? featured_image : existing.featured_image,
+    video_url: req.body.video_url !== undefined ? req.body.video_url : (existing.video_url || ''),
+    video_thumbnail: req.body.video_thumbnail !== undefined ? req.body.video_thumbnail : (existing.video_thumbnail || ''),
+    video_size_mb: req.body.video_size_mb !== undefined ? req.body.video_size_mb : (existing.video_size_mb || ''),
     is_featured: is_featured !== undefined ? Boolean(is_featured) : existing.is_featured,
     is_new_arrival: is_new_arrival !== undefined ? Boolean(is_new_arrival) : existing.is_new_arrival,
     is_active: is_active !== undefined ? Boolean(is_active) : existing.is_active,
@@ -1980,9 +2106,73 @@ app.get(['/api/v1/content/videos', '/api/v1/content/videos/all'], (req, res) => 
   res.json(videos);
 });
 
+// Admin Video Upload (.mp4, .mov, .webm, etc.) with automatic WebP thumbnail generation & file weight measurement
+app.post(['/api/v1/upload/video', '/api/upload/video'], requireAdmin, uploadVideoMiddleware.single('video'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ detail: 'No video file provided for upload' });
+    }
+
+    const filename = req.file.filename;
+    const ext = path.extname(filename).toLowerCase();
+    const baseName = path.parse(filename).name;
+    const videoPath = req.file.path;
+    const sizeBytes = req.file.size;
+    const sizeMb = (sizeBytes / (1024 * 1024)).toFixed(2) + ' MB';
+
+    // Auto-generate high-quality WebP thumbnail
+    const thumbFilename = `${baseName}.webp`;
+    const thumbPath = path.join(thumbsUploadDir, thumbFilename);
+    const hasThumb = await generateVideoThumbnail(videoPath, thumbPath);
+
+    const videoUrl = `/public/videos/${filename}`;
+    const thumbnailUrl = hasThumb ? `/public/video_thumbnails/${thumbFilename}` : '';
+
+    console.log(`[VIDEO UPLOAD] Successfully saved ${filename} (${sizeMb}), thumbnail generated: ${hasThumb}`);
+
+    res.json({
+      success: true,
+      message: 'Video uploaded and processed successfully',
+      video_url: videoUrl,
+      thumbnail_url: thumbnailUrl,
+      filename: filename,
+      original_name: req.file.originalname,
+      size_bytes: sizeBytes,
+      size_mb: sizeMb,
+      format: ext,
+      has_thumbnail: hasThumb
+    });
+  } catch (err) {
+    console.error('Video upload processing error:', err);
+    res.status(500).json({ detail: 'Video upload processing failed: ' + err.message });
+  }
+});
+
+// Admin Custom Image / Video Thumbnail Upload
+app.post(['/api/v1/upload/image', '/api/upload/image'], requireAdmin, uploadImageMiddleware.single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ detail: 'No image file provided for upload' });
+    }
+    const filename = req.file.filename;
+    const sizeMb = (req.file.size / (1024 * 1024)).toFixed(2) + ' MB';
+    res.json({
+      success: true,
+      image_url: `/public/video_thumbnails/${filename}`,
+      filename: filename,
+      original_name: req.file.originalname,
+      size_mb: sizeMb
+    });
+  } catch (err) {
+    console.error('Image upload error:', err);
+    res.status(500).json({ detail: 'Image upload failed: ' + err.message });
+  }
+});
+
 app.post('/api/v1/content/videos', requireAdmin, (req, res) => {
+  videos = loadJsonFile('videos_data.json', []);
   const newVideo = {
-    id: videos.length + 1,
+    id: videos.length > 0 ? Math.max(...videos.map(v => v.id || 0)) + 1 : 1,
     ...req.body,
     created_at: new Date().toISOString()
   };
@@ -1991,8 +2181,27 @@ app.post('/api/v1/content/videos', requireAdmin, (req, res) => {
   res.status(201).json(newVideo);
 });
 
+// Admin Update Video Showcase (PUT)
+app.put('/api/v1/content/videos/:id', requireAdmin, (req, res) => {
+  const vidId = parseInt(req.params.id);
+  videos = loadJsonFile('videos_data.json', []);
+  const idx = videos.findIndex(v => v.id === vidId);
+  if (idx === -1) {
+    return res.status(404).json({ detail: 'Video showcase not found' });
+  }
+  videos[idx] = {
+    ...videos[idx],
+    ...req.body,
+    id: vidId,
+    updated_at: new Date().toISOString()
+  };
+  saveJsonFile('videos_data.json', videos);
+  res.json(videos[idx]);
+});
+
 app.delete('/api/v1/content/videos/:id', requireAdmin, (req, res) => {
   const vidId = parseInt(req.params.id);
+  videos = loadJsonFile('videos_data.json', []);
   videos = videos.filter(v => v.id !== vidId);
   saveJsonFile('videos_data.json', videos);
   res.json({ message: 'Video deleted' });
