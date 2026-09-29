@@ -2,13 +2,15 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   Plus, Edit, Trash2, Check, X, Sparkles, RefreshCw,
   Search, Filter, ChevronDown, ChevronRight, MoreVertical,
-  Layers, Copy, AlertCircle, CheckSquare, Square, Eye, Package
+  Layers, Copy, AlertCircle, CheckSquare, Square, Eye, Package, Video
 } from 'lucide-react';
 import { Product, Category, ProductVariant } from '../../types';
 import api from '../../services/api';
 import { getErrorMessage } from '../../utils/apiError';
 import { useLiveSilver } from '../../context/LiveSilverContext';
 import { ImagePreviewModal } from '../../components/ImagePreviewModal';
+import { VideoUploadField } from '../../components/admin/VideoUploadField';
+import { VideoPlayerModal } from '../../components/VideoPlayerModal';
 
 export const AdminProducts: React.FC = () => {
   const { silverStats, refreshSilverRate, calculateDynamicPrice } = useLiveSilver();
@@ -18,6 +20,7 @@ export const AdminProducts: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [previewImageData, setPreviewImageData] = useState<{ url: string; title?: string; sku?: string } | null>(null);
+  const [previewVideoData, setPreviewVideoData] = useState<{ url: string; title?: string } | null>(null);
 
   // Filters & Search
   const [searchQuery, setSearchQuery] = useState('');
@@ -63,6 +66,9 @@ export const AdminProducts: React.FC = () => {
     description: '',
     specifications: '',
     featured_image: '/public/Saibalaji products S/Floral Engraved Silver Pooja Thali Set.webp',
+    video_url: '',
+    video_thumbnail: '',
+    video_size_mb: '',
     is_featured: true,
     is_new_arrival: true
   });
@@ -193,6 +199,9 @@ export const AdminProducts: React.FC = () => {
       description: 'Handcrafted silver piece created with hallmark precision.',
       specifications: 'Material: 925 Sterling Silver',
       featured_image: '/public/Saibalaji products S/Floral Engraved Silver Pooja Thali Set.webp',
+      video_url: '',
+      video_thumbnail: '',
+      video_size_mb: '',
       is_featured: true,
       is_new_arrival: true
     });
@@ -236,6 +245,9 @@ export const AdminProducts: React.FC = () => {
       description: prod.description || '',
       specifications: prod.specifications || '',
       featured_image: prod.featured_image,
+      video_url: prod.video_url || '',
+      video_thumbnail: prod.video_thumbnail || '',
+      video_size_mb: prod.video_size_mb || '',
       is_featured: prod.is_featured,
       is_new_arrival: prod.is_new_arrival
     });
@@ -776,6 +788,20 @@ export const AdminProducts: React.FC = () => {
                                 {p.category_name || p.category?.name || 'Silver Collection'}
                                 {p.subcategory ? ` • ${p.subcategory}` : ''}
                               </span>
+                              {p.video_url && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setPreviewVideoData({ url: p.video_url!, title: p.title });
+                                  }}
+                                  className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 bg-[#1A1918] text-[#C5A059] rounded-md font-mono text-[9px] font-bold hover:bg-[#C5A059] hover:text-black transition-colors cursor-pointer"
+                                  title="Watch attached product video"
+                                >
+                                  <Video className="w-2.5 h-2.5" />
+                                  <span>Video{p.video_size_mb ? ` (${p.video_size_mb})` : ''}</span>
+                                </button>
+                              )}
                             </div>
                           </div>
                         </td>
@@ -1283,6 +1309,27 @@ export const AdminProducts: React.FC = () => {
                     value={formData.featured_image}
                     onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
                     className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3.5 py-2 font-mono text-[11px] text-[#1A1918] transition-all shadow-2xs"
+                  />
+                </div>
+
+                <div className="pt-2 border-t border-[#E6E1DA]">
+                  <VideoUploadField
+                    label="Product Showcase / Unboxing Video (.mp4, .mov, .webm)"
+                    videoUrl={formData.video_url}
+                    thumbnailUrl={formData.video_thumbnail}
+                    videoSizeMb={formData.video_size_mb}
+                    helperText="Optional 360-degree rotating or unboxing video. Upload .mp4, .mov, or .webm files up to 500 MB."
+                    onVideoChange={(url, thumb, sizeMb) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        video_url: url,
+                        video_thumbnail: thumb || prev.video_thumbnail,
+                        video_size_mb: sizeMb || prev.video_size_mb
+                      }));
+                    }}
+                    onThumbnailChange={(thumb) => {
+                      setFormData(prev => ({ ...prev, video_thumbnail: thumb }));
+                    }}
                   />
                 </div>
 

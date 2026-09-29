@@ -455,6 +455,8 @@ export const AdminCMS: React.FC = () => {
             </form>
           </div>
         </div>
+      )}
+
       {/* Video Player Preview Modal */}
       {previewVideo && (
         <VideoPlayerModal
