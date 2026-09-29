@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Check, Plus, Edit, Trash2, Video, FileText, Image as ImageIcon, X, MessageSquare, PhoneCall } from 'lucide-react';
+import { Save, Check, Plus, Edit, Trash2, Video, FileText, Image as ImageIcon, X, MessageSquare, PhoneCall, Play, HardDrive } from 'lucide-react';
 import { CompanyVideo } from '../../types';
 import api from '../../services/api';
 import { getAdminWhatsAppNumber, setAdminWhatsAppNumber } from '../../config/whatsappConfig';
+import { VideoUploadField } from '../../components/admin/VideoUploadField';
+import { VideoPlayerModal } from '../../components/VideoPlayerModal';
 
 export const AdminCMS: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'hero' | 'videos' | 'whatsapp'>('hero');
@@ -17,11 +19,13 @@ export const AdminCMS: React.FC = () => {
   const [videos, setVideos] = useState<CompanyVideo[]>([]);
   const [isVidModalOpen, setIsVidModalOpen] = useState(false);
   const [editingVideo, setEditingVideo] = useState<CompanyVideo | null>(null);
+  const [previewVideo, setPreviewVideo] = useState<CompanyVideo | null>(null);
   const [vidForm, setVidForm] = useState({
     title: '',
     description: '',
     video_url: '',
     thumbnail_url: '',
+    size_mb: '',
     section: 'story',
     sort_order: 1,
     is_active: true
@@ -96,6 +100,7 @@ export const AdminCMS: React.FC = () => {
       description: '',
       video_url: '',
       thumbnail_url: '/homescreen.webp',
+      size_mb: '',
       section: 'story',
       sort_order: videos.length + 1,
       is_active: true
@@ -110,6 +115,7 @@ export const AdminCMS: React.FC = () => {
       description: vid.description || '',
       video_url: vid.video_url,
       thumbnail_url: vid.thumbnail_url || '',
+      size_mb: vid.size_mb || '',
       section: vid.section,
       sort_order: vid.sort_order,
       is_active: vid.is_active
@@ -323,10 +329,28 @@ export const AdminCMS: React.FC = () => {
                   {videos.map((vid) => (
                     <tr key={vid.id} className="hover:bg-[#FAF9F5]/50 transition-colors">
                       <td className="py-4 px-6 flex items-center gap-3">
-                        <img src={vid.thumbnail_url || '/public/Saibalaji products S/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp'} alt="" className="w-16 h-10 object-cover rounded-lg border border-gray-200" />
-                        <div>
-                          <span className="font-serif text-sm font-bold text-[#1A1918] block">{vid.title}</span>
+                        <div 
+                          className="relative w-16 h-10 shrink-0 rounded-lg overflow-hidden border border-gray-200 cursor-pointer group"
+                          onClick={() => setPreviewVideo(vid)}
+                          title="Click to play video"
+                        >
+                          <img 
+                            src={vid.thumbnail_url || '/public/Saibalaji products S/Elegant Silver Lakshmi Devi Idol with Ornate Arch.webp'} 
+                            alt="" 
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform" 
+                          />
+                          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 flex items-center justify-center transition-colors">
+                            <Play className="w-4 h-4 text-white fill-current drop-shadow-xs" />
+                          </div>
+                        </div>
+                        <div className="min-w-0">
+                          <span className="font-serif text-sm font-bold text-[#1A1918] block truncate max-w-xs">{vid.title}</span>
                           <span className="text-[10px] text-gray-500 truncate max-w-xs block">{vid.description}</span>
+                          {vid.size_mb && (
+                            <span className="text-[9px] text-[#C5A059] font-mono font-bold flex items-center gap-1 mt-0.5">
+                              <HardDrive className="w-2.5 h-2.5" /> {vid.size_mb}
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="py-4 px-6">
@@ -378,15 +402,27 @@ export const AdminCMS: React.FC = () => {
                 <textarea rows={2} value={vidForm.description} onChange={(e) => setVidForm({ ...vidForm, description: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-4 py-2.5" />
               </div>
 
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Video Stream MP4 URL *</label>
-                <input type="text" required value={vidForm.video_url} onChange={(e) => setVidForm({ ...vidForm, video_url: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-4 py-2.5 font-mono text-[11px]" />
-              </div>
-
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Thumbnail Preview Image URL</label>
-                <input type="text" value={vidForm.thumbnail_url} onChange={(e) => setVidForm({ ...vidForm, thumbnail_url: e.target.value })} className="w-full bg-white border border-[#E6E1DA] rounded-xl px-4 py-2.5" />
-              </div>
+              <VideoUploadField
+                label="Showcase Video File (.mp4, .mov, .webm) *"
+                videoUrl={vidForm.video_url}
+                thumbnailUrl={vidForm.thumbnail_url}
+                videoSizeMb={vidForm.size_mb}
+                required
+                onVideoChange={(url, thumb, sizeMb, originalName) => {
+                  setVidForm(prev => ({
+                    ...prev,
+                    video_url: url,
+                    thumbnail_url: thumb || prev.thumbnail_url,
+                    size_mb: sizeMb || prev.size_mb,
+                    title: prev.title.trim() === '' && originalName 
+                      ? originalName.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') 
+                      : prev.title
+                  }));
+                }}
+                onThumbnailChange={(thumbUrl) => {
+                  setVidForm(prev => ({ ...prev, thumbnail_url: thumbUrl }));
+                }}
+              />
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
@@ -419,6 +455,15 @@ export const AdminCMS: React.FC = () => {
             </form>
           </div>
         </div>
+      {/* Video Player Preview Modal */}
+      {previewVideo && (
+        <VideoPlayerModal
+          isOpen={Boolean(previewVideo)}
+          onClose={() => setPreviewVideo(null)}
+          videoUrl={previewVideo.video_url}
+          title={previewVideo.title}
+          description={previewVideo.description}
+        />
       )}
 
     </div>
