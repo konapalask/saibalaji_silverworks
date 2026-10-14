@@ -906,6 +906,9 @@ const handleCreateProduct = (req, res) => {
     title: title || 'New Silver Product',
     slug,
     sku: sku || `SBS-SLV-${newId}`,
+    sort_order: req.body.sort_order !== undefined && req.body.sort_order !== null && !isNaN(parseInt(req.body.sort_order))
+      ? parseInt(req.body.sort_order)
+      : (productsList.length > 0 ? Math.max(...productsList.map(p => p.sort_order || 0)) + 1 : 1),
     category_id: category_id ? Number(category_id) : 1,
     category_name: category ? category.name : 'Silver Pooja Articles',
     category_slug: category ? category.slug : 'silver-pooja-articles',
@@ -943,6 +946,79 @@ const handleCreateProduct = (req, res) => {
 app.post('/api/v1/products', requireAdmin, handleCreateProduct);
 app.post('/api/products', handleCreateProduct);
 
+// Reorder products in bulk (MUST BE DECLARED BEFORE /:id)
+const handleReorderProducts = (req, res) => {
+  const { items, ordered_ids } = req.body;
+  let productsList = getProducts();
+
+  if (Array.isArray(ordered_ids)) {
+    const orderMap = new Map();
+    ordered_ids.forEach((id, idx) => {
+      orderMap.set(Number(id), idx + 1);
+    });
+
+    productsList = productsList.map(p => {
+      if (orderMap.has(p.id)) {
+        return { ...p, sort_order: orderMap.get(p.id) };
+      }
+      return p;
+    });
+  } else if (Array.isArray(items)) {
+    const orderMap = new Map();
+    items.forEach(it => {
+      if (it && it.id !== undefined && it.sort_order !== undefined) {
+        orderMap.set(Number(it.id), parseInt(it.sort_order));
+      }
+    });
+
+    productsList = productsList.map(p => {
+      if (orderMap.has(p.id)) {
+        return { ...p, sort_order: orderMap.get(p.id) };
+      }
+      return p;
+    });
+  } else {
+    return res.status(400).json({ detail: 'Invalid payload. Expecting { items: [{id, sort_order}] } or { ordered_ids: [...] }' });
+  }
+
+  saveJsonFile('products_data.json', productsList);
+  res.json({ message: 'Products reordered successfully', count: productsList.length });
+};
+
+app.put('/api/v1/products/reorder', requireAdmin, handleReorderProducts);
+app.post('/api/v1/products/reorder', requireAdmin, handleReorderProducts);
+app.put('/api/products/reorder', handleReorderProducts);
+app.post('/api/products/reorder', handleReorderProducts);
+
+// Single Product Sort Order Quick Update
+const handleUpdateProductSortOrder = (req, res) => {
+  const productId = parseInt(req.params.id);
+  const newOrder = parseInt(req.body.sort_order !== undefined ? req.body.sort_order : req.body.order);
+
+  if (isNaN(newOrder)) {
+    return res.status(400).json({ detail: 'Valid sort_order number is required' });
+  }
+
+  let productsList = getProducts();
+  const index = productsList.findIndex(p => p.id === productId);
+  if (index === -1) {
+    return res.status(404).json({ detail: 'Product not found' });
+  }
+
+  productsList[index] = {
+    ...productsList[index],
+    sort_order: newOrder
+  };
+
+  saveJsonFile('products_data.json', productsList);
+  res.json({ message: 'Sort order updated successfully', product: productsList[index] });
+};
+
+app.put('/api/v1/products/:id/sort-order', requireAdmin, handleUpdateProductSortOrder);
+app.patch('/api/v1/products/:id/sort-order', requireAdmin, handleUpdateProductSortOrder);
+app.put('/api/products/:id/sort-order', handleUpdateProductSortOrder);
+app.patch('/api/products/:id/sort-order', handleUpdateProductSortOrder);
+
 // Admin Product Update (PUT)
 const handleUpdateProduct = (req, res) => {
   const productsList = getProducts();
@@ -969,6 +1045,9 @@ const handleUpdateProduct = (req, res) => {
     ...existing,
     title: title !== undefined ? title : existing.title,
     sku: sku !== undefined ? sku : existing.sku,
+    sort_order: req.body.sort_order !== undefined && req.body.sort_order !== null && !isNaN(parseInt(req.body.sort_order))
+      ? parseInt(req.body.sort_order)
+      : (existing.sort_order !== undefined ? existing.sort_order : index + 1),
     category_id: catId,
     category_name: category ? category.name : existing.category_name,
     category_slug: category ? category.slug : existing.category_slug,
