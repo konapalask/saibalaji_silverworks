@@ -696,6 +696,15 @@ export const AdminProducts: React.FC = () => {
 
         <div className="flex items-center gap-3">
           <button
+            onClick={handleOpenReorderModal}
+            className="bg-[#FAF9F5] hover:bg-[#F0ECE4] text-[#1A1918] border-2 border-[#C5A059] px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider font-bold flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+            title="Set which product appears 1st, 2nd, 3rd, 4th on storefront"
+          >
+            <ListOrdered className="w-4 h-4 text-[#C5A059]" />
+            <span>Set Product Order</span>
+          </button>
+
+          <button
             onClick={handleOpenAdd}
             className="bg-[#1A1918] hover:bg-[#C5A059] text-white px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer"
           >
