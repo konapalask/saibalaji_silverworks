@@ -267,6 +267,7 @@ export const RetailShop: React.FC = () => {
               onChange={(e) => updateFilter('sortBy', e.target.value)}
               className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-3 py-2 text-xs font-semibold text-[#202020] focus:outline-none focus:border-[#B9A77A]"
             >
+              <option value="featured">Featured / Custom Sequence</option>
               <option value="created_at_desc">Latest Additions</option>
               <option value="price_asc">Price: Low to High</option>
               <option value="price_desc">Price: High to Low</option>

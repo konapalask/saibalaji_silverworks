@@ -33,7 +33,7 @@ export const WholesaleCatalogue: React.FC = () => {
   const purityVal = searchParams.get('purity') || '';
   const priceRangeVal = searchParams.get('priceRange') || '';
   const weightVal = searchParams.get('weight') || '';
-  const sortByVal = searchParams.get('sortBy') || 'created_at_desc';
+  const sortByVal = searchParams.get('sortBy') || 'featured';
 
   // Dynamic available subcategories
   const availableSubcategories = useMemo(() => {
@@ -308,6 +308,7 @@ export const WholesaleCatalogue: React.FC = () => {
               onChange={(e) => updateFilter('sortBy', e.target.value)}
               className="w-full bg-[#F8F6F1] border border-[#E5E0D8] rounded-xl px-3 py-2 text-xs font-semibold text-[#202020] focus:outline-none focus:border-[#B9A77A]"
             >
+              <option value="featured">Featured / Custom Sequence</option>
               <option value="created_at_desc">Latest Additions</option>
               <option value="price_asc">Price: Low to High</option>
               <option value="price_desc">Price: High to Low</option>
