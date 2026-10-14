@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   Plus, Edit, Trash2, Check, X, Sparkles, RefreshCw,
   Search, Filter, ChevronDown, ChevronRight, MoreVertical,
-  Layers, Copy, AlertCircle, CheckSquare, Square, Eye, Package, Video
+  Layers, Copy, AlertCircle, CheckSquare, Square, Eye, Package, Video,
+  ArrowUpDown, ArrowUp, ArrowDown, ListOrdered, CheckCircle2, Hash
 } from 'lucide-react';
 import { Product, Category, ProductVariant } from '../../types';
 import api from '../../services/api';
@@ -28,6 +29,17 @@ export const AdminProducts: React.FC = () => {
   const [selectedPurity, setSelectedPurity] = useState<string>('ALL');
   const [selectedStockStatus, setSelectedStockStatus] = useState<string>('ALL');
   const [selectedProductStatus, setSelectedProductStatus] = useState<string>('ALL');
+  const [selectedSortBy, setSelectedSortBy] = useState<string>('order_asc');
+
+  // Product Ordering & Reorder Showcase State
+  const [isReorderModalOpen, setIsReorderModalOpen] = useState(false);
+  const [reorderingCategory, setReorderingCategory] = useState<string>('ALL');
+  const [reorderSearchQuery, setReorderSearchQuery] = useState('');
+  const [reorderList, setReorderList] = useState<Product[]>([]);
+  const [inlineOrderEditing, setInlineOrderEditing] = useState<{ [id: number]: number }>({});
+  const [orderUpdatingId, setOrderUpdatingId] = useState<number | null>(null);
+  const [isSavingReorder, setIsSavingReorder] = useState(false);
+  const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
 
   // Bulk Selection
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
@@ -49,6 +61,7 @@ export const AdminProducts: React.FC = () => {
   const [formData, setFormData] = useState({
     title: '',
     sku: '',
+    sort_order: 1,
     category_id: 1,
     subcategory: '',
     product_type: 'BOTH' as 'RETAIL' | 'WHOLESALE' | 'BOTH',
