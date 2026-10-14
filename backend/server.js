@@ -703,7 +703,7 @@ app.get('/api/v1/categories/:id_or_slug', (req, res) => {
 
 // --- PRODUCT API ENDPOINTS ---
 
-app.get('/api/v1/products', (req, res) => {
+const handleGetProducts = (req, res) => {
   const productsList = getProducts();
   const categoriesList = getCategories();
   let result = [...productsList];
@@ -715,6 +715,12 @@ app.get('/api/v1/products', (req, res) => {
   if (req.query.category_slug) {
     const slug = req.query.category_slug.toLowerCase();
     result = result.filter(p => p.category_slug && p.category_slug.toLowerCase() === slug);
+  }
+
+  // Product Type Filter (RETAIL, WHOLESALE, BOTH)
+  if (req.query.product_type) {
+    const pt = String(req.query.product_type).toUpperCase();
+    result = result.filter(p => !p.product_type || p.product_type === 'BOTH' || p.product_type.toUpperCase() === pt);
   }
 
   // Subcategory Filter
@@ -789,8 +795,24 @@ app.get('/api/v1/products', (req, res) => {
     result.sort((a, b) => b.weight_g - a.weight_g);
   } else if (sortBy === 'newest') {
     result.sort((a, b) => b.id - a.id);
-  } else { // default "featured"
-    result.sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0));
+  } else if (sortBy === 'created_at_desc') {
+    result.sort((a, b) => b.id - a.id);
+  } else if (sortBy === 'title_asc' || sortBy === 'name_asc') {
+    result.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+  } else if (sortBy === 'order_desc') {
+    result.sort((a, b) => {
+      const orderA = (a.sort_order !== undefined && a.sort_order !== null && !isNaN(a.sort_order)) ? Number(a.sort_order) : 999999;
+      const orderB = (b.sort_order !== undefined && b.sort_order !== null && !isNaN(b.sort_order)) ? Number(b.sort_order) : 999999;
+      return orderB - orderA;
+    });
+  } else {
+    // Default: Custom sort order set by Admin in dashboard (1, 2, 3, 4...)
+    result.sort((a, b) => {
+      const orderA = (a.sort_order !== undefined && a.sort_order !== null && !isNaN(a.sort_order)) ? Number(a.sort_order) : 999999;
+      const orderB = (b.sort_order !== undefined && b.sort_order !== null && !isNaN(b.sort_order)) ? Number(b.sort_order) : 999999;
+      if (orderA !== orderB) return orderA - orderB;
+      return a.id - b.id;
+    });
   }
 
   // Pagination
@@ -809,46 +831,10 @@ app.get('/api/v1/products', (req, res) => {
   });
 
   res.json(responseData);
-});
+};
 
-app.get('/api/v1/products/:id_or_slug', (req, res) => {
-  const productsList = getProducts();
-  const categoriesList = getCategories();
-  const param = req.params.id_or_slug;
-  const product = productsList.find(p => String(p.id) === param || p.slug === param);
-  if (!product) return res.status(404).json({ detail: 'Product not found' });
-
-  const cat = categoriesList.find(c => c.id === product.category_id || c.slug === product.category_slug);
-  res.json({
-    ...product,
-    category: cat || null,
-    images: product.images || []
-  });
-});
-
-// Alias GET /api/products
-app.get('/api/products', (req, res) => {
-  req.url = '/api/v1/products' + (req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '');
-  const productsList = getProducts();
-  const categoriesList = getCategories();
-  let result = [...productsList];
-
-  if (req.query.category_id) {
-    result = result.filter(p => p.category_id === parseInt(req.query.category_id));
-  }
-  if (req.query.category_slug) {
-    const slug = req.query.category_slug.toLowerCase();
-    result = result.filter(p => p.category_slug && p.category_slug.toLowerCase() === slug);
-  }
-
-  const limit = parseInt(req.query.limit) || 200;
-  const paginatedResult = result.slice(0, limit);
-  const responseData = paginatedResult.map(p => {
-    const cat = categoriesList.find(c => c.id === p.category_id || c.slug === p.category_slug);
-    return { ...p, category: cat || null, images: p.images || [] };
-  });
-  res.json(responseData);
-});
+app.get('/api/v1/products', handleGetProducts);
+app.get('/api/products', handleGetProducts);
 
 app.get('/api/products/:id_or_slug', (req, res) => {
   const productsList = getProducts();
