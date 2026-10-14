@@ -867,6 +867,22 @@ export const AdminProducts: React.FC = () => {
               <option value="ACTIVE">Active</option>
               <option value="INACTIVE">Inactive</option>
             </select>
+
+            {/* Admin Sorting Dropdown */}
+            <select
+              value={selectedSortBy}
+              onChange={(e) => { setSelectedSortBy(e.target.value); setCurrentPage(1); }}
+              className="bg-white border-2 border-amber-300 hover:border-amber-400 rounded-xl px-3 py-2 text-xs text-[#1A1918] font-bold focus:outline-none focus:border-black transition-all shadow-2xs cursor-pointer"
+              title="Change table sort order"
+            >
+              <option value="order_asc">Display Order (1 → 2 → 3)</option>
+              <option value="order_desc">Display Order (Reverse)</option>
+              <option value="title_asc">Title (A → Z)</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="stock_asc">Stock: Low to High</option>
+              <option value="newest">Newest First</option>
+            </select>
           </div>
         </div>
 
