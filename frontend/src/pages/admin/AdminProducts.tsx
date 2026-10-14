@@ -36,10 +36,11 @@ export const AdminProducts: React.FC = () => {
   const [reorderingCategory, setReorderingCategory] = useState<string>('ALL');
   const [reorderSearchQuery, setReorderSearchQuery] = useState('');
   const [reorderList, setReorderList] = useState<Product[]>([]);
-  const [inlineOrderEditing, setInlineOrderEditing] = useState<{ [id: number]: number }>({});
+  const [inlineOrderEditing, setInlineOrderEditing] = useState<{ [id: number]: string }>({});
+  const [reorderInputEditing, setReorderInputEditing] = useState<{ [id: number]: string }>({});
   const [orderUpdatingId, setOrderUpdatingId] = useState<number | null>(null);
   const [isSavingReorder, setIsSavingReorder] = useState(false);
-  const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
+  const [feedbackToast, setFeedbackToast] = useState<{ message: string; type?: 'success' | 'warning' | 'error' } | null>(null);
 
   // Bulk Selection
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
@@ -61,7 +62,7 @@ export const AdminProducts: React.FC = () => {
   const [formData, setFormData] = useState({
     title: '',
     sku: '',
-    sort_order: 1,
+    sort_order: 1 as number | '',
     category_id: 1,
     subcategory: '',
     product_type: 'BOTH' as 'RETAIL' | 'WHOLESALE' | 'BOTH',
@@ -222,16 +223,19 @@ export const AdminProducts: React.FC = () => {
   }, [products]);
 
   // Toast Notification
-  const showToast = (msg: string) => {
-    setFeedbackToast(msg);
+  const showToast = (msg: string, type: 'success' | 'warning' | 'error' = 'success') => {
+    setFeedbackToast({ message: msg, type });
     setTimeout(() => {
       setFeedbackToast(null);
-    }, 3200);
+    }, 3500);
   };
 
   // Quick Inline Order Update
   const handleQuickUpdateSortOrder = async (productId: number, newOrder: number) => {
-    if (isNaN(newOrder) || newOrder < 1) return;
+    if (isNaN(newOrder) || newOrder < 1) {
+      showToast('⚠️ Please enter a valid display order number (1 or greater)', 'warning');
+      return;
+    }
     setOrderUpdatingId(productId);
     try {
       await api.put(`/products/${productId}/sort-order`, { sort_order: newOrder });
@@ -241,11 +245,49 @@ export const AdminProducts: React.FC = () => {
         delete next[productId];
         return next;
       });
-      showToast(`Product order set to #${newOrder}`);
+      showToast(`Product order updated to #${newOrder}`, 'success');
     } catch (err: any) {
       alert(getErrorMessage(err, 'Failed to update display order'));
     } finally {
       setOrderUpdatingId(null);
+    }
+  };
+
+  // Commit Inline Order from Table Input
+  const handleCommitInlineOrder = (productId: number, currentOrder: number | undefined) => {
+    const rawVal = inlineOrderEditing[productId];
+    if (rawVal === undefined) return;
+
+    const trimmed = rawVal.trim();
+    if (trimmed === '') {
+      showToast('⚠️ Please enter a number for the display order', 'warning');
+      setInlineOrderEditing(prev => {
+        const next = { ...prev };
+        delete next[productId];
+        return next;
+      });
+      return;
+    }
+
+    const parsed = parseInt(trimmed, 10);
+    if (isNaN(parsed) || parsed < 1) {
+      showToast('⚠️ Please enter a valid number (1 or greater)', 'warning');
+      setInlineOrderEditing(prev => {
+        const next = { ...prev };
+        delete next[productId];
+        return next;
+      });
+      return;
+    }
+
+    if (parsed !== currentOrder) {
+      handleQuickUpdateSortOrder(productId, parsed);
+    } else {
+      setInlineOrderEditing(prev => {
+        const next = { ...prev };
+        delete next[productId];
+        return next;
+      });
     }
   };
 
@@ -320,6 +362,7 @@ export const AdminProducts: React.FC = () => {
       return a.id - b.id;
     });
     setReorderList(sorted);
+    setReorderInputEditing({});
     setReorderingCategory('ALL');
     setReorderSearchQuery('');
     setIsReorderModalOpen(true);
@@ -352,20 +395,30 @@ export const AdminProducts: React.FC = () => {
 
   const handleAutoReindex = () => {
     setReorderList(prev => prev.map((p, idx) => ({ ...p, sort_order: idx + 1 })));
-    showToast('Sequence re-indexed 1, 2, 3...');
+    setReorderInputEditing({});
+    showToast('Sequence re-indexed 1, 2, 3...', 'success');
   };
 
   const handleSaveReorderSequence = async () => {
     setIsSavingReorder(true);
     try {
-      const items = reorderList.map((p, idx) => ({
-        id: p.id,
-        sort_order: p.sort_order !== undefined ? p.sort_order : idx + 1
-      }));
+      const items = reorderList.map((p, idx) => {
+        const raw = reorderInputEditing[p.id];
+        let order = p.sort_order !== undefined ? p.sort_order : idx + 1;
+        if (raw !== undefined && raw.trim() !== '') {
+          const parsed = parseInt(raw.trim(), 10);
+          if (!isNaN(parsed) && parsed >= 1) order = parsed;
+        }
+        return {
+          id: p.id,
+          sort_order: order
+        };
+      });
       await api.put('/products/reorder', { items });
       await fetchProducts();
       setIsReorderModalOpen(false);
-      showToast('Product ordering saved! Live on store catalogue.');
+      setReorderInputEditing({});
+      showToast('Product ordering saved! Live on store catalogue.', 'success');
     } catch (err: any) {
       alert(getErrorMessage(err, 'Failed to save product ordering sequence'));
     } finally {
@@ -470,7 +523,10 @@ export const AdminProducts: React.FC = () => {
     e.preventDefault();
     try {
       const autoSku = formData.sku || `SBS-DT-${Date.now().toString().slice(-6)}`;
-      const payload = { ...formData, sku: autoSku, variants };
+      const sortOrderNum = (formData.sort_order === '' || isNaN(Number(formData.sort_order)) || Number(formData.sort_order) < 1)
+        ? 1
+        : Number(formData.sort_order);
+      const payload = { ...formData, sort_order: sortOrderNum, sku: autoSku, variants };
       if (editingProduct) {
         await api.put(`/products/${editingProduct.id}`, payload);
       } else {
@@ -1022,32 +1078,42 @@ export const AdminProducts: React.FC = () => {
                             <div className="flex items-center gap-0.5">
                               <span className="font-mono text-[10px] text-gray-400 font-bold">#</span>
                               <input
-                                type="number"
-                                min="1"
-                                value={inlineOrderEditing[p.id] !== undefined ? inlineOrderEditing[p.id] : (p.sort_order ?? 999)}
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                value={inlineOrderEditing[p.id] !== undefined ? inlineOrderEditing[p.id] : String(p.sort_order ?? 999)}
+                                onFocus={(e) => e.target.select()}
                                 onChange={(e) => {
-                                  const val = parseInt(e.target.value);
-                                  setInlineOrderEditing(prev => ({ ...prev, [p.id]: isNaN(val) ? 1 : val }));
+                                  // Clean input: only allow digits (empty string allowed so user can backspace!)
+                                  const val = e.target.value.replace(/[^0-9]/g, '');
+                                  setInlineOrderEditing(prev => ({ ...prev, [p.id]: val }));
                                 }}
-                                onBlur={() => {
-                                  const currentVal = inlineOrderEditing[p.id];
-                                  if (currentVal !== undefined && currentVal !== p.sort_order) {
-                                    handleQuickUpdateSortOrder(p.id, currentVal);
-                                  }
-                                }}
+                                onBlur={() => handleCommitInlineOrder(p.id, p.sort_order)}
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') {
-                                    const currentVal = inlineOrderEditing[p.id];
-                                    if (currentVal !== undefined && currentVal !== p.sort_order) {
-                                      handleQuickUpdateSortOrder(p.id, currentVal);
-                                    }
+                                    e.currentTarget.blur();
+                                  } else if (e.key === 'Escape') {
+                                    setInlineOrderEditing(prev => {
+                                      const next = { ...prev };
+                                      delete next[p.id];
+                                      return next;
+                                    });
                                   }
                                 }}
                                 disabled={orderUpdatingId === p.id}
-                                className={`w-12 text-center font-mono font-bold text-xs bg-white border border-[#E6E1DA] hover:border-[#C5A059] focus:border-[#C5A059] focus:ring-1 focus:ring-[#C5A059] rounded-lg py-0.5 px-1 transition-all ${orderUpdatingId === p.id ? 'opacity-50 animate-pulse' : ''}`}
-                                title="Type display sequence number and press Enter or click outside to save"
+                                className={`w-12 text-center font-mono font-bold text-xs bg-white border rounded-lg py-0.5 px-1 transition-all ${
+                                  inlineOrderEditing[p.id] === ''
+                                    ? 'border-amber-400 bg-amber-50 text-amber-900 ring-2 ring-amber-300'
+                                    : 'border-[#E6E1DA] hover:border-[#C5A059] focus:border-[#C5A059] focus:ring-1 focus:ring-[#C5A059]'
+                                } ${orderUpdatingId === p.id ? 'opacity-50 animate-pulse' : ''}`}
+                                title={inlineOrderEditing[p.id] === '' ? "Please enter a number" : "Type sequence number and press Enter or click outside to save"}
                               />
                             </div>
+                            {inlineOrderEditing[p.id] === '' && (
+                              <span className="text-[9px] text-amber-700 font-bold tracking-tight animate-pulse bg-amber-100 px-1 rounded">
+                                Enter #
+                              </span>
+                            )}
                             <div className="flex items-center gap-0.5">
                               <button
                                 type="button"
@@ -1446,12 +1512,23 @@ export const AdminProducts: React.FC = () => {
                       <span className="text-[10px] text-[#C5A059] font-bold">1 = 1st</span>
                     </label>
                     <input
-                      type="number"
-                      min="1"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       required
                       placeholder="e.g. 1"
-                      value={formData.sort_order ?? 1}
-                      onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 1 })}
+                      value={formData.sort_order !== undefined ? formData.sort_order : 1}
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, '');
+                        setFormData({ ...formData, sort_order: val === '' ? ('' as any) : parseInt(val, 10) });
+                      }}
+                      onBlur={() => {
+                        if (formData.sort_order === '' || isNaN(Number(formData.sort_order)) || Number(formData.sort_order) < 1) {
+                          showToast('⚠️ Please enter a display order number (defaulted to 1)', 'warning');
+                          setFormData(prev => ({ ...prev, sort_order: 1 }));
+                        }
+                      }}
                       className="w-full bg-white border-2 border-amber-300 hover:border-amber-400 focus:border-black focus:outline-none rounded-xl px-3.5 py-2 text-xs text-[#1A1918] transition-all shadow-2xs font-bold"
                     />
                   </div>
@@ -1973,15 +2050,62 @@ export const AdminProducts: React.FC = () => {
 
                       {/* Right: Rank Input + Move Actions */}
                       <div className="flex items-center gap-2 shrink-0">
-                        <div className="flex items-center gap-1 bg-[#FAF9F5] px-2 py-1 rounded-xl border border-[#E6E1DA]">
-                          <span className="text-[10px] text-gray-400 font-bold">Order:</span>
-                          <input
-                            type="number"
-                            min="1"
-                            value={prod.sort_order ?? index + 1}
-                            onChange={(e) => handleReorderItemChange(prod.id, parseInt(e.target.value) || 1)}
-                            className="w-12 text-center font-mono font-bold text-xs bg-white border border-[#E6E1DA] rounded-lg py-0.5"
-                          />
+                        <div className="flex flex-col items-end gap-0.5">
+                          <div className="flex items-center gap-1 bg-[#FAF9F5] px-2 py-1 rounded-xl border border-[#E6E1DA]">
+                            <span className="text-[10px] text-gray-400 font-bold">Order:</span>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              value={reorderInputEditing[prod.id] !== undefined ? reorderInputEditing[prod.id] : String(prod.sort_order ?? index + 1)}
+                              onFocus={(e) => e.target.select()}
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/[^0-9]/g, '');
+                                setReorderInputEditing(prev => ({ ...prev, [prod.id]: val }));
+                              }}
+                              onBlur={() => {
+                                const raw = reorderInputEditing[prod.id];
+                                if (raw === undefined) return;
+                                const trimmed = raw.trim();
+                                if (trimmed === '') {
+                                  showToast('⚠️ Please enter an order sequence number', 'warning');
+                                  setReorderInputEditing(prev => {
+                                    const next = { ...prev };
+                                    delete next[prod.id];
+                                    return next;
+                                  });
+                                  return;
+                                }
+                                const num = parseInt(trimmed, 10);
+                                if (isNaN(num) || num < 1) {
+                                  showToast('⚠️ Please enter a valid positive number', 'warning');
+                                  setReorderInputEditing(prev => {
+                                    const next = { ...prev };
+                                    delete next[prod.id];
+                                    return next;
+                                  });
+                                  return;
+                                }
+                                handleReorderItemChange(prod.id, num);
+                                setReorderInputEditing(prev => {
+                                  const next = { ...prev };
+                                  delete next[prod.id];
+                                  return next;
+                                });
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') e.currentTarget.blur();
+                              }}
+                              className={`w-12 text-center font-mono font-bold text-xs bg-white border rounded-lg py-0.5 ${
+                                reorderInputEditing[prod.id] === '' ? 'border-amber-400 bg-amber-50 text-amber-900 ring-1 ring-amber-300' : 'border-[#E6E1DA]'
+                              }`}
+                            />
+                          </div>
+                          {reorderInputEditing[prod.id] === '' && (
+                            <span className="text-[9px] text-amber-700 font-bold bg-amber-100 px-1 rounded">
+                              Enter #
+                            </span>
+                          )}
                         </div>
 
                         <div className="flex items-center gap-1">
@@ -2056,9 +2180,19 @@ export const AdminProducts: React.FC = () => {
 
       {/* FEEDBACK TOAST */}
       {feedbackToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#1A1918] text-white px-4 py-3 rounded-2xl shadow-2xl border border-[#C5A059] flex items-center gap-2.5 text-xs font-semibold animate-bounce">
-          <CheckCircle2 className="w-4 h-4 text-green-400" />
-          <span>{feedbackToast}</span>
+        <div className={`fixed bottom-6 right-6 z-50 bg-[#1A1918] text-white px-4 py-3 rounded-2xl shadow-2xl border flex items-center gap-2.5 text-xs font-semibold animate-bounce transition-all ${
+          feedbackToast.type === 'warning'
+            ? 'border-amber-400 text-amber-100 shadow-amber-900/30'
+            : feedbackToast.type === 'error'
+              ? 'border-red-400 text-red-100 shadow-red-900/30'
+              : 'border-[#C5A059]'
+        }`}>
+          {feedbackToast.type === 'warning' || feedbackToast.type === 'error' ? (
+            <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+          ) : (
+            <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
+          )}
+          <span>{feedbackToast.message}</span>
         </div>
       )}
 
