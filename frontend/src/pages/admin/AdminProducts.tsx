@@ -1068,16 +1068,25 @@ export const AdminProducts: React.FC = () => {
                   const isSelected = selectedProductIds.includes(p.id);
                   const isExpanded = expandedProductIds.includes(p.id);
 
-                  const netWeight = p.net_silver_weight_g || p.weight_g || 25;
-                  const grossWeight = p.gross_weight_g || netWeight;
+                  const baseVar = Array.isArray(p.variants) && p.variants.length > 0
+                    ? (p.variants.find(v => v.is_active !== false) || p.variants[0])
+                    : null;
+
+                  const netWeight = p.net_silver_weight_g || p.weight_g || baseVar?.weight_g || 25;
+                  const grossWeight = p.gross_weight_g || p.weight_g || baseVar?.weight_g || netWeight;
                   const silverRate = silverStats.live_silver_rate || 250.64;
 
-                  const silverValue = Math.round(netWeight * silverRate * 100) / 100;
-                  const making = p.making_charges || 0;
+                  const making = (p.making_charges !== undefined && p.making_charges !== null && p.making_charges > 0)
+                    ? p.making_charges
+                    : (baseVar?.making_charge || 0);
+                  const makingType = (p.making_charge_type || baseVar?.making_charge_type || 'fixed') as 'fixed' | 'per_gram' | 'percentage';
 
                   // Price breakdown
-                  const calcPrice = calculateDynamicPrice(netWeight, making, p.making_charge_type || 'fixed', p.silver_purity);
-                  const displayPrice = calcPrice.finalPrice;
+                  const calcPrice = calculateDynamicPrice(netWeight, making, makingType, p.silver_purity);
+                  const silverValue = calcPrice.silverValue > 0 ? calcPrice.silverValue : Math.round(netWeight * silverRate * 100) / 100;
+                  const displayPrice = (typeof p.retail_price === 'number' && p.retail_price > 0)
+                    ? p.retail_price
+                    : calcPrice.finalPrice;
 
                   // Stock logic
                   const stockQty = p.stock !== undefined ? p.stock : 10;
@@ -1211,7 +1220,7 @@ export const AdminProducts: React.FC = () => {
 
                         {/* Weight (Net / Gross) */}
                         <td className="py-3 px-3 text-[11px]">
-                          <div className="font-bold text-[#1A1918]">Net: {netWeight}g</div>
+                          <div className="font-bold text-[#1A1918]">Net: {netWeight}g{hasVariants ? ' (Base)' : ''}</div>
                           <div className="text-[10px] text-gray-400">Gross: {grossWeight}g</div>
                         </td>
 
@@ -1225,9 +1234,7 @@ export const AdminProducts: React.FC = () => {
                           {making > 0 ? (
                             <span className="font-semibold text-gray-800">
                               ₹{making.toLocaleString()}
-                              {p.making_charge_type && p.making_charge_type !== 'fixed' && (
-                                <span className="text-[9px] text-gray-500 block">({p.making_charge_type})</span>
-                              )}
+                              <span className="text-[9px] text-gray-500 block">({makingType === 'per_gram' ? '/g' : makingType})</span>
                             </span>
                           ) : (
                             <span className="text-gray-400 italic">Included</span>
@@ -1237,7 +1244,7 @@ export const AdminProducts: React.FC = () => {
                         {/* Selling Price */}
                         <td className="py-3 px-4 min-w-[120px]">
                           <div className="font-bold text-xs text-[#1A1918] font-mono">
-                            ₹{calcPrice.finalPrice.toLocaleString()}
+                            ₹{displayPrice.toLocaleString()}
                           </div>
                           <div className="text-[9px] text-gray-400 mt-0.5">
                             Sil ₹{(silverValue / 1000).toFixed(1)}k | Mk ₹{(calcPrice.makingCharge / 1000).toFixed(1)}k
