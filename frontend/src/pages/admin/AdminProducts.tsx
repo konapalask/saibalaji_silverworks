@@ -110,7 +110,36 @@ export const AdminProducts: React.FC = () => {
         api.get('/products?limit=500'),
         api.get('/categories')
       ]);
-      setProducts(prodRes.data);
+      const list: Product[] = Array.isArray(prodRes.data) ? prodRes.data : [];
+
+      // Check if any duplicate sort orders exist
+      const orderSet = new Set<number>();
+      let hasDuplicates = false;
+      for (const p of list) {
+        const o = p.sort_order;
+        if (o !== undefined && o !== null) {
+          if (orderSet.has(o)) {
+            hasDuplicates = true;
+            break;
+          }
+          orderSet.add(o);
+        }
+      }
+
+      if (hasDuplicates) {
+        // Auto-normalize duplicates into unique sequential sequence 1, 2, 3...
+        const sorted = [...list].sort((a, b) => {
+          const oA = (a.sort_order !== undefined && a.sort_order !== null) ? Number(a.sort_order) : 999999;
+          const oB = (b.sort_order !== undefined && b.sort_order !== null) ? Number(b.sort_order) : 999999;
+          if (oA !== oB) return oA - oB;
+          return a.id - b.id;
+        });
+        const normalized = sorted.map((p, idx) => ({ ...p, sort_order: idx + 1 }));
+        setProducts(normalized);
+        api.put('/products/reorder', { items: normalized.map(p => ({ id: p.id, sort_order: p.sort_order })) }).catch(() => {});
+      } else {
+        setProducts(list);
+      }
       setCategories(catRes.data);
     } catch (err) {
       console.error('Error fetching admin products', err);
@@ -238,14 +267,18 @@ export const AdminProducts: React.FC = () => {
     }
     setOrderUpdatingId(productId);
     try {
-      await api.put(`/products/${productId}/sort-order`, { sort_order: newOrder });
-      setProducts(prev => prev.map(p => p.id === productId ? { ...p, sort_order: newOrder } : p));
+      const res = await api.put(`/products/${productId}/sort-order`, { sort_order: newOrder });
+      if (res.data && Array.isArray(res.data.products)) {
+        setProducts(res.data.products);
+      } else {
+        await fetchProducts();
+      }
       setInlineOrderEditing(prev => {
         const next = { ...prev };
         delete next[productId];
         return next;
       });
-      showToast(`Product order updated to #${newOrder}`, 'success');
+      showToast(`Product order set to #${newOrder} (ranks shifted)`, 'success');
     } catch (err: any) {
       alert(getErrorMessage(err, 'Failed to update display order'));
     } finally {
@@ -295,61 +328,58 @@ export const AdminProducts: React.FC = () => {
   const handleMoveOrder = async (productId: number, direction: 'up' | 'down' | 'top') => {
     const prod = products.find(p => p.id === productId);
     if (!prod) return;
-    const currentOrder = prod.sort_order ?? 999;
+
+    // Sort all products by current sequence
+    const sorted = [...products].sort((a, b) => {
+      const oA = (a.sort_order !== undefined && a.sort_order !== null) ? Number(a.sort_order) : 999999;
+      const oB = (b.sort_order !== undefined && b.sort_order !== null) ? Number(b.sort_order) : 999999;
+      if (oA !== oB) return oA - oB;
+      return a.id - b.id;
+    });
+
+    const currentIndex = sorted.findIndex(p => p.id === productId);
+    if (currentIndex === -1) return;
 
     if (direction === 'top') {
-      const updatedList = products.map(p => {
-        if (p.id === productId) return { ...p, sort_order: 1 };
-        if ((p.sort_order ?? 999) <= currentOrder) return { ...p, sort_order: (p.sort_order ?? 1) + 1 };
-        return p;
-      });
-      setProducts(updatedList);
-      try {
-        await api.put('/products/reorder', {
-          items: updatedList.map(p => ({ id: p.id, sort_order: p.sort_order }))
-        });
-        showToast(`Moved "${prod.title.slice(0, 22)}..." to #1 Position`);
-      } catch (err) {
-        fetchProducts();
+      if (currentIndex === 0) {
+        showToast(`Already at #1 Position`, 'success');
+        return;
       }
-      return;
+      const [item] = sorted.splice(currentIndex, 1);
+      sorted.unshift(item);
+    } else if (direction === 'up') {
+      if (currentIndex === 0) {
+        showToast(`Already at top position`, 'warning');
+        return;
+      }
+      const temp = sorted[currentIndex];
+      sorted[currentIndex] = sorted[currentIndex - 1];
+      sorted[currentIndex - 1] = temp;
+    } else if (direction === 'down') {
+      if (currentIndex === sorted.length - 1) {
+        showToast(`Already at bottom position`, 'warning');
+        return;
+      }
+      const temp = sorted[currentIndex];
+      sorted[currentIndex] = sorted[currentIndex + 1];
+      sorted[currentIndex + 1] = temp;
     }
 
-    if (direction === 'up') {
-      if (currentOrder <= 1) return;
-      const targetOrder = Math.max(1, currentOrder - 1);
-      const otherProd = products.find(p => p.id !== productId && p.sort_order === targetOrder);
-      const updatedList = products.map(p => {
-        if (p.id === productId) return { ...p, sort_order: targetOrder };
-        if (otherProd && p.id === otherProd.id) return { ...p, sort_order: currentOrder };
-        return p;
+    // Re-index all sequentially 1, 2, 3, 4... so duplicates are impossible
+    const reorderedList = sorted.map((p, idx) => ({ ...p, sort_order: idx + 1 }));
+    setProducts(reorderedList);
+
+    try {
+      const res = await api.put('/products/reorder', {
+        items: reorderedList.map(p => ({ id: p.id, sort_order: p.sort_order }))
       });
-      setProducts(updatedList);
-      try {
-        const items = [{ id: productId, sort_order: targetOrder }];
-        if (otherProd) items.push({ id: otherProd.id, sort_order: currentOrder });
-        await api.put('/products/reorder', { items });
-        showToast(`Moved Up to #${targetOrder}`);
-      } catch (err) {
-        fetchProducts();
+      if (res.data && Array.isArray(res.data.products)) {
+        setProducts(res.data.products);
       }
-    } else {
-      const targetOrder = currentOrder + 1;
-      const otherProd = products.find(p => p.id !== productId && p.sort_order === targetOrder);
-      const updatedList = products.map(p => {
-        if (p.id === productId) return { ...p, sort_order: targetOrder };
-        if (otherProd && p.id === otherProd.id) return { ...p, sort_order: currentOrder };
-        return p;
-      });
-      setProducts(updatedList);
-      try {
-        const items = [{ id: productId, sort_order: targetOrder }];
-        if (otherProd) items.push({ id: otherProd.id, sort_order: currentOrder });
-        await api.put('/products/reorder', { items });
-        showToast(`Moved Down to #${targetOrder}`);
-      } catch (err) {
-        fetchProducts();
-      }
+      const newPos = reorderedList.find(p => p.id === productId)?.sort_order;
+      showToast(`Product moved to #${newPos}`, 'success');
+    } catch (err) {
+      fetchProducts();
     }
   };
 
