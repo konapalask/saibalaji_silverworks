@@ -124,7 +124,7 @@ export const AdminProducts: React.FC = () => {
 
   // Filtered & Searched Products
   const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
+    const list = products.filter((p) => {
       // Search
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -160,7 +160,40 @@ export const AdminProducts: React.FC = () => {
 
       return true;
     });
-  }, [products, searchQuery, selectedCategory, selectedPurity, selectedStockStatus, selectedProductStatus]);
+
+    // Custom Display Sorting
+    return [...list].sort((a, b) => {
+      if (selectedSortBy === 'order_asc') {
+        const oA = (a.sort_order !== undefined && a.sort_order !== null) ? Number(a.sort_order) : 999999;
+        const oB = (b.sort_order !== undefined && b.sort_order !== null) ? Number(b.sort_order) : 999999;
+        if (oA !== oB) return oA - oB;
+        return a.id - b.id;
+      }
+      if (selectedSortBy === 'order_desc') {
+        const oA = (a.sort_order !== undefined && a.sort_order !== null) ? Number(a.sort_order) : 0;
+        const oB = (b.sort_order !== undefined && b.sort_order !== null) ? Number(b.sort_order) : 0;
+        return oB - oA;
+      }
+      if (selectedSortBy === 'title_asc') {
+        return (a.title || '').localeCompare(b.title || '');
+      }
+      if (selectedSortBy === 'price_asc') {
+        return a.retail_price - b.retail_price;
+      }
+      if (selectedSortBy === 'price_desc') {
+        return b.retail_price - a.retail_price;
+      }
+      if (selectedSortBy === 'stock_asc') {
+        return (a.stock ?? 0) - (b.stock ?? 0);
+      }
+      if (selectedSortBy === 'newest') {
+        return b.id - a.id;
+      }
+      const oA = (a.sort_order !== undefined && a.sort_order !== null) ? Number(a.sort_order) : 999999;
+      const oB = (b.sort_order !== undefined && b.sort_order !== null) ? Number(b.sort_order) : 999999;
+      return oA - oB;
+    });
+  }, [products, searchQuery, selectedCategory, selectedPurity, selectedStockStatus, selectedProductStatus, selectedSortBy]);
 
   // Paginated Products
   const totalProductsCount = filteredProducts.length;
@@ -188,6 +221,169 @@ export const AdminProducts: React.FC = () => {
     return { total, active, lowStock, outOfStock };
   }, [products]);
 
+  // Toast Notification
+  const showToast = (msg: string) => {
+    setFeedbackToast(msg);
+    setTimeout(() => {
+      setFeedbackToast(null);
+    }, 3200);
+  };
+
+  // Quick Inline Order Update
+  const handleQuickUpdateSortOrder = async (productId: number, newOrder: number) => {
+    if (isNaN(newOrder) || newOrder < 1) return;
+    setOrderUpdatingId(productId);
+    try {
+      await api.put(`/products/${productId}/sort-order`, { sort_order: newOrder });
+      setProducts(prev => prev.map(p => p.id === productId ? { ...p, sort_order: newOrder } : p));
+      setInlineOrderEditing(prev => {
+        const next = { ...prev };
+        delete next[productId];
+        return next;
+      });
+      showToast(`Product order set to #${newOrder}`);
+    } catch (err: any) {
+      alert(getErrorMessage(err, 'Failed to update display order'));
+    } finally {
+      setOrderUpdatingId(null);
+    }
+  };
+
+  // Move Product Up, Down or Directly to #1 Top
+  const handleMoveOrder = async (productId: number, direction: 'up' | 'down' | 'top') => {
+    const prod = products.find(p => p.id === productId);
+    if (!prod) return;
+    const currentOrder = prod.sort_order ?? 999;
+
+    if (direction === 'top') {
+      const updatedList = products.map(p => {
+        if (p.id === productId) return { ...p, sort_order: 1 };
+        if ((p.sort_order ?? 999) <= currentOrder) return { ...p, sort_order: (p.sort_order ?? 1) + 1 };
+        return p;
+      });
+      setProducts(updatedList);
+      try {
+        await api.put('/products/reorder', {
+          items: updatedList.map(p => ({ id: p.id, sort_order: p.sort_order }))
+        });
+        showToast(`Moved "${prod.title.slice(0, 22)}..." to #1 Position`);
+      } catch (err) {
+        fetchProducts();
+      }
+      return;
+    }
+
+    if (direction === 'up') {
+      if (currentOrder <= 1) return;
+      const targetOrder = Math.max(1, currentOrder - 1);
+      const otherProd = products.find(p => p.id !== productId && p.sort_order === targetOrder);
+      const updatedList = products.map(p => {
+        if (p.id === productId) return { ...p, sort_order: targetOrder };
+        if (otherProd && p.id === otherProd.id) return { ...p, sort_order: currentOrder };
+        return p;
+      });
+      setProducts(updatedList);
+      try {
+        const items = [{ id: productId, sort_order: targetOrder }];
+        if (otherProd) items.push({ id: otherProd.id, sort_order: currentOrder });
+        await api.put('/products/reorder', { items });
+        showToast(`Moved Up to #${targetOrder}`);
+      } catch (err) {
+        fetchProducts();
+      }
+    } else {
+      const targetOrder = currentOrder + 1;
+      const otherProd = products.find(p => p.id !== productId && p.sort_order === targetOrder);
+      const updatedList = products.map(p => {
+        if (p.id === productId) return { ...p, sort_order: targetOrder };
+        if (otherProd && p.id === otherProd.id) return { ...p, sort_order: currentOrder };
+        return p;
+      });
+      setProducts(updatedList);
+      try {
+        const items = [{ id: productId, sort_order: targetOrder }];
+        if (otherProd) items.push({ id: otherProd.id, sort_order: currentOrder });
+        await api.put('/products/reorder', { items });
+        showToast(`Moved Down to #${targetOrder}`);
+      } catch (err) {
+        fetchProducts();
+      }
+    }
+  };
+
+  // Reorder Modal Actions
+  const handleOpenReorderModal = () => {
+    const sorted = [...products].sort((a, b) => {
+      const oA = (a.sort_order !== undefined && a.sort_order !== null) ? Number(a.sort_order) : 999999;
+      const oB = (b.sort_order !== undefined && b.sort_order !== null) ? Number(b.sort_order) : 999999;
+      if (oA !== oB) return oA - oB;
+      return a.id - b.id;
+    });
+    setReorderList(sorted);
+    setReorderingCategory('ALL');
+    setReorderSearchQuery('');
+    setIsReorderModalOpen(true);
+  };
+
+  const handleReorderItemChange = (productId: number, newOrder: number) => {
+    setReorderList(prev => prev.map(p => p.id === productId ? { ...p, sort_order: newOrder } : p));
+  };
+
+  const handleReorderShift = (productId: number, direction: 'up' | 'down' | 'top') => {
+    setReorderList(prev => {
+      const idx = prev.findIndex(p => p.id === productId);
+      if (idx === -1) return prev;
+      const clone = [...prev];
+      if (direction === 'top') {
+        const [target] = clone.splice(idx, 1);
+        clone.unshift(target);
+      } else if (direction === 'up' && idx > 0) {
+        const temp = clone[idx];
+        clone[idx] = clone[idx - 1];
+        clone[idx - 1] = temp;
+      } else if (direction === 'down' && idx < clone.length - 1) {
+        const temp = clone[idx];
+        clone[idx] = clone[idx + 1];
+        clone[idx + 1] = temp;
+      }
+      return clone.map((p, i) => ({ ...p, sort_order: i + 1 }));
+    });
+  };
+
+  const handleAutoReindex = () => {
+    setReorderList(prev => prev.map((p, idx) => ({ ...p, sort_order: idx + 1 })));
+    showToast('Sequence re-indexed 1, 2, 3...');
+  };
+
+  const handleSaveReorderSequence = async () => {
+    setIsSavingReorder(true);
+    try {
+      const items = reorderList.map((p, idx) => ({
+        id: p.id,
+        sort_order: p.sort_order !== undefined ? p.sort_order : idx + 1
+      }));
+      await api.put('/products/reorder', { items });
+      await fetchProducts();
+      setIsReorderModalOpen(false);
+      showToast('Product ordering saved! Live on store catalogue.');
+    } catch (err: any) {
+      alert(getErrorMessage(err, 'Failed to save product ordering sequence'));
+    } finally {
+      setIsSavingReorder(false);
+    }
+  };
+
+  const filteredReorderList = useMemo(() => {
+    return reorderList.filter(p => {
+      if (reorderingCategory !== 'ALL' && String(p.category_id) !== reorderingCategory) return false;
+      if (reorderSearchQuery.trim()) {
+        const q = reorderSearchQuery.toLowerCase();
+        return p.title.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q);
+      }
+      return true;
+    });
+  }, [reorderList, reorderingCategory, reorderSearchQuery]);
+
   // Handlers for Add / Edit Product Modal
   const handleOpenAdd = () => {
     setEditingProduct(null);
@@ -195,6 +391,7 @@ export const AdminProducts: React.FC = () => {
     setFormData({
       title: '',
       sku: `SBS-SLV-${Math.floor(1000 + Math.random() * 9000)}`,
+      sort_order: products.length > 0 ? Math.max(...products.map(p => p.sort_order || 0)) + 1 : 1,
       category_id: categories[0]?.id || 1,
       subcategory: '',
       product_type: 'BOTH',
@@ -241,6 +438,7 @@ export const AdminProducts: React.FC = () => {
     setFormData({
       title: prod.title,
       sku: prod.sku,
+      sort_order: prod.sort_order !== undefined ? prod.sort_order : (products.findIndex(p => p.id === prod.id) + 1),
       category_id: prod.category_id,
       subcategory: prod.subcategory || '',
       product_type: prod.product_type,
