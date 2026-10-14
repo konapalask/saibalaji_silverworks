@@ -946,6 +946,28 @@ const handleCreateProduct = (req, res) => {
 app.post('/api/v1/products', requireAdmin, handleCreateProduct);
 app.post('/api/products', handleCreateProduct);
 
+// Re-indexes products so that sort_orders are strictly unique, sequential 1..N
+function normalizeProductSortOrders(productsList) {
+  if (!Array.isArray(productsList) || productsList.length === 0) return productsList;
+
+  const sorted = [...productsList].sort((a, b) => {
+    const oA = (a.sort_order !== undefined && a.sort_order !== null && !isNaN(a.sort_order)) ? Number(a.sort_order) : 999999;
+    const oB = (b.sort_order !== undefined && b.sort_order !== null && !isNaN(b.sort_order)) ? Number(b.sort_order) : 999999;
+    if (oA !== oB) return oA - oB;
+    return a.id - b.id;
+  });
+
+  const idToOrder = new Map();
+  sorted.forEach((p, idx) => {
+    idToOrder.set(p.id, idx + 1);
+  });
+
+  return productsList.map(p => ({
+    ...p,
+    sort_order: idToOrder.get(p.id) || 999
+  }));
+}
+
 // Reorder products in bulk (MUST BE DECLARED BEFORE /:id)
 const handleReorderProducts = (req, res) => {
   const { items, ordered_ids } = req.body;
@@ -981,8 +1003,9 @@ const handleReorderProducts = (req, res) => {
     return res.status(400).json({ detail: 'Invalid payload. Expecting { items: [{id, sort_order}] } or { ordered_ids: [...] }' });
   }
 
+  productsList = normalizeProductSortOrders(productsList);
   saveJsonFile('products_data.json', productsList);
-  res.json({ message: 'Products reordered successfully', count: productsList.length });
+  res.json({ message: 'Products reordered successfully', count: productsList.length, products: productsList });
 };
 
 app.put('/api/v1/products/reorder', requireAdmin, handleReorderProducts);
@@ -990,28 +1013,50 @@ app.post('/api/v1/products/reorder', requireAdmin, handleReorderProducts);
 app.put('/api/products/reorder', handleReorderProducts);
 app.post('/api/products/reorder', handleReorderProducts);
 
-// Single Product Sort Order Quick Update
+// Single Product Sort Order Quick Update (Shifts existing products so duplicate ranks are impossible)
 const handleUpdateProductSortOrder = (req, res) => {
   const productId = parseInt(req.params.id);
   const newOrder = parseInt(req.body.sort_order !== undefined ? req.body.sort_order : req.body.order);
 
-  if (isNaN(newOrder)) {
-    return res.status(400).json({ detail: 'Valid sort_order number is required' });
+  if (isNaN(newOrder) || newOrder < 1) {
+    return res.status(400).json({ detail: 'Valid sort_order number (1 or greater) is required' });
   }
 
   let productsList = getProducts();
-  const index = productsList.findIndex(p => p.id === productId);
-  if (index === -1) {
+  const targetProduct = productsList.find(p => p.id === productId);
+  if (!targetProduct) {
     return res.status(404).json({ detail: 'Product not found' });
   }
 
-  productsList[index] = {
-    ...productsList[index],
-    sort_order: newOrder
-  };
+  // 1. Sort all products by current sort_order (or id)
+  const sorted = [...productsList].sort((a, b) => {
+    const oA = (a.sort_order !== undefined && a.sort_order !== null && !isNaN(a.sort_order)) ? Number(a.sort_order) : 999999;
+    const oB = (b.sort_order !== undefined && b.sort_order !== null && !isNaN(b.sort_order)) ? Number(b.sort_order) : 999999;
+    if (oA !== oB) return oA - oB;
+    return a.id - b.id;
+  });
+
+  // 2. Remove target product from the list
+  const remaining = sorted.filter(p => p.id !== productId);
+
+  // 3. Insert target product at desired position (clamped 0 .. remaining.length)
+  const insertIndex = Math.min(Math.max(0, newOrder - 1), remaining.length);
+  remaining.splice(insertIndex, 0, targetProduct);
+
+  // 4. Re-index sequentially 1, 2, 3...
+  const idToOrder = new Map();
+  remaining.forEach((p, idx) => {
+    idToOrder.set(p.id, idx + 1);
+  });
+
+  productsList = productsList.map(p => ({
+    ...p,
+    sort_order: idToOrder.get(p.id) || (p.id === productId ? insertIndex + 1 : 999)
+  }));
 
   saveJsonFile('products_data.json', productsList);
-  res.json({ message: 'Sort order updated successfully', product: productsList[index] });
+  const updatedTarget = productsList.find(p => p.id === productId);
+  res.json({ message: 'Sort order updated successfully', product: updatedTarget, products: productsList });
 };
 
 app.put('/api/v1/products/:id/sort-order', requireAdmin, handleUpdateProductSortOrder);
