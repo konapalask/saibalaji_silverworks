@@ -1417,7 +1417,7 @@ export const AdminProducts: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block font-bold text-gray-700 mb-1">Main Category *</label>
                     <select
@@ -1438,6 +1438,21 @@ export const AdminProducts: React.FC = () => {
                       value={formData.subcategory}
                       onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
                       className="w-full bg-white border-2 border-gray-300 hover:border-gray-400 focus:border-black focus:outline-none rounded-xl px-3.5 py-2 text-xs text-[#1A1918] transition-all shadow-2xs font-medium"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-gray-700 mb-1 flex items-center justify-between">
+                      <span>Display Order (Rank)</span>
+                      <span className="text-[10px] text-[#C5A059] font-bold">1 = 1st</span>
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      required
+                      placeholder="e.g. 1"
+                      value={formData.sort_order ?? 1}
+                      onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 1 })}
+                      className="w-full bg-white border-2 border-amber-300 hover:border-amber-400 focus:border-black focus:outline-none rounded-xl px-3.5 py-2 text-xs text-[#1A1918] transition-all shadow-2xs font-bold"
                     />
                   </div>
                 </div>
