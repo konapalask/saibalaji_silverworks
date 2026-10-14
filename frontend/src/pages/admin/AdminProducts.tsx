@@ -942,6 +942,16 @@ export const AdminProducts: React.FC = () => {
                     )}
                   </button>
                 </th>
+                <th className="py-3 px-2 w-28 text-center">
+                  <div
+                    className="flex items-center justify-center gap-1 cursor-pointer hover:text-[#C5A059] transition-colors"
+                    onClick={() => setSelectedSortBy(selectedSortBy === 'order_asc' ? 'order_desc' : 'order_asc')}
+                    title="Click to sort by Display Order"
+                  >
+                    <span># Order</span>
+                    <ArrowUpDown className="w-3 h-3 text-[#C5A059]" />
+                  </div>
+                </th>
                 <th className="py-3 px-4 min-w-[220px]">Product Details</th>
                 <th className="py-3 px-3">Weight (Net/Gross)</th>
                 <th className="py-3 px-3">Silver Value</th>
@@ -956,14 +966,14 @@ export const AdminProducts: React.FC = () => {
             <tbody className="divide-y divide-gray-100 font-sans">
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-gray-400">
+                  <td colSpan={10} className="py-12 text-center text-gray-400">
                     <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#C5A059] mb-2"></div>
                     <p>Loading inventory items...</p>
                   </td>
                 </tr>
               ) : paginatedProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-gray-500">
+                  <td colSpan={10} className="py-12 text-center text-gray-500">
                     No products match your search or filter criteria.
                   </td>
                 </tr>
@@ -1004,6 +1014,67 @@ export const AdminProducts: React.FC = () => {
                               <Square className="w-4 h-4 text-gray-300" />
                             )}
                           </button>
+                        </td>
+
+                        {/* Display Order Sequence & Quick Controls */}
+                        <td className="py-3 px-2 text-center">
+                          <div className="flex flex-col items-center justify-center gap-1">
+                            <div className="flex items-center gap-0.5">
+                              <span className="font-mono text-[10px] text-gray-400 font-bold">#</span>
+                              <input
+                                type="number"
+                                min="1"
+                                value={inlineOrderEditing[p.id] !== undefined ? inlineOrderEditing[p.id] : (p.sort_order ?? 999)}
+                                onChange={(e) => {
+                                  const val = parseInt(e.target.value);
+                                  setInlineOrderEditing(prev => ({ ...prev, [p.id]: isNaN(val) ? 1 : val }));
+                                }}
+                                onBlur={() => {
+                                  const currentVal = inlineOrderEditing[p.id];
+                                  if (currentVal !== undefined && currentVal !== p.sort_order) {
+                                    handleQuickUpdateSortOrder(p.id, currentVal);
+                                  }
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    const currentVal = inlineOrderEditing[p.id];
+                                    if (currentVal !== undefined && currentVal !== p.sort_order) {
+                                      handleQuickUpdateSortOrder(p.id, currentVal);
+                                    }
+                                  }
+                                }}
+                                disabled={orderUpdatingId === p.id}
+                                className={`w-12 text-center font-mono font-bold text-xs bg-white border border-[#E6E1DA] hover:border-[#C5A059] focus:border-[#C5A059] focus:ring-1 focus:ring-[#C5A059] rounded-lg py-0.5 px-1 transition-all ${orderUpdatingId === p.id ? 'opacity-50 animate-pulse' : ''}`}
+                                title="Type display sequence number and press Enter or click outside to save"
+                              />
+                            </div>
+                            <div className="flex items-center gap-0.5">
+                              <button
+                                type="button"
+                                onClick={() => handleMoveOrder(p.id, 'up')}
+                                className="p-1 hover:bg-gray-100 text-gray-600 hover:text-black rounded border border-[#E6E1DA] transition-colors cursor-pointer"
+                                title="Move Up (closer to #1)"
+                              >
+                                <ArrowUp className="w-2.5 h-2.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleMoveOrder(p.id, 'down')}
+                                className="p-1 hover:bg-gray-100 text-gray-600 hover:text-black rounded border border-[#E6E1DA] transition-colors cursor-pointer"
+                                title="Move Down"
+                              >
+                                <ArrowDown className="w-2.5 h-2.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleMoveOrder(p.id, 'top')}
+                                className="px-1.5 py-0.5 text-[9px] bg-[#1A1918] hover:bg-[#C5A059] text-white hover:text-black font-bold rounded transition-colors cursor-pointer"
+                                title="Promote to #1 First Product"
+                              >
+                                Top
+                              </button>
+                            </div>
+                          </div>
                         </td>
 
                         {/* Product Detail (Thumbnail + Title + Category) */}
@@ -1183,7 +1254,7 @@ export const AdminProducts: React.FC = () => {
                       {/* EXPANDABLE INLINE VARIANTS SUB-TABLE ROW */}
                       {isExpanded && (
                         <tr className="bg-[#FAF9F5] border-b border-[#E6E1DA]">
-                          <td colSpan={9} className="p-4">
+                          <td colSpan={10} className="p-4">
                             <div className="bg-white rounded-xl border border-[#E6E1DA] p-4 space-y-3 shadow-inner">
                               <div className="flex items-center justify-between border-b border-[#E6E1DA] pb-2">
                                 <div className="flex items-center gap-2">
