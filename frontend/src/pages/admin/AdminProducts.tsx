@@ -1864,6 +1864,204 @@ export const AdminProducts: React.FC = () => {
         />
       )}
 
+      {/* REORDER SHOWCASE MODAL */}
+      {isReorderModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-[#E6E1DA] overflow-hidden animate-fadeIn">
+            {/* Modal Header */}
+            <div className="p-5 border-b border-[#E6E1DA] flex items-center justify-between bg-[#FAF9F5]">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="bg-[#C5A059] text-black text-[10px] font-bold px-2 py-0.5 rounded tracking-wider uppercase">
+                    Storefront Display Sequence
+                  </span>
+                  <span className="text-xs text-gray-500 font-medium">({reorderList.length} products total)</span>
+                </div>
+                <h2 className="font-serif text-xl font-bold text-[#1A1918] mt-1">Set Product Order</h2>
+                <p className="text-xs text-gray-500">
+                  Control which product comes 1st, 2nd, 3rd, 4th, etc. Product #1 displays first on your website catalogue.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsReorderModalOpen(false)}
+                className="p-2 text-gray-400 hover:text-black hover:bg-gray-200/50 rounded-xl transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Toolbar: Search & Category Filter & Auto-Index */}
+            <div className="p-4 bg-white border-b border-[#E6E1DA] flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2 flex-1 min-w-[280px]">
+                <div className="relative flex-1">
+                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search product to reorder..."
+                    value={reorderSearchQuery}
+                    onChange={(e) => setReorderSearchQuery(e.target.value)}
+                    className="w-full bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl pl-9 pr-3 py-1.5 text-xs text-[#1A1918] focus:outline-none focus:border-[#C5A059]"
+                  />
+                  {reorderSearchQuery && (
+                    <button onClick={() => setReorderSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
+                      <X className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+
+                <select
+                  value={reorderingCategory}
+                  onChange={(e) => setReorderingCategory(e.target.value)}
+                  className="bg-[#FAF9F5] border border-[#E6E1DA] rounded-xl px-3 py-1.5 text-xs font-medium text-gray-700 focus:outline-none focus:border-[#C5A059] cursor-pointer"
+                >
+                  <option value="ALL">All Categories</option>
+                  {categories.map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleAutoReindex}
+                  className="px-3 py-1.5 bg-[#FAF9F5] hover:bg-[#F0ECE4] text-gray-700 hover:text-black rounded-xl text-xs font-semibold border border-[#E6E1DA] transition-colors flex items-center gap-1.5 cursor-pointer"
+                  title="Auto-renumber list 1, 2, 3... in current sequence"
+                >
+                  <Hash className="w-3.5 h-3.5 text-[#C5A059]" />
+                  <span>Renumber 1, 2, 3...</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Product List */}
+            <div className="p-4 overflow-y-auto flex-1 divide-y divide-gray-100 space-y-2">
+              {filteredReorderList.length === 0 ? (
+                <div className="py-12 text-center text-gray-400 text-xs">
+                  No products found for this filter.
+                </div>
+              ) : (
+                filteredReorderList.map((prod, index) => {
+                  return (
+                    <div
+                      key={prod.id}
+                      className="flex items-center justify-between gap-3 p-2.5 rounded-2xl hover:bg-[#FAF9F5] transition-colors border border-transparent hover:border-[#E6E1DA]"
+                    >
+                      {/* Left: Rank Badge + Thumbnail + Title */}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="flex flex-col items-center">
+                          <span className="w-7 h-7 rounded-lg bg-[#1A1918] text-[#C5A059] font-mono font-bold text-xs flex items-center justify-center shadow-xs">
+                            {prod.sort_order ?? index + 1}
+                          </span>
+                        </div>
+
+                        <img
+                          src={prod.featured_image}
+                          alt={prod.title}
+                          className="w-12 h-12 object-cover rounded-xl bg-black border border-[#E6E1DA] shrink-0"
+                        />
+
+                        <div className="min-w-0 flex-1">
+                          <span className="font-serif font-bold text-xs text-[#1A1918] truncate block" title={prod.title}>
+                            {prod.title}
+                          </span>
+                          <span className="text-[10px] text-gray-500 block truncate">
+                            {prod.sku} • {prod.category_name || prod.category?.name || 'Silver'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Right: Rank Input + Move Actions */}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-1 bg-[#FAF9F5] px-2 py-1 rounded-xl border border-[#E6E1DA]">
+                          <span className="text-[10px] text-gray-400 font-bold">Order:</span>
+                          <input
+                            type="number"
+                            min="1"
+                            value={prod.sort_order ?? index + 1}
+                            onChange={(e) => handleReorderItemChange(prod.id, parseInt(e.target.value) || 1)}
+                            className="w-12 text-center font-mono font-bold text-xs bg-white border border-[#E6E1DA] rounded-lg py-0.5"
+                          />
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => handleReorderShift(prod.id, 'top')}
+                            className="px-2 py-1 bg-[#1A1918] hover:bg-[#C5A059] text-white hover:text-black rounded-lg text-[10px] font-bold transition-colors cursor-pointer"
+                            title="Move to #1 position"
+                          >
+                            Top #1
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleReorderShift(prod.id, 'up')}
+                            className="p-1 hover:bg-gray-100 rounded-lg text-gray-600 hover:text-black border border-[#E6E1DA] cursor-pointer"
+                            title="Move Up 1 spot"
+                          >
+                            <ArrowUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleReorderShift(prod.id, 'down')}
+                            className="p-1 hover:bg-gray-100 rounded-lg text-gray-600 hover:text-black border border-[#E6E1DA] cursor-pointer"
+                            title="Move Down 1 spot"
+                          >
+                            <ArrowDown className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-[#E6E1DA] bg-[#FAF9F5] flex items-center justify-between">
+              <span className="text-xs text-gray-500">
+                Products will appear in this exact order on your storefront catalogue.
+              </span>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsReorderModalOpen(false)}
+                  className="px-4 py-2 border border-gray-300 hover:bg-gray-100 rounded-xl text-xs font-semibold text-gray-700 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveReorderSequence}
+                  disabled={isSavingReorder}
+                  className="px-5 py-2 bg-[#1A1918] hover:bg-[#C5A059] text-white hover:text-black font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {isSavingReorder ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Saving Sequence...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4 text-green-400" />
+                      <span>Apply & Save Order</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FEEDBACK TOAST */}
+      {feedbackToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#1A1918] text-white px-4 py-3 rounded-2xl shadow-2xl border border-[#C5A059] flex items-center gap-2.5 text-xs font-semibold animate-bounce">
+          <CheckCircle2 className="w-4 h-4 text-green-400" />
+          <span>{feedbackToast}</span>
+        </div>
+      )}
+
     </div>
   );
 };
