@@ -22,7 +22,7 @@ export const RetailShop: React.FC = () => {
   const purityVal = searchParams.get('purity') || '';
   const priceRangeVal = searchParams.get('priceRange') || '';
   const weightVal = searchParams.get('weight') || '';
-  const sortByVal = searchParams.get('sortBy') || 'created_at_desc';
+  const sortByVal = searchParams.get('sortBy') || 'featured';
 
   // Compute available subcategories dynamically from products and category definitions
   const availableSubcategories = React.useMemo(() => {
