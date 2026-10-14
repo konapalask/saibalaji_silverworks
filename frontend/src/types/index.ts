@@ -54,6 +54,7 @@ export interface Product {
   title: string;
   slug: string;
   sku: string;
+  sort_order?: number;
   category_id: number;
   category_name?: string;
   category_slug?: string;
