@@ -26,8 +26,15 @@ async function connectDB(uri) {
     isConnectedState = true;
     console.log('\x1b[32m[MongoDB] Successfully connected to Cloud MongoDB Atlas!\x1b[0m');
 
-    // Automatically check and seed empty collections from JSON if needed
-    await seedFromFilesIfEmpty();
+    // Check if cloud collections are populated
+    const productCount = await models.Product.countDocuments();
+    if (productCount > 0) {
+      console.log('\x1b[36m[MongoDB] Cloud collections found. Hydrating latest data from Atlas...\x1b[0m');
+      await hydrateLocalFromMongo();
+    } else {
+      console.log('\x1b[36m[MongoDB] Cloud database is empty. Auto-seeding from existing JSON data...\x1b[0m');
+      await seedFromFilesIfEmpty();
+    }
 
     return true;
   } catch (err) {
