@@ -3013,13 +3013,13 @@ app.get('/api/v1/db/status', async (req, res) => {
   });
 });
 
-// Admin-triggerable manual sync between Cloud MongoDB and Local Store
+// Admin-triggerable manual sync with Cloud MongoDB
 app.post('/api/v1/admin/db/sync', requireAdmin, async (req, res) => {
   if (!db.isConnected()) {
     return res.status(503).json({ detail: 'Cloud MongoDB is not currently connected' });
   }
   try {
-    await db.hydrateLocalFromMongo();
+    await db.hydrateFromMongo();
     res.json({ message: 'Successfully synced all collections from Cloud MongoDB' });
   } catch (e) {
     res.status(500).json({ detail: e.message });
@@ -3028,17 +3028,17 @@ app.post('/api/v1/admin/db/sync', requireAdmin, async (req, res) => {
 
 // Start Node.js Express Server
 app.listen(PORT, async () => {
-  console.log(`========================================================`);
-  console.log(`  🚀 Node.js Express Server running on http://localhost:${PORT}`);
-  console.log(`  📁 Products loaded: ${getProducts().length} products`);
-  console.log(`  📁 Categories loaded: ${getCategories().length} categories`);
-  console.log(`  📖 Interactive API Docs: http://localhost:${PORT}/docs`);
-  console.log(`========================================================`);
-
   if (process.env.MONGODB_URI) {
     await db.connectDB();
   } else {
-    console.log(`\x1b[33m[!INFO] MONGODB_URI not configured in .env. Operating in fallback JSON mode.\x1b[0m`);
-    console.log(`\x1b[33mTo connect to Cloud MongoDB, set MONGODB_URI in backend/.env\x1b[0m`);
+    console.log(`\x1b[33m[!WARN] MONGODB_URI not configured in .env.\x1b[0m`);
   }
+
+  console.log(`========================================================`);
+  console.log(`  🚀 Node.js Express Server running on http://localhost:${PORT}`);
+  console.log(`  ☁️ Cloud MongoDB: ${db.isConnected() ? 'CONNECTED' : 'DISCONNECTED'}`);
+  console.log(`  📁 Products in memory: ${getProducts().length} products`);
+  console.log(`  📁 Categories in memory: ${getCategories().length} categories`);
+  console.log(`  📖 Interactive API Docs: http://localhost:${PORT}/docs`);
+  console.log(`========================================================`);
 });
