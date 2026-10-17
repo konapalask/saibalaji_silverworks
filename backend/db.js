@@ -2,49 +2,59 @@ const dns = require('dns');
 try {
   dns.setServers(['8.8.8.8', '1.1.1.1']);
 } catch (e) {}
+
 const mongoose = require('mongoose');
-const fs = require('fs');
-const path = require('path');
 const models = require('./models');
 
 let isConnectedState = false;
 
+// Live in-memory cache directly backed by Cloud MongoDB
+const memoryCache = {
+  'categories_data.json': [],
+  'products_data.json': [],
+  'users.json': [],
+  'orders_data.json': [],
+  'wholesale_requests_data.json': [],
+  'quotations_data.json': [],
+  'wishlists_data.json': [],
+  'videos_data.json': [],
+  'gallery_data.json': [],
+  'settings_data.json': { whatsapp_number: '919347443997' },
+  'homepage_hero_data.json': {
+    title: 'Crafted in Silver. Created with Precision.',
+    content: 'From traditional craftsmanship to contemporary silver designs, Sai Balaji Silverworks creates premium silver products for retail and wholesale markets.',
+    media_url: '/homescreen.webp'
+  }
+};
+
 /**
- * Connect to MongoDB Cloud using MONGODB_URI
+ * Connect to Cloud MongoDB Atlas and load all collections into memory
  */
 async function connectDB(uri) {
   const mongoUri = uri || process.env.MONGODB_URI;
 
   if (!mongoUri) {
-    console.warn('\x1b[33m[!WARN] MONGODB_URI not configured in .env. Operating in fallback JSON mode.\x1b[0m');
+    console.error('\x1b[31m[MongoDB] MONGODB_URI is not set in backend/.env!\x1b[0m');
     return false;
   }
 
   try {
     console.log('\x1b[36m[MongoDB] Connecting to Cloud MongoDB Atlas...\x1b[0m');
     await mongoose.connect(mongoUri, {
-      serverSelectionTimeoutMS: 8000,
+      serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
     });
 
     isConnectedState = true;
     console.log('\x1b[32m[MongoDB] Successfully connected to Cloud MongoDB Atlas!\x1b[0m');
 
-    // Check if cloud collections are populated
-    const productCount = await models.Product.countDocuments();
-    if (productCount > 0) {
-      console.log('\x1b[36m[MongoDB] Cloud collections found. Hydrating latest data from Atlas...\x1b[0m');
-      await hydrateLocalFromMongo();
-    } else {
-      console.log('\x1b[36m[MongoDB] Cloud database is empty. Auto-seeding from existing JSON data...\x1b[0m');
-      await seedFromFilesIfEmpty();
-    }
+    // Hydrate memory cache directly from Cloud MongoDB
+    await hydrateFromMongo();
 
     return true;
   } catch (err) {
     isConnectedState = false;
     console.error('\x1b[31m[MongoDB] Connection error:\x1b[0m', err.message);
-    console.warn('\x1b[33m[!WARN] Server will continue running with JSON backup until Cloud MongoDB recovers.\x1b[0m');
     return false;
   }
 }
@@ -57,6 +67,7 @@ mongoose.connection.on('disconnected', () => {
 mongoose.connection.on('reconnected', () => {
   isConnectedState = true;
   console.log('\x1b[32m[MongoDB] Reconnected to Cloud MongoDB.\x1b[0m');
+  hydrateFromMongo().catch(err => console.error('[MongoDB] Re-hydration error:', err.message));
 });
 
 function isConnected() {
@@ -64,39 +75,56 @@ function isConnected() {
 }
 
 /**
- * Seed empty MongoDB collections from existing local JSON files on first boot
+ * Hydrate in-memory store directly from Cloud MongoDB collections
  */
-async function seedFromFilesIfEmpty() {
+async function hydrateFromMongo() {
   if (!isConnected()) return;
 
-  for (const [filename, Model] of Object.entries(models.fileModelMap)) {
+  for (const [key, Model] of Object.entries(models.fileModelMap)) {
     try {
-      const count = await Model.countDocuments();
-      if (count === 0) {
-        const filePath = path.join(__dirname, filename);
-        if (fs.existsSync(filePath)) {
-          let content = fs.readFileSync(filePath, 'utf8').trim();
-          if (content.length > 0) {
-            content = content.replace(/^\uFEFF/, '');
-            const parsed = JSON.parse(content);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              await Model.insertMany(parsed, { ordered: false });
-              console.log(`\x1b[32m[MongoDB Seed] Populated ${parsed.length} records into ${Model.modelName} from ${filename}\x1b[0m`);
-            } else if (!Array.isArray(parsed) && typeof parsed === 'object') {
-              await Model.findOneAndUpdate({}, parsed, { upsert: true, new: true });
-              console.log(`\x1b[32m[MongoDB Seed] Populated document into ${Model.modelName} from ${filename}\x1b[0m`);
-            }
-          }
+      if (key === 'settings_data.json' || key === 'homepage_hero_data.json') {
+        const doc = await Model.findOne({}).lean();
+        if (doc) {
+          const { _id, __v, ...rest } = doc;
+          memoryCache[key] = rest;
         }
+      } else {
+        const docs = await Model.find({}).lean();
+        memoryCache[key] = docs.map(({ _id, __v, ...rest }) => rest);
       }
+      const countStr = Array.isArray(memoryCache[key]) ? `${memoryCache[key].length} items` : '1 doc';
+      console.log(`\x1b[32m[MongoDB] Hydrated ${Model.modelName} from Cloud Atlas (${countStr})\x1b[0m`);
     } catch (err) {
-      console.error(`[MongoDB Seed] Error seeding ${filename}:`, err.message);
+      console.error(`[MongoDB] Error hydrating ${key}:`, err.message);
     }
   }
 }
 
 /**
- * Sync data array or object directly into MongoDB
+ * Retrieve data live from MongoDB-backed memory store
+ */
+function getData(key, defaultValue = []) {
+  if (memoryCache[key] !== undefined) {
+    return memoryCache[key];
+  }
+  return defaultValue;
+}
+
+/**
+ * Save data directly to Cloud MongoDB and update memory cache (Zero JSON file dependencies)
+ */
+function saveData(key, data) {
+  // Update in-memory state immediately for instant read responses
+  memoryCache[key] = data;
+
+  // Persist directly to Cloud MongoDB Atlas
+  syncToMongo(key, data).catch((err) => {
+    console.error(`\x1b[31m[MongoDB Cloud Sync Error] ${key}:\x1b[0m`, err.message);
+  });
+}
+
+/**
+ * Direct sync data array or object to Cloud MongoDB Atlas
  */
 async function syncToMongo(filename, data) {
   if (!isConnected()) return;
@@ -106,7 +134,6 @@ async function syncToMongo(filename, data) {
 
   try {
     if (!Array.isArray(data) && typeof data === 'object') {
-      // Single object collection (e.g. settings, homepage_hero)
       await Model.findOneAndUpdate({}, { $set: data }, { upsert: true, new: true });
       return;
     }
@@ -117,9 +144,8 @@ async function syncToMongo(filename, data) {
         return;
       }
 
-      // Upsert all items by id or user_id
       const idKey = (filename === 'wishlists_data.json') ? 'user_id' : 'id';
-      
+
       const bulkOps = data.map(item => {
         const filter = {};
         if (item[idKey] !== undefined) {
@@ -153,72 +179,12 @@ async function syncToMongo(filename, data) {
   }
 }
 
-/**
- * Fetch data from MongoDB with fallback
- */
-async function fetchFromMongo(filename, defaultValue) {
-  if (!isConnected()) return null;
-
-  const Model = models.fileModelMap[filename];
-  if (!Model) return null;
-
-  try {
-    if (Array.isArray(defaultValue)) {
-      const docs = await Model.find({}).lean();
-      return docs.map(({ _id, __v, ...rest }) => rest);
-    } else {
-      const doc = await Model.findOne({}).lean();
-      if (!doc) return null;
-      const { _id, __v, ...rest } = doc;
-      return rest;
-    }
-  } catch (err) {
-    console.error(`[MongoDB Fetch] Error fetching ${filename}:`, err.message);
-    return null;
-  }
-}
-
-/**
- * Hydrate local JSON files from Cloud MongoDB if MongoDB already contains collections
- */
-async function hydrateLocalFromMongo() {
-  if (!isConnected()) return;
-
-  for (const [filename, Model] of Object.entries(models.fileModelMap)) {
-    try {
-      const count = await Model.countDocuments();
-      if (count > 0) {
-        const filePath = path.join(__dirname, filename);
-        let cloudData;
-        if (filename === 'settings_data.json' || filename === 'homepage_hero_data.json') {
-          const doc = await Model.findOne({}).lean();
-          if (doc) {
-            const { _id, __v, ...rest } = doc;
-            cloudData = rest;
-          }
-        } else {
-          const docs = await Model.find({}).lean();
-          cloudData = docs.map(({ _id, __v, ...rest }) => rest);
-        }
-
-        if (cloudData) {
-          fs.writeFileSync(filePath, JSON.stringify(cloudData, null, 2), 'utf8');
-          console.log(`\x1b[32m[MongoDB Hydrate] Synced ${filename} from Cloud MongoDB (${Array.isArray(cloudData) ? cloudData.length + ' records' : 'document'})\x1b[0m`);
-        }
-      }
-    } catch (err) {
-      console.error(`[MongoDB Hydrate] Error hydrating ${filename}:`, err.message);
-    }
-  }
-}
-
 module.exports = {
   connectDB,
   isConnected,
+  getData,
+  saveData,
   syncToMongo,
-  fetchFromMongo,
-  seedFromFilesIfEmpty,
-  hydrateLocalFromMongo,
+  hydrateFromMongo,
   models
 };
-
