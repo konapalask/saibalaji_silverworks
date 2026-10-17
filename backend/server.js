@@ -163,38 +163,13 @@ if (fs.existsSync(frontendPublicDir)) {
   }));
 }
 
-// Utility Functions to Load JSON Data (Preserves existing data; auto-creates missing files safely)
+// Data Layer: 100% Cloud MongoDB Atlas (Zero JSON file dependencies)
 const loadJsonFile = (filename, defaultValue = []) => {
-  const filePath = path.join(__dirname, filename);
-  try {
-    if (fs.existsSync(filePath)) {
-      let data = fs.readFileSync(filePath, 'utf8');
-      if (data && data.trim().length > 0) {
-        data = data.replace(/^\uFEFF/, '');
-        return JSON.parse(data);
-      }
-    } else {
-      // File genuinely does not exist on disk - create it with default empty structure
-      fs.writeFileSync(filePath, JSON.stringify(defaultValue, null, 2), 'utf8');
-      return defaultValue;
-    }
-  } catch (err) {
-    console.error(`Error reading ${filename}:`, err);
-  }
-  return defaultValue;
+  return db.getData(filename, defaultValue);
 };
 
 const saveJsonFile = (filename, data) => {
-  const filePath = path.join(__dirname, filename);
-  try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-  } catch (err) {
-    console.error(`Error writing ${filename}:`, err);
-  }
-  // Seamlessly synchronize change to Cloud MongoDB
-  db.syncToMongo(filename, data).catch((err) => {
-    console.error(`[MongoDB Sync] Error syncing ${filename}:`, err.message);
-  });
+  db.saveData(filename, data);
 };
 
 // Data Helper Functions (Always load LIVE directly from JSON files on disk)
