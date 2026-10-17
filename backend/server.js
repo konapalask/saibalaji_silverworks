@@ -191,6 +191,10 @@ const saveJsonFile = (filename, data) => {
   } catch (err) {
     console.error(`Error writing ${filename}:`, err);
   }
+  // Seamlessly synchronize change to Cloud MongoDB
+  db.syncToMongo(filename, data).catch((err) => {
+    console.error(`[MongoDB Sync] Error syncing ${filename}:`, err.message);
+  });
 };
 
 // Data Helper Functions (Always load LIVE directly from JSON files on disk)
@@ -3011,12 +3015,55 @@ app.get('/openapi.json', (req, res) => {
   });
 });
 
+// Database Status & Cloud MongoDB Metrics
+app.get('/api/v1/db/status', async (req, res) => {
+  const connected = db.isConnected();
+  let collections = {};
+  if (connected) {
+    try {
+      for (const [file, Model] of Object.entries(db.models.fileModelMap)) {
+        collections[Model.modelName] = await Model.countDocuments();
+      }
+    } catch (e) {
+      collections.error = e.message;
+    }
+  }
+  res.json({
+    connected,
+    engine: connected ? 'Cloud MongoDB Atlas' : 'Local JSON fallback mode',
+    readyState: require('mongoose').connection.readyState,
+    database: require('mongoose').connection.name || null,
+    collections,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Admin-triggerable manual sync between Cloud MongoDB and Local Store
+app.post('/api/v1/admin/db/sync', requireAdmin, async (req, res) => {
+  if (!db.isConnected()) {
+    return res.status(503).json({ detail: 'Cloud MongoDB is not currently connected' });
+  }
+  try {
+    await db.hydrateLocalFromMongo();
+    res.json({ message: 'Successfully synced all collections from Cloud MongoDB' });
+  } catch (e) {
+    res.status(500).json({ detail: e.message });
+  }
+});
+
 // Start Node.js Express Server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`========================================================`);
   console.log(`  🚀 Node.js Express Server running on http://localhost:${PORT}`);
-  console.log(`  📁 Products loaded from JSON: ${getProducts().length} products`);
-  console.log(`  📁 Categories loaded from JSON: ${getCategories().length} categories`);
+  console.log(`  📁 Products loaded: ${getProducts().length} products`);
+  console.log(`  📁 Categories loaded: ${getCategories().length} categories`);
   console.log(`  📖 Interactive API Docs: http://localhost:${PORT}/docs`);
   console.log(`========================================================`);
+
+  if (process.env.MONGODB_URI) {
+    await db.connectDB();
+  } else {
+    console.log(`\x1b[33m[!INFO] MONGODB_URI not configured in .env. Operating in fallback JSON mode.\x1b[0m`);
+    console.log(`\x1b[33mTo connect to Cloud MongoDB, set MONGODB_URI in backend/.env\x1b[0m`);
+  }
 });
