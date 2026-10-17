@@ -167,11 +167,47 @@ async function fetchFromMongo(filename, defaultValue) {
   }
 }
 
+/**
+ * Hydrate local JSON files from Cloud MongoDB if MongoDB already contains collections
+ */
+async function hydrateLocalFromMongo() {
+  if (!isConnected()) return;
+
+  for (const [filename, Model] of Object.entries(models.fileModelMap)) {
+    try {
+      const count = await Model.countDocuments();
+      if (count > 0) {
+        const filePath = path.join(__dirname, filename);
+        let cloudData;
+        if (filename === 'settings_data.json' || filename === 'homepage_hero_data.json') {
+          const doc = await Model.findOne({}).lean();
+          if (doc) {
+            const { _id, __v, ...rest } = doc;
+            cloudData = rest;
+          }
+        } else {
+          const docs = await Model.find({}).lean();
+          cloudData = docs.map(({ _id, __v, ...rest }) => rest);
+        }
+
+        if (cloudData) {
+          fs.writeFileSync(filePath, JSON.stringify(cloudData, null, 2), 'utf8');
+          console.log(`\x1b[32m[MongoDB Hydrate] Synced ${filename} from Cloud MongoDB (${Array.isArray(cloudData) ? cloudData.length + ' records' : 'document'})\x1b[0m`);
+        }
+      }
+    } catch (err) {
+      console.error(`[MongoDB Hydrate] Error hydrating ${filename}:`, err.message);
+    }
+  }
+}
+
 module.exports = {
   connectDB,
   isConnected,
   syncToMongo,
   fetchFromMongo,
   seedFromFilesIfEmpty,
+  hydrateLocalFromMongo,
   models
 };
+
