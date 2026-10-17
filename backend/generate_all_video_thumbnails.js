@@ -77,24 +77,30 @@ async function run() {
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.log(`Finished in ${elapsed}s! Total: ${files.length} | Generated: ${completed} | Skipped: ${skipped} | Failed: ${failed}`);
 
-  // Now update backend/videos_data.json and frontend/src/data/videosData.ts
-  const backendJsonPath = path.join(__dirname, 'videos_data.json');
-  if (fs.existsSync(backendJsonPath)) {
-    let videosData = JSON.parse(fs.readFileSync(backendJsonPath, 'utf8'));
-    let updatedCount = 0;
-    videosData = videosData.map(v => {
-      if (v.filename) {
-        const baseName = path.parse(v.filename).name;
-        const thumbUrl = `/public/video_thumbnails/${baseName}.webp`;
-        if (v.thumbnail_url !== thumbUrl) {
-          updatedCount++;
-          return { ...v, thumbnail_url: thumbUrl };
+  // Update Cloud MongoDB Video collection if connected
+  try {
+    require('dotenv').config();
+    const mongoose = require('mongoose');
+    if (process.env.MONGODB_URI) {
+      await mongoose.connect(process.env.MONGODB_URI);
+      const Video = require('./models/Video');
+      const allVideos = await Video.find({}).lean();
+      let updatedCount = 0;
+      for (const v of allVideos) {
+        if (v.filename) {
+          const baseName = path.parse(v.filename).name;
+          const thumbUrl = `/public/video_thumbnails/${baseName}.webp`;
+          if (v.thumbnail_url !== thumbUrl) {
+            await Video.updateOne({ _id: v._id }, { $set: { thumbnail_url: thumbUrl } });
+            updatedCount++;
+          }
         }
       }
-      return v;
-    });
-    fs.writeFileSync(backendJsonPath, JSON.stringify(videosData, null, 2), 'utf8');
-    console.log(`Updated ${updatedCount} entries in backend/videos_data.json with .webp thumbnails`);
+      console.log(`Updated ${updatedCount} video entries in Cloud MongoDB with .webp thumbnails`);
+      await mongoose.disconnect();
+    }
+  } catch (e) {
+    console.error('Error updating Cloud MongoDB video thumbnails:', e.message);
   }
 
   const frontendDataPath = path.join(__dirname, '..', 'frontend', 'src', 'data', 'videosData.ts');
