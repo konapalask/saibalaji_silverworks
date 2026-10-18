@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, MessageSquare, Share2, Copy, X, AlertCircle, ChevronLeft, ChevronRight, Sliders, Play, Video } from 'lucide-react';
+import { Heart, ShieldCheck, Truck, RefreshCw, ShoppingBag, Briefcase, Sparkles, Check, ArrowRight, ArrowLeft, MessageSquare, Share2, Copy, X, AlertCircle, ChevronLeft, ChevronRight, Sliders, Play, Video } from 'lucide-react';
 import { Product, ProductVariant } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -196,8 +196,16 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
         setSelectedVariant(initialVar);
 
         // Fetch related products
-        const relRes = await api.get(`/products?category_id=${res.data.category_id}&limit=4`);
-        setRelated(relRes.data.filter((p: Product) => p.id !== res.data.id));
+        if (res.data && res.data.category_id) {
+          try {
+            const relRes = await api.get(`/products?category_id=${res.data.category_id}&limit=4`);
+            if (Array.isArray(relRes.data)) {
+              setRelated(relRes.data.filter((p: Product) => p.id !== res.data.id));
+            }
+          } catch (relErr) {
+            console.warn('Could not load related products:', relErr);
+          }
+        }
       } catch (err) {
         console.error('Error fetching product details', err);
       } finally {
@@ -222,10 +230,31 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ isWholesalePage = 
     }
   }, [selectedVariant, product, cart, availableVariants, activeVar]);
 
-  if (loading || !product) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#FAF9F5] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C5A059]"></div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-[70vh] bg-[#FAF9F5] flex flex-col items-center justify-center px-4 text-center">
+        <div className="w-16 h-16 mb-4 rounded-full bg-stone-100 border border-[#C5A059]/30 flex items-center justify-center text-[#C5A059]">
+          <ShoppingBag className="w-8 h-8" />
+        </div>
+        <h2 className="text-2xl font-serif text-[#1A1A1A] mb-2 font-medium">Product Not Found</h2>
+        <p className="text-sm text-stone-500 max-w-md mb-6 font-sans">
+          The requested silver product could not be found or may have been updated in our catalogue.
+        </p>
+        <Link
+          to={isWholesalePage ? "/shop/wholesale" : "/shop/retail"}
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-sm bg-[#1A1A1A] hover:bg-[#C5A059] text-white text-xs font-semibold uppercase tracking-widest transition-all duration-300"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>{isWholesalePage ? "Return to Wholesale Catalogue" : "Browse Retail Collection"}</span>
+        </Link>
       </div>
     );
   }
