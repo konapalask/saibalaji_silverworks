@@ -659,15 +659,29 @@ app.delete('/api/v1/users/:id', requireAdmin, (req, res) => {
 
 // --- CATEGORY API ENDPOINTS ---
 
-app.get('/api/v1/categories', (req, res) => {
+app.get(['/api/v1/categories', '/api/categories'], (req, res) => {
   res.json(getCategories());
 });
 
-app.get('/api/v1/categories/:id_or_slug', (req, res) => {
+app.get(['/api/v1/categories/:id_or_slug', '/api/categories/:id_or_slug'], (req, res) => {
   const categoriesList = getCategories();
   const productsList = getProducts();
-  const param = req.params.id_or_slug;
-  const category = categoriesList.find(c => String(c.id) === param || c.slug === param);
+  const rawParam = req.params.id_or_slug;
+  let decodedParam = rawParam;
+  try {
+    decodedParam = decodeURIComponent(rawParam);
+  } catch (e) {
+    decodedParam = rawParam;
+  }
+  const cleanParam = decodedParam.trim().toLowerCase();
+
+  const category = categoriesList.find(c => {
+    if (!c) return false;
+    if (String(c.id) === rawParam || String(c.id) === decodedParam) return true;
+    if (c.slug && (c.slug === rawParam || c.slug === decodedParam || c.slug.toLowerCase() === cleanParam)) return true;
+    if (c.name && c.name.toLowerCase() === cleanParam) return true;
+    return false;
+  });
   if (!category) return res.status(404).json({ detail: 'Category not found' });
 
   // Compute subcategories under this category
@@ -817,16 +831,35 @@ const handleGetProducts = (req, res) => {
 app.get('/api/v1/products', handleGetProducts);
 app.get('/api/products', handleGetProducts);
 
-app.get('/api/products/:id_or_slug', (req, res) => {
+const handleGetProductByIdOrSlug = (req, res) => {
   const productsList = getProducts();
   const categoriesList = getCategories();
-  const param = req.params.id_or_slug;
-  const product = productsList.find(p => String(p.id) === param || p.slug === param);
+  const rawParam = req.params.id_or_slug;
+  let decodedParam = rawParam;
+  try {
+    decodedParam = decodeURIComponent(rawParam);
+  } catch (e) {
+    decodedParam = rawParam;
+  }
+
+  const cleanParam = decodedParam.trim().toLowerCase();
+
+  const product = productsList.find(p => {
+    if (!p) return false;
+    if (String(p.id) === rawParam || String(p.id) === decodedParam) return true;
+    if (p.slug && (p.slug === rawParam || p.slug === decodedParam || p.slug.toLowerCase() === cleanParam)) return true;
+    if (p.title && p.title.toLowerCase() === cleanParam) return true;
+    return false;
+  });
+
   if (!product) return res.status(404).json({ detail: 'Product not found' });
 
   const cat = categoriesList.find(c => c.id === product.category_id || c.slug === product.category_slug);
   res.json({ ...product, category: cat || null, images: product.images || [] });
-});
+};
+
+app.get('/api/v1/products/:id_or_slug', handleGetProductByIdOrSlug);
+app.get('/api/products/:id_or_slug', handleGetProductByIdOrSlug);
 
 // Reusable Dynamic Product Price Calculation Function
 function calculateProductPrice(weight_g, making_charge, making_charge_type = 'fixed', silver_purity = '925', live_silver_rate = 250.64, wholesale_making_charge = null) {
