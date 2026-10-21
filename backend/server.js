@@ -3061,16 +3061,12 @@ app.post('/api/v1/admin/db/sync', requireAdmin, async (req, res) => {
 
 // Start Node.js Express Server
 app.listen(PORT, async () => {
-  if (process.env.MONGODB_URI) {
-    await db.connectDB();
-  } else {
-    console.log(`\x1b[33m[!WARN] MONGODB_URI not configured in .env.\x1b[0m`);
-  }
+  await db.connectDB();
 
   console.log(`========================================================`);
   console.log(`  🚀 Node.js Express Server running on http://localhost:${PORT}`);
-  console.log(`  ☁️ Cloud MongoDB: ${db.isConnected() ? 'CONNECTED' : 'DISCONNECTED'}`);
-  console.log(`  📁 Products in memory: ${getProducts().length} products`);
+  console.log(`  🍃 MongoDB: ${db.isConnected() ? 'CONNECTED (' + db.getActiveUri() + ')' : 'DISCONNECTED'}`);
+  console.log(`  📁 Products loaded from MongoDB: ${getProducts().length} products`);
   console.log(`  📁 Categories in memory: ${getCategories().length} categories`);
   console.log(`  📖 Interactive API Docs: http://localhost:${PORT}/docs`);
   console.log(`========================================================`);
