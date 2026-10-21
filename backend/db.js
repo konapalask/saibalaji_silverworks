@@ -9,8 +9,9 @@ const mongoose = require('mongoose');
 const models = require('./models');
 
 let isConnectedState = false;
+let activeMongoUri = '';
 
-// Live in-memory cache backed by local JSON files & Cloud MongoDB
+// Live in-memory cache directly populated from MongoDB
 const memoryCache = {
   'categories_data.json': [],
   'products_data.json': [],
@@ -30,7 +31,7 @@ const memoryCache = {
 };
 
 /**
- * Load all existing local JSON data files into memoryCache immediately
+ * Load all existing local JSON data files into memoryCache as initial baseline
  */
 function loadFromLocalFiles() {
   for (const [key, Model] of Object.entries(models.fileModelMap)) {
@@ -47,16 +48,13 @@ function loadFromLocalFiles() {
       }
     }
   }
-  const prodCount = Array.isArray(memoryCache['products_data.json']) ? memoryCache['products_data.json'].length : 0;
-  const catCount = Array.isArray(memoryCache['categories_data.json']) ? memoryCache['categories_data.json'].length : 0;
-  console.log(`\x1b[32m[Local Data] Pre-loaded ${prodCount} products and ${catCount} categories into memory.\x1b[0m`);
 }
 
-// Initial immediate pre-load so data is available instantly on boot
+// Initial baseline pre-load
 loadFromLocalFiles();
 
 /**
- * Persist current memoryCache to local JSON files
+ * Persist current memoryCache to local JSON files for backup
  */
 function saveLocalBackups() {
   for (const [key, data] of Object.entries(memoryCache)) {
@@ -70,56 +68,83 @@ function saveLocalBackups() {
 }
 
 /**
- * Connect to Cloud MongoDB Atlas with automatic fallback to local JSON data
+ * Connect to MongoDB with automatic fallback between Atlas and Local MongoDB
  */
 async function connectDB(uri) {
-  const mongoUri = uri || process.env.MONGODB_URI;
+  const primaryUri = uri || process.env.MONGODB_URI;
+  const localUri = process.env.LOCAL_MONGODB_URI || 'mongodb://127.0.0.1:27017/saibalaji_silverworks';
 
-  if (!mongoUri) {
-    console.warn('\x1b[33m[MongoDB] MONGODB_URI not set. Operating seamlessly with local JSON store.\x1b[0m');
-    return false;
+  // 1. Try Primary URI (Atlas or configured URI)
+  if (primaryUri) {
+    try {
+      console.log(`\x1b[36m[MongoDB] Connecting to MongoDB (${primaryUri.includes('mongodb+srv') ? 'Cloud Atlas' : primaryUri})...\x1b[0m`);
+      await mongoose.connect(primaryUri, {
+        serverSelectionTimeoutMS: 4000,
+        socketTimeoutMS: 45000,
+      });
+
+      isConnectedState = true;
+      activeMongoUri = primaryUri;
+      console.log('\x1b[32m[MongoDB] Successfully connected to MongoDB!\x1b[0m');
+      await onConnected();
+      return true;
+    } catch (err) {
+      console.warn('\x1b[33m[MongoDB] Primary connection failed: ' + err.message + '\x1b[0m');
+    }
   }
 
+  // 2. Fall back to Local MongoDB Server (127.0.0.1:27017)
+  if (localUri && localUri !== primaryUri) {
+    try {
+      console.log('\x1b[36m[MongoDB] Connecting to local MongoDB server (127.0.0.1:27017/saibalaji_silverworks)...\x1b[0m');
+      await mongoose.connect(localUri, {
+        serverSelectionTimeoutMS: 4000,
+        socketTimeoutMS: 45000,
+      });
+
+      isConnectedState = true;
+      activeMongoUri = localUri;
+      console.log('\x1b[32m[MongoDB] Successfully connected to local MongoDB (saibalaji_silverworks)!\x1b[0m');
+      await onConnected();
+      return true;
+    } catch (err) {
+      console.warn('\x1b[33m[MongoDB] Local MongoDB connection failed: ' + err.message + '\x1b[0m');
+    }
+  }
+
+  isConnectedState = false;
+  console.log('\x1b[33m[MongoDB] Operating in resilient memory mode.\x1b[0m');
+  return false;
+}
+
+/**
+ * Post-connection hydration and auto-seeding
+ */
+async function onConnected() {
   try {
-    console.log('\x1b[36m[MongoDB] Connecting to Cloud MongoDB Atlas...\x1b[0m');
-    await mongoose.connect(mongoUri, {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    });
-
-    isConnectedState = true;
-    console.log('\x1b[32m[MongoDB] Successfully connected to Cloud MongoDB Atlas!\x1b[0m');
-
-    // Check if cloud collections are populated
     const productCount = await models.Product.countDocuments();
     if (productCount > 0) {
-      console.log(`\x1b[36m[MongoDB] Cloud collections found (${productCount} products). Hydrating memory from Atlas...\x1b[0m`);
+      console.log(`\x1b[36m[MongoDB] Found ${productCount} products in MongoDB. Hydrating from MongoDB...\x1b[0m`);
       await hydrateFromMongo();
-      // Keep local JSON files in sync with Atlas
       saveLocalBackups();
     } else {
-      console.log('\x1b[36m[MongoDB] Cloud database is empty. Auto-seeding Atlas from local data files...\x1b[0m');
+      console.log('\x1b[36m[MongoDB] MongoDB collections empty. Auto-seeding from local data files...\x1b[0m');
       await seedFromFilesIfEmpty();
+      await hydrateFromMongo();
     }
-
-    return true;
   } catch (err) {
-    isConnectedState = false;
-    console.warn('\x1b[33m[MongoDB] Notice: Could not connect to MongoDB Atlas cluster.\x1b[0m');
-    console.warn('\x1b[33m[MongoDB] ' + err.message + '\x1b[0m');
-    console.log('\x1b[32m[MongoDB] Running in high-performance local store mode (100% functional with all products).\x1b[0m');
-    return false;
+    console.error('[MongoDB] Post-connection error:', err.message);
   }
 }
 
 mongoose.connection.on('disconnected', () => {
   isConnectedState = false;
-  console.warn('\x1b[33m[MongoDB] Disconnected from Cloud MongoDB.\x1b[0m');
+  console.warn('\x1b[33m[MongoDB] Disconnected from MongoDB.\x1b[0m');
 });
 
 mongoose.connection.on('reconnected', () => {
   isConnectedState = true;
-  console.log('\x1b[32m[MongoDB] Reconnected to Cloud MongoDB.\x1b[0m');
+  console.log('\x1b[32m[MongoDB] Reconnected to MongoDB.\x1b[0m');
   hydrateFromMongo().catch(err => console.error('[MongoDB] Re-hydration error:', err.message));
 });
 
@@ -127,8 +152,12 @@ function isConnected() {
   return isConnectedState && mongoose.connection.readyState === 1;
 }
 
+function getActiveUri() {
+  return activeMongoUri;
+}
+
 /**
- * Seed empty MongoDB collections from existing memoryCache data
+ * Seed empty MongoDB collections from existing data files
  */
 async function seedFromFilesIfEmpty() {
   if (!isConnected()) return;
@@ -162,7 +191,7 @@ async function seedFromFilesIfEmpty() {
 }
 
 /**
- * Hydrate in-memory store directly from Cloud MongoDB collections
+ * Hydrate in-memory store directly from MongoDB collections
  */
 async function hydrateFromMongo() {
   if (!isConnected()) return;
@@ -182,7 +211,7 @@ async function hydrateFromMongo() {
         }
       }
       const countStr = Array.isArray(memoryCache[key]) ? `${memoryCache[key].length} items` : '1 doc';
-      console.log(`\x1b[32m[MongoDB] Hydrated ${Model.modelName} from Cloud Atlas (${countStr})\x1b[0m`);
+      console.log(`\x1b[32m[MongoDB] Hydrated ${Model.modelName} from MongoDB (${countStr})\x1b[0m`);
     } catch (err) {
       console.error(`[MongoDB] Error hydrating ${key}:`, err.message);
     }
@@ -190,7 +219,7 @@ async function hydrateFromMongo() {
 }
 
 /**
- * Retrieve data live from memory store
+ * Retrieve data live from memory store (backed directly by MongoDB)
  */
 function getData(key, defaultValue = []) {
   if (memoryCache[key] !== undefined) {
@@ -200,13 +229,13 @@ function getData(key, defaultValue = []) {
 }
 
 /**
- * Save data to memory cache, local JSON file, and Cloud MongoDB Atlas if connected
+ * Save data to memory cache, local JSON file, and Cloud / Local MongoDB
  */
 function saveData(key, data) {
   // Update in-memory state immediately for instant read responses
   memoryCache[key] = data;
 
-  // Persist to local JSON file for bulletproof reliability
+  // Persist to local JSON backup file
   try {
     const filePath = path.join(__dirname, key);
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
@@ -214,16 +243,16 @@ function saveData(key, data) {
     console.error(`[Local Data] Error saving ${key}:`, err.message);
   }
 
-  // Persist directly to Cloud MongoDB Atlas if connected
+  // Persist directly to MongoDB
   if (isConnected()) {
     syncToMongo(key, data).catch((err) => {
-      console.error(`\x1b[31m[MongoDB Cloud Sync Error] ${key}:\x1b[0m`, err.message);
+      console.error(`\x1b[31m[MongoDB Sync Error] ${key}:\x1b[0m`, err.message);
     });
   }
 }
 
 /**
- * Direct sync data array or object to Cloud MongoDB Atlas
+ * Direct sync data array or object to MongoDB
  */
 async function syncToMongo(filename, data) {
   if (!isConnected()) return;
@@ -281,6 +310,7 @@ async function syncToMongo(filename, data) {
 module.exports = {
   connectDB,
   isConnected,
+  getActiveUri,
   getData,
   saveData,
   syncToMongo,
