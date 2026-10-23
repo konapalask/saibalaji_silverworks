@@ -1261,8 +1261,13 @@ function updateAllProductPrices(newSilverRate) {
   }
 }
 
+let isFetchingRate = false;
+
 // Function to fetch live rate from RB Gold Spot API
 function fetchLiveSilverRate() {
+  if (isFetchingRate) return;
+  isFetchingRate = true;
+
   try {
     const urlObj = new URL(RB_GOLD_API_URL);
     const client = urlObj.protocol === 'https:' ? https : http;
@@ -1273,11 +1278,12 @@ function fetchLiveSilverRate() {
       path: urlObj.pathname + urlObj.search,
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
       rejectUnauthorized: false,
-      timeout: 6000
+      timeout: 5000
     }, (res) => {
       let rawData = '';
       res.on('data', chunk => { rawData += chunk; });
       res.on('end', () => {
+        isFetchingRate = false;
         try {
           const lines = rawData.trim().split(/\r?\n/);
           let parsedRate = null;
@@ -1315,31 +1321,43 @@ function fetchLiveSilverRate() {
             broadcastSilverRateUpdate(silverRateCache);
           }
         } catch (parseErr) {
-          console.warn('RB Gold Spot response parse warning:', parseErr.message);
           silverRateCache.api_status = 'RETRYING';
         }
+      });
+      res.on('error', () => {
+        isFetchingRate = false;
+        res.destroy();
       });
     });
 
     req.on('error', (err) => {
-      console.warn('RB Gold Spot API network fetch warning:', err.message);
+      isFetchingRate = false;
+      try { req.destroy(); } catch (e) {}
       silverRateCache.api_status = 'RETRYING';
       silverRateCache.error_message = err.message;
     });
 
     req.on('timeout', () => {
-      req.destroy();
+      isFetchingRate = false;
+      try { req.destroy(); } catch (e) {}
       silverRateCache.api_status = 'RETRYING';
     });
   } catch (err) {
-    console.warn('Live silver rate fetch exception:', err.message);
+    isFetchingRate = false;
     silverRateCache.api_status = 'RETRYING';
   }
 }
 
-// Background polling interval every 1 second (1000ms real-time live sync)
-setInterval(fetchLiveSilverRate, 1000);
+// Resilient background polling with backoff (3s if connected, 15s if network retry)
+function scheduleNextRateFetch() {
+  const delay = silverRateCache.api_status === 'CONNECTED' ? 3000 : 15000;
+  setTimeout(() => {
+    fetchLiveSilverRate();
+    scheduleNextRateFetch();
+  }, delay);
+}
 fetchLiveSilverRate();
+scheduleNextRateFetch();
 
 // --- LIVE SILVER RATE ENDPOINTS ---
 

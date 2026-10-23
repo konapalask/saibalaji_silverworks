@@ -3,16 +3,13 @@ try {
   dns.setServers(['8.8.8.8', '1.1.1.1']);
 } catch (e) {}
 
-const fs = require('fs');
-const path = require('path');
 const mongoose = require('mongoose');
 const models = require('./models');
 
 let isConnectedState = false;
-let activeMongoUri = '';
 let retryTimer = null;
 
-// Live in-memory cache directly populated from Cloud MongoDB Atlas
+// Live in-memory cache directly backed by Cloud MongoDB Atlas ONLY
 const memoryCache = {
   'categories_data.json': [],
   'products_data.json': [],
@@ -32,7 +29,7 @@ const memoryCache = {
 };
 
 /**
- * Connect to Cloud MongoDB Atlas
+ * Connect exclusively to Cloud MongoDB Atlas
  */
 async function connectDB(uri) {
   const mongoUri = uri || process.env.MONGODB_URI;
@@ -43,14 +40,13 @@ async function connectDB(uri) {
   }
 
   try {
-    console.log('\x1b[36m[MongoDB Atlas] Connecting to Cloud MongoDB Atlas...\x1b[0m');
+    console.log('\x1b[36m[MongoDB Atlas] Connecting exclusively to Cloud MongoDB Atlas...\x1b[0m');
     await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });
 
     isConnectedState = true;
-    activeMongoUri = mongoUri;
     console.log('\x1b[32m[MongoDB Atlas] Successfully connected to Cloud MongoDB Atlas!\x1b[0m');
 
     if (retryTimer) {
@@ -63,19 +59,15 @@ async function connectDB(uri) {
   } catch (err) {
     isConnectedState = false;
     console.error('\x1b[31m[MongoDB Atlas Connection Error]\x1b[0m', err.message);
-    console.warn('\x1b[33m[!IMPORTANT] To connect, your public IP must be whitelisted in MongoDB Atlas:\x1b[0m');
-    console.warn('\x1b[33m1. Open MongoDB Atlas -> Security -> Network Access\x1b[0m');
-    console.warn('\x1b[33m2. Click "Add IP Address" -> "Allow Access From Anywhere" (0.0.0.0/0)\x1b[0m');
-    console.warn('\x1b[33m3. Click Confirm. The server will auto-connect as soon as deployed!\x1b[0m');
 
-    // Auto-retry connecting every 8 seconds so it connects the second the user whitelists
+    // Auto-retry connecting every 5 seconds until Atlas whitelist is ready
     if (!retryTimer) {
       retryTimer = setInterval(() => {
         if (!isConnected()) {
           console.log('\x1b[36m[MongoDB Atlas] Retrying connection to Cloud Atlas...\x1b[0m');
           connectDB(mongoUri).catch(() => {});
         }
-      }, 8000);
+      }, 5000);
     }
 
     return false;
@@ -88,7 +80,7 @@ async function connectDB(uri) {
 async function onConnected() {
   try {
     const productCount = await models.Product.countDocuments();
-    console.log(`\x1b[32m[MongoDB Atlas] Connected to database: saibalaji_silverworks (${productCount} products found in Atlas)\x1b[0m`);
+    console.log(`\x1b[32m[MongoDB Atlas] Database: saibalaji_silverworks | ${productCount} products found in Cloud Atlas\x1b[0m`);
     await hydrateFromMongo();
   } catch (err) {
     console.error('[MongoDB Atlas] Post-connection hydration error:', err.message);
@@ -111,7 +103,7 @@ function isConnected() {
 }
 
 function getActiveUri() {
-  return activeMongoUri;
+  return 'Cloud MongoDB Atlas';
 }
 
 /**
@@ -135,7 +127,7 @@ async function hydrateFromMongo() {
         }
       }
       const countStr = Array.isArray(memoryCache[key]) ? `${memoryCache[key].length} items` : '1 doc';
-      console.log(`\x1b[32m[MongoDB Atlas] Hydrated ${Model.modelName} from Cloud Atlas (${countStr})\x1b[0m`);
+      console.log(`\x1b[32m[MongoDB Atlas] Loaded ${Model.modelName} from Cloud Atlas (${countStr})\x1b[0m`);
     } catch (err) {
       console.error(`[MongoDB Atlas] Error hydrating ${key}:`, err.message);
     }
@@ -143,7 +135,7 @@ async function hydrateFromMongo() {
 }
 
 /**
- * Retrieve data live from memory store (backed directly by Cloud Atlas)
+ * Retrieve data live from memory store (backed 100% by Cloud Atlas)
  */
 function getData(key, defaultValue = []) {
   if (memoryCache[key] !== undefined) {
