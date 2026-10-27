@@ -87,6 +87,8 @@ async function onConnected() {
   }
 }
 
+let lastHydrateTime = 0;
+
 mongoose.connection.on('disconnected', () => {
   isConnectedState = false;
   console.warn('\x1b[33m[MongoDB Atlas] Disconnected from Cloud Atlas.\x1b[0m');
@@ -95,7 +97,11 @@ mongoose.connection.on('disconnected', () => {
 mongoose.connection.on('reconnected', () => {
   isConnectedState = true;
   console.log('\x1b[32m[MongoDB Atlas] Reconnected to Cloud Atlas.\x1b[0m');
-  hydrateFromMongo().catch(err => console.error('[MongoDB Atlas] Re-hydration error:', err.message));
+  const now = Date.now();
+  if (now - lastHydrateTime > 60000) {
+    lastHydrateTime = now;
+    hydrateFromMongo().catch(err => console.error('[MongoDB Atlas] Re-hydration error:', err.message));
+  }
 });
 
 function isConnected() {
@@ -142,6 +148,13 @@ function getData(key, defaultValue = []) {
     return memoryCache[key];
   }
   return defaultValue;
+}
+
+/**
+ * Update memoryCache only (for live real-time rate updates without hammering Atlas with bulk writes)
+ */
+function setMemoryData(key, data) {
+  memoryCache[key] = data;
 }
 
 /**
@@ -217,6 +230,7 @@ module.exports = {
   isConnected,
   getActiveUri,
   getData,
+  setMemoryData,
   saveData,
   syncToMongo,
   hydrateFromMongo,
