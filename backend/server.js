@@ -1257,7 +1257,7 @@ function updateAllProductPrices(newSilverRate) {
   });
 
   if (modified) {
-    saveJsonFile('products_data.json', productsList);
+    db.setMemoryData('products_data.json', productsList);
   }
 }
 
