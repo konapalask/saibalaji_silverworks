@@ -12,13 +12,6 @@ build/
 *.egg-info/
 .eggs/
 
-# Environment & Local Secrets
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
 # Python runtime & caches
 __pycache__/
 *.py[cod]
@@ -32,23 +25,10 @@ env.bak/
 venv.bak/
 .pytest_cache/
 
-# Databases & Runtime JSON Data Files
+# Databases & Runtime DB binaries (keep json tracked)
 *.db
 *.sqlite
 *.sqlite3
-
-# Protect all JSON data files from Git tracking (EXCEPT config and package files)
-*.json
-!package.json
-!package-lock.json
-!**/package.json
-!**/package-lock.json
-!tsconfig*.json
-!**/tsconfig*.json
-!.oxlintrc.json
-!**/vercel.json
-!vercel.json
-
 
 # IDE / Editor files
 .vscode/
@@ -68,11 +48,6 @@ bin/
 # Logs
 logs/
 *.log
-
-# Large media files (videos)
-backend/public/videos/
-*.mp4
-*.MP4
 
 # Backups
 .json_backups/

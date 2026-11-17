@@ -1,0 +1,42 @@
+[
+  {
+    "user_id": 1,
+    "product_ids": [
+      2,
+      5,
+      9,
+      8,
+      7
+    ],
+    "updated_at": "2026-10-23T13:18:48.101Z"
+  },
+  {
+    "user_id": 2,
+    "product_ids": [],
+    "updated_at": "2026-08-21T08:32:03.296Z",
+    "createdAt": "2026-10-21T08:58:38.646Z",
+    "updatedAt": "2026-10-21T09:03:38.954Z"
+  },
+  {
+    "user_id": 4,
+    "product_ids": [],
+    "updated_at": "2026-08-29T15:06:21.918Z",
+    "createdAt": "2026-10-21T08:58:38.646Z",
+    "updatedAt": "2026-10-21T09:03:38.954Z"
+  },
+  {
+    "user_id": 3,
+    "product_ids": [],
+    "updated_at": "2026-08-29T13:04:59.045Z",
+    "createdAt": "2026-10-21T08:58:38.646Z",
+    "updatedAt": "2026-10-21T09:03:38.954Z"
+  },
+  {
+    "user_id": "guest",
+    "product_ids": [
+      59,
+      89
+    ],
+    "updated_at": "2026-10-23T10:36:01.925Z"
+  }
+]
