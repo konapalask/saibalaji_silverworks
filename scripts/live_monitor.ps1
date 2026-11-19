@@ -301,12 +301,22 @@ while ($true) {
             $remoteHash = (& $gitExe rev-parse origin/main 2>$null).Trim()
         } catch {}
 
-        if ($localHash -and $remoteHash) {
-            if ($localHash -ne $remoteHash) {
+        if ($localHash -and $remoteHash -and ($localHash -ne $remoteHash)) {
+            $behindCount = 0
+            $aheadCount = 0
+            try {
+                $behindCount = [int]((& $gitExe rev-list HEAD..origin/main --count 2>$null).Trim())
+                $aheadCount = [int]((& $gitExe rev-list origin/main..HEAD --count 2>$null).Trim())
+            } catch {}
+
+            if ($aheadCount -gt 0 -and $behindCount -eq 0) {
+                Write-ConsoleLog "Local is ahead of origin/main by $aheadCount commit(s). Pushing to GitHub..." "UPDATE"
+                & $gitExe push origin main --quiet 2>$null
+            } elseif ($behindCount -gt 0) {
                 $shortLocal = $localHash.Substring(0, [Math]::Min(7, $localHash.Length))
                 $shortRemote = $remoteHash.Substring(0, [Math]::Min(7, $remoteHash.Length))
                 Write-Host "`n********************************************************************************" -ForegroundColor Magenta
-                Write-ConsoleLog "NEW COMMITS DETECTED ON GITHUB! ($shortLocal -> $shortRemote)" "UPDATE"
+                Write-ConsoleLog "NEW COMMITS DETECTED ON GITHUB! ($shortLocal -> $shortRemote, $behindCount new)" "UPDATE"
                 Write-Host "********************************************************************************" -ForegroundColor Magenta
                 
                 # Identify changed files

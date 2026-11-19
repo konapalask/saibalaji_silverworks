@@ -3,13 +3,21 @@ try {
   dns.setServers(['8.8.8.8', '1.1.1.1']);
 } catch (e) {}
 
+const path = require('path');
+const fs = require('fs');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
 const mongoose = require('mongoose');
 const models = require('./models');
 
-let isConnectedState = false;
-let retryTimer = null;
+const DEFAULT_MONGODB_URI = 'mongodb+srv://samuelnikhilmddali123_db_user:oqY6b7J4nB2GzjAr@cluster0.whgmi0w.mongodb.net/saibalaji_silverworks?retryWrites=true&w=majority';
 
-// Live in-memory cache directly backed by Cloud MongoDB Atlas ONLY
+let isConnectedState = false;
+let isConnecting = false;
+let retryTimer = null;
+let lastHydrateTime = 0;
+
+// Live in-memory cache directly backed by Cloud MongoDB Atlas
 const memoryCache = {
   'categories_data.json': [],
   'products_data.json': [],
@@ -29,17 +37,51 @@ const memoryCache = {
 };
 
 /**
- * Connect exclusively to Cloud MongoDB Atlas
+ * Pre-load from local JSON backup on server boot so products are immediately available
+ */
+function loadFromLocalBackup() {
+  for (const [key, Model] of Object.entries(models.fileModelMap)) {
+    const filePath = path.join(__dirname, key);
+    if (fs.existsSync(filePath)) {
+      try {
+        const content = fs.readFileSync(filePath, 'utf8').trim().replace(/^\uFEFF/, '');
+        if (content) {
+          memoryCache[key] = JSON.parse(content);
+        }
+      } catch (err) {
+        console.error(`[Local Backup] Error reading ${key}:`, err.message);
+      }
+    }
+  }
+  const prodCount = Array.isArray(memoryCache['products_data.json']) ? memoryCache['products_data.json'].length : 0;
+  console.log(`\x1b[32m[Boot Data] Initialized ${prodCount} products from local backup.\x1b[0m`);
+}
+loadFromLocalBackup();
+
+/**
+ * Save data to local backup on disk
+ */
+function saveLocalBackup(key, data) {
+  try {
+    const filePath = path.join(__dirname, key);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+  } catch (e) {}
+}
+
+/**
+ * Connect to Cloud MongoDB Atlas with auto-retry and safe state handling
  */
 async function connectDB(uri) {
-  const mongoUri = uri || process.env.MONGODB_URI;
+  const mongoUri = uri || process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
 
-  if (!mongoUri) {
-    console.error('\x1b[31m[MongoDB Atlas] MONGODB_URI is not set in backend/.env!\x1b[0m');
-    return false;
-  }
+  if (isConnecting) return false;
+  isConnecting = true;
 
   try {
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect().catch(() => {});
+    }
+
     console.log('\x1b[36m[MongoDB Atlas] Connecting exclusively to Cloud MongoDB Atlas...\x1b[0m');
     await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 5000,
@@ -55,19 +97,20 @@ async function connectDB(uri) {
     }
 
     await onConnected();
+    isConnecting = false;
     return true;
   } catch (err) {
     isConnectedState = false;
+    isConnecting = false;
     console.error('\x1b[31m[MongoDB Atlas Connection Error]\x1b[0m', err.message);
 
-    // Auto-retry connecting every 5 seconds until Atlas whitelist is ready
     if (!retryTimer) {
       retryTimer = setInterval(() => {
-        if (!isConnected()) {
+        if (!isConnected() && !isConnecting) {
           console.log('\x1b[36m[MongoDB Atlas] Retrying connection to Cloud Atlas...\x1b[0m');
           connectDB(mongoUri).catch(() => {});
         }
-      }, 5000);
+      }, 8000);
     }
 
     return false;
@@ -86,8 +129,6 @@ async function onConnected() {
     console.error('[MongoDB Atlas] Post-connection hydration error:', err.message);
   }
 }
-
-let lastHydrateTime = 0;
 
 mongoose.connection.on('disconnected', () => {
   isConnectedState = false;
@@ -125,11 +166,13 @@ async function hydrateFromMongo() {
         if (doc) {
           const { _id, __v, ...rest } = doc;
           memoryCache[key] = rest;
+          saveLocalBackup(key, memoryCache[key]);
         }
       } else {
         const docs = await Model.find({}).lean();
         if (docs && docs.length > 0) {
           memoryCache[key] = docs.map(({ _id, __v, ...rest }) => rest);
+          saveLocalBackup(key, memoryCache[key]);
         }
       }
       const countStr = Array.isArray(memoryCache[key]) ? `${memoryCache[key].length} items` : '1 doc';
@@ -141,27 +184,42 @@ async function hydrateFromMongo() {
 }
 
 /**
- * Retrieve data live from memory store (backed 100% by Cloud Atlas)
+ * Retrieve data live from memory store with file fallback
  */
 function getData(key, defaultValue = []) {
   if (memoryCache[key] !== undefined) {
-    return memoryCache[key];
+    const val = memoryCache[key];
+    if (Array.isArray(val) && val.length > 0) return val;
+    if (!Array.isArray(val) && val && Object.keys(val).length > 0) return val;
+  }
+  // Safe disk fallback if cache is ever unexpectedly empty
+  const filePath = path.join(__dirname, key);
+  if (fs.existsSync(filePath)) {
+    try {
+      const content = fs.readFileSync(filePath, 'utf8').trim().replace(/^\uFEFF/, '');
+      if (content) {
+        const parsed = JSON.parse(content);
+        memoryCache[key] = parsed;
+        return parsed;
+      }
+    } catch (e) {}
   }
   return defaultValue;
 }
 
 /**
- * Update memoryCache only (for live real-time rate updates without hammering Atlas with bulk writes)
+ * Update memoryCache only (for live real-time rate updates without hammering Atlas)
  */
 function setMemoryData(key, data) {
   memoryCache[key] = data;
 }
 
 /**
- * Save data to memory cache and persist directly to Cloud MongoDB Atlas
+ * Save data to memory cache, local backup, and Cloud MongoDB Atlas
  */
 function saveData(key, data) {
   memoryCache[key] = data;
+  saveLocalBackup(key, data);
 
   if (isConnected()) {
     syncToMongo(key, data).catch((err) => {
@@ -181,7 +239,7 @@ async function syncToMongo(filename, data) {
 
   try {
     if (!Array.isArray(data) && typeof data === 'object') {
-      await Model.findOneAndUpdate({}, { $set: data }, { upsert: true, new: true });
+      await Model.findOneAndUpdate({}, { $set: data }, { upsert: true, returnDocument: 'after' });
       return;
     }
 

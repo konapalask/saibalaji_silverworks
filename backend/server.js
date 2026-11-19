@@ -1,8 +1,11 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+if (!process.env.MONGODB_URI) {
+  process.env.MONGODB_URI = 'mongodb+srv://samuelnikhilmddali123_db_user:oqY6b7J4nB2GzjAr@cluster0.whgmi0w.mongodb.net/saibalaji_silverworks?retryWrites=true&w=majority';
+}
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
-const path = require('path');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const https = require('https');
