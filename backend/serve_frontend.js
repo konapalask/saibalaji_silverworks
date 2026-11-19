@@ -55,7 +55,9 @@ const proxyToBackend = (req, res) => {
   });
 
   proxyReq.on('error', (err) => {
-    res.status(502).json({ detail: 'Backend server connection error', error: err.message });
+    if (!res.headersSent) {
+      res.status(502).json({ detail: 'Backend server connection error', error: err.message });
+    }
   });
 
   req.pipe(proxyReq, { end: true });
