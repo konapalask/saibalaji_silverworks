@@ -34,8 +34,8 @@
     ],
     "status": "QUOTE_ISSUED",
     "created_at": "2026-08-29T08:13:44.001Z",
-    "createdAt": "2026-10-21T08:58:38.642Z",
-    "updatedAt": "2026-10-21T08:58:38.642Z"
+    "createdAt": "2026-10-17T09:41:14.536Z",
+    "updatedAt": "2026-11-08T17:37:37.383Z"
   },
   {
     "id": 2,
@@ -63,8 +63,8 @@
     ],
     "status": "QUOTE_ISSUED",
     "created_at": "2026-08-29T08:23:01.307Z",
-    "createdAt": "2026-10-21T08:58:38.642Z",
-    "updatedAt": "2026-10-21T08:58:38.642Z"
+    "createdAt": "2026-10-17T09:41:14.536Z",
+    "updatedAt": "2026-11-08T17:37:37.383Z"
   },
   {
     "id": 3,
@@ -92,8 +92,8 @@
     ],
     "status": "QUOTE_ISSUED",
     "created_at": "2026-08-29T08:33:44.205Z",
-    "createdAt": "2026-10-21T08:58:38.642Z",
-    "updatedAt": "2026-10-21T08:58:38.642Z"
+    "createdAt": "2026-10-17T09:41:14.536Z",
+    "updatedAt": "2026-11-08T17:37:37.383Z"
   },
   {
     "id": 4,
@@ -148,8 +148,8 @@
     ],
     "status": "QUOTE_ISSUED",
     "created_at": "2026-08-29T08:41:13.064Z",
-    "createdAt": "2026-10-21T08:58:38.642Z",
-    "updatedAt": "2026-10-21T08:58:38.642Z"
+    "createdAt": "2026-10-17T09:41:14.536Z",
+    "updatedAt": "2026-11-08T17:37:37.383Z"
   },
   {
     "id": 5,
@@ -204,8 +204,8 @@
     ],
     "status": "PENDING",
     "created_at": "2026-08-29T08:43:58.057Z",
-    "createdAt": "2026-10-21T08:58:38.642Z",
-    "updatedAt": "2026-10-21T08:58:38.642Z"
+    "createdAt": "2026-10-17T09:41:14.536Z",
+    "updatedAt": "2026-11-08T17:37:37.383Z"
   },
   {
     "id": 6,
@@ -263,8 +263,9 @@
     ],
     "status": "QUOTE_ISSUED",
     "created_at": "2026-08-29T08:51:41.043Z",
-    "createdAt": "2026-10-21T08:58:38.642Z",
-    "updatedAt": "2026-10-21T08:58:38.642Z"
+    "updated_at": "2026-09-04T11:26:17.733Z",
+    "createdAt": "2026-10-17T09:41:14.536Z",
+    "updatedAt": "2026-11-08T17:37:37.383Z"
   },
   {
     "id": 7,
@@ -335,7 +336,40 @@
     ],
     "status": "Order Accepted",
     "created_at": "2026-08-29T08:56:12.494Z",
-    "createdAt": "2026-10-21T08:58:38.642Z",
-    "updatedAt": "2026-10-21T08:58:38.642Z"
+    "createdAt": "2026-10-17T09:41:14.536Z",
+    "updatedAt": "2026-11-08T17:37:37.383Z"
+  },
+  {
+    "id": 8,
+    "address": "Main bazar donakonda ",
+    "city": "Donakonda ",
+    "company_name": "MM JEWELLERS ",
+    "contact_person": "MADISETTY VENKAT SOMA RAMESH",
+    "createdAt": "2026-11-08T17:37:37.383Z",
+    "created_at": "2026-11-08T17:37:37.326Z",
+    "email": "rameshdkd.ramesh@gmail.com",
+    "gstin": "37AJIPM9528Q1Z7",
+    "items": [
+      {
+        "product_id": 169,
+        "product_name": "5 - STAR KUNDULU ",
+        "product_sku": "SBS-DT-169",
+        "measurement": "10g",
+        "selected_measurement": "10g",
+        "size": "10g",
+        "weight_g": 10,
+        "featured_image": "/public/Saibalaji products S/Stainless Steel Pedestal Dessert Bowl Set.webp",
+        "unit_price": 1935.5,
+        "requested_quantity": 1,
+        "notes": ""
+      }
+    ],
+    "phone": "+91 9381987066",
+    "pincode": "523305",
+    "request_number": "SBS-QT-457326",
+    "state": "Andhra Pradesh ",
+    "status": "PENDING",
+    "updatedAt": "2026-11-08T17:37:37.383Z",
+    "user_id": 19
   }
 ]
