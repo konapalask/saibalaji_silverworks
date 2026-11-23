@@ -4,21 +4,21 @@
     "product_ids": [],
     "updated_at": "2026-09-16T11:01:10.173Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 9,
     "product_ids": [],
     "updated_at": "2026-09-15T17:29:05.492Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 5,
     "product_ids": [],
     "updated_at": "2026-09-22T05:34:42.531Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": "guest",
@@ -27,54 +27,56 @@
     ],
     "updated_at": "2026-10-24T06:19:36.865Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 4,
     "product_ids": [],
     "updated_at": "2026-09-15T10:36:23.694Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 6,
     "product_ids": [],
     "updated_at": "2026-09-14T09:43:55.673Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 11,
     "product_ids": [],
     "updated_at": "2026-09-17T10:04:36.573Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 1,
     "product_ids": [],
-    "updated_at": "2026-11-19T06:57:06.938Z",
+    "updated_at": "2026-11-21T07:47:05.093Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 15,
     "product_ids": [],
     "updated_at": "2026-09-29T09:38:39.784Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 16,
     "product_ids": [],
     "updated_at": "2026-09-30T07:40:45.980Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 17,
     "product_ids": [],
-    "updated_at": "2026-11-20T17:27:35.611Z"
+    "updated_at": "2026-11-20T17:27:35.611Z",
+    "createdAt": "2026-10-17T09:41:14.705Z",
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 3,
@@ -83,27 +85,27 @@
     ],
     "updated_at": "2026-10-15T15:31:11.038Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 2,
     "product_ids": [],
     "updated_at": "2026-09-15T10:28:31.646Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 14,
     "product_ids": [],
     "updated_at": "2026-09-21T13:37:08.094Z",
     "createdAt": "2026-10-17T09:41:14.705Z",
-    "updatedAt": "2026-11-19T06:57:06.982Z"
+    "updatedAt": "2026-11-21T07:47:05.126Z"
   },
   {
     "user_id": 19,
     "createdAt": "2026-11-08T17:15:10.365Z",
     "product_ids": [],
-    "updatedAt": "2026-11-19T06:57:06.982Z",
+    "updatedAt": "2026-11-21T07:47:05.126Z",
     "updated_at": "2026-11-08T17:50:13.560Z"
   },
   {
@@ -112,7 +114,7 @@
     "product_ids": [
       89
     ],
-    "updatedAt": "2026-11-19T06:57:06.982Z",
+    "updatedAt": "2026-11-21T07:47:05.126Z",
     "updated_at": "2026-11-17T16:19:41.559Z"
   }
 ]
