@@ -369,5 +369,23 @@
     "role": "CUSTOMER",
     "is_active": true,
     "created_at": "2026-11-26T08:37:17.274Z"
+  },
+  {
+    "id": 21,
+    "firebase_uid": "4SfLTkg2WzbD7KZu3YB2AyXCodA2",
+    "email": "deepupradeep61@gmail.com",
+    "password_hash": "",
+    "full_name": "deepu 07",
+    "photo_url": "https://lh3.googleusercontent.com/a/ACg8ocKZfgzkxWH7O0m1_HYcBt5h06IxNZphPgVPEIVMs3fIO69wCQ=s96-c",
+    "phone": "",
+    "street_address": "",
+    "city": "",
+    "state": "",
+    "pincode": "",
+    "company_name": "",
+    "gstin": "",
+    "role": "CUSTOMER",
+    "is_active": true,
+    "created_at": "2026-11-26T23:32:33.112Z"
   }
 ]

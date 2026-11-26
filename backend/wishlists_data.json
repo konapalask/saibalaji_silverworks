@@ -118,5 +118,10 @@
     "user_id": 20,
     "product_ids": [],
     "updated_at": "2026-11-26T08:37:17.548Z"
+  },
+  {
+    "user_id": 21,
+    "product_ids": [],
+    "updated_at": "2026-11-26T23:32:33.737Z"
   }
 ]
