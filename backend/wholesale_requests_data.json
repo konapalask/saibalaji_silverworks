@@ -371,5 +371,36 @@
     "status": "PENDING",
     "updatedAt": "2026-11-08T17:37:37.383Z",
     "user_id": 19
+  },
+  {
+    "id": 9,
+    "request_number": "SBS-QT-245456",
+    "user_id": 20,
+    "company_name": "RAGHAVENDRA JEWELLERS",
+    "contact_person": "Aravind",
+    "phone": "7702226402",
+    "email": "aravindsirvi.222@gmail.com",
+    "gstin": "",
+    "address": "2 /1A keesara",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "pincode": "501301",
+    "items": [
+      {
+        "product_id": 172,
+        "product_name": "DINNER SET CNC ENGRAVING ",
+        "product_sku": "SBS-PA-172",
+        "measurement": "850g",
+        "selected_measurement": "850g",
+        "size": "850g",
+        "weight_g": 850,
+        "featured_image": "/public/Saibalaji products S/Tree of Life Engraved Silver Pooja Thali Set.webp",
+        "unit_price": 131699,
+        "requested_quantity": 1,
+        "notes": ""
+      }
+    ],
+    "status": "PENDING",
+    "created_at": "2026-11-26T08:37:25.456Z"
   }
 ]
